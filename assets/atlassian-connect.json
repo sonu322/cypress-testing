@@ -1,0 +1,34 @@
+{
+  "name": "Links Explorer",
+  "description": "This is simple links tree view plugin",
+  "key": "com.otpl.jira.plugins.lxp",
+  "baseUrl": "https://d1lo9kuasdt7aw.cloudfront.net",
+  "vendor": {
+    "name": "Optimizory Technologies Private Limited",
+    "url": "https://optimizory.com"
+  },
+  "translations": {
+    "paths": {
+      "en-US": "/i18n/0.1/en_US.json",
+      "de-DE": "/i18n/0.1/de_DE.json"
+    }
+  },
+  "authentication": {
+    "type": "none"
+  },
+  "scopes": ["read"],
+  "apiVersion": 1,
+  "modules": {
+    "jiraIssueTabPanels": [
+      {
+        "url": "/index.html",
+        "weight": 100,
+        "name": {
+          "value": "Links Explorer",
+          "i18n": "issue.tab.name"
+        },
+        "key": "lxp-issue-tab"
+      }
+    ]
+  }
+}
