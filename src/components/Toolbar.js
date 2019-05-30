@@ -3,7 +3,16 @@ import PropTypes from "prop-types";
 import IssueTypeDropdown from "./IssueTypeDropdown";
 import LinkTypeDropdown from "./LinkTypeDropDown";
 import PriorityDropdown from "./PriorityDropdown";
-import { ButtonGroup } from "@atlaskit/button";
+import Button, { ButtonGroup } from "@atlaskit/button";
+import Page, { Grid, GridColumn } from "@atlaskit/page";
+import styled from "styled-components";
+import QuestionIcon from "@atlaskit/icon/glyph/question";
+
+const AlignRight = styled.div`
+  text-align: right;
+`;
+
+const HelpLink = "https://docs.optimizory.com/x/FIBZAQ";
 
 class Toolbar extends Component {
   constructor(props) {
@@ -44,15 +53,33 @@ class Toolbar extends Component {
 
   render() {
     return (
-      <div className="toolbar">
-        <ButtonGroup>
-          <IssueTypeDropdown
-            filter={data => this.updateIssueTypeFilter(data)}
-          />
-          <LinkTypeDropdown filter={data => this.updateLinkTypeFilter(data)} />
-          <PriorityDropdown filter={data => this.updatePriorityFilter(data)} />
-        </ButtonGroup>
-      </div>
+      <Page>
+        <Grid spacing="compact">
+          <GridColumn medium={10}>
+            <ButtonGroup>
+              <IssueTypeDropdown
+                filter={data => this.updateIssueTypeFilter(data)}
+              />
+              <LinkTypeDropdown
+                filter={data => this.updateLinkTypeFilter(data)}
+              />
+              <PriorityDropdown
+                filter={data => this.updatePriorityFilter(data)}
+              />
+            </ButtonGroup>
+          </GridColumn>
+          <GridColumn medium={2}>
+            <AlignRight>
+              <Button
+                appearance="default"
+                target="_blank"
+                href={HelpLink}
+                iconBefore={<QuestionIcon />}
+              />
+            </AlignRight>
+          </GridColumn>
+        </Grid>
+      </Page>
     );
   }
 }

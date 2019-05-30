@@ -7,6 +7,11 @@
     "name": "Optimizory Technologies Private Limited",
     "url": "https://optimizory.com"
   },
+  "links": {
+    "self": "https://d1lo9kuasdt7aw.cloudfront.net/atlassian-connect.json",
+    "documentation": "https://docs.optimizory.com/x/FIBZAQ"
+  },
+  "enableLicensing": true,
   "translations": {
     "paths": {
       "en-US": "/i18n/0.1/en_US.json",
@@ -16,7 +21,9 @@
   "authentication": {
     "type": "none"
   },
-  "scopes": ["read"],
+  "scopes": [
+    "read"
+  ],
   "apiVersion": 1,
   "modules": {
     "jiraIssueTabPanels": [

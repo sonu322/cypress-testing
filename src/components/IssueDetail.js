@@ -2,6 +2,7 @@
 import React, { Component } from "react";
 import InlineDialog from "@atlaskit/inline-dialog";
 import MoreIcon from "@atlaskit/icon/glyph/more";
+import CrossIcon from "@atlaskit/icon/glyph/cross";
 import Button from "@atlaskit/button";
 import Spinner from "@atlaskit/spinner";
 import { IssueAPI } from "./api";
@@ -11,7 +12,7 @@ import Page, { Grid, GridColumn } from "@atlaskit/page";
 
 const ModalContainer = styled.div`
   width: 300px;
-  height: 200px;
+  height: 160px;
   overflow: auto;
 `;
 
@@ -20,6 +21,14 @@ const DetailContainer = styled.div`
   background-color: ${colors.N20};
   padding: 2px;
   border-radius: 3px;
+`;
+
+const CloseIconPosition = styled.span`
+  float: right;
+`;
+
+const HeaderContainer = styled.div`
+  padding: 0 4px;
 `;
 
 const DetailHeading = styled.div`
@@ -56,25 +65,60 @@ export default class IssueDetail extends Component<Props, State> {
     open: false
   };
 
-  toggle = () => {
-    this.setState({
-      open: !this.state.open
+  open = () => {
+    IssueAPI(this.props.id).then(data => {
+      if (this._isMounted) {
+        this.setState({
+          fetched: true,
+          issue: data
+        });
+      }
     });
   };
 
+  close = () => {
+    this.setState({
+      fetched: false,
+      issue: {}
+    });
+  };
+
+  toggle = () => {
+    const { open } = this.state;
+    this.setState({
+      open: !open
+    });
+
+    open ? this.close() : this.open();
+  };
+
   getContent = () => {
-    const { fetched, issue } = this.state;
+    const { fetched, issue, open } = this.state;
     const fields = issue.fields;
     return (
       <ModalContainer>
-        {!fetched ? (
+        <CloseIconPosition>
+          <Button
+            spacing="none"
+            appearance="subtle-link"
+            onClick={() => {
+              this.setState({ open: false });
+              this.close();
+            }}
+          >
+            <CrossIcon size="small" />
+          </Button>
+        </CloseIconPosition>
+        {!fetched || !open ? (
           <SpinnerWrapper>
             <Spinner size="small" />
           </SpinnerWrapper>
         ) : (
           <div>
-            <h4>{issue.key}</h4>
-            <p>{fields.summary}</p>
+            <HeaderContainer>
+              <h4>{issue.key}</h4>
+              <div>{fields.summary}</div>
+            </HeaderContainer>
             <Page>
               <Grid spacing="compact">
                 <GridColumn medium={6}>
@@ -119,14 +163,6 @@ export default class IssueDetail extends Component<Props, State> {
 
   componentDidMount() {
     this._isMounted = true;
-    IssueAPI(this.props.id).then(data => {
-      if (this._isMounted) {
-        this.setState({
-          fetched: true,
-          issue: data
-        });
-      }
-    });
   }
 
   componentWillUnmount() {
@@ -139,9 +175,11 @@ export default class IssueDetail extends Component<Props, State> {
         <InlineDialog
           onClose={() => {
             this.setState({ open: false });
+            this.close();
           }}
           onContentBlur={() => {
             this.setState({ open: false });
+            this.close();
           }}
           placement="right"
           content={this.getContent()}

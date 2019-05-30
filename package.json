@@ -28,9 +28,9 @@
   },
   "scripts": {
     "start": "parcel index.html",
-    "prebuild": "rm -rf dist",
+    "prebuild": "/bin/bash prebuild.sh",
     "build": "parcel build index.html",
-    "serve": "ngrok http 1234",
+    "serve": "/usr/local/bin/node serve.js",
     "upload": "aws s3 sync ./dist s3://cf-simple-s3-origin-lxp-cloudfront-432900565600",
     "flow": "flow"
   },

@@ -53,6 +53,7 @@ const IconContainer = styled.span`
   display: flex;
   width: 16px;
   overflow: hidden;
+  height: 16px;
 `;
 
 const Container = styled.div`
@@ -418,6 +419,8 @@ class IssueTree extends Component<Props, State> {
             <span>
               <IconContainer>
                 <img
+                  height={16}
+                  width={16}
                   src={item.data ? item.data.type.iconUrl : ""}
                   title={
                     item.data
@@ -428,6 +431,8 @@ class IssueTree extends Component<Props, State> {
               </IconContainer>
               <IconContainer>
                 <img
+                  height={16}
+                  width={16}
                   src={item.data ? item.data.priority.iconUrl : ""}
                   title={item.data ? item.data.priority.name : ""}
                 />
