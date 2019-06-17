@@ -11,6 +11,7 @@
     "@atlaskit/page": "^10.0.1",
     "@atlaskit/spinner": "^11.0.0",
     "@atlaskit/tree": "^6.0.0",
+    "@ungap/url-search-params": "^0.1.2",
     "react": "^16.8.0",
     "react-dom": "^16.8.6",
     "styled-components": "^3.2.6"
@@ -23,8 +24,10 @@
     "@babel/preset-react": "^7.0.0",
     "cssnano": "^4.1.10",
     "flow-bin": "^0.98.1",
+    "ngrok": "^3.2.0",
     "node-sass": "^4.12.0",
-    "parcel-plugin-static-files-copy": "^2.0.0"
+    "parcel-plugin-static-files-copy": "^2.0.0",
+    "shelljs": "^0.8.3"
   },
   "scripts": {
     "start": "parcel index.html",
@@ -39,5 +42,6 @@
       "assets"
     ],
     "watcherGlob": "**"
-  }
+  },
+  "browserslist": "> 0.25%, not dead"
 }
