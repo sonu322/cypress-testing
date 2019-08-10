@@ -7,12 +7,12 @@ import Button, { ButtonGroup } from "@atlaskit/button";
 import Page, { Grid, GridColumn } from "@atlaskit/page";
 import styled from "styled-components";
 import QuestionIcon from "@atlaskit/icon/glyph/question";
+import ExportIcon from "@atlaskit/icon/glyph/export";
+import { HelpLink } from "../../constants";
 
 const AlignRight = styled.div`
   text-align: right;
 `;
-
-const HelpLink = "https://docs.optimizory.com/x/FIBZAQ";
 
 class Toolbar extends Component {
   constructor(props) {
@@ -20,7 +20,8 @@ class Toolbar extends Component {
     this.state = {
       issueType: [],
       linkType: [],
-      priority: []
+      priority: [],
+      exporting: false
     };
   }
 
@@ -51,7 +52,22 @@ class Toolbar extends Component {
     });
   }
 
+  export() {
+    const { exporting } = this.state;
+    if (!exporting) {
+      this.setState({ exporting: true });
+      this.props.export(this);
+    }
+  }
+
+  exported() {
+    this.setState({
+      exporting: false
+    });
+  }
+
   render() {
+    const { exporting } = this.state;
     return (
       <Page>
         <Grid spacing="compact">
@@ -70,12 +86,20 @@ class Toolbar extends Component {
           </GridColumn>
           <GridColumn medium={2}>
             <AlignRight>
-              <Button
-                appearance="default"
-                target="_blank"
-                href={HelpLink}
-                iconBefore={<QuestionIcon />}
-              />
+              <ButtonGroup>
+                <Button
+                  appearance="default"
+                  iconBefore={<ExportIcon />}
+                  onClick={() => this.export()}
+                  isLoading={exporting}
+                />
+                <Button
+                  appearance="default"
+                  target="_blank"
+                  href={HelpLink}
+                  iconBefore={<QuestionIcon />}
+                />
+              </ButtonGroup>
             </AlignRight>
           </GridColumn>
         </Grid>

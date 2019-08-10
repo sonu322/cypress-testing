@@ -1,3 +1,4 @@
 {
-  "flow.pathToFlow": "${workspacFolder}/node_modules/.bin/flow"
+  "flow.pathToFlow": "${workspacFolder}/node_modules/.bin/flow",
+  "typescript.format.enable": false
 }

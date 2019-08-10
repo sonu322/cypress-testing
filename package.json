@@ -9,11 +9,14 @@
     "@atlaskit/lozenge": "^8.0.0",
     "@atlaskit/navigation-next": "^6.0.1",
     "@atlaskit/page": "^10.0.1",
+    "@atlaskit/page-header": "^9.0.7",
     "@atlaskit/spinner": "^11.0.0",
     "@atlaskit/tree": "^6.0.0",
     "@ungap/url-search-params": "^0.1.2",
     "react": "^16.8.0",
     "react-dom": "^16.8.6",
+    "s": "^0.1.1",
+    "sty": "^0.6.1",
     "styled-components": "^3.2.6"
   },
   "devDependencies": {
@@ -30,9 +33,9 @@
     "shelljs": "^0.8.3"
   },
   "scripts": {
-    "start": "parcel index.html",
+    "start": "parcel public/*.html",
     "prebuild": "/bin/bash prebuild.sh",
-    "build": "parcel build index.html",
+    "build": "parcel build public/*.html",
     "serve": "/usr/local/bin/node serve.js",
     "upload": "aws s3 sync ./dist s3://cf-simple-s3-origin-lxp-cloudfront-432900565600",
     "flow": "flow"

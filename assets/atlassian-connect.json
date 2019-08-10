@@ -2,7 +2,7 @@
   "name": "Links Explorer",
   "description": "This is simple links tree view plugin",
   "key": "com.otpl.jira.plugins.lxp",
-  "baseUrl": "https://d1lo9kuasdt7aw.cloudfront.net",
+  "baseUrl": "https://6668c21c.ngrok.io",
   "vendor": {
     "name": "Optimizory Technologies Private Limited",
     "url": "https://optimizory.com"
@@ -35,6 +35,22 @@
           "i18n": "issue.tab.name"
         },
         "key": "lxp-issue-tab"
+      }
+    ],
+    "generalPages": [
+      {
+        "url": "/home.html",
+        "location": "system.top.navigation.bar",
+        "name": {
+          "value": "Links Explorer",
+          "i18n": "general.page.name"
+        },
+        "conditions": [
+          {
+            "condition": "user_is_logged_in"
+          }
+        ],
+        "key": "lxp-home-page"
       }
     ]
   }

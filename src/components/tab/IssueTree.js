@@ -8,8 +8,8 @@ import Button from "@atlaskit/button";
 import { Item } from "@atlaskit/navigation-next";
 import { colors } from "@atlaskit/theme";
 import Lozenge from "@atlaskit/lozenge";
-import { IssueLinkAPI } from "./api";
-import { UUID } from "./../util";
+import { IssueLinkAPI } from "../api";
+import { UUID, getStatusAppearance } from "../../util";
 import IssueDetail from "./IssueDetail";
 
 import Tree, {
@@ -27,7 +27,7 @@ const PARENT = "Parent";
 
 const Box = styled.span`
   display: flex;
-  width: 26px;
+  width: 24px;
   height: 32px;
   justify-content: center;
   font-size: 12px;
@@ -47,6 +47,10 @@ const LinkTypeContainer = styled.div`
   padding-right: 6px;
   font-weight: 500;
   text-transform: capitalize;
+`;
+const ItemWrapper = styled.div`
+  display: flex;
+  width: 270px;  
 `;
 
 const IconContainer = styled.span`
@@ -81,6 +85,7 @@ const TextContent = styled.span`
   vertical-align: middle;
 `;
 
+
 type State = {|
   tree: TreeData,
   fetched: boolean
@@ -91,7 +96,8 @@ type Props = {
     issueType: Array<string>,
     linkType: Array<string>,
     priority: Array<string>
-  |}
+  |},
+  onRef: function
 };
 
 class IssueTree extends Component<Props, State> {
@@ -298,6 +304,7 @@ class IssueTree extends Component<Props, State> {
 
   componentDidMount() {
     this._isMounted = true;
+    this.props.onRef(this);
     IssueLinkAPI().then(data => {
       if (this._isMounted) {
         const value = IssueTree.formatIssue(data, null, null);
@@ -317,6 +324,7 @@ class IssueTree extends Component<Props, State> {
 
   componentWillUnmount() {
     this._isMounted = false;
+    this.props.onRef(null);
   }
 
   static getIcon(
@@ -356,43 +364,15 @@ class IssueTree extends Component<Props, State> {
 
   static getItemStyle(depth: number) {
     const style = {
-      width: "20em",
+      width: "300px",
       margin: ".5em 0",
       display: "flex",
-      paddingLeft: "0px"
+      marginLeft: "0px"
     };
-    style["paddingLeft"] = PADDING_LEVEL * depth + "px";
+
+    style["marginLeft"] = PADDING_LEVEL * depth + "px";
 
     return style;
-  }
-  static getStatusAppearance(category: Object) {
-    const know = [
-      "default",
-      "inprogress",
-      "moved",
-      "new",
-      "removed",
-      "success"
-    ];
-    let color = category.colorName;
-    let type = "default";
-    if (know.includes(category.key)) {
-      type = category.key;
-    } else {
-      if (color.includes("gray")) {
-        type = "default";
-      } else if (color.includes("green")) {
-        type = "success";
-      } else if (color.includes("blue")) {
-        type = "inprogress";
-      } else if (color.includes("red")) {
-        type = "removed";
-      } else if (color.includes("yellow")) {
-        type = "moved";
-      }
-    }
-
-    return type;
   }
 
   renderItem = ({
@@ -413,62 +393,64 @@ class IssueTree extends Component<Props, State> {
           {item.data ? item.data.title : "No Name"}
         </LinkTypeContainer>
       ) : (
-        <Item
-          after={() => <IssueDetail id={item.data ? item.data.id : null} />}
-          before={() => (
-            <span>
-              <IconContainer>
-                <img
-                  height={16}
-                  width={16}
-                  src={item.data ? item.data.type.iconUrl : ""}
-                  title={
+        <ItemWrapper>
+          <Item
+            after={() => <IssueDetail id={item.data ? item.data.id : null} />}
+            before={() => (
+              <span>
+                <IconContainer>
+                  <img
+                    height={16}
+                    width={16}
+                    src={item.data ? item.data.type.iconUrl : ""}
+                    title={
+                      item.data
+                        ? `${item.data.type.name} - ${item.data.type.description}`
+                        : ""
+                    }
+                  />
+                </IconContainer>
+                <IconContainer>
+                  <img
+                    height={16}
+                    width={16}
+                    src={item.data ? item.data.priority.iconUrl : ""}
+                    title={item.data ? item.data.priority.name : ""}
+                  />
+                </IconContainer>
+              </span>
+            )}
+            text={
+              <div>
+                <Lozenge
+                  maxWidth={100}
+                  appearance={
                     item.data
-                      ? `${item.data.type.name} - ${item.data.type.description}`
-                      : ""
+                      ? getStatusAppearance(
+                          item.data.status.statusCategory
+                        )
+                      : "default"
                   }
-                />
-              </IconContainer>
-              <IconContainer>
-                <img
-                  height={16}
-                  width={16}
-                  src={item.data ? item.data.priority.iconUrl : ""}
-                  title={item.data ? item.data.priority.name : ""}
-                />
-              </IconContainer>
-            </span>
-          )}
-          text={
-            <div>
-              <Lozenge
-                maxWidth={100}
-                appearance={
-                  item.data
-                    ? IssueTree.getStatusAppearance(
-                        item.data.status.statusCategory
-                      )
-                    : "default"
-                }
-              >
-                {item.data ? item.data.status.name : ""}
-              </Lozenge>
-              <TextContent>{item.data ? item.data.title : ""}</TextContent>
-            </div>
-          }
-          subText={item.data ? item.data.summary : ""}
-          component={InnerElem}
-          styles={styles => {
-            styles.itemBase.cursor = "default";
-            styles.itemBase.backgroundColor = colors.N20;
-            styles.itemBase.fill = colors.N20;
-            styles.itemBase.paddingLeft = 6;
-            styles.itemBase.paddingRight = 6;
-            styles.beforeWrapper.marginRight = 8;
-            styles.afterWrapper.marginLeft = 8;
-            return styles;
-          }}
-        />
+                >
+                  {item.data ? item.data.status.name : ""}
+                </Lozenge>
+                <TextContent>{item.data ? item.data.title : ""}</TextContent>
+              </div>
+            }
+            subText={item.data ? item.data.summary : ""}
+            component={InnerElem}
+            styles={styles => {
+              styles.itemBase.cursor = "default";
+              styles.itemBase.backgroundColor = colors.N20;
+              styles.itemBase.fill = colors.N20;
+              styles.itemBase.paddingLeft = 6;
+              styles.itemBase.paddingRight = 6;
+              styles.beforeWrapper.marginRight = 8;
+              styles.afterWrapper.marginLeft = 8;
+              return styles;
+            }}
+          />
+        </ItemWrapper>
       )}
     </div>
   );
@@ -531,6 +513,52 @@ class IssueTree extends Component<Props, State> {
       })
     });
   };
+
+  export() {
+    const { tree } = this.state;
+    const root = tree.items[tree.rootId];
+    const rootChildren = root.children;
+
+    const contents = [];
+
+    const process = (item, indent) => {
+      if (!item) return;
+      const content = {
+        indent: indent,
+        key: '',
+        link: '',
+        summary: '',
+        type: '',
+        status: '',
+        priority: ''
+      };
+
+      if (item.data) {
+        const data = item.data;
+        if (data.isType) {
+          content.link = data.title;
+        } else {
+          content.key = data.title;
+          content.summary = data.summary;
+          content.type = data.type.name;
+          content.status = data.status.name;
+          content.priority = data.priority.name;
+        }
+      }
+
+      contents.push(content);
+      if (item.hasChildren) {
+        const nextIndent = indent + 1;
+        item.children.forEach(key => {
+          process(tree.items[key], nextIndent);
+        })
+      }
+    };
+
+    process(tree.items[rootChildren[0]], 1);
+
+    return contents;
+  }
 
   render() {
     const { tree, fetched } = this.state;

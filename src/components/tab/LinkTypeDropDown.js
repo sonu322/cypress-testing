@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { LinkTypeAPI } from "./api";
+import { LinkTypeAPI } from "../api";
 import DropdownMenu, {
   DropdownItemGroupCheckbox,
   DropdownItemCheckbox

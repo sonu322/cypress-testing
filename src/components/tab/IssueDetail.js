@@ -5,7 +5,7 @@ import MoreIcon from "@atlaskit/icon/glyph/more";
 import CrossIcon from "@atlaskit/icon/glyph/cross";
 import Button from "@atlaskit/button";
 import Spinner from "@atlaskit/spinner";
-import { IssueAPI } from "./api";
+import { IssueAPI } from "../api";
 import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import Page, { Grid, GridColumn } from "@atlaskit/page";
