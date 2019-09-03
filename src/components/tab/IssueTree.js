@@ -50,7 +50,7 @@ const LinkTypeContainer = styled.div`
 `;
 const ItemWrapper = styled.div`
   display: flex;
-  width: 270px;  
+  width: 270px;
 `;
 
 const IconContainer = styled.span`
@@ -85,7 +85,6 @@ const TextContent = styled.span`
   vertical-align: middle;
 `;
 
-
 type State = {|
   tree: TreeData,
   fetched: boolean
@@ -97,7 +96,7 @@ type Props = {
     linkType: Array<string>,
     priority: Array<string>
   |},
-  onRef: function
+  onRef: Function
 };
 
 class IssueTree extends Component<Props, State> {
@@ -231,9 +230,8 @@ class IssueTree extends Component<Props, State> {
     for (const { id, type, inwardIssue, outwardIssue } of data.fields
       .issuelinks) {
       if (
-        type.id !== parentTypeID &&
-        ((inwardIssue && inwardIssue.id !== parentIssueID) ||
-          (outwardIssue && outwardIssue.id !== parentIssueID))
+        (inwardIssue && inwardIssue.id !== parentIssueID) ||
+        (outwardIssue && outwardIssue.id !== parentIssueID)
       ) {
         hasChildren = true;
         const inwards = inwardIssue ? true : false;
@@ -426,9 +424,7 @@ class IssueTree extends Component<Props, State> {
                   maxWidth={100}
                   appearance={
                     item.data
-                      ? getStatusAppearance(
-                          item.data.status.statusCategory
-                        )
+                      ? getStatusAppearance(item.data.status.statusCategory)
                       : "default"
                   }
                 >
@@ -525,12 +521,12 @@ class IssueTree extends Component<Props, State> {
       if (!item) return;
       const content = {
         indent: indent,
-        key: '',
-        link: '',
-        summary: '',
-        type: '',
-        status: '',
-        priority: ''
+        key: "",
+        link: "",
+        summary: "",
+        type: "",
+        status: "",
+        priority: ""
       };
 
       if (item.data) {
@@ -551,7 +547,7 @@ class IssueTree extends Component<Props, State> {
         const nextIndent = indent + 1;
         item.children.forEach(key => {
           process(tree.items[key], nextIndent);
-        })
+        });
       }
     };
 
