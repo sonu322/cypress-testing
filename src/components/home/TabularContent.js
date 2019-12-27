@@ -5,6 +5,7 @@ import Button from "@atlaskit/button";
 import { IssueSearchAPI } from "../api";
 import { colors } from "@atlaskit/theme";
 import Lozenge from "@atlaskit/lozenge";
+import Tabs from "@atlaskit/tabs";
 import { getStatusAppearance } from "../../util";
 
 const Container = styled.div`
@@ -18,6 +19,7 @@ const BorderTr = styled.tr`
 const TableContainer = styled.div`
   padding: 2px 5px;
   border: 1px solid ${colors.N10};
+  width: 100%;
 `;
 
 const IssueContainer = styled.span`
@@ -73,14 +75,20 @@ class TabularContent extends Component {
       data: [],
       start: 0,
       gettingMore: false,
-      noMore: false
+      noMore: false,
+      selectedTab: 0
     };
+  }
+
+  selectTab(index) {
+    this.setState({
+      selectedTab: index
+    });
   }
 
   fetch() {
     const { jql, start, data } = this.state;
     IssueSearchAPI(jql, start, ROWS_PER_PAGE).then(result => {
-      console.log(result);
       const { issues, total } = result;
       const updatedStart = start + ROWS_PER_PAGE;
       data.push(...issues);
@@ -110,6 +118,7 @@ class TabularContent extends Component {
       {
         defined: true,
         fetching: true,
+        data: [],
         jql: jql,
         start: 0
       },
@@ -189,31 +198,135 @@ class TabularContent extends Component {
     ));
   }
 
-  renderLink(link) {
-    let issue;
-    let name;
-    if (link.outwardIssue) {
-      issue = link.outwardIssue;
-      name = link.type.outward;
-    } else {
-      issue = link.inwardIssue;
-      name = link.type.inward;
-    }
+  renderLinkTable(data) {
+    const links = [];
+    const upsurt = (holder, link) => {
+      const name = link.type.name;
+      if (!links.includes(name)) {
+        links.push(name);
+      }
+      if (!holder[name]) holder[name] = [];
+      holder[name].push(
+        link.outwardIssue ? link.outwardIssue : link.inwardIssue
+      );
+    };
+    const classifieds = [];
+    data.forEach(issue => {
+      const fields = issue.fields;
+      const classified = {
+        issue: issue,
+        parent: fields.parent,
+        subtasks: fields.subtasks
+      };
 
-    return <div>{this.renderIssue(issue, name)}</div>;
+      if (fields.issuelinks) {
+        fields.issuelinks.forEach(link => {
+          upsurt(classified, link);
+        });
+      }
+
+      classifieds.push(classified);
+    });
+
+    links.sort();
+
+    return (
+      <table>
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Parent</th>
+            <th>Sub-Tasks</th>
+            {links.map((link, i) => (
+              <th key={i}>{link}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {classifieds.map((classified, i) => (
+            <BorderTr key={i}>
+              <td>{this.renderIssue(classified.issue)}</td>
+              <td>{this.renderIssue(classified.parent)}</td>
+              <td>{this.renderIssues(classified.subtasks)}</td>
+              {links.map((link, j) => (
+                <td key={`${i}..${j}`}>
+                  {this.renderIssues(classified[link])}
+                </td>
+              ))}
+            </BorderTr>
+          ))}
+        </tbody>
+      </table>
+    );
   }
-  renderLinks(links) {
-    if (!links || links.length === 0) {
-      return <em>n.a.</em>;
-    }
 
-    return links.map((link, i) => (
-      <ListItem key={i}>{this.renderLink(link)}</ListItem>
-    ));
+  renderIssueTypeTable(data) {
+    const types = [];
+    const upsurt = (holder, issue) => {
+      const name = issue.fields.issuetype.name;
+      if (!types.includes(name)) {
+        types.push(name);
+      }
+      if (!holder[name]) holder[name] = [];
+      holder[name].push(issue);
+    };
+
+    const classifieds = [];
+    data.forEach(issue => {
+      const classified = {
+        issue: issue
+      };
+
+      const fields = issue.fields;
+      if (fields.parent) {
+        upsurt(classified, fields.parent);
+      }
+
+      if (fields.subtasks) {
+        fields.subtasks.forEach(task => {
+          upsurt(classified, task);
+        });
+      }
+
+      if (fields.issuelinks) {
+        fields.issuelinks.forEach(link => {
+          const li = link.outwardIssue ? link.outwardIssue : link.inwardIssue;
+          upsurt(classified, li);
+        });
+      }
+
+      classifieds.push(classified);
+    });
+
+    types.sort();
+    return (
+      <table>
+        <thead>
+          <tr>
+            <th>Key</th>
+            {types.map((type, i) => (
+              <th key={i}>{type}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {classifieds.map((classified, i) => (
+            <BorderTr key={i}>
+              <td>{this.renderIssue(classified.issue)}</td>
+              {types.map((type, j) => (
+                <td key={`${i}..${j}`}>
+                  {this.renderIssues(classified[type])}
+                </td>
+              ))}
+            </BorderTr>
+          ))}
+        </tbody>
+      </table>
+    );
   }
 
   render() {
-    const { defined, fetching, data, gettingMore, noMore } = this.state;
+    const { defined, fetching, data, gettingMore, noMore, selectedTab } = this.state;
     if (!defined) {
       return (
         <Container>
@@ -228,30 +341,27 @@ class TabularContent extends Component {
           </Container>
         );
       } else {
+        const tabs = [
+          {
+            label: "Issue Type View",
+            content: (
+              <TableContainer>{this.renderIssueTypeTable(data)}</TableContainer>
+            )
+          },
+          {
+            label: "Links View",
+            content: (
+              <TableContainer>{this.renderLinkTable(data)}</TableContainer>
+            )
+          }
+        ];
         return (
           <Container>
-            <TableContainer>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Key</th>
-                    <th>Parent</th>
-                    <th>Sub-Tasks</th>
-                    <th>Links</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.map((issue, i) => (
-                    <BorderTr key={i}>
-                      <td>{this.renderIssue(issue)}</td>
-                      <td>{this.renderIssue(issue.fields.parent)}</td>
-                      <td>{this.renderIssues(issue.fields.subtasks)}</td>
-                      <td>{this.renderLinks(issue.fields.issuelinks)}</td>
-                    </BorderTr>
-                  ))}
-                </tbody>
-              </table>
-            </TableContainer>
+            <Tabs
+              tabs={tabs}
+              selected={selectedTab}
+              onSelect={(_tab, index) => this.selectTab(index)}
+            />
             <Button
               isLoading={gettingMore}
               isDisabled={noMore}
