@@ -72,7 +72,7 @@ class BottomBarContent extends Component {
                   triggerType="button"
                   trigger={selected.name}
                   shouldFlip={false}
-                  position="bottom right"
+                  position="bottom left"
                   triggerButtonProps={{
                     className: "toolbar-select"
                   }}
