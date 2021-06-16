@@ -3,5 +3,5 @@
 echo "Removing old build directory and cache"
 rm -rf ./dist;
 rm -rf ./.cache;
-echo "Setting baseUrl to Amazon Cloudfront url https://d1lo9kuasdt7aw.cloudfront.net"
-jq '.baseUrl = "https://d1lo9kuasdt7aw.cloudfront.net"' assets/original-atlassian-connect.json > assets/atlassian-connect.json
+echo "Setting baseUrl to Amazon Cloudfront url https://lxp.optimizoryapps.com"
+jq '.baseUrl = "https://lxp.optimizoryapps.com"' assets/original-atlassian-connect.json > assets/atlassian-connect.json

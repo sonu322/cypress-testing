@@ -2,7 +2,7 @@
   "name": "Links Explorer",
   "description": "This is simple links tree view plugin",
   "key": "com.otpl.jira.plugins.lxp",
-  "baseUrl": "https://d1lo9kuasdt7aw.cloudfront.net",
+  "baseUrl": "https://lxp.optimizoryapps.com",
   "vendor": {
     "name": "Optimizory Technologies Private Limited",
     "url": "https://optimizory.com"

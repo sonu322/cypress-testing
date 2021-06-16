@@ -38,7 +38,7 @@
     "prebuild": "/bin/bash prebuild.sh",
     "build": "parcel build --no-minify public/*.html",
     "serve": "node serve.js",
-    "upload": "aws s3 sync ./dist s3://cf-simple-s3-origin-lxp-cloudfront-432900565600",
+    "upload": "aws s3 sync ./dist s3://lxp-1.9.5-ac",
     "flow": "flow"
   },
   "staticFiles": {
