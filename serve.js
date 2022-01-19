@@ -5,7 +5,7 @@ const shelljs = require("shelljs");
   const url = await ngrok.connect(1234);
   console.info(`${url}/atlassian-connect.json`);
   const commands = {
-    "create-temporary-descriptor": `jq '.baseUrl = "${url}"' assets/original-atlassian-connect.json > assets/atlassian-connect.json`,
+    "create-temporary-descriptor": `jq '.baseUrl = "${url}" | .links.self = "${url}/atlassian-connect.json"' assets/original-atlassian-connect.json > assets/atlassian-connect.json`,
     //"move-file": `mv temporary-atlassian-connect.json assets/atlassian-connect.json`
     //"open-ngrok-management": `/usr/bin/open http://127.0.0.1:4040`
   };

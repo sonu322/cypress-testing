@@ -3,7 +3,7 @@ import Button, { ButtonGroup } from "@atlaskit/button";
 import Spinner from "@atlaskit/spinner";
 import DropdownMenu, {
   DropdownItemGroup,
-  DropdownItem
+  DropdownItem,
 } from "@atlaskit/dropdown-menu";
 import { FilterAPI } from "../api";
 import Page, { Grid, GridColumn } from "@atlaskit/page";
@@ -23,18 +23,18 @@ class BottomBarContent extends Component {
       fetched: false,
       options: [],
       selected: {
-        name: "Select filter"
-      }
+        name: "Select filter",
+      },
     };
   }
 
   componentDidMount() {
     this._isMounted = true;
-    FilterAPI().then(data => {
+    FilterAPI().then((data) => {
       if (this._isMounted) {
         this.setState({
           fetched: true,
-          options: data
+          options: data.values,
         });
       }
     });
@@ -45,9 +45,9 @@ class BottomBarContent extends Component {
   }
 
   select(id) {
-    const selects = this.state.options.filter(entry => entry.id === id);
+    const selects = this.state.options.filter((entry) => entry.id === id);
     this.setState({
-      selected: selects[0]
+      selected: selects[0],
     });
   }
   apply() {
@@ -74,11 +74,11 @@ class BottomBarContent extends Component {
                   shouldFlip={false}
                   position="bottom left"
                   triggerButtonProps={{
-                    className: "toolbar-select"
+                    className: "toolbar-select",
                   }}
                 >
                   <DropdownItemGroup>
-                    {Object.keys(options).map(key => (
+                    {Object.keys(options).map((key) => (
                       <DropdownItem
                         key={options[key].id}
                         id={options[key].id}

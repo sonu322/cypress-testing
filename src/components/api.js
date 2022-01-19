@@ -16,13 +16,13 @@ export const PriorityAPI = async () => {
   return Promise.resolve(JSON.parse(response.body));
 };
 
-export const IssueLinkAPI = async key => {
+export const IssueLinkAPI = async (key) => {
   const getKey = () => {
     if (key) {
       return Promise.resolve(key);
     } else {
-      return new Promise(resolve => {
-        AP.context.getContext(res => {
+      return new Promise((resolve) => {
+        AP.context.getContext((res) => {
           resolve(res.jira.issue.id);
         });
       });
@@ -36,14 +36,14 @@ export const IssueLinkAPI = async key => {
   return Promise.resolve(JSON.parse(response.body));
 };
 
-export const IssueAPI = async id => {
+export const IssueAPI = async (id) => {
   const response = await AP.request(`/rest/api/3/issue/${id}`);
 
   return Promise.resolve(JSON.parse(response.body));
 };
 
 export const FilterAPI = async () => {
-  const response = await AP.request(`/rest/api/3/filter`);
+  const response = await AP.request(`/rest/api/3/filter/search`);
 
   return Promise.resolve(JSON.parse(response.body));
 };
@@ -82,11 +82,11 @@ export const IssueSearchAPI = async (jql, start, max) => {
           "issuelinks",
           "issuetype",
           "priority",
-          "status"
+          "status",
         ],
         startAt: start,
         maxResults: max,
-        jql: jql
+        jql: jql,
       };
 
       AP.request({
@@ -94,12 +94,12 @@ export const IssueSearchAPI = async (jql, start, max) => {
         contentType: "application/json",
         url: `/rest/api/3/search`,
         data: JSON.stringify(data),
-        success: response => {
+        success: (response) => {
           resolve(JSON.parse(response));
         },
-        error: err => {
+        error: (err) => {
           reject(err);
-        }
+        },
       });
     });
   };
