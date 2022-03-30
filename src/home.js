@@ -17,8 +17,8 @@ class Main extends React.Component {
     this.state = {};
   }
 
-  updateFilter = filter => {
-    const { jql } = filter;
+  updateFilter = (filter) => {
+    const jql = "filter=" + filter.id;
     this.table.update(jql);
   };
 
@@ -29,12 +29,15 @@ class Main extends React.Component {
         <FullWidthContainer>
           <Grid spacing="compact" layout="fluid">
             <GridColumn>
-              <Header filter={filter => this.updateFilter(filter)} />
+              <Header filter={(filter) => this.updateFilter(filter)} />
             </GridColumn>
           </Grid>
           <Grid spacing="compact" layout="fluid">
             <GridColumn>
-              <TabularContent xdm={this.props.xdm} onRef={ref => (this.table = ref)} />
+              <TabularContent
+                xdm={this.props.xdm}
+                onRef={(ref) => (this.table = ref)}
+              />
             </GridColumn>
           </Grid>
         </FullWidthContainer>

@@ -17,19 +17,19 @@ class Header extends Component {
     this.state = {};
   }
 
-  updateFilter = data => {
+  updateFilter = (data) => {
     this.props.filter(data);
   };
 
   bottomBar = (
     <MainBar>
-      <BottomBarContent filter={data => this.updateFilter(data)} />
+      <BottomBarContent filter={(data) => this.updateFilter(data)} />
     </MainBar>
   );
 
   render() {
     return (
-      <PageHeader bottomBar={this.bottomBar} >
+      <PageHeader bottomBar={this.bottomBar}>
         Links Explorer Traceability and Reports
       </PageHeader>
     );

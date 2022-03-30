@@ -3,6 +3,7 @@ import Spinner from "@atlaskit/spinner";
 import styled from "styled-components";
 import Button from "@atlaskit/button";
 import { IssueSearchAPI } from "../api";
+import { FilterAPI } from "../api";
 import { colors } from "@atlaskit/theme";
 import Lozenge from "@atlaskit/lozenge";
 import Tabs from "@atlaskit/tabs";
@@ -76,19 +77,19 @@ class TabularContent extends Component {
       start: 0,
       gettingMore: false,
       noMore: false,
-      selectedTab: 0
+      selectedTab: 0,
     };
   }
 
   selectTab(index) {
     this.setState({
-      selectedTab: index
+      selectedTab: index,
     });
   }
 
   fetch() {
     const { jql, start, data } = this.state;
-    IssueSearchAPI(jql, start, ROWS_PER_PAGE).then(result => {
+    IssueSearchAPI(jql, start, ROWS_PER_PAGE).then((result) => {
       const { issues, total } = result;
       const updatedStart = start + ROWS_PER_PAGE;
       data.push(...issues);
@@ -97,7 +98,7 @@ class TabularContent extends Component {
         start: updatedStart,
         fetching: false,
         data: data,
-        noMore: issues.length === 0 || total < updatedStart ? true : false
+        noMore: issues.length === 0 || total < updatedStart ? true : false,
       });
     });
   }
@@ -105,7 +106,7 @@ class TabularContent extends Component {
   more() {
     this.setState(
       {
-        gettingMore: true
+        gettingMore: true,
       },
       () => {
         this.fetch();
@@ -120,7 +121,7 @@ class TabularContent extends Component {
         fetching: true,
         data: [],
         jql: jql,
-        start: 0
+        start: 0,
       },
       () => {
         this.fetch();
@@ -211,16 +212,16 @@ class TabularContent extends Component {
       );
     };
     const classifieds = [];
-    data.forEach(issue => {
+    data.forEach((issue) => {
       const fields = issue.fields;
       const classified = {
         issue: issue,
         parent: fields.parent,
-        subtasks: fields.subtasks
+        subtasks: fields.subtasks,
       };
 
       if (fields.issuelinks) {
-        fields.issuelinks.forEach(link => {
+        fields.issuelinks.forEach((link) => {
           upsurt(classified, link);
         });
       }
@@ -272,9 +273,9 @@ class TabularContent extends Component {
     };
 
     const classifieds = [];
-    data.forEach(issue => {
+    data.forEach((issue) => {
       const classified = {
-        issue: issue
+        issue: issue,
       };
 
       const fields = issue.fields;
@@ -283,13 +284,13 @@ class TabularContent extends Component {
       }
 
       if (fields.subtasks) {
-        fields.subtasks.forEach(task => {
+        fields.subtasks.forEach((task) => {
           upsurt(classified, task);
         });
       }
 
       if (fields.issuelinks) {
-        fields.issuelinks.forEach(link => {
+        fields.issuelinks.forEach((link) => {
           const li = link.outwardIssue ? link.outwardIssue : link.inwardIssue;
           upsurt(classified, li);
         });
@@ -326,7 +327,8 @@ class TabularContent extends Component {
   }
 
   render() {
-    const { defined, fetching, data, gettingMore, noMore, selectedTab } = this.state;
+    const { defined, fetching, data, gettingMore, noMore, selectedTab } =
+      this.state;
     if (!defined) {
       return (
         <Container>
@@ -346,14 +348,14 @@ class TabularContent extends Component {
             label: "Issue Type View",
             content: (
               <TableContainer>{this.renderIssueTypeTable(data)}</TableContainer>
-            )
+            ),
           },
           {
             label: "Links View",
             content: (
               <TableContainer>{this.renderLinkTable(data)}</TableContainer>
-            )
-          }
+            ),
+          },
         ];
         return (
           <Container>
