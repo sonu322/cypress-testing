@@ -37,8 +37,8 @@
     "prebuild-dev": "/bin/bash prebuild_dev.sh",
     "prebuild": "/bin/bash prebuild.sh",
     "build": "parcel build --no-source-maps --no-minify public/*.html",
-    "build-dev": "parcel build --no-source-maps public/*.html",
-    "upload-dev": "aws --profile otpl s3 sync ./dist s3://lxp-cloud-dev",
+    "build-dev": "parcel build --no-source-maps --no-minify public/*.html",
+    "upload-dev": "aws --profile otpl s3 sync ./dist s3://lxp-cloud-dev --delete",
     "upload": "aws --profile otpl s3 sync ./dist s3://lxp-cloud",
     "serve": "node serve.js",
     "flow": "flow"
