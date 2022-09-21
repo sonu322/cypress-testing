@@ -1,8 +1,8 @@
-** Plugin for Jira Cloud **
+# Links Explorer - a plugin for Jira Cloud
 
-# Requires ngrok, yarn, node.
+* Requires ngrok, yarn, node.
 
-## For local plugin development
+#### For local plugin development
  - First start the server to serve the plugin descriptor and other static files using the command below:
    - `yarn start` 
  - In another tab, run the below command to open the ngrok tunnel and update the plugin descriptor file:
