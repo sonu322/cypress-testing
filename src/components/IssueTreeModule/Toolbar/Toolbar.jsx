@@ -4,7 +4,6 @@ import { IssueTypeAPI, LinkTypeAPI, PriorityAPI } from "../../api";
 import { Dropdown } from "./Dropdown";
 import Button, { ButtonGroup } from "@atlaskit/button";
 export const Toolbar = ({
-  options,
   filter,
   updateKeyOptions,
   updateFilteredKeyOptions,
@@ -15,15 +14,12 @@ export const Toolbar = ({
         <GridColumn medium={10}>
           <ButtonGroup>
             <Dropdown
-              options={options}
               filter={filter}
               keyName={"issueTypes"}
-              updateKeyOptions={updateKeyOptions}
               updateFilteredKeyOptions={updateFilteredKeyOptions}
               api={IssueTypeAPI}
             />
             <Dropdown
-              options={options}
               filter={filter}
               keyName={"linkTypes"}
               updateKeyOptions={updateKeyOptions}
@@ -31,7 +27,6 @@ export const Toolbar = ({
               api={LinkTypeAPI}
             />
             <Dropdown
-              options={options}
               filter={filter}
               keyName={"priorities"}
               updateKeyOptions={updateKeyOptions}
