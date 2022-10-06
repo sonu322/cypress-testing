@@ -7,7 +7,7 @@ export const IssueTypeAPI = async () => {
 export const LinkTypeAPI = async () => {
   const response = await AP.request("/rest/api/3/issueLinkType");
 
-  return Promise.resolve(JSON.parse(response.body));
+  return Promise.resolve(JSON.parse(response.body).issueLinkTypes);
 };
 
 export const PriorityAPI = async () => {
