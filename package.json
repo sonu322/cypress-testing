@@ -11,6 +11,7 @@
     "@atlaskit/navigation-next": "^6.0.1",
     "@atlaskit/page": "^10.0.1",
     "@atlaskit/page-header": "^9.0.7",
+    "@atlaskit/select": "^15.7.2",
     "@atlaskit/spinner": "^11.0.0",
     "@atlaskit/tabs": "^11.2.3",
     "@atlaskit/tree": "^6.0.0",

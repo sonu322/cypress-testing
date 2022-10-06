@@ -1,0 +1,57 @@
+{
+  "name": "Links Explorer",
+  "description": "This is simple links tree view plugin",
+  "key": "com.otpl.jira.plugins.lxp",
+  "baseUrl": "https://khaki-rings-juggle-61-2-197-116.loca.lt",
+  "vendor": {
+    "name": "Optimizory Technologies Private Limited",
+    "url": "https://optimizory.com"
+  },
+  "links": {
+    "self": "https://khaki-rings-juggle-61-2-197-116.loca.lt/atlassian-connect.json",
+    "documentation": "https://optimizory.atlassian.net/l/c/MeM66urR"
+  },
+  "enableLicensing": true,
+  "translations": {
+    "paths": {
+      "en-US": "/i18n/0.1/en_US.json",
+      "de-DE": "/i18n/0.1/de_DE.json"
+    }
+  },
+  "authentication": {
+    "type": "none"
+  },
+  "scopes": [
+    "read"
+  ],
+  "apiVersion": 1,
+  "modules": {
+    "jiraIssueTabPanels": [
+      {
+        "url": "/issueTreeModuleEntry.html",
+        "weight": 100,
+        "name": {
+          "value": "Links Explorer",
+          "i18n": "issue.tab.name"
+        },
+        "key": "lxp-issue-tab"
+      }
+    ],
+    "generalPages": [
+      {
+        "url": "/home.html",
+        "location": "system.top.navigation.bar",
+        "name": {
+          "value": "Links Explorer",
+          "i18n": "general.page.name"
+        },
+        "conditions": [
+          {
+            "condition": "user_is_logged_in"
+          }
+        ],
+        "key": "lxp-home-page"
+      }
+    ]
+  }
+}

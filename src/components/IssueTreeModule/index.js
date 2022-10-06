@@ -1,1 +1,1 @@
-export * from './MainTree'
+export * from './IssueTreeModule'
