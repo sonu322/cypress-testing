@@ -6,11 +6,10 @@ import DropdownMenu, {
 } from "@atlaskit/dropdown-menu";
 import Spinner from "@atlaskit/spinner";
 export const Dropdown = ({
-  filter,
+  filteredKeyOptions,
   keyName,
   updateKeyOptions,
   updateFilteredKeyOptions,
-  api,
   keyOptions,
 }) => {
   //   const [options, setOptions] = useState([]);
@@ -55,14 +54,13 @@ export const Dropdown = ({
   //     </>
   //   );
   const handleOptionClick = (e, id) => {
-    if (filter && filter[keyName]) {
+    if (filteredKeyOptions) {
       console.log(e);
-      const filteredOptions = filter[keyName];
       let updated = [];
-      if (filteredOptions.includes(id)) {
-        updated = filteredOptions.filter((item, index) => item != id);
+      if (filteredKeyOptions.includes(id)) {
+        updated = filteredKeyOptions.filter((item, index) => item != id);
       } else {
-        updated = [...filteredOptions, id];
+        updated = [...filteredKeyOptions, id];
       }
       updateFilteredKeyOptions(keyName, updated);
     }
@@ -84,8 +82,8 @@ export const Dropdown = ({
                 key={option.id}
                 id={option.id}
                 isSelected={
-                  filter && filter[keyName]
-                    ? filter[keyName].includes(option.id)
+                  filteredKeyOptions
+                    ? filteredKeyOptions.includes(option.id)
                     : false
                 }
                 onClick={(e) => handleOptionClick(e, option.id)}

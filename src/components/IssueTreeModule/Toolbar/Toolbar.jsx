@@ -8,13 +8,26 @@ export const Toolbar = ({
   filter,
   updateKeyOptions,
   updateFilteredKeyOptions,
+  keyNames,
 }) => {
   return (
     <div>
       <Grid spacing="compact">
         <GridColumn medium={10}>
           <ButtonGroup>
-            <Dropdown
+            {options &&
+              filter &&
+              keyNames.map((keyName) => (
+                <Dropdown
+                  key={keyName}
+                  keyName={keyName}
+                  keyOptions={options[keyName]}
+                  filteredKeyOptions={filter[keyName]}
+                  updateFilteredKeyOptions={updateFilteredKeyOptions}
+                  // api={IssueTypeAPI}
+                />
+              ))}
+            {/* <Dropdown
               filter={filter}
               keyName={"issueTypes"}
               updateFilteredKeyOptions={updateFilteredKeyOptions}
@@ -36,7 +49,7 @@ export const Toolbar = ({
               updateFilteredKeyOptions={updateFilteredKeyOptions}
               api={PriorityAPI}
               keyOptions={options.priorities}
-            />
+            /> */}
           </ButtonGroup>
           {/* <LinkTypeDropdown
               filter={(data) => this.updateLinkTypeFilter(data)}

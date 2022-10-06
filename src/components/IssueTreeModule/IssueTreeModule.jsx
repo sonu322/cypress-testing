@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { IssueLinkAPI, IssueTypeAPI, LinkTypeAPI, PriorityAPI } from "../api";
+import { IssueTypeAPI, LinkTypeAPI, PriorityAPI } from "../api";
 import { Toolbar } from "./Toolbar";
 export const IssueTreeModule = () => {
   const [options, setOptions] = useState({});
@@ -39,6 +39,7 @@ export const IssueTreeModule = () => {
         options={options}
         filter={filter}
         updateFilteredKeyOptions={updateFilteredKeyOptions}
+        keyNames={["priorities", "linkTypes", "issueTypes"]}
       />
       {console.log(filter)}
       {Object.keys(filter).map((keyName) => (
