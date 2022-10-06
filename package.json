@@ -15,6 +15,7 @@
     "@atlaskit/tabs": "^11.2.3",
     "@atlaskit/tree": "^6.0.0",
     "@ungap/url-search-params": "^0.1.2",
+    "localtunnel": "^2.0.2",
     "react": "^16.8.0",
     "react-dom": "^16.8.6",
     "styled-components": "^3.2.6"
