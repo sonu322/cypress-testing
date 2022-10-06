@@ -11,21 +11,23 @@ export const Dropdown = ({
   updateKeyOptions,
   updateFilteredKeyOptions,
   api,
+  keyOptions,
 }) => {
-  const [options, setOptions] = useState([]);
-  const [isFetched, setIsFetched] = useState(false);
-  useEffect(() => {
-    api().then((data) => {
-      console.log("data!!!!!");
-      setOptions(data);
-      console.log(data);
-      updateFilteredKeyOptions(
-        keyName,
-        data.map((item) => item.id)
-      );
-      setIsFetched(true);
-    });
-  }, []);
+  //   const [options, setOptions] = useState([]);
+  //   const [isFetched, setIsFetched] = useState(false);
+  //   useEffect(() => {
+  //     updateFilteredKeyOptions(keyName, []);
+  //     api().then((data) => {
+  //       console.log("data!!!!!");
+  //       setOptions(data);
+  //       console.log(data);
+  //       updateFilteredKeyOptions(
+  //         keyName,
+  //         data.map((item) => item.id)
+  //       );
+  //       setIsFetched(true);
+  //     });
+  //   }, []);
   //   let formattedOptions = [];
   //   formattedOptions =
   //     options &&
@@ -53,20 +55,22 @@ export const Dropdown = ({
   //     </>
   //   );
   const handleOptionClick = (e, id) => {
-    console.log(e);
-    const filteredOptions = filter[keyName];
-    let updated = [];
-    if (filteredOptions.includes(id)) {
-      updated = filteredOptions.filter((item, index) => item != id);
-    } else {
-      updated = [...filteredOptions, id];
+    if (filter && filter[keyName]) {
+      console.log(e);
+      const filteredOptions = filter[keyName];
+      let updated = [];
+      if (filteredOptions.includes(id)) {
+        updated = filteredOptions.filter((item, index) => item != id);
+      } else {
+        updated = [...filteredOptions, id];
+      }
+      updateFilteredKeyOptions(keyName, updated);
     }
-    updateFilteredKeyOptions(keyName, updated);
   };
   return (
     <>
       <DropdownMenu
-        isLoading={!isFetched}
+        // isLoading={!isFetched}
         triggerType="button"
         trigger={keyName}
         shouldFlip={false}
@@ -74,12 +78,16 @@ export const Dropdown = ({
         isCompact={true}
       >
         <DropdownItemCheckboxGroup>
-          {options &&
-            options.map((option) => (
+          {keyOptions &&
+            keyOptions.map((option) => (
               <DropdownItemCheckbox
                 key={option.id}
                 id={option.id}
-                isSelected={filter[keyName].includes(option.id)}
+                isSelected={
+                  filter && filter[keyName]
+                    ? filter[keyName].includes(option.id)
+                    : false
+                }
                 onClick={(e) => handleOptionClick(e, option.id)}
               >
                 {option.name}
