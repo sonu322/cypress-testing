@@ -9,7 +9,6 @@ import styled from "styled-components";
 import QuestionIcon from "@atlaskit/icon/glyph/question";
 import ExportIcon from "@atlaskit/icon/glyph/export";
 import { HelpLink } from "../../constants";
-
 const AlignRight = styled.div`
   text-align: right;
 `;
@@ -21,7 +20,7 @@ class Toolbar extends Component {
       issueType: [],
       linkType: [],
       priority: [],
-      exporting: false
+      exporting: false,
     };
   }
 
@@ -30,7 +29,7 @@ class Toolbar extends Component {
     this.props.filter({
       issueType,
       linkType,
-      priority
+      priority,
     });
   }
 
@@ -62,7 +61,7 @@ class Toolbar extends Component {
 
   exported() {
     this.setState({
-      exporting: false
+      exporting: false,
     });
   }
 
@@ -74,13 +73,13 @@ class Toolbar extends Component {
           <GridColumn medium={10}>
             <ButtonGroup>
               <IssueTypeDropdown
-                filter={data => this.updateIssueTypeFilter(data)}
+                filter={(data) => this.updateIssueTypeFilter(data)}
               />
               <LinkTypeDropdown
-                filter={data => this.updateLinkTypeFilter(data)}
+                filter={(data) => this.updateLinkTypeFilter(data)}
               />
               <PriorityDropdown
-                filter={data => this.updatePriorityFilter(data)}
+                filter={(data) => this.updatePriorityFilter(data)}
               />
             </ButtonGroup>
           </GridColumn>
@@ -109,7 +108,7 @@ class Toolbar extends Component {
 }
 
 Toolbar.propTypes = {
-  filter: PropTypes.func
+  filter: PropTypes.func,
 };
 
 export default Toolbar;
