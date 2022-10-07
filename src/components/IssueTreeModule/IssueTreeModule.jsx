@@ -9,7 +9,6 @@ export const IssueTreeModule = () => {
     const fetchData = async () => {
       Promise.all([PriorityAPI(), LinkTypeAPI(), IssueTypeAPI()]).then(
         (results) => {
-          console.log(results);
           const optionsData = {
             priorities: results[0],
             linkTypes: results[1],
@@ -31,7 +30,6 @@ export const IssueTreeModule = () => {
     let newFilter = { ...filter };
     newFilter[key] = keyOptions;
     setFilter(newFilter);
-    console.log(JSON.stringify(filter));
   };
   return (
     <div>
@@ -41,10 +39,8 @@ export const IssueTreeModule = () => {
         updateFilteredKeyOptions={updateFilteredKeyOptions}
         keyNames={["priorities", "linkTypes", "issueTypes"]}
       />
-      {console.log(filter)}
       {Object.keys(filter).map((keyName) => (
         <div key={keyName}>
-          {" "}
           ---
           {filter[keyName].map((item) => (
             <div key={item}>

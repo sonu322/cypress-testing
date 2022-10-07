@@ -24,39 +24,9 @@ export const Toolbar = ({
                   keyOptions={options[keyName]}
                   filteredKeyOptions={filter[keyName]}
                   updateFilteredKeyOptions={updateFilteredKeyOptions}
-                  // api={IssueTypeAPI}
                 />
               ))}
-            {/* <Dropdown
-              filter={filter}
-              keyName={"issueTypes"}
-              updateFilteredKeyOptions={updateFilteredKeyOptions}
-              api={IssueTypeAPI}
-              keyOptions={options.issueTypes}
-            />
-            <Dropdown
-              filter={filter}
-              keyName={"linkTypes"}
-              updateKeyOptions={updateKeyOptions}
-              updateFilteredKeyOptions={updateFilteredKeyOptions}
-              api={LinkTypeAPI}
-              keyOptions={options.linkTypes}
-            />
-            <Dropdown
-              filter={filter}
-              keyName={"priorities"}
-              updateKeyOptions={updateKeyOptions}
-              updateFilteredKeyOptions={updateFilteredKeyOptions}
-              api={PriorityAPI}
-              keyOptions={options.priorities}
-            /> */}
           </ButtonGroup>
-          {/* <LinkTypeDropdown
-              filter={(data) => this.updateLinkTypeFilter(data)}
-            />
-            <PriorityDropdown
-              filter={(data) => this.updatePriorityFilter(data)}
-            /> */}
         </GridColumn>
       </Grid>
     </div>
