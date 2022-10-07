@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import ChevronDownIcon from "@atlaskit/icon/glyph/chevron-down";
 import ChevronRightIcon from "@atlaskit/icon/glyph/chevron-right";
@@ -10,7 +10,7 @@ import Lozenge from "@atlaskit/lozenge";
 import { IssueLinkAPI } from "../api";
 import { UUID, getStatusAppearance } from "../../util";
 import Tree, { mutateTree } from "@atlaskit/tree";
-
+import IssueDetail from "../tab/IssueDetail";
 const PADDING_LEVEL = 30;
 const SUB_TASKS = "Subtasks";
 const PARENT = "Parent";
@@ -74,25 +74,27 @@ const TextContent = styled.span`
   font-weight: 500;
   vertical-align: middle;
 `;
-const root = {
-  rootId: "0",
-  items: {
-    0: {
-      id: "0",
-      children: [],
-      hasChildren: true,
-      isExpanded: true,
-      isChildrenLoading: false,
-      data: {
-        title: "Fake Root Node",
-      },
-    },
-  },
-};
 
-export const IssueTree = () => {
-  const [tree, setTree] = useState(mutateTree(root, "0", { isExpanded: true }));
-  const [isFetched, setIsFetched] = useState(false);
+export const IssueTree = ({
+  root,
+  tree,
+  setTree,
+  isFetched,
+  setIsFetched,
+  filter,
+}) => {
+  const formatIssueData = (data, parent) => {
+    return {
+      title: data.key,
+      id: data.id,
+      parent: parent,
+      summary: data.fields.summary,
+      type: data.fields.issuetype,
+      priority: data.fields.priority,
+      status: data.fields.status,
+      isType: false,
+    };
+  };
 
   const formatIssue = (data, parentTypeID, parentIssueID) => {
     let hasChildren = false;
@@ -120,7 +122,7 @@ export const IssueTree = () => {
 
     for (const issue of data.fields.subtasks) {
       if (issue.id !== parentIssueID) {
-        const issueID = UUID(); //`${data.id}-${issue.id}`;
+        const issueID = UUID();
         subTasks.push(issueID);
         items.push({
           id: issueID,
@@ -128,7 +130,7 @@ export const IssueTree = () => {
           hasChildren: true,
           isChildrenLoading: false,
           isExpanded: false,
-          data: IssueTree.formatIssueData(issue, subTypeID),
+          data: formatIssueData(issue, subTypeID),
         });
       }
     }
@@ -165,7 +167,7 @@ export const IssueTree = () => {
           hasChildren: true,
           isChildrenLoading: false,
           isExpanded: false,
-          data: IssueTree.formatIssueData(parent, parentIssueLinkID),
+          data: formatIssueData(parent, parentIssueLinkID),
         });
 
         ids.push(parentIssueLinkID);
@@ -181,8 +183,7 @@ export const IssueTree = () => {
       return typeIDMap.get(key);
     };
 
-    for (const { id, type, inwardIssue, outwardIssue } of data.fields
-      .issuelinks) {
+    for (const { type, inwardIssue, outwardIssue } of data.fields.issuelinks) {
       if (
         (inwardIssue && inwardIssue.id !== parentIssueID) ||
         (outwardIssue && outwardIssue.id !== parentIssueID)
@@ -219,7 +220,7 @@ export const IssueTree = () => {
             hasChildren: true,
             isChildrenLoading: false,
             isExpanded: false,
-            data: IssueTree.formatIssueData(inwardIssue, typeID),
+            data: formatIssueData(inwardIssue, typeID),
           });
         }
         if (outwardIssue) {
@@ -231,13 +232,13 @@ export const IssueTree = () => {
             hasChildren: true,
             isChildrenLoading: false,
             isExpanded: false,
-            data: IssueTree.formatIssueData(outwardIssue, typeID),
+            data: formatIssueData(outwardIssue, typeID),
           });
         }
       }
     }
 
-    for (const [key, value] of typeMap) {
+    for (const [value] of typeMap) {
       items.push(value);
     }
 
@@ -249,26 +250,263 @@ export const IssueTree = () => {
         hasChildren: hasChildren,
         isChildrenLoading: false,
         isExpanded: true,
-        data: IssueTree.formatIssueData(data),
+        data: formatIssueData(data),
       },
     };
   };
   useEffect(() => {
-    IssueLinkAPI.then((data) => {
-      if (this._isMounted) {
-        const value = IssueTree.formatIssue(data, null, null);
-        this.root.items[data.id] = value.data;
-        this.root.items["0"].children.push(data.id);
-        for (const child of value.children) {
-          this.root.items[child.id] = child;
-        }
+    IssueLinkAPI().then((data) => {
+      const value = formatIssue(data, null, null);
+      root.items[data.id] = value.data;
+      root.items["0"].children.push(data.id);
+      for (const child of value.children) {
+        root.items[child.id] = child;
       }
 
-      this.setState({
-        tree: mutateTree(this.root, "0", { isExpanded: true }),
-        fetched: true,
-      });
+      setTree(mutateTree(root, "0", { isExpanded: true }));
+      setIsFetched(true);
     });
   }, []);
-  return <div>issue tree</div>;
+
+  const getIcon = (item, onExpand, onCollapse) => {
+    if (item.isChildrenLoading) {
+      return (
+        <SpinnerContainer onClick={() => onCollapse(item.id)}>
+          <Spinner size={16} />
+        </SpinnerContainer>
+      );
+    }
+    if (item.hasChildren) {
+      return item.isExpanded ? (
+        <Button
+          spacing="none"
+          appearance="subtle-link"
+          onClick={() => onCollapse(item.id)}
+        >
+          <ChevronDownIcon label="" size={16} />
+        </Button>
+      ) : (
+        <Button
+          spacing="none"
+          appearance="subtle-link"
+          onClick={() => onExpand(item.id)}
+        >
+          <ChevronRightIcon label="" size={16} />
+        </Button>
+      );
+    }
+
+    return <Box />;
+  };
+  const getItemStyle = (depth) => {
+    const style = {
+      width: "300px",
+      margin: ".5em 0",
+      display: "flex",
+      marginLeft: "0px",
+    };
+
+    style["marginLeft"] = PADDING_LEVEL * depth + "px";
+
+    return style;
+  };
+
+  const renderItem = ({ item, onExpand, onCollapse, provided, depth }) => (
+    <div
+      style={getItemStyle(depth)}
+      ref={provided.innerRef}
+      {...provided.dragHandleProps}
+    >
+      {getIcon(item, onExpand, onCollapse)}
+      {item.data && item.data.isType ? (
+        <LinkTypeContainer>
+          {item.data ? item.data.title : "No Name"}
+        </LinkTypeContainer>
+      ) : (
+        <ItemWrapper>
+          <Item
+            after={() => <IssueDetail id={item.data ? item.data.id : null} />}
+            before={() => (
+              <span>
+                <IconContainer>
+                  <img
+                    height={16}
+                    width={16}
+                    src={item.data ? item.data.type.iconUrl : ""}
+                    title={
+                      item.data
+                        ? `${item.data.type.name} - ${item.data.type.description}`
+                        : ""
+                    }
+                  />
+                </IconContainer>
+                <IconContainer>
+                  <img
+                    height={16}
+                    width={16}
+                    src={item.data ? item.data.priority.iconUrl : ""}
+                    title={item.data ? item.data.priority.name : ""}
+                  />
+                </IconContainer>
+              </span>
+            )}
+            text={
+              <div>
+                <Lozenge
+                  maxWidth={100}
+                  appearance={
+                    item.data
+                      ? getStatusAppearance(item.data.status.statusCategory)
+                      : "default"
+                  }
+                >
+                  {item.data ? item.data.status.name : ""}
+                </Lozenge>
+                <TextContent>{item.data ? item.data.title : ""}</TextContent>
+              </div>
+            }
+            subText={item.data ? item.data.summary : ""}
+            component={InnerElem}
+            styles={(styles) => {
+              styles.itemBase.cursor = "default";
+              styles.itemBase.backgroundColor = colors.N20;
+              styles.itemBase.fill = colors.N20;
+              styles.itemBase.paddingLeft = 6;
+              styles.itemBase.paddingRight = 6;
+              styles.beforeWrapper.marginRight = 8;
+              styles.afterWrapper.marginLeft = 8;
+              return styles;
+            }}
+          />
+        </ItemWrapper>
+      )}
+    </div>
+  );
+  const onExpand = (itemId) => {
+    setTree(mutateTree(tree, itemId, { isChildrenLoading: true }));
+
+    const ntree = tree;
+    const item = ntree.items[itemId];
+
+    if (item.hasChildren && item.children.length > 0) {
+      setTree(
+        mutateTree(ntree, itemId, {
+          isExpanded: true,
+          isChildrenLoading: false,
+        })
+      );
+    } else if (item.hasChildren && item.children.length === 0) {
+      IssueLinkAPI(item.data ? item.data.id : null).then((data) => {
+        let parent = (item.data || {}).parent;
+        const parentType = parent ? ntree.items[parent] : null;
+        parent = parent
+          ? ((ntree.items[parent] || {}).data || {}).parent
+          : null;
+        const parentIssue = parent ? ntree.items[parent] : null;
+
+        const parentTypeID = ((parentType || {}).data || {}).id;
+        const parentIssueID = ((parentIssue || {}).data || {}).id;
+
+        const value = formatIssue(data, parentTypeID, parentIssueID);
+
+        for (const child of value.children) {
+          if (!ntree.items[child.id]) {
+            ntree.items[child.id] = child;
+          }
+        }
+
+        item.hasChildren = value.data.hasChildren;
+        item.children = value.data.children;
+
+        setTree(
+          mutateTree(ntree, itemId, {
+            isExpanded: true,
+            isChildrenLoading: false,
+          })
+        );
+      });
+    }
+  };
+
+  const onCollapse = (itemId) => {
+    setTree(
+      mutateTree(tree, itemId, {
+        isExpanded: false,
+        isChildrenLoading: false,
+      })
+    );
+  };
+
+  const hiddedTree = mutateTree(
+    {
+      rootId: "0",
+      items: {
+        0: {
+          id: "0",
+          children: [],
+          hasChildren: true,
+          isExpanded: true,
+          isChildrenLoading: false,
+          data: {
+            title: "Fake Root Node",
+          },
+        },
+      },
+    },
+    "0",
+    { isExpanded: true }
+  );
+
+  if (isFetched) {
+    const { linkTypes, issueTypes, priorities } = filter;
+    const root = tree.items[tree.rootId];
+    const rootChildren = root.children;
+    Object.keys(tree.items).forEach((key) => {
+      const item = JSON.parse(JSON.stringify(tree.items[key]));
+      if (item.data) {
+        const data = item.data;
+        if (key == tree.rootId || rootChildren.includes(key)) {
+          hiddedTree.items[key] = item;
+        } else {
+          if (data.isType) {
+            if (
+              linkTypes.length === 0 ||
+              linkTypes.includes(data.id) ||
+              data.id === "-1"
+            ) {
+              hiddedTree.items[key] = item;
+            }
+          } else {
+            if (
+              (issueTypes.length === 0 || issueTypes.includes(data.type.id)) &&
+              (priorities.length === 0 || priorities.includes(data.priority.id))
+            ) {
+              hiddedTree.items[key] = item;
+            }
+          }
+        }
+      }
+    });
+  }
+
+  const keys = Object.keys(hiddedTree.items);
+  keys.forEach((key) => {
+    const item = hiddedTree.items[key];
+    item.children = item.children.filter((i) => keys.includes(i));
+    if (item.children.length === 0 && item.isExpanded) {
+      item.hasChildren = false;
+    }
+  });
+
+  return (
+    <Container>
+      <Tree
+        tree={hiddedTree}
+        renderItem={renderItem}
+        onExpand={onExpand}
+        onCollapse={onCollapse}
+        isDragEnabled={false}
+      />
+    </Container>
+  );
 };

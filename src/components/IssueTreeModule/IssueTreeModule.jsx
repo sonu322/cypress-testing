@@ -2,10 +2,73 @@ import React, { useEffect, useState } from "react";
 import { IssueTypeAPI, LinkTypeAPI, PriorityAPI } from "../api";
 import { Toolbar } from "./Toolbar";
 import { IssueTree } from "./IssueTree";
+import { mutateTree } from "@atlaskit/tree";
+let root = {
+  rootId: "0",
+  items: {
+    0: {
+      id: "0",
+      children: [],
+      hasChildren: true,
+      isExpanded: true,
+      isChildrenLoading: false,
+      data: {
+        title: "Fake Root Node",
+      },
+    },
+  },
+};
+
 export const IssueTreeModule = () => {
   const [options, setOptions] = useState({});
   const [filter, setFilter] = useState({});
+  const [tree, setTree] = useState(mutateTree(root, "0", { isExpanded: true }));
+  const [isFetched, setIsFetched] = useState(false);
 
+  const exportTree = () => {
+    const root = tree.items[tree.rootId];
+    const rootChildren = root.children;
+
+    const contents = [];
+
+    const process = (item, indent) => {
+      if (!item) return;
+      const content = {
+        indent: indent,
+        key: "",
+        link: "",
+        summary: "",
+        type: "",
+        status: "",
+        priority: "",
+      };
+
+      if (item.data) {
+        const data = item.data;
+        if (data.isType) {
+          content.link = data.title;
+        } else {
+          content.key = data.title;
+          content.summary = data.summary;
+          content.type = data.type.name;
+          content.status = data.status.name;
+          content.priority = data.priority.name;
+        }
+      }
+
+      contents.push(content);
+      if (item.hasChildren) {
+        const nextIndent = indent + 1;
+        item.children.forEach((key) => {
+          process(tree.items[key], nextIndent);
+        });
+      }
+    };
+
+    process(tree.items[rootChildren[0]], 1);
+
+    return contents;
+  };
   useEffect(() => {
     const fetchData = async () => {
       Promise.all([PriorityAPI(), LinkTypeAPI(), IssueTypeAPI()]).then(
@@ -35,10 +98,19 @@ export const IssueTreeModule = () => {
   return (
     <div>
       <Toolbar
+        exportTree={exportTree}
         options={options}
         filter={filter}
         updateFilteredKeyOptions={updateFilteredKeyOptions}
         keyNames={["priorities", "linkTypes", "issueTypes"]}
+      />
+      <IssueTree
+        tree={tree}
+        setTree={setTree}
+        isFetched={isFetched}
+        setIsFetched={setIsFetched}
+        filter={filter}
+        root={root}
       />
       {Object.keys(filter).map((keyName) => (
         <div key={keyName}>
@@ -49,7 +121,6 @@ export const IssueTreeModule = () => {
             </div>
           ))}
           ---
-          <IssueTree />
         </div>
       ))}
     </div>
