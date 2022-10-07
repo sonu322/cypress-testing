@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { IssueTypeAPI, LinkTypeAPI, PriorityAPI } from "../api";
 import { Toolbar } from "./Toolbar";
+import { IssueTree } from "./IssueTree";
 export const IssueTreeModule = () => {
   const [options, setOptions] = useState({});
   const [filter, setFilter] = useState({});
@@ -48,6 +49,7 @@ export const IssueTreeModule = () => {
             </div>
           ))}
           ---
+          <IssueTree />
         </div>
       ))}
     </div>
