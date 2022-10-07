@@ -28,7 +28,7 @@
   "modules": {
     "jiraIssueTabPanels": [
       {
-        "url": "/index.html",
+        "url": "/issueTreeModuleEntry.html",
         "weight": 100,
         "name": {
           "value": "Links Explorer",
