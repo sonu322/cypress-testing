@@ -98,9 +98,9 @@ export const IssueTreeModule = () => {
         console.log(results);
         const newResults = results.map((result) => {
           if (result.key.includes("customfield_")) {
-            result.customKey = result.name
-              .replace(/[\s, -]/g, "")
-              .toLowerCase();
+            console.log("custom!!!");
+            result.customKey = result.name.replace(/[\s, -]/g, "").toLowerCase();
+            console.log(result.key, result.name, result.customKey);
           } else {
             result.customKey = result.key;
           }
@@ -118,10 +118,17 @@ export const IssueTreeModule = () => {
           "storypoints",
           "assignee",
         ];
-        const selectedFields = defaultFeildNames.map((name) => {
+        // const selectedFields = defaultFeildNames.map((name) => {
+        //   const field = newResults.find((result) => result.customKey == name);
+        //   if (field) {
+        //     return field.customKey;
+        //   } // useforeach
+        // });
+        let selectedFields = [];
+        defaultFeildNames.forEach((name) => {
           const field = newResults.find((result) => result.customKey == name);
           if (field) {
-            return field;
+            selectedFields.push(field.key);
           }
         });
         console.log("selected");
@@ -145,6 +152,9 @@ export const IssueTreeModule = () => {
         filter={filter}
         updateFilteredKeyOptions={updateFilteredKeyOptions}
         keyNames={["priorities", "linkTypes", "issueTypes"]}
+        issueFields={issueFields}
+        selectedIssueFields={selectedIssueFields}
+        setSelectedIssueFields={setSelectedIssueFields}
       />
       <IssueTree
         tree={tree}
@@ -154,6 +164,7 @@ export const IssueTreeModule = () => {
         filter={filter}
         root={root}
         selectedIssueFields={selectedIssueFields}
+        issueFields={issueFields}
       />
       {Object.keys(filter).map((keyName) => (
         <div key={keyName}>

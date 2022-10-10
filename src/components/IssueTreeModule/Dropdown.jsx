@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { CheckboxSelect } from "@atlaskit/select";
+import React from "react";
 import DropdownMenu, {
   DropdownItemCheckboxGroup,
   DropdownItemCheckbox,
 } from "@atlaskit/dropdown-menu";
-import Spinner from "@atlaskit/spinner";
 export const Dropdown = ({
   filteredKeyOptions,
   keyName,

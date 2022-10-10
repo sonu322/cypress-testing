@@ -58,14 +58,28 @@ const FooterSideContainer = styled.div`
   gap: 8px;
 `;
 const SummaryContainer = styled.div``;
-export const IssueCard = ({ issueData, selectedIssueFields }) => {
-  const storyPointsField = selectedIssueFields.find(
+export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
+  let storyPointsField = issueFields.find(
     (field) => field.customKey == "storypoints"
   );
-  const priorityField = selectedIssueFields.find(
-    (field) => field.key == "priority"
+  console.log("from card!!!! storypoints");
+  console.log(storyPointsField);
+  let priorityField = issueFields.find(
+    (field) => field.customKey == "priority"
   );
+  let isStoryPointsFieldSelected = selectedIssueFields.find(
+    (key) => key == storyPointsField.key
+  );
+  let isPriorityFieldSelected = selectedIssueFields.find(
+    (key) => key == priorityField.key
+  );
+
   console.log("from card");
+  console.log(
+    isStoryPointsFieldSelected,
+    isPriorityFieldSelected,
+    issueData.fields[storyPointsField.key]
+  );
   console.log(issueData);
   if (issueData && issueData.fields) {
     return (
@@ -82,7 +96,10 @@ export const IssueCard = ({ issueData, selectedIssueFields }) => {
         <CardFooter>
           <FooterSideContainer>
             {issueData.fields.issuetype && (
-              <Tooltip position="bottom-end" content={issueData.fields.issuetype.name}>
+              <Tooltip
+                position="bottom-end"
+                content={issueData.fields.issuetype.name}
+              >
                 {(props) => (
                   <IconContainer {...props}>
                     <img
@@ -94,8 +111,11 @@ export const IssueCard = ({ issueData, selectedIssueFields }) => {
                 )}
               </Tooltip>
             )}
-            {priorityField && issueData.fields.priority && (
-              <Tooltip position="bottom-end" content={issueData.fields.priority.name}>
+            {isPriorityFieldSelected && issueData.fields.priority && (
+              <Tooltip
+                position="bottom-end"
+                content={issueData.fields.priority.name}
+              >
                 <IconContainer>
                   <img
                     height={16}
@@ -105,21 +125,23 @@ export const IssueCard = ({ issueData, selectedIssueFields }) => {
                 </IconContainer>
               </Tooltip>
             )}
-            {storyPointsField && issueData.fields[storyPointsField.key] && (
-              <Tooltip position="bottom-end"
-                content={
-                  issueData.fields[storyPointsField.key] +
-                  " " +
-                  storyPointsField.name
-                }
-              >
-                {(props) => (
-                  <Badge {...props}>
-                    {issueData.fields[storyPointsField.key]}
-                  </Badge>
-                )}
-              </Tooltip>
-            )}
+            {isStoryPointsFieldSelected &&
+              issueData.fields[storyPointsField.key] && (
+                <Tooltip
+                  position="bottom-end"
+                  content={
+                    issueData.fields[storyPointsField.key] +
+                    " " +
+                    storyPointsField.name
+                  }
+                >
+                  {(props) => (
+                    <Badge {...props}>
+                      {issueData.fields[storyPointsField.key]}
+                    </Badge>
+                  )}
+                </Tooltip>
+              )}
           </FooterSideContainer>
           <FooterSideContainer>
             <IssueTypeName>{issueData.key}</IssueTypeName>

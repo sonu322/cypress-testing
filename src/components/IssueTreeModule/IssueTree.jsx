@@ -4,11 +4,14 @@ import ChevronDownIcon from "@atlaskit/icon/glyph/chevron-down";
 import ChevronRightIcon from "@atlaskit/icon/glyph/chevron-right";
 import Spinner from "@atlaskit/spinner";
 import Button from "@atlaskit/button";
-import { Item } from "@atlaskit/navigation-next";
+// import { Item } from "@atlaskit/navigation-next";
 import { colors } from "@atlaskit/theme";
-import Lozenge from "@atlaskit/lozenge";
+// import Lozenge from "@atlaskit/lozenge";
 import { IssueLinkAPI } from "../api";
-import { UUID, getStatusAppearance } from "../../util";
+import {
+  UUID,
+  // getStatusAppearance
+} from "../../util";
 import Tree, { mutateTree } from "@atlaskit/tree";
 import { IssueCard } from "../IssueCard";
 
@@ -39,17 +42,17 @@ const LinkTypeContainer = styled.div`
   font-weight: 500;
   text-transform: capitalize;
 `;
-const ItemWrapper = styled.div`
-  display: flex;
-  width: 270px;
-`;
+// const ItemWrapper = styled.div`
+//   display: flex;
+//   width: 270px;
+// `;
 
-const IconContainer = styled.span`
-  display: flex;
-  width: 16px;
-  overflow: hidden;
-  height: 16px;
-`;
+// const IconContainer = styled.span`
+//   display: flex;
+//   width: 16px;
+//   overflow: hidden;
+//   height: 16px;
+// `;
 
 const Container = styled.div`
   display: flex;
@@ -66,15 +69,15 @@ const SpinnerContainer = styled.span`
   padding-top: 8px;
 `;
 
-const InnerElem = styled.div`
-  display: flex;
-`;
+// const InnerElem = styled.div`
+//   display: flex;
+// `;
 
-const TextContent = styled.span`
-  margin-left: 4px;
-  font-weight: 500;
-  vertical-align: middle;
-`;
+// const TextContent = styled.span`
+//   margin-left: 4px;
+//   font-weight: 500;
+//   vertical-align: middle;
+// `;
 
 export const IssueTree = ({
   root,
@@ -84,6 +87,7 @@ export const IssueTree = ({
   setIsFetched,
   filter,
   selectedIssueFields,
+  issueFields
 }) => {
   const formatIssueData = (data, parent) => {
     return {
@@ -259,7 +263,7 @@ export const IssueTree = ({
   };
   useEffect(() => {
     if (selectedIssueFields && selectedIssueFields.length > 0) {
-      const fieldKeys = selectedIssueFields.map((field) => field.key);
+      const fieldKeys = selectedIssueFields;
       IssueLinkAPI(null, fieldKeys).then((data) => {
         console.log("with fields: !data!!!!!");
         console.log(data);
@@ -336,6 +340,7 @@ export const IssueTree = ({
         <IssueCard
           issueData={item.data && item.allData ? item.allData : null}
           selectedIssueFields={selectedIssueFields}
+          issueFields = {issueFields}
         />
       )}
     </div>
