@@ -16,6 +16,11 @@ export const PriorityAPI = async () => {
   return Promise.resolve(JSON.parse(response.body));
 };
 
+export const IssueFieldsAPI = async () => {
+  const response = await AP.request("/rest/api/3/field");
+  return Promise.resolve(JSON.parse(response.body));
+};
+
 export const IssueLinkAPI = async (
   key,
   fields = [

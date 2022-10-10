@@ -11,6 +11,7 @@ import { IssueLinkAPI } from "../api";
 import { UUID, getStatusAppearance } from "../../util";
 import Tree, { mutateTree } from "@atlaskit/tree";
 import { IssueCard } from "../IssueCard";
+
 const PADDING_LEVEL = 30;
 const SUB_TASKS = "Subtasks";
 const PARENT = "Parent";
@@ -328,7 +329,9 @@ export const IssueTree = ({
           {item.data ? item.data.title : "No Name"}
         </LinkTypeContainer>
       ) : (
-        <IssueCard issueData={item.data && item.allData ? item.allData : null} />
+        <IssueCard
+          issueData={item.data && item.allData ? item.allData : null}
+        />
       )}
     </div>
   );

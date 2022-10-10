@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { IssueTypeAPI, LinkTypeAPI, PriorityAPI } from "../api";
+import { IssueTypeAPI, LinkTypeAPI, PriorityAPI, IssueFieldsAPI } from "../api";
 import { Toolbar } from "./Toolbar";
 import { IssueTree } from "./IssueTree";
 import { mutateTree } from "@atlaskit/tree";
@@ -24,7 +24,7 @@ export const IssueTreeModule = () => {
   const [filter, setFilter] = useState({});
   const [tree, setTree] = useState(mutateTree(root, "0", { isExpanded: true }));
   const [isFetched, setIsFetched] = useState(false);
-
+  const [issueFields, setIssueFields] = useState([]);
   const exportTree = () => {
     const root = tree.items[tree.rootId];
     const rootChildren = root.children;
@@ -70,7 +70,7 @@ export const IssueTreeModule = () => {
     return contents;
   };
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDropdownsData = async () => {
       Promise.all([PriorityAPI(), LinkTypeAPI(), IssueTypeAPI()]).then(
         (results) => {
           const optionsData = {
@@ -88,7 +88,17 @@ export const IssueTreeModule = () => {
         }
       );
     };
-    fetchData();
+    fetchDropdownsData();
+  }, []);
+  useEffect(() => {
+    const fetchFieldsData = async () => {
+      IssueFieldsAPI().then((results) => {
+        console.log("fields!!!");
+        console.log(results);
+        setIssueFields(results);
+      });
+    };
+    fetchFieldsData();
   }, []);
   const updateFilteredKeyOptions = (key, keyOptions) => {
     let newFilter = { ...filter };
