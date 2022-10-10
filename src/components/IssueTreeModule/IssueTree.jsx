@@ -310,7 +310,7 @@ export const IssueTree = ({
   };
   const getItemStyle = (depth) => {
     const style = {
-      width: "300px",
+      // width: "300px",
       margin: ".5em 0",
       display: "flex",
       marginLeft: "0px",

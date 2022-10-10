@@ -21,12 +21,18 @@ const Container = styled.div`
   color: ${colors.N800};
   box-shadow: rgba(23, 43, 77, 0.2) 0px 1px 1px 0px,
     rgba(23, 43, 77, 0.2) 0px 0px 1px 0px;
-  border-radius: 3px;
-  padding: 12px;
+  border-radius: 4px;
+  padding-top: 1px;
+  padding-left: 5px;
+  padding-right: 5px;
   font-size: 14px;
   font-weight: 400px;
   line-height: 20px;
-  width: 260px;
+  min-width: 162px;
+  width: 100%;
+  max-width: 500px;
+
+  border-spacing: 10px 0px;
 `;
 // const Spacer = styled.div`
 //   width: ${({ width }) => {
@@ -56,6 +62,9 @@ export const IssueCard = ({ issueData, selectedIssueFields }) => {
   const storyPointsField = selectedIssueFields.find(
     (field) => field.customKey == "storypoints"
   );
+  const priorityField = selectedIssueFields.find(
+    (field) => field.key == "priority"
+  );
   console.log("from card");
   console.log(issueData);
   if (issueData && issueData.fields) {
@@ -63,23 +72,53 @@ export const IssueCard = ({ issueData, selectedIssueFields }) => {
       <Container>
         {/* header */}
         <Tooltip content={issueData.fields.summary}>
-          <SummaryContainer>{issueData.fields.summary}</SummaryContainer>
+          {(props) => (
+            <SummaryContainer {...props}>
+              {issueData.fields.summary}
+            </SummaryContainer>
+          )}
         </Tooltip>
         {/* footer */}
         <CardFooter>
           <FooterSideContainer>
             {issueData.fields.issuetype && (
-              <IconContainer>
-                <img
-                  height={16}
-                  width={16}
-                  src={issueData.fields.issuetype.iconUrl}
-                  title={`${issueData.fields.issuetype.name} - ${issueData.fields.issuetype.description}`}
-                />
-              </IconContainer>
+              <Tooltip position="bottom-end" content={issueData.fields.issuetype.name}>
+                {(props) => (
+                  <IconContainer {...props}>
+                    <img
+                      height={16}
+                      width={16}
+                      src={issueData.fields.issuetype.iconUrl}
+                    />
+                  </IconContainer>
+                )}
+              </Tooltip>
             )}
-            {storyPointsField && (
-              <Badge>{issueData.fields[storyPointsField.key]}</Badge>
+            {priorityField && issueData.fields.priority && (
+              <Tooltip position="bottom-end" content={issueData.fields.priority.name}>
+                <IconContainer>
+                  <img
+                    height={16}
+                    width={16}
+                    src={issueData.fields.priority.iconUrl}
+                  />
+                </IconContainer>
+              </Tooltip>
+            )}
+            {storyPointsField && issueData.fields[storyPointsField.key] && (
+              <Tooltip position="bottom-end"
+                content={
+                  issueData.fields[storyPointsField.key] +
+                  " " +
+                  storyPointsField.name
+                }
+              >
+                {(props) => (
+                  <Badge {...props}>
+                    {issueData.fields[storyPointsField.key]}
+                  </Badge>
+                )}
+              </Tooltip>
             )}
           </FooterSideContainer>
           <FooterSideContainer>
