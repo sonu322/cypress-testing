@@ -15,6 +15,7 @@
     "@atlaskit/spinner": "^11.0.0",
     "@atlaskit/tabs": "^11.2.3",
     "@atlaskit/tag": "^11.4.1",
+    "@atlaskit/tooltip": "^17.5.17",
     "@atlaskit/tree": "^6.0.0",
     "@ungap/url-search-params": "^0.1.2",
     "localtunnel": "^2.0.2",

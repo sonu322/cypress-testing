@@ -3,6 +3,7 @@ import React from "react";
 import { colors } from "@atlaskit/theme";
 import styled, { css } from "styled-components";
 import { SimpleTag } from "@atlaskit/tag";
+import Tooltip from "@atlaskit/tooltip";
 const IconContainer = styled.span`
   display: flex;
   width: 16px;
@@ -38,14 +39,11 @@ const Spacer = styled.div`
     `;
   }};
 `;
-const LabelsContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-`;
-const BottomBar = styled.div`
+const CardFooter = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-between;
+  margin-top: 10px;
 `;
 const TypeAndKeyContainer = styled.div`
   display: flex;
@@ -59,19 +57,12 @@ export const IssueCard = ({ issueData }) => {
   if (issueData && issueData.fields) {
     return (
       <Container>
-        <SummaryContainer>{issueData.fields.summary}</SummaryContainer>
-        <Spacer height={"8px"}></Spacer>
-        {issueData.fields &&
-          issueData.fields.labels &&
-          issueData.fields.labels.length > 0 && (
-            <LabelsContainer>
-              {issueData.fields.labels.map((label) => (
-                <SimpleTag key={label} text={label} />
-              ))}
-            </LabelsContainer>
-          )}
-        <Spacer height={"8px"}></Spacer>
-        <BottomBar>
+        {/* header */}
+        <Tooltip content={issueData.fields.summary}>
+          <SummaryContainer>{issueData.fields.summary}</SummaryContainer>
+        </Tooltip>
+        {/* footer */}
+        <CardFooter>
           <TypeAndKeyContainer>
             {issueData.fields.issuetype && (
               <IconContainer>
@@ -85,7 +76,7 @@ export const IssueCard = ({ issueData }) => {
             )}
             <IssueTypeName>{issueData.key}</IssueTypeName>
           </TypeAndKeyContainer>
-        </BottomBar>
+        </CardFooter>
       </Container>
     );
   } else {
