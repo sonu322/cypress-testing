@@ -25,6 +25,7 @@ export const IssueTreeModule = () => {
   const [tree, setTree] = useState(mutateTree(root, "0", { isExpanded: true }));
   const [isFetched, setIsFetched] = useState(false);
   const [issueFields, setIssueFields] = useState([]);
+  const [selectedIssueFields, setSelectedIssueFields] = useState([]);
   const exportTree = () => {
     const root = tree.items[tree.rootId];
     const rootChildren = root.children;
@@ -96,10 +97,35 @@ export const IssueTreeModule = () => {
         console.log("fields!!!");
         console.log(results);
         setIssueFields(results);
+        const defaultFeildNames = [
+          "summary",
+          "subtasks",
+          "parent",
+          "issuelinks",
+          "issuetype",
+          "priority",
+          "status",
+          "storypoints",
+          "assignee",
+        ];
+        const selectedFields = defaultFeildNames.map((name) => {
+          const field = results.find(
+            (result) =>
+              result.name.replace(/ /g, "").toLowerCase() == name ||
+              result.key == name
+          );
+          if (field) {
+            return field;
+          }
+        });
+        console.log("selected");
+        console.log(selectedFields);
+        setSelectedIssueFields(selectedFields);
       });
     };
     fetchFieldsData();
   }, []);
+
   const updateFilteredKeyOptions = (key, keyOptions) => {
     let newFilter = { ...filter };
     newFilter[key] = keyOptions;
@@ -121,7 +147,7 @@ export const IssueTreeModule = () => {
         setIsFetched={setIsFetched}
         filter={filter}
         root={root}
-        issueFields={issueFields}
+        selectedIssueFields={selectedIssueFields}
       />
       {Object.keys(filter).map((keyName) => (
         <div key={keyName}>

@@ -83,6 +83,7 @@ export const IssueTree = ({
   isFetched,
   setIsFetched,
   filter,
+  selectedIssueFields,
 }) => {
   const formatIssueData = (data, parent) => {
     return {
@@ -257,22 +258,25 @@ export const IssueTree = ({
     };
   };
   useEffect(() => {
-    IssueLinkAPI().then((data) => {
-      console.log("data!!!!!");
-      console.log(data);
-      const value = formatIssue(data, null, null);
-      console.log("value!!!");
-      console.log(value);
-      root.items[data.id] = value.data;
-      root.items["0"].children.push(data.id);
-      for (const child of value.children) {
-        root.items[child.id] = child;
-      }
+    if (selectedIssueFields && selectedIssueFields.length > 0) {
+      const fieldKeys = selectedIssueFields.map((field) => field.key);
+      IssueLinkAPI(null, fieldKeys).then((data) => {
+        console.log("with fields: !data!!!!!");
+        console.log(data);
+        const value = formatIssue(data, null, null);
+        console.log("value!!!");
+        console.log(value);
+        root.items[data.id] = value.data;
+        root.items["0"].children.push(data.id);
+        for (const child of value.children) {
+          root.items[child.id] = child;
+        }
 
-      setTree(mutateTree(root, "0", { isExpanded: true }));
-      setIsFetched(true);
-    });
-  }, []);
+        setTree(mutateTree(root, "0", { isExpanded: true }));
+        setIsFetched(true);
+      });
+    }
+  }, [selectedIssueFields]);
 
   const getIcon = (item, onExpand, onCollapse) => {
     if (item.isChildrenLoading) {
