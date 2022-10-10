@@ -116,6 +116,7 @@ export const IssueTreeModule = () => {
           "priority",
           "status",
           "storypoints",
+          "storypointestimate",
           "assignee",
         ];
         // const selectedFields = defaultFeildNames.map((name) => {

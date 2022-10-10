@@ -63,6 +63,9 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
     (field) => field.customKey == "storypoints"
   );
   console.log("from card!!!! storypoints");
+  let storyPointEstimateField = issueFields.find(
+    (field) => field.customKey == "storypointestimate"
+  );
   console.log(storyPointsField);
   let priorityField = issueFields.find(
     (field) => field.customKey == "priority"
@@ -70,10 +73,14 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
   let isStoryPointsFieldSelected = selectedIssueFields.find(
     (key) => key == storyPointsField.key
   );
+  let isStoryPointEstimateFieldSelected = selectedIssueFields.find(
+    (key) => key == storyPointEstimateField.key
+  );
   let isPriorityFieldSelected = selectedIssueFields.find(
     (key) => key == priorityField.key
   );
 
+  console.log(storyPointsField, storyPointEstimateField, priorityField);
   console.log("from card");
   console.log(
     isStoryPointsFieldSelected,
@@ -138,6 +145,23 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
                   {(props) => (
                     <Badge {...props}>
                       {issueData.fields[storyPointsField.key]}
+                    </Badge>
+                  )}
+                </Tooltip>
+              )}
+            {isStoryPointEstimateFieldSelected &&
+              issueData.fields[storyPointEstimateField.key] && (
+                <Tooltip
+                  position="bottom-end"
+                  content={
+                    issueData.fields[storyPointEstimateField.key] +
+                    " " +
+                    storyPointEstimateField.name
+                  }
+                >
+                  {(props) => (
+                    <Badge {...props}>
+                      {issueData.fields[storyPointEstimateField.key]}
                     </Badge>
                   )}
                 </Tooltip>
