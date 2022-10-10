@@ -30,7 +30,7 @@ export const IssueLinkAPI = async (key) => {
   };
   const input = await getKey();
   const response = await AP.request(
-    `/rest/api/3/issue/${input}?fields=summary&fields=subtasks&fields=parent&fields=issuelinks&fields=issuetype&fields=priority&fields=status`
+    `/rest/api/3/issue/${input}?fields=summary&fields=subtasks&fields=parent&fields=issuelinks&fields=issuetype&fields=priority&fields=status&fields=labels`
   );
 
   return Promise.resolve(JSON.parse(response.body));

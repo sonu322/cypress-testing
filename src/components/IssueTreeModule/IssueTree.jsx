@@ -10,7 +10,7 @@ import Lozenge from "@atlaskit/lozenge";
 import { IssueLinkAPI } from "../api";
 import { UUID, getStatusAppearance } from "../../util";
 import Tree, { mutateTree } from "@atlaskit/tree";
-import IssueDetail from "../tab/IssueDetail";
+import { IssueCard } from "../IssueCard";
 const PADDING_LEVEL = 30;
 const SUB_TASKS = "Subtasks";
 const PARENT = "Parent";
@@ -251,12 +251,17 @@ export const IssueTree = ({
         isChildrenLoading: false,
         isExpanded: true,
         data: formatIssueData(data),
+        allData: data,
       },
     };
   };
   useEffect(() => {
     IssueLinkAPI().then((data) => {
+      console.log("data!!!!!");
+      console.log(data);
       const value = formatIssue(data, null, null);
+      console.log("value!!!");
+      console.log(value);
       root.items[data.id] = value.data;
       root.items["0"].children.push(data.id);
       for (const child of value.children) {
@@ -323,62 +328,7 @@ export const IssueTree = ({
           {item.data ? item.data.title : "No Name"}
         </LinkTypeContainer>
       ) : (
-        <ItemWrapper>
-          <Item
-            after={() => <IssueDetail id={item.data ? item.data.id : null} />}
-            before={() => (
-              <span>
-                <IconContainer>
-                  <img
-                    height={16}
-                    width={16}
-                    src={item.data ? item.data.type.iconUrl : ""}
-                    title={
-                      item.data
-                        ? `${item.data.type.name} - ${item.data.type.description}`
-                        : ""
-                    }
-                  />
-                </IconContainer>
-                <IconContainer>
-                  <img
-                    height={16}
-                    width={16}
-                    src={item.data ? item.data.priority.iconUrl : ""}
-                    title={item.data ? item.data.priority.name : ""}
-                  />
-                </IconContainer>
-              </span>
-            )}
-            text={
-              <div>
-                <Lozenge
-                  maxWidth={100}
-                  appearance={
-                    item.data
-                      ? getStatusAppearance(item.data.status.statusCategory)
-                      : "default"
-                  }
-                >
-                  {item.data ? item.data.status.name : ""}
-                </Lozenge>
-                <TextContent>{item.data ? item.data.title : ""}</TextContent>
-              </div>
-            }
-            subText={item.data ? item.data.summary : ""}
-            component={InnerElem}
-            styles={(styles) => {
-              styles.itemBase.cursor = "default";
-              styles.itemBase.backgroundColor = colors.N20;
-              styles.itemBase.fill = colors.N20;
-              styles.itemBase.paddingLeft = 6;
-              styles.itemBase.paddingRight = 6;
-              styles.beforeWrapper.marginRight = 8;
-              styles.afterWrapper.marginLeft = 8;
-              return styles;
-            }}
-          />
-        </ItemWrapper>
+        <IssueCard issueData={item.data && item.allData ? item.allData : null} />
       )}
     </div>
   );
