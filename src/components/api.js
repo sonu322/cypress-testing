@@ -16,7 +16,18 @@ export const PriorityAPI = async () => {
   return Promise.resolve(JSON.parse(response.body));
 };
 
-export const IssueLinkAPI = async (key) => {
+export const IssueLinkAPI = async (
+  key,
+  fields = [
+    "summary",
+    "subtasks",
+    "parent",
+    "issuelinks",
+    "issuetype",
+    "priority",
+    "status",
+  ]
+) => {
   const getKey = () => {
     if (key) {
       return Promise.resolve(key);
@@ -29,9 +40,17 @@ export const IssueLinkAPI = async (key) => {
     }
   };
   const input = await getKey();
-  const response = await AP.request(
-    `/rest/api/3/issue/${input}?fields=summary&fields=subtasks&fields=parent&fields=issuelinks&fields=issuetype&fields=priority&fields=status&fields=labels`
-  );
+  let queries = [];
+  fields.forEach((field) => {
+    queries.push(`fields=${field}`);
+  });
+  const queriesString = queries.join("&");
+  let url = `/rest/api/3/issue/${input}`;
+  if (queriesString.length > 0) {
+    url = url + "?" + queriesString;
+  }
+  console.log(url);
+  const response = await AP.request(url);
 
   return Promise.resolve(JSON.parse(response.body));
 };
