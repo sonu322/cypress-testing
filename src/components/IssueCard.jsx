@@ -62,9 +62,13 @@ export const IssueCard = ({ issueData, selectedIssueFields }) => {
   const storyPointsField = selectedIssueFields.find(
     (field) => field.customKey == "storypoints"
   );
+  const storyPointsEstimateField = selectedIssueFields.find(
+    (field) => field.customKey == "storypointestimate"
+  );
   const priorityField = selectedIssueFields.find(
     (field) => field.key == "priority"
   );
+  console.log(storyPointsField, storyPointsEstimateField, priorityField);
   console.log("from card");
   console.log(issueData);
   if (issueData && issueData.fields) {
@@ -82,7 +86,10 @@ export const IssueCard = ({ issueData, selectedIssueFields }) => {
         <CardFooter>
           <FooterSideContainer>
             {issueData.fields.issuetype && (
-              <Tooltip position="bottom-end" content={issueData.fields.issuetype.name}>
+              <Tooltip
+                position="bottom-end"
+                content={issueData.fields.issuetype.name}
+              >
                 {(props) => (
                   <IconContainer {...props}>
                     <img
@@ -95,7 +102,10 @@ export const IssueCard = ({ issueData, selectedIssueFields }) => {
               </Tooltip>
             )}
             {priorityField && issueData.fields.priority && (
-              <Tooltip position="bottom-end" content={issueData.fields.priority.name}>
+              <Tooltip
+                position="bottom-end"
+                content={issueData.fields.priority.name}
+              >
                 <IconContainer>
                   <img
                     height={16}
@@ -106,7 +116,8 @@ export const IssueCard = ({ issueData, selectedIssueFields }) => {
               </Tooltip>
             )}
             {storyPointsField && issueData.fields[storyPointsField.key] && (
-              <Tooltip position="bottom-end"
+              <Tooltip
+                position="bottom-end"
                 content={
                   issueData.fields[storyPointsField.key] +
                   " " +
@@ -120,6 +131,23 @@ export const IssueCard = ({ issueData, selectedIssueFields }) => {
                 )}
               </Tooltip>
             )}
+            {storyPointsEstimateField &&
+              issueData.fields[storyPointsEstimateField.key] && (
+                <Tooltip
+                  position="bottom-end"
+                  content={
+                    issueData.fields[storyPointsEstimateField.key] +
+                    " " +
+                    storyPointsEstimateField.name
+                  }
+                >
+                  {(props) => (
+                    <Badge {...props}>
+                      {issueData.fields[storyPointsEstimateField.key]}
+                    </Badge>
+                  )}
+                </Tooltip>
+              )}
           </FooterSideContainer>
           <FooterSideContainer>
             <IssueTypeName>{issueData.key}</IssueTypeName>

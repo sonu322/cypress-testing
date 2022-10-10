@@ -52,7 +52,7 @@ export const IssueLinkAPI = async (
   const queriesString = queries.join("&");
   let url = `/rest/api/3/issue/${input}`;
   if (queriesString.length > 0) {
-    url = url + "?" + queriesString;
+    url = url + "?" + "fields=*all";
   }
   console.log(url);
   const response = await AP.request(url);
