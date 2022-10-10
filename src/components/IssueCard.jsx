@@ -1,9 +1,10 @@
 /* eslint-disable indent */
 import React from "react";
 import { colors } from "@atlaskit/theme";
-import styled, { css } from "styled-components";
-import { SimpleTag } from "@atlaskit/tag";
+import styled from "styled-components";
+// import { SimpleTag } from "@atlaskit/tag";
 import Tooltip from "@atlaskit/tooltip";
+import Badge from "@atlaskit/badge";
 const IconContainer = styled.span`
   display: flex;
   width: 16px;
@@ -27,31 +28,34 @@ const Container = styled.div`
   line-height: 20px;
   width: 260px;
 `;
-const Spacer = styled.div`
-  width: ${({ width }) => {
-    return css`
-      ${width}
-    `;
-  }};
-  height: ${({ height }) => {
-    return css`
-      ${height}
-    `;
-  }};
-`;
+// const Spacer = styled.div`
+//   width: ${({ width }) => {
+//     return css`
+//       ${width}
+//     `;
+//   }};
+//   height: ${({ height }) => {
+//     return css`
+//       ${height}
+//     `;
+//   }};
+// `;
 const CardFooter = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-between;
   margin-top: 10px;
 `;
-const TypeAndKeyContainer = styled.div`
+const FooterSideContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
 `;
 const SummaryContainer = styled.div``;
-export const IssueCard = ({ issueData }) => {
+export const IssueCard = ({ issueData, selectedIssueFields }) => {
+  const storyPointsField = selectedIssueFields.find(
+    (field) => field.customKey == "storypoints"
+  );
   console.log("from card");
   console.log(issueData);
   if (issueData && issueData.fields) {
@@ -63,7 +67,7 @@ export const IssueCard = ({ issueData }) => {
         </Tooltip>
         {/* footer */}
         <CardFooter>
-          <TypeAndKeyContainer>
+          <FooterSideContainer>
             {issueData.fields.issuetype && (
               <IconContainer>
                 <img
@@ -74,8 +78,13 @@ export const IssueCard = ({ issueData }) => {
                 />
               </IconContainer>
             )}
+            {storyPointsField && (
+              <Badge>{issueData.fields[storyPointsField.key]}</Badge>
+            )}
+          </FooterSideContainer>
+          <FooterSideContainer>
             <IssueTypeName>{issueData.key}</IssueTypeName>
-          </TypeAndKeyContainer>
+          </FooterSideContainer>
         </CardFooter>
       </Container>
     );

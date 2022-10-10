@@ -5,6 +5,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@atlaskit/badge": "^15.0.20",
     "@atlaskit/dropdown-menu": "^11.5.1",
     "@atlaskit/inline-dialog": "^11.0.1",
     "@atlaskit/lozenge": "^8.0.0",
@@ -15,6 +16,7 @@
     "@atlaskit/spinner": "^11.0.0",
     "@atlaskit/tabs": "^11.2.3",
     "@atlaskit/tag": "^11.4.1",
+    "@atlaskit/theme": "^12.2.1",
     "@atlaskit/tooltip": "^17.5.17",
     "@atlaskit/tree": "^6.0.0",
     "@ungap/url-search-params": "^0.1.2",

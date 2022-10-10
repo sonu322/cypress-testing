@@ -335,6 +335,7 @@ export const IssueTree = ({
       ) : (
         <IssueCard
           issueData={item.data && item.allData ? item.allData : null}
+          selectedIssueFields={selectedIssueFields}
         />
       )}
     </div>

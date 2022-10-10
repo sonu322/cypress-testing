@@ -96,7 +96,17 @@ export const IssueTreeModule = () => {
       IssueFieldsAPI().then((results) => {
         console.log("fields!!!");
         console.log(results);
-        setIssueFields(results);
+        const newResults = results.map((result) => {
+          if (result.key.includes("customfield_")) {
+            result.customKey = result.name
+              .replace(/[\s, -]/g, "")
+              .toLowerCase();
+          } else {
+            result.customKey = result.key;
+          }
+          return result;
+        });
+        setIssueFields(newResults);
         const defaultFeildNames = [
           "summary",
           "subtasks",
@@ -109,11 +119,7 @@ export const IssueTreeModule = () => {
           "assignee",
         ];
         const selectedFields = defaultFeildNames.map((name) => {
-          const field = results.find(
-            (result) =>
-              result.name.replace(/ /g, "").toLowerCase() == name ||
-              result.key == name
-          );
+          const field = newResults.find((result) => result.customKey == name);
           if (field) {
             return field;
           }
