@@ -121,6 +121,7 @@ export const IssueTreeModule = () => {
         setIsFetched={setIsFetched}
         filter={filter}
         root={root}
+        issueFields={issueFields}
       />
       {Object.keys(filter).map((keyName) => (
         <div key={keyName}>
