@@ -17,7 +17,7 @@ const IssueKey = styled.span`
   text-overflow: ellipsis;
   font-size: 12px;
   font-weight: 600;
-  color: ${colors.N70};
+  color: ${colors.N400};
 `;
 const Container = styled.div`
   color: ${colors.N800};
@@ -118,7 +118,7 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
             </div>
           )}
         </Tooltip>
-        
+
         {/* footer */}
         <CardFooter>
           <FooterSideContainer>
@@ -210,7 +210,11 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
             {isAssigneeFieldSelected && (
               <Tooltip
                 position="bottom-end"
-                content={issueData.fields[assigneeField.key].displayName}
+                content={
+                  issueData.fields[assigneeField.key]
+                    ? issueData.fields[assigneeField.key].displayName
+                    : "Unassigned"
+                }
               >
                 {(props) => (
                   <div {...props}>
