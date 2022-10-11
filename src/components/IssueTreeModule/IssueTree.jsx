@@ -275,7 +275,6 @@ export const IssueTree = ({
         for (const child of value.children) {
           root.items[child.id] = child;
         }
-
         setTree(mutateTree(root, "0", { isExpanded: true }));
         setIsFetched(true);
       });

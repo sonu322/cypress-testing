@@ -24,7 +24,7 @@ let root = {
     },
   },
 };
-
+const fixedFieldNames = ["summary", "subtasks", "parent", "issuelinks", "status"];
 export const IssueTreeModule = () => {
   const [options, setOptions] = useState({});
   const [filter, setFilter] = useState({});
@@ -99,57 +99,60 @@ export const IssueTreeModule = () => {
   }, []);
   useEffect(() => {
     const fetchFieldsData = async () => {
-      Promise.all([ProjectAPI(), IssueFieldsAPI()]).then(([project, results]) => {
-        console.log("fields!!!");
-        console.log(results);
-        const newResults = results.map((result) => {
-          if (result.key.includes("customfield_")) {
-            console.log("custom!!!");
-            result.customKey = result.name
-              .replace(/[\s, -]/g, "")
-              .toLowerCase();
-            console.log(result.key, result.name, result.customKey);
+      Promise.all([ProjectAPI(), IssueFieldsAPI()]).then(
+        ([project, results]) => {
+          console.log("fields!!!");
+          console.log(results);
+          const newResults = results.map((result) => {
+            if (result.key.includes("customfield_")) {
+              console.log("custom!!!");
+              result.customKey = result.name
+                .replace(/[\s, -]/g, "")
+                .toLowerCase();
+              console.log(result.key, result.name, result.customKey);
+            } else {
+              result.customKey = result.key;
+            }
+            return result;
+          });
+          // setIssueFields(newResults);
+          const fieldNames = [
+            ...fixedFieldNames,
+            "issuetype",
+            "priority",
+            "status",
+            "assignee",
+          ];
+
+          if (project.style == "classic") {
+            fieldNames.push("storypoints");
           } else {
-            result.customKey = result.key;
+            fieldNames.push("storypointestimate");
           }
-          return result;
-        });
-        // setIssueFields(newResults);
-        const defaultFeildNames = [
-          "summary",
-          "subtasks",
-          "parent",
-          "issuelinks",
-          "issuetype",
-          "priority",
-          "status",
-          "assignee",
-        ];
-        if (project.style == "classic") {
-          defaultFeildNames.push("storypoints");
-        } else {
-          defaultFeildNames.push("storypointestimate");
+          // const selectedFields = fieldNames.map((name) => {
+          //   const field = newResults.find((result) => result.customKey == name);
+          //   if (field) {
+          //     return field.customKey;
+          //   } // useforeach
+          // });
+          let selectedFields = [];
+          let allOptions = [];
+          fieldNames.forEach((name) => {
+            const field = newResults.find((result) => result.customKey == name);
+            if (field) {
+              allOptions.push(field);
+              if (!fixedFieldNames.includes(name)) {
+                selectedFields.push(field.key);
+              }
+            }
+          });
+          console.log("selected");
+          console.log(selectedFields);
+          console.log(allOptions);
+          setIssueFields(allOptions);
+          setSelectedIssueFields(selectedFields);
         }
-        // const selectedFields = defaultFeildNames.map((name) => {
-        //   const field = newResults.find((result) => result.customKey == name);
-        //   if (field) {
-        //     return field.customKey;
-        //   } // useforeach
-        // });
-        let selectedFields = [];
-        let allOptions = [];
-        defaultFeildNames.forEach((name) => {
-          const field = newResults.find((result) => result.customKey == name);
-          if (field) {
-            allOptions.push(field);
-            selectedFields.push(field.key);
-          }
-        });
-        console.log("selected");
-        console.log(selectedFields);
-        setIssueFields(allOptions);
-        setSelectedIssueFields(selectedFields);
-      });
+      );
     };
     fetchFieldsData();
   }, []);
@@ -159,6 +162,9 @@ export const IssueTreeModule = () => {
     newFilter[key] = keyOptions;
     setFilter(newFilter);
   };
+  const issueCardOptions = issueFields.filter(
+    (field) => !fixedFieldNames.includes(field.customKey)
+  );
   return (
     <div>
       <Toolbar
@@ -167,7 +173,7 @@ export const IssueTreeModule = () => {
         filter={filter}
         updateFilteredKeyOptions={updateFilteredKeyOptions}
         keyNames={["priorities", "linkTypes", "issueTypes"]}
-        issueFields={issueFields}
+        issueFields={issueCardOptions}
         selectedIssueFields={selectedIssueFields}
         setSelectedIssueFields={setSelectedIssueFields}
       />
