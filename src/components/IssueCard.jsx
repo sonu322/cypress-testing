@@ -6,6 +6,11 @@ import styled, { css } from "styled-components";
 import Tooltip from "@atlaskit/tooltip";
 import Badge from "@atlaskit/badge";
 import Avatar from "@atlaskit/avatar";
+import URLSearchParams from "@ungap/url-search-params";
+
+const searcher = new URLSearchParams(location.search);
+const xdm = searcher.get("xdm_e");
+
 // TODO: ADD ASSIGNEE AVATAR, TOOLTIP FOR KEY
 const IconContainer = styled.span`
   display: flex;
@@ -13,11 +18,13 @@ const IconContainer = styled.span`
   overflow: hidden;
   height: 16px;
 `;
-const IssueKey = styled.span`
+const IssueKey = styled.a`
   text-overflow: ellipsis;
   font-size: 12px;
   font-weight: 600;
   color: ${colors.N400};
+  text-decoration: none;
+  cursor: pointer;
   ${(props) =>
     props.isResolved &&
     css`
@@ -112,7 +119,9 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
     issueData.fields[assigneeField.key]
   );
   console.log(issueData);
+
   if (issueData && issueData.fields) {
+    const issueUrl = `${xdm}/browse/${issueData.key}`;
     return (
       <Container>
         {/* header */}
@@ -209,6 +218,8 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
               {(props) => (
                 <div {...props}>
                   <IssueKey
+                    target="_blank"
+                    href={issueUrl}
                     isResolved={issueData.fields.resolution ? true : false}
                   >
                     {issueData.key}

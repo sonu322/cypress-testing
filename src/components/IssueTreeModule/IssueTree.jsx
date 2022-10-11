@@ -87,7 +87,7 @@ export const IssueTree = ({
   setIsFetched,
   filter,
   selectedIssueFields,
-  issueFields
+  issueFields,
 }) => {
   const formatIssueData = (data, parent) => {
     return {
@@ -340,7 +340,7 @@ export const IssueTree = ({
         <IssueCard
           issueData={item.data && item.allData ? item.allData : null}
           selectedIssueFields={selectedIssueFields}
-          issueFields = {issueFields}
+          issueFields={issueFields}
         />
       )}
     </div>
