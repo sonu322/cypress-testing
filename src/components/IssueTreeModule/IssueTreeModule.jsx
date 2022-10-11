@@ -99,14 +99,16 @@ export const IssueTreeModule = () => {
         const newResults = results.map((result) => {
           if (result.key.includes("customfield_")) {
             console.log("custom!!!");
-            result.customKey = result.name.replace(/[\s, -]/g, "").toLowerCase();
+            result.customKey = result.name
+              .replace(/[\s, -]/g, "")
+              .toLowerCase();
             console.log(result.key, result.name, result.customKey);
           } else {
             result.customKey = result.key;
           }
           return result;
         });
-        setIssueFields(newResults);
+        // setIssueFields(newResults);
         const defaultFeildNames = [
           "summary",
           "subtasks",
@@ -126,14 +128,17 @@ export const IssueTreeModule = () => {
         //   } // useforeach
         // });
         let selectedFields = [];
+        let allOptions = [];
         defaultFeildNames.forEach((name) => {
           const field = newResults.find((result) => result.customKey == name);
           if (field) {
+            allOptions.push(field);
             selectedFields.push(field.key);
           }
         });
         console.log("selected");
         console.log(selectedFields);
+        setIssueFields(allOptions);
         setSelectedIssueFields(selectedFields);
       });
     };
