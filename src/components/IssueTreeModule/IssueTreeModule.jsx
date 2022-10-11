@@ -24,7 +24,7 @@ let root = {
     },
   },
 };
-const fixedFieldNames = ["summary", "subtasks", "parent", "issuelinks", "status"];
+const fixedFieldNames = ["summary", "subtasks", "parent", "issuelinks", "status", "resolution"];
 export const IssueTreeModule = () => {
   const [options, setOptions] = useState({});
   const [filter, setFilter] = useState({});
