@@ -64,36 +64,39 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
   const storyPointsField = issueFields.find(
     (field) => field.customKey == "storypoints"
   );
-  console.log("from card!!!! storypoints");
+  console.log("from card!!!! storypoints and estimate");
   const storyPointEstimateField = issueFields.find(
     (field) => field.customKey == "storypointestimate"
   );
   console.log(storyPointsField);
+  console.log(storyPointEstimateField);
   const priorityField = issueFields.find(
     (field) => field.customKey == "priority"
   );
   const isStoryPointsFieldSelected = selectedIssueFields.includes(
-    (key) => key == storyPointsField.key
+    storyPointsField.key
   );
   const isStoryPointEstimateFieldSelected = selectedIssueFields.includes(
-    (key) => key == storyPointEstimateField.key
+    storyPointEstimateField.key
   );
   const isPriorityFieldSelected = selectedIssueFields.includes(
-    (key) => key == priorityField.key
+    priorityField.key
   );
   const assigneeField = issueFields.find(
     (field) => field.customKey == "assignee"
   );
   const isAssigneeFieldSelected = selectedIssueFields.includes(
-    (key) => key == assigneeField.key
+    assigneeField.key
   );
 
-  console.log(storyPointsField, storyPointEstimateField, priorityField);
   console.log("from card");
   console.log(
     isStoryPointsFieldSelected,
+    isStoryPointEstimateFieldSelected,
     isPriorityFieldSelected,
-    issueData.fields[storyPointsField.key]
+    issueData.fields[storyPointsField.key],
+    issueData.fields[storyPointEstimateField.key],
+    issueData.fields[priorityField.key]
   );
   console.log(issueData);
   if (issueData && issueData.fields) {
@@ -126,10 +129,14 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
                 )}
               </Tooltip>
             )}
-            {isPriorityFieldSelected && issueData.fields.priority && (
+            {isPriorityFieldSelected && (
               <Tooltip
                 position="bottom-end"
-                content={issueData.fields.priority.name}
+                content={
+                  issueData.fields.priority.name
+                    ? issueData.fields.priority.name
+                    : "no priority selected"
+                }
               >
                 <IconContainer>
                   <img
