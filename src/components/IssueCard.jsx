@@ -91,12 +91,11 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
   const isIssueTypeFieldSelected = selectedIssueFields.includes(
     issueTypeField.key
   );
-  const isStoryPointsFieldSelected = selectedIssueFields.includes(
-    storyPointsField.key
-  );
-  const isStoryPointEstimateFieldSelected = selectedIssueFields.includes(
-    storyPointEstimateField.key
-  );
+  const isStoryPointsFieldSelected =
+    storyPointsField && selectedIssueFields.includes(storyPointsField.key);
+  const isStoryPointEstimateFieldSelected =
+    storyPointEstimateField &&
+    selectedIssueFields.includes(storyPointEstimateField.key);
   const isPriorityFieldSelected = selectedIssueFields.includes(
     priorityField.key
   );
@@ -108,16 +107,6 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
   );
 
   console.log("from card");
-  console.log(
-    isStoryPointsFieldSelected,
-    isStoryPointEstimateFieldSelected,
-    isPriorityFieldSelected,
-    isAssigneeFieldSelected,
-    issueData.fields[storyPointsField.key],
-    issueData.fields[storyPointEstimateField.key],
-    issueData.fields[priorityField.key],
-    issueData.fields[assigneeField.key]
-  );
   console.log(issueData);
 
   if (issueData && issueData.fields) {

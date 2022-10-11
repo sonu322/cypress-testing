@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { IssueTypeAPI, LinkTypeAPI, PriorityAPI, IssueFieldsAPI } from "../api";
+import {
+  IssueTypeAPI,
+  LinkTypeAPI,
+  PriorityAPI,
+  IssueFieldsAPI,
+  ProjectAPI,
+} from "../api";
 import { Toolbar } from "./Toolbar";
 import { IssueTree } from "./IssueTree";
 import { mutateTree } from "@atlaskit/tree";
@@ -93,54 +99,59 @@ export const IssueTreeModule = () => {
   }, []);
   useEffect(() => {
     const fetchFieldsData = async () => {
-      IssueFieldsAPI().then((results) => {
-        console.log("fields!!!");
-        console.log(results);
-        const newResults = results.map((result) => {
-          if (result.key.includes("customfield_")) {
-            console.log("custom!!!");
-            result.customKey = result.name
-              .replace(/[\s, -]/g, "")
-              .toLowerCase();
-            console.log(result.key, result.name, result.customKey);
+      Promise.all([ProjectAPI(), IssueFieldsAPI()]).then(
+        ([project, results]) => {
+          console.log("fields!!!");
+          console.log(results);
+          const newResults = results.map((result) => {
+            if (result.key.includes("customfield_")) {
+              console.log("custom!!!");
+              result.customKey = result.name
+                .replace(/[\s, -]/g, "")
+                .toLowerCase();
+              console.log(result.key, result.name, result.customKey);
+            } else {
+              result.customKey = result.key;
+            }
+            return result;
+          });
+          // setIssueFields(newResults);
+          const defaultFeildNames = [
+            "summary",
+            "subtasks",
+            "parent",
+            "issuelinks",
+            "issuetype",
+            "priority",
+            "status",
+            "assignee",
+          ];
+          if (project.style == "classic") {
+            defaultFeildNames.push("storypoints");
           } else {
-            result.customKey = result.key;
+            defaultFeildNames.push("storypointestimate");
           }
-          return result;
-        });
-        // setIssueFields(newResults);
-        const defaultFeildNames = [
-          "summary",
-          "subtasks",
-          "parent",
-          "issuelinks",
-          "issuetype",
-          "priority",
-          "status",
-          "storypoints",
-          "storypointestimate",
-          "assignee",
-        ];
-        // const selectedFields = defaultFeildNames.map((name) => {
-        //   const field = newResults.find((result) => result.customKey == name);
-        //   if (field) {
-        //     return field.customKey;
-        //   } // useforeach
-        // });
-        let selectedFields = [];
-        let allOptions = [];
-        defaultFeildNames.forEach((name) => {
-          const field = newResults.find((result) => result.customKey == name);
-          if (field) {
-            allOptions.push(field);
-            selectedFields.push(field.key);
-          }
-        });
-        console.log("selected");
-        console.log(selectedFields);
-        setIssueFields(allOptions);
-        setSelectedIssueFields(selectedFields);
-      });
+          // const selectedFields = defaultFeildNames.map((name) => {
+          //   const field = newResults.find((result) => result.customKey == name);
+          //   if (field) {
+          //     return field.customKey;
+          //   } // useforeach
+          // });
+          let selectedFields = [];
+          let allOptions = [];
+          defaultFeildNames.forEach((name) => {
+            const field = newResults.find((result) => result.customKey == name);
+            if (field) {
+              allOptions.push(field);
+              selectedFields.push(field.key);
+            }
+          });
+          console.log("selected");
+          console.log(selectedFields);
+          setIssueFields(allOptions);
+          setSelectedIssueFields(selectedFields);
+        }
+      );
     };
     fetchFieldsData();
   }, []);

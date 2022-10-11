@@ -72,6 +72,26 @@ export const FilterAPI = async () => {
   return Promise.resolve(JSON.parse(response.body));
 };
 
+export const ProjectAPI = async (key) => {
+  const getKey = () => {
+    if (key) {
+      return Promise.resolve(key);
+    } else {
+      return new Promise((resolve) => {
+        AP.context.getContext((res) => {
+          console.log("result");
+          console.log(res);
+          resolve(res.jira.project.key);
+        });
+      });
+    }
+  };
+  const input = await getKey();
+  const response = await AP.request(`/rest/api/3/project/${input}`);
+
+  return Promise.resolve(JSON.parse(response.body));
+};
+
 /*
 const _accumulator = (results, startIndex, maxResults, query, total) => {
   return new Promise((resolve, reject) => {
