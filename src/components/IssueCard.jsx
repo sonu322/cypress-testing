@@ -111,16 +111,14 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
     return (
       <Container>
         {/* header */}
-        <Tooltip
-          content={issueData.fields.summary}
-          position="bottom-end"
-        >
+        <Tooltip content={issueData.fields.summary} position="bottom-end">
           {(props) => (
             <div {...props}>
               <SummaryContainer>{issueData.fields.summary}</SummaryContainer>
             </div>
           )}
         </Tooltip>
+        
         {/* footer */}
         <CardFooter>
           <FooterSideContainer>
