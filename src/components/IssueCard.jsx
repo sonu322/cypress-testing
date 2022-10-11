@@ -13,7 +13,7 @@ const IconContainer = styled.span`
   overflow: hidden;
   height: 16px;
 `;
-const IssueTypeName = styled.span`
+const IssueKey = styled.span`
   text-overflow: ellipsis;
   font-size: 12px;
   font-weight: 600;
@@ -73,6 +73,12 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
   const priorityField = issueFields.find(
     (field) => field.customKey == "priority"
   );
+  const issueTypeField = issueFields.find(
+    (field) => field.customKey == "issuetype"
+  );
+  const isIssueTypeFieldSelected = selectedIssueFields.includes(
+    issueTypeField.key
+  );
   const isStoryPointsFieldSelected = selectedIssueFields.includes(
     storyPointsField.key
   );
@@ -105,29 +111,34 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
     return (
       <Container>
         {/* header */}
-        <Tooltip content={issueData.fields.summary}>
+        <Tooltip
+          content={issueData.fields.summary}
+          position="bottom-end"
+        >
           {(props) => (
-            <SummaryContainer {...props}>
-              {issueData.fields.summary}
-            </SummaryContainer>
+            <div {...props}>
+              <SummaryContainer>{issueData.fields.summary}</SummaryContainer>
+            </div>
           )}
         </Tooltip>
         {/* footer */}
         <CardFooter>
           <FooterSideContainer>
-            {issueData.fields.issuetype && (
+            {isIssueTypeFieldSelected && (
               <Tooltip
                 position="bottom-end"
                 content={issueData.fields.issuetype.name}
               >
                 {(props) => (
-                  <IconContainer {...props}>
-                    <img
-                      height={16}
-                      width={16}
-                      src={issueData.fields.issuetype.iconUrl}
-                    />
-                  </IconContainer>
+                  <div {...props}>
+                    <IconContainer>
+                      <img
+                        height={16}
+                        width={16}
+                        src={issueData.fields.issuetype.iconUrl}
+                      />
+                    </IconContainer>
+                  </div>
                 )}
               </Tooltip>
             )}
@@ -141,13 +152,15 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
                 }
               >
                 {(props) => (
-                  <IconContainer {...props}>
-                    <img
-                      height={16}
-                      width={16}
-                      src={issueData.fields.priority.iconUrl}
-                    />
-                  </IconContainer>
+                  <div {...props}>
+                    <IconContainer>
+                      <img
+                        height={16}
+                        width={16}
+                        src={issueData.fields.priority.iconUrl}
+                      />
+                    </IconContainer>
+                  </div>
                 )}
               </Tooltip>
             )}
@@ -189,20 +202,27 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
               )}
           </FooterSideContainer>
           <FooterSideContainer>
-            <IssueTypeName>{issueData.key}</IssueTypeName>
+            <Tooltip position="bottom-end" content={issueData.key}>
+              {(props) => (
+                <div {...props}>
+                  <IssueKey>{issueData.key}</IssueKey>
+                </div>
+              )}
+            </Tooltip>
             {isAssigneeFieldSelected && (
               <Tooltip
                 position="bottom-end"
                 content={issueData.fields[assigneeField.key].displayName}
               >
                 {(props) => (
-                  <Avatar
-                    {...props}
-                    src={
-                      issueData.fields[assigneeField.key] &&
-                      issueData.fields[assigneeField.key].avatarUrls["16x16"]
-                    }
-                  ></Avatar>
+                  <div {...props}>
+                    <Avatar
+                      src={
+                        issueData.fields[assigneeField.key] &&
+                        issueData.fields[assigneeField.key].avatarUrls["16x16"]
+                      }
+                    ></Avatar>
+                  </div>
                 )}
               </Tooltip>
             )}
