@@ -5,6 +5,8 @@ import styled from "styled-components";
 // import { SimpleTag } from "@atlaskit/tag";
 import Tooltip from "@atlaskit/tooltip";
 import Badge from "@atlaskit/badge";
+import Avatar from "@atlaskit/avatar";
+// TODO: ADD ASSIGNEE AVATAR, TOOLTIP FOR KEY
 const IconContainer = styled.span`
   display: flex;
   width: 16px;
@@ -59,25 +61,31 @@ const FooterSideContainer = styled.div`
 `;
 const SummaryContainer = styled.div``;
 export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
-  let storyPointsField = issueFields.find(
+  const storyPointsField = issueFields.find(
     (field) => field.customKey == "storypoints"
   );
   console.log("from card!!!! storypoints");
-  let storyPointEstimateField = issueFields.find(
+  const storyPointEstimateField = issueFields.find(
     (field) => field.customKey == "storypointestimate"
   );
   console.log(storyPointsField);
-  let priorityField = issueFields.find(
+  const priorityField = issueFields.find(
     (field) => field.customKey == "priority"
   );
-  let isStoryPointsFieldSelected = selectedIssueFields.find(
+  const isStoryPointsFieldSelected = selectedIssueFields.includes(
     (key) => key == storyPointsField.key
   );
-  let isStoryPointEstimateFieldSelected = selectedIssueFields.find(
+  const isStoryPointEstimateFieldSelected = selectedIssueFields.includes(
     (key) => key == storyPointEstimateField.key
   );
-  let isPriorityFieldSelected = selectedIssueFields.find(
+  const isPriorityFieldSelected = selectedIssueFields.includes(
     (key) => key == priorityField.key
+  );
+  const assigneeField = issueFields.find(
+    (field) => field.customKey == "assignee"
+  );
+  const isAssigneeFieldSelected = selectedIssueFields.includes(
+    (key) => key == assigneeField.key
   );
 
   console.log(storyPointsField, storyPointEstimateField, priorityField);
@@ -169,6 +177,19 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
           </FooterSideContainer>
           <FooterSideContainer>
             <IssueTypeName>{issueData.key}</IssueTypeName>
+            {isAssigneeFieldSelected && issueData.fields[assigneeField.key] && (
+              <Tooltip
+                position="bottom-end"
+                content={issueData.fields[assigneeField.key].displayName}
+              >
+                {(props) => (
+                  <Avatar
+                    {...props}
+                    src={issueData.fields[assigneeField.key]}
+                  ></Avatar>
+                )}
+              </Tooltip>
+            )}
           </FooterSideContainer>
         </CardFooter>
       </Container>

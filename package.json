@@ -5,6 +5,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@atlaskit/avatar": "^21.0.3",
     "@atlaskit/badge": "^15.0.20",
     "@atlaskit/dropdown-menu": "^11.5.1",
     "@atlaskit/inline-dialog": "^11.0.1",
