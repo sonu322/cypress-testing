@@ -262,8 +262,8 @@ export const IssueTree = ({
     };
   };
   useEffect(() => {
-    if (selectedIssueFields && selectedIssueFields.length > 0) {
-      const fieldKeys = selectedIssueFields;
+    if (issueFields && issueFields.length > 0) {
+      const fieldKeys = issueFields.map((field) => field.key);
       IssueLinkAPI(null, fieldKeys).then((data) => {
         console.log("with fields: !data!!!!!");
         console.log(data);
@@ -280,7 +280,7 @@ export const IssueTree = ({
         setIsFetched(true);
       });
     }
-  }, [selectedIssueFields]);
+  }, [issueFields]);
 
   const SideIcon = ({ item, onExpand, onCollapse }) => {
     if (item.isChildrenLoading) {

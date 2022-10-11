@@ -99,59 +99,57 @@ export const IssueTreeModule = () => {
   }, []);
   useEffect(() => {
     const fetchFieldsData = async () => {
-      Promise.all([ProjectAPI(), IssueFieldsAPI()]).then(
-        ([project, results]) => {
-          console.log("fields!!!");
-          console.log(results);
-          const newResults = results.map((result) => {
-            if (result.key.includes("customfield_")) {
-              console.log("custom!!!");
-              result.customKey = result.name
-                .replace(/[\s, -]/g, "")
-                .toLowerCase();
-              console.log(result.key, result.name, result.customKey);
-            } else {
-              result.customKey = result.key;
-            }
-            return result;
-          });
-          // setIssueFields(newResults);
-          const defaultFeildNames = [
-            "summary",
-            "subtasks",
-            "parent",
-            "issuelinks",
-            "issuetype",
-            "priority",
-            "status",
-            "assignee",
-          ];
-          if (project.style == "classic") {
-            defaultFeildNames.push("storypoints");
+      Promise.all([ProjectAPI(), IssueFieldsAPI()]).then(([project, results]) => {
+        console.log("fields!!!");
+        console.log(results);
+        const newResults = results.map((result) => {
+          if (result.key.includes("customfield_")) {
+            console.log("custom!!!");
+            result.customKey = result.name
+              .replace(/[\s, -]/g, "")
+              .toLowerCase();
+            console.log(result.key, result.name, result.customKey);
           } else {
-            defaultFeildNames.push("storypointestimate");
+            result.customKey = result.key;
           }
-          // const selectedFields = defaultFeildNames.map((name) => {
-          //   const field = newResults.find((result) => result.customKey == name);
-          //   if (field) {
-          //     return field.customKey;
-          //   } // useforeach
-          // });
-          let selectedFields = [];
-          let allOptions = [];
-          defaultFeildNames.forEach((name) => {
-            const field = newResults.find((result) => result.customKey == name);
-            if (field) {
-              allOptions.push(field);
-              selectedFields.push(field.key);
-            }
-          });
-          console.log("selected");
-          console.log(selectedFields);
-          setIssueFields(allOptions);
-          setSelectedIssueFields(selectedFields);
+          return result;
+        });
+        // setIssueFields(newResults);
+        const defaultFeildNames = [
+          "summary",
+          "subtasks",
+          "parent",
+          "issuelinks",
+          "issuetype",
+          "priority",
+          "status",
+          "assignee",
+        ];
+        if (project.style == "classic") {
+          defaultFeildNames.push("storypoints");
+        } else {
+          defaultFeildNames.push("storypointestimate");
         }
-      );
+        // const selectedFields = defaultFeildNames.map((name) => {
+        //   const field = newResults.find((result) => result.customKey == name);
+        //   if (field) {
+        //     return field.customKey;
+        //   } // useforeach
+        // });
+        let selectedFields = [];
+        let allOptions = [];
+        defaultFeildNames.forEach((name) => {
+          const field = newResults.find((result) => result.customKey == name);
+          if (field) {
+            allOptions.push(field);
+            selectedFields.push(field.key);
+          }
+        });
+        console.log("selected");
+        console.log(selectedFields);
+        setIssueFields(allOptions);
+        setSelectedIssueFields(selectedFields);
+      });
     };
     fetchFieldsData();
   }, []);
