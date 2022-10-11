@@ -282,7 +282,7 @@ export const IssueTree = ({
     }
   }, [selectedIssueFields]);
 
-  const getIcon = (item, onExpand, onCollapse) => {
+  const SideIcon = ({ item, onExpand, onCollapse }) => {
     if (item.isChildrenLoading) {
       return (
         <SpinnerContainer onClick={() => onCollapse(item.id)}>
@@ -297,7 +297,7 @@ export const IssueTree = ({
           appearance="subtle-link"
           onClick={() => onCollapse(item.id)}
         >
-          <ChevronDownIcon label="" size={16} />
+          d<ChevronDownIcon label="" size={16} />
         </Button>
       ) : (
         <Button
@@ -305,12 +305,12 @@ export const IssueTree = ({
           appearance="subtle-link"
           onClick={() => onExpand(item.id)}
         >
-          <ChevronRightIcon label="" size={16} />
+          r<ChevronRightIcon label="" size={16} />
         </Button>
       );
     }
 
-    return <Box />;
+    return <Box>asdf</Box>;
   };
   const getItemStyle = (depth) => {
     const style = {
@@ -331,14 +331,19 @@ export const IssueTree = ({
       ref={provided.innerRef}
       {...provided.dragHandleProps}
     >
-      {getIcon(item, onExpand, onCollapse)}
+      {/* {getIcon(item, onExpand, onCollapse)} */}
+      <SideIcon
+        item={item}
+        onExpand={onExpand}
+        onCollapse={onCollapse}
+      ></SideIcon>
       {item.data && item.data.isType ? (
         <LinkTypeContainer>
           {item.data ? item.data.title : "No Name"}
         </LinkTypeContainer>
       ) : (
         <IssueCard
-          issueData={item.data && item.allData ? item.allData : null}
+          issueData={item.allData ? item.allData : null}
           selectedIssueFields={selectedIssueFields}
           issueFields={issueFields}
         />
