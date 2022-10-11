@@ -1,7 +1,7 @@
 /* eslint-disable indent */
 import React from "react";
 import { colors } from "@atlaskit/theme";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 // import { SimpleTag } from "@atlaskit/tag";
 import Tooltip from "@atlaskit/tooltip";
 import Badge from "@atlaskit/badge";
@@ -18,6 +18,11 @@ const IssueKey = styled.span`
   font-size: 12px;
   font-weight: 600;
   color: ${colors.N400};
+  ${(props) =>
+    props.isResolved &&
+    css`
+      text-decoration: line-through;
+    `};
 `;
 const Container = styled.div`
   color: ${colors.N800};
@@ -203,7 +208,11 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
             <Tooltip position="bottom-end" content={issueData.key}>
               {(props) => (
                 <div {...props}>
-                  <IssueKey>{issueData.key}</IssueKey>
+                  <IssueKey
+                    isResolved={issueData.fields.resolution ? true : false}
+                  >
+                    {issueData.key}
+                  </IssueKey>
                 </div>
               )}
             </Tooltip>
