@@ -212,7 +212,8 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
                 position="bottom-end"
                 content={
                   issueData.fields[assigneeField.key]
-                    ? issueData.fields[assigneeField.key].displayName
+                    ? "Assignee: " +
+                      issueData.fields[assigneeField.key].displayName
                     : "Unassigned"
                 }
               >
