@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import React from "react";
+import React, { useMemo } from "react";
 import { colors } from "@atlaskit/theme";
 import styled, { css } from "styled-components";
 import Badge from "@atlaskit/badge";
@@ -41,18 +41,6 @@ const Container = styled.div`
 
   border-spacing: 10px 0px;
 `;
-// const Spacer = styled.div`
-//   width: ${({ width }) => {
-//     return css`
-//       ${width}
-//     `;
-//   }};
-//   height: ${({ height }) => {
-//     return css`
-//       ${height}
-//     `;
-//   }};
-// `;
 const CardFooter = styled.div`
   display: flex;
   width: 100%;
@@ -66,37 +54,56 @@ const FooterSideContainer = styled.div`
 `;
 const SummaryContainer = styled.div``;
 export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
-  const storyPointsField = issueFields.find(
-    (field) => field.customKey == "storypoints"
+  const storyPointsInfo = useMemo(() => {
+    const field = issueFields.find((field) => field.customKey == "storypoints");
+    field.isSelected = selectedIssueFields.includes(field.key);
+    return field;
+  }, [issueFields, selectedIssueFields]);
+  
+  const storyPointEstimateField = useMemo(
+    () => issueFields.find((field) => field.customKey == "storypointestimate"),
+    [issueFields]
   );
-  console.log("from card!!!! storypoints and estimate");
-  const storyPointEstimateField = issueFields.find(
-    (field) => field.customKey == "storypointestimate"
-  );
-  console.log(storyPointsField);
+  console.log(storyPointsInfo);
   console.log(storyPointEstimateField);
-  const priorityField = issueFields.find(
-    (field) => field.customKey == "priority"
+  const priorityField = useMemo(
+    () => issueFields.find((field) => field.customKey == "priority"),
+    [issueFields]
   );
-  const issueTypeField = issueFields.find(
-    (field) => field.customKey == "issuetype"
+
+  const issueTypeField = useMemo(
+    () => issueFields.find((field) => field.customKey == "issuetype"),
+    [issueFields]
   );
-  const isIssueTypeFieldSelected = selectedIssueFields.includes(
-    issueTypeField.key
+  const assigneeField = useMemo(
+    () => issueFields.find((field) => field.customKey == "assignee"),
+    [issueFields]
   );
-  const isStoryPointsFieldSelected =
-    storyPointsField && selectedIssueFields.includes(storyPointsField.key);
-  const isStoryPointEstimateFieldSelected =
-    storyPointEstimateField &&
-    selectedIssueFields.includes(storyPointEstimateField.key);
-  const isPriorityFieldSelected = selectedIssueFields.includes(
-    priorityField.key
+  const isIssueTypeFieldSelected = useMemo(
+    () => selectedIssueFields.includes(issueTypeField.key),
+    [issueTypeField, selectedIssueFields]
   );
-  const assigneeField = issueFields.find(
-    (field) => field.customKey == "assignee"
+
+  // const isStoryPointsFieldSelected = useMemo(
+  //   () => storyPointsInfo && selectedIssueFields.includes(storyPointsInfo.key),
+  //   [selectedIssueFields, storyPointsInfo]
+  // );
+
+  const isStoryPointEstimateFieldSelected = useMemo(
+    () =>
+      storyPointEstimateField &&
+      selectedIssueFields.includes(storyPointEstimateField.key),
+    [selectedIssueFields, storyPointEstimateField]
   );
-  const isAssigneeFieldSelected = selectedIssueFields.includes(
-    assigneeField.key
+
+  const isPriorityFieldSelected = useMemo(
+    () => selectedIssueFields.includes(priorityField.key),
+    [selectedIssueFields, priorityField]
+  );
+
+  const isAssigneeFieldSelected = useMemo(
+    () => selectedIssueFields.includes(assigneeField.key),
+    [selectedIssueFields, assigneeField]
   );
 
   console.log("from card");
@@ -138,17 +145,17 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
                 />
               </TooltipContainer>
             )}
-            {isStoryPointsFieldSelected &&
-              issueData.fields[storyPointsField.key] && (
+            {storyPointsInfo.isSelected &&
+              issueData.fields[storyPointsInfo.key] && (
                 <TooltipContainer
                   position="bottom-end"
                   content={
-                    issueData.fields[storyPointsField.key] +
+                    issueData.fields[storyPointsInfo.key] +
                     " " +
-                    storyPointsField.name
+                    storyPointsInfo.name
                   }
                 >
-                  <Badge>{issueData.fields[storyPointsField.key]}</Badge>
+                  <Badge>{issueData.fields[storyPointsInfo.key]}</Badge>
                 </TooltipContainer>
               )}
             {isStoryPointEstimateFieldSelected &&
