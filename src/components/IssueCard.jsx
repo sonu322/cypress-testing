@@ -2,7 +2,6 @@
 import React from "react";
 import { colors } from "@atlaskit/theme";
 import styled, { css } from "styled-components";
-// import { SimpleTag } from "@atlaskit/tag";
 import Badge from "@atlaskit/badge";
 import Avatar from "@atlaskit/avatar";
 import URLSearchParams from "@ungap/url-search-params";
@@ -141,20 +140,6 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
             )}
             {isStoryPointsFieldSelected &&
               issueData.fields[storyPointsField.key] && (
-                // <Tooltip
-                // position="bottom-end"
-                // content={
-                //   issueData.fields[storyPointsField.key] +
-                //   " " +
-                //   storyPointsField.name
-                // }
-                // >
-                // {(props) => (
-                //   <div {...props}>
-                // <Badge>{issueData.fields[storyPointsField.key]}</Badge>
-                //   </div>
-                // )}
-                // </Tooltip>
                 <TooltipContainer
                   position="bottom-end"
                   content={
@@ -181,19 +166,6 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
               )}
           </FooterSideContainer>
           <FooterSideContainer>
-            {/* <Tooltip position="bottom-end" content={issueData.key}>
-              {(props) => (
-                <div {...props}>
-                  <IssueKey
-                    target="_blank"
-                    href={issueUrl}
-                    isResolved={issueData.fields.resolution ? true : false}
-                  >
-                    {issueData.key}
-                  </IssueKey>
-                </div>
-              )}
-            </Tooltip> */}
             <TooltipContainer position="bottom-end" content={issueData.key}>
               <IssueKey
                 target="_blank"
@@ -204,26 +176,6 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
               </IssueKey>
             </TooltipContainer>
             {isAssigneeFieldSelected && (
-              // <Tooltip
-              //   position="bottom-end"
-              //   content={
-              //     issueData.fields[assigneeField.key]
-              //       ? "Assignee: " +
-              //         issueData.fields[assigneeField.key].displayName
-              //       : "Unassigned"
-              //   }
-              // >
-              //   {(props) => (
-              //     <div {...props}>
-              // <Avatar
-              //   src={
-              //     issueData.fields[assigneeField.key] &&
-              //     issueData.fields[assigneeField.key].avatarUrls["16x16"]
-              //   }
-              // ></Avatar>
-              //     </div>
-              //   )}
-              // </Tooltip>
               <TooltipContainer
                 position="bottom-end"
                 content={
