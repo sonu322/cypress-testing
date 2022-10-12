@@ -8,17 +8,11 @@ import Badge from "@atlaskit/badge";
 import Avatar from "@atlaskit/avatar";
 import URLSearchParams from "@ungap/url-search-params";
 import { Icon } from "./Icon";
+import { TooltipContainer } from "./TooltipContainer";
 
 const searcher = new URLSearchParams(location.search);
 const xdm = searcher.get("xdm_e");
 
-// TODO: ADD ASSIGNEE AVATAR, TOOLTIP FOR KEY
-// const IconContainer = styled.span`
-//   display: flex;
-//   width: 16px;
-//   overflow: hidden;
-//   height: 16px;
-// `;
 const IssueKey = styled.a`
   text-overflow: ellipsis;
   font-size: 12px;
@@ -115,56 +109,54 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
     return (
       <Container>
         {/* header */}
-        <Tooltip content={issueData.fields.summary} position="bottom">
-          {(props) => (
-            <div {...props}>
-              <SummaryContainer>{issueData.fields.summary}</SummaryContainer>
-            </div>
-          )}
-        </Tooltip>
+        <TooltipContainer content={issueData.fields.summary} position="bottom">
+          <SummaryContainer>{issueData.fields.summary}</SummaryContainer>
+        </TooltipContainer>
 
         {/* footer */}
         <CardFooter>
           <FooterSideContainer>
             {isIssueTypeFieldSelected && (
-              <Tooltip
+              <TooltipContainer
                 position="bottom-end"
                 content={issueData.fields.issuetype.name}
               >
-                {(props) => (
-                  <div {...props}>
-                    <Icon
-                      height={16}
-                      width={16}
-                      src={issueData.fields.issuetype.iconUrl}
-                    />
-                  </div>
-                )}
-              </Tooltip>
+                <Icon
+                  height={16}
+                  width={16}
+                  src={issueData.fields.issuetype.iconUrl}
+                />
+              </TooltipContainer>
             )}
-            {isPriorityFieldSelected && (
-              <Tooltip
+            {isPriorityFieldSelected && issueData.fields.priority && (
+              <TooltipContainer
                 position="bottom-end"
-                content={
-                  issueData.fields.priority.name
-                    ? issueData.fields.priority.name
-                    : "no priority selected"
-                }
+                content={issueData.fields.priority.name}
               >
-                {(props) => (
-                  <div {...props}>
-                    <Icon
-                      height={16}
-                      width={16}
-                      src={issueData.fields.priority.iconUrl}
-                    />
-                  </div>
-                )}
-              </Tooltip>
+                <Icon
+                  height={16}
+                  width={16}
+                  src={issueData.fields.priority.iconUrl}
+                />
+              </TooltipContainer>
             )}
             {isStoryPointsFieldSelected &&
               issueData.fields[storyPointsField.key] && (
-                <Tooltip
+                // <Tooltip
+                // position="bottom-end"
+                // content={
+                //   issueData.fields[storyPointsField.key] +
+                //   " " +
+                //   storyPointsField.name
+                // }
+                // >
+                // {(props) => (
+                //   <div {...props}>
+                // <Badge>{issueData.fields[storyPointsField.key]}</Badge>
+                //   </div>
+                // )}
+                // </Tooltip>
+                <TooltipContainer
                   position="bottom-end"
                   content={
                     issueData.fields[storyPointsField.key] +
@@ -172,16 +164,28 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
                     storyPointsField.name
                   }
                 >
-                  {(props) => (
-                    <div {...props}>
-                      <Badge>{issueData.fields[storyPointsField.key]}</Badge>
-                    </div>
-                  )}
-                </Tooltip>
+                  <Badge>{issueData.fields[storyPointsField.key]}</Badge>
+                </TooltipContainer>
               )}
             {isStoryPointEstimateFieldSelected &&
               issueData.fields[storyPointEstimateField.key] && (
-                <Tooltip
+                // <Tooltip
+                // position="bottom-end"
+                // content={
+                //   issueData.fields[storyPointEstimateField.key] +
+                //   " " +
+                //   storyPointEstimateField.name
+                // }
+                // >
+                //   {(props) => (
+                //     <div {...props}>
+                // <Badge>
+                //   {issueData.fields[storyPointEstimateField.key]}
+                // </Badge>
+                //     </div>
+                //   )}
+                // </Tooltip>
+                <TooltipContainer
                   position="bottom-end"
                   content={
                     issueData.fields[storyPointEstimateField.key] +
@@ -189,14 +193,8 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
                     storyPointEstimateField.name
                   }
                 >
-                  {(props) => (
-                    <div {...props}>
-                      <Badge>
-                        {issueData.fields[storyPointEstimateField.key]}
-                      </Badge>
-                    </div>
-                  )}
-                </Tooltip>
+                  <Badge>{issueData.fields[storyPointEstimateField.key]}</Badge>
+                </TooltipContainer>
               )}
           </FooterSideContainer>
           <FooterSideContainer>
