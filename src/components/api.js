@@ -54,7 +54,6 @@ export const IssueLinkAPI = async (
   if (queriesString.length > 0) {
     url = url + "?" + queriesString;
   }
-  console.log(url);
   const response = await AP.request(url);
 
   return Promise.resolve(JSON.parse(response.body));
@@ -79,8 +78,6 @@ export const ProjectAPI = async (key) => {
     } else {
       return new Promise((resolve) => {
         AP.context.getContext((res) => {
-          console.log("result");
-          console.log(res);
           resolve(res.jira.project.key);
         });
       });
