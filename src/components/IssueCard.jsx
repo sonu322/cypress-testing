@@ -7,17 +7,18 @@ import Tooltip from "@atlaskit/tooltip";
 import Badge from "@atlaskit/badge";
 import Avatar from "@atlaskit/avatar";
 import URLSearchParams from "@ungap/url-search-params";
+import { Icon } from "./Icon";
 
 const searcher = new URLSearchParams(location.search);
 const xdm = searcher.get("xdm_e");
 
 // TODO: ADD ASSIGNEE AVATAR, TOOLTIP FOR KEY
-const IconContainer = styled.span`
-  display: flex;
-  width: 16px;
-  overflow: hidden;
-  height: 16px;
-`;
+// const IconContainer = styled.span`
+//   display: flex;
+//   width: 16px;
+//   overflow: hidden;
+//   height: 16px;
+// `;
 const IssueKey = styled.a`
   text-overflow: ellipsis;
   font-size: 12px;
@@ -114,7 +115,7 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
     return (
       <Container>
         {/* header */}
-        <Tooltip content={issueData.fields.summary} position="bottom-end">
+        <Tooltip content={issueData.fields.summary} position="bottom">
           {(props) => (
             <div {...props}>
               <SummaryContainer>{issueData.fields.summary}</SummaryContainer>
@@ -132,13 +133,11 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
               >
                 {(props) => (
                   <div {...props}>
-                    <IconContainer>
-                      <img
-                        height={16}
-                        width={16}
-                        src={issueData.fields.issuetype.iconUrl}
-                      />
-                    </IconContainer>
+                    <Icon
+                      height={16}
+                      width={16}
+                      src={issueData.fields.issuetype.iconUrl}
+                    />
                   </div>
                 )}
               </Tooltip>
@@ -154,13 +153,11 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
               >
                 {(props) => (
                   <div {...props}>
-                    <IconContainer>
-                      <img
-                        height={16}
-                        width={16}
-                        src={issueData.fields.priority.iconUrl}
-                      />
-                    </IconContainer>
+                    <Icon
+                      height={16}
+                      width={16}
+                      src={issueData.fields.priority.iconUrl}
+                    />
                   </div>
                 )}
               </Tooltip>
