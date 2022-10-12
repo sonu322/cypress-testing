@@ -55,56 +55,33 @@ const FooterSideContainer = styled.div`
 const SummaryContainer = styled.div``;
 export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
   const storyPointsInfo = useMemo(() => {
-    const field = issueFields.find((field) => field.customKey == "storypoints");
+    let field = issueFields.find((field) => field.customKey == "storypoints");
+    if (!field) {
+      field = issueFields.find(
+        (field) => field.customKey == "storypointestimate"
+      );
+    }
     field.isSelected = selectedIssueFields.includes(field.key);
     return field;
   }, [issueFields, selectedIssueFields]);
-  
-  const storyPointEstimateField = useMemo(
-    () => issueFields.find((field) => field.customKey == "storypointestimate"),
-    [issueFields]
-  );
+
   console.log(storyPointsInfo);
-  console.log(storyPointEstimateField);
-  const priorityField = useMemo(
-    () => issueFields.find((field) => field.customKey == "priority"),
-    [issueFields]
-  );
+  const priorityInfo = useMemo(() => {
+    const field = issueFields.find((field) => field.customKey == "priority");
+    field.isSelected = selectedIssueFields.includes(field.key);
+    return field;
+  }, [issueFields, selectedIssueFields]);
 
-  const issueTypeField = useMemo(
-    () => issueFields.find((field) => field.customKey == "issuetype"),
-    [issueFields]
-  );
-  const assigneeField = useMemo(
-    () => issueFields.find((field) => field.customKey == "assignee"),
-    [issueFields]
-  );
-  const isIssueTypeFieldSelected = useMemo(
-    () => selectedIssueFields.includes(issueTypeField.key),
-    [issueTypeField, selectedIssueFields]
-  );
-
-  // const isStoryPointsFieldSelected = useMemo(
-  //   () => storyPointsInfo && selectedIssueFields.includes(storyPointsInfo.key),
-  //   [selectedIssueFields, storyPointsInfo]
-  // );
-
-  const isStoryPointEstimateFieldSelected = useMemo(
-    () =>
-      storyPointEstimateField &&
-      selectedIssueFields.includes(storyPointEstimateField.key),
-    [selectedIssueFields, storyPointEstimateField]
-  );
-
-  const isPriorityFieldSelected = useMemo(
-    () => selectedIssueFields.includes(priorityField.key),
-    [selectedIssueFields, priorityField]
-  );
-
-  const isAssigneeFieldSelected = useMemo(
-    () => selectedIssueFields.includes(assigneeField.key),
-    [selectedIssueFields, assigneeField]
-  );
+  const issueTypeInfo = useMemo(() => {
+    const field = issueFields.find((field) => field.customKey == "issuetype");
+    field.isSelected = selectedIssueFields.includes(field.key);
+    return field;
+  }, [issueFields, selectedIssueFields]);
+  const assigneeInfo = useMemo(() => {
+    const field = issueFields.find((field) => field.customKey == "assignee");
+    field.isSelected = selectedIssueFields.includes(field.key);
+    return field;
+  }, [issueFields, selectedIssueFields]);
 
   console.log("from card");
   console.log(issueData);
@@ -121,7 +98,7 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
         {/* footer */}
         <CardFooter>
           <FooterSideContainer>
-            {isIssueTypeFieldSelected && (
+            {issueTypeInfo.isSelected && (
               <TooltipContainer
                 position="bottom-end"
                 content={issueData.fields.issuetype.name}
@@ -133,7 +110,7 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
                 />
               </TooltipContainer>
             )}
-            {isPriorityFieldSelected && issueData.fields.priority && (
+            {priorityInfo.isSelected && issueData.fields.priority && (
               <TooltipContainer
                 position="bottom-end"
                 content={issueData.fields.priority.name}
@@ -158,19 +135,19 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
                   <Badge>{issueData.fields[storyPointsInfo.key]}</Badge>
                 </TooltipContainer>
               )}
-            {isStoryPointEstimateFieldSelected &&
-              issueData.fields[storyPointEstimateField.key] && (
+            {/* {storyPointEstimateInfo.isSelected &&
+              issueData.fields[storyPointEstimateInfo.key] && (
                 <TooltipContainer
                   position="bottom-end"
                   content={
-                    issueData.fields[storyPointEstimateField.key] +
+                    issueData.fields[storyPointEstimateInfo.key] +
                     " " +
-                    storyPointEstimateField.name
+                    storyPointEstimateInfo.name
                   }
                 >
-                  <Badge>{issueData.fields[storyPointEstimateField.key]}</Badge>
+                  <Badge>{issueData.fields[storyPointEstimateInfo.key]}</Badge>
                 </TooltipContainer>
-              )}
+              )} */}
           </FooterSideContainer>
           <FooterSideContainer>
             <TooltipContainer position="bottom-end" content={issueData.key}>
@@ -182,20 +159,20 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
                 {issueData.key}
               </IssueKey>
             </TooltipContainer>
-            {isAssigneeFieldSelected && (
+            {assigneeInfo.isSelected && (
               <TooltipContainer
                 position="bottom-end"
                 content={
-                  issueData.fields[assigneeField.key]
+                  issueData.fields[assigneeInfo.key]
                     ? "Assignee: " +
-                      issueData.fields[assigneeField.key].displayName
+                      issueData.fields[assigneeInfo.key].displayName
                     : "Unassigned"
                 }
               >
                 <Avatar
                   src={
-                    issueData.fields[assigneeField.key] &&
-                    issueData.fields[assigneeField.key].avatarUrls["16x16"]
+                    issueData.fields[assigneeInfo.key] &&
+                    issueData.fields[assigneeInfo.key].avatarUrls["16x16"]
                   }
                 ></Avatar>
               </TooltipContainer>
