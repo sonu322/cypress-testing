@@ -6,9 +6,7 @@ import Spinner from "@atlaskit/spinner";
 import Button from "@atlaskit/button";
 import { colors } from "@atlaskit/theme";
 import { IssueLinkAPI } from "../api";
-import {
-  UUID,
-} from "../../util";
+import { UUID } from "../../util";
 import Tree, { mutateTree } from "@atlaskit/tree";
 import { IssueCard } from "../IssueCard";
 
@@ -53,7 +51,6 @@ const SpinnerContainer = styled.span`
   line-height: 32px;
   padding-top: 8px;
 `;
-
 
 const formatIssueData = (data, parent) => {
   return {
@@ -280,7 +277,7 @@ export const IssueTree = ({
       );
     }
 
-    return <Box>asdf</Box>;
+    return <Box />;
   };
   const getItemStyle = (depth) => {
     const style = {
