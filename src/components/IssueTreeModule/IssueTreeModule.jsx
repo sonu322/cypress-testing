@@ -125,12 +125,6 @@ export const IssueTreeModule = () => {
           } else {
             fieldNames.push("storypointestimate");
           }
-          // const selectedFields = fieldNames.map((name) => {
-          //   const field = newResults.find((result) => result.customKey == name);
-          //   if (field) {
-          //     return field.customKey;
-          //   } // useforeach
-          // });
           let selectedFields = [];
           let allOptions = [];
           fieldNames.forEach((name) => {
