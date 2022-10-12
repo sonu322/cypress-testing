@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import DropdownMenu, {
   DropdownItemCheckboxGroup,
   DropdownItemCheckbox,
@@ -8,17 +8,20 @@ export const CardFieldsDropdown = ({
   selectedIssueFields,
   setSelectedIssueFields,
 }) => {
-  const handleOptionClick = (e, key) => {
-    if (selectedIssueFields) {
-      let updated = [];
-      if (selectedIssueFields.includes(key)) {
-        updated = selectedIssueFields.filter((fieldKey) => fieldKey != key);
-      } else {
-        updated = [...selectedIssueFields, key];
+  const handleOptionClick = useCallback(
+    (key) => {
+      if (selectedIssueFields) {
+        let updated = [];
+        if (selectedIssueFields.includes(key)) {
+          updated = selectedIssueFields.filter((fieldKey) => fieldKey != key);
+        } else {
+          updated = [...selectedIssueFields, key];
+        }
+        setSelectedIssueFields(updated);
       }
-      setSelectedIssueFields(updated);
-    }
-  };
+    },
+    [selectedIssueFields, setSelectedIssueFields]
+  );
   return (
     <>
       <DropdownMenu
@@ -39,7 +42,7 @@ export const CardFieldsDropdown = ({
                     ? selectedIssueFields.includes(option.key)
                     : false
                 }
-                onClick={(e) => handleOptionClick(e, option.key)}
+                onClick={() => handleOptionClick(option.key)}
               >
                 {option.name}
               </DropdownItemCheckbox>

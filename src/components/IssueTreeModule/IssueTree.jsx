@@ -4,13 +4,10 @@ import ChevronDownIcon from "@atlaskit/icon/glyph/chevron-down";
 import ChevronRightIcon from "@atlaskit/icon/glyph/chevron-right";
 import Spinner from "@atlaskit/spinner";
 import Button from "@atlaskit/button";
-// import { Item } from "@atlaskit/navigation-next";
 import { colors } from "@atlaskit/theme";
-// import Lozenge from "@atlaskit/lozenge";
 import { IssueLinkAPI } from "../api";
 import {
   UUID,
-  // getStatusAppearance
 } from "../../util";
 import Tree, { mutateTree } from "@atlaskit/tree";
 import { IssueCard } from "../IssueCard";
@@ -42,18 +39,6 @@ const LinkTypeContainer = styled.div`
   font-weight: 500;
   text-transform: capitalize;
 `;
-// const ItemWrapper = styled.div`
-//   display: flex;
-//   width: 270px;
-// `;
-
-// const IconContainer = styled.span`
-//   display: flex;
-//   width: 16px;
-//   overflow: hidden;
-//   height: 16px;
-// `;
-
 const Container = styled.div`
   display: flex;
 `;
@@ -69,15 +54,7 @@ const SpinnerContainer = styled.span`
   padding-top: 8px;
 `;
 
-// const InnerElem = styled.div`
-//   display: flex;
-// `;
 
-// const TextContent = styled.span`
-//   margin-left: 4px;
-//   font-weight: 500;
-//   vertical-align: middle;
-// `;
 const formatIssueData = (data, parent) => {
   return {
     title: data.key,
@@ -307,7 +284,6 @@ export const IssueTree = ({
   };
   const getItemStyle = (depth) => {
     const style = {
-      // width: "300px",
       margin: ".5em 0",
       display: "flex",
       marginLeft: "0px",
@@ -324,7 +300,6 @@ export const IssueTree = ({
       ref={provided.innerRef}
       {...provided.dragHandleProps}
     >
-      {/* {getIcon(item, onExpand, onCollapse)} */}
       <SideIcon
         item={item}
         onExpand={onExpand}

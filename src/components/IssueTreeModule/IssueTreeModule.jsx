@@ -111,7 +111,6 @@ export const IssueTreeModule = () => {
             }
             return result;
           });
-          // setIssueFields(newResults);
           const fieldNames = [
             ...fixedFieldNames,
             "issuetype",

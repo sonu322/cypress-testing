@@ -133,19 +133,6 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
                   <Badge>{issueData.fields[storyPointsInfo.key]}</Badge>
                 </TooltipContainer>
               )}
-            {/* {storyPointEstimateInfo.isSelected &&
-              issueData.fields[storyPointEstimateInfo.key] && (
-                <TooltipContainer
-                  position="bottom-end"
-                  content={
-                    issueData.fields[storyPointEstimateInfo.key] +
-                    " " +
-                    storyPointEstimateInfo.name
-                  }
-                >
-                  <Badge>{issueData.fields[storyPointEstimateInfo.key]}</Badge>
-                </TooltipContainer>
-              )} */}
           </FooterSideContainer>
           <FooterSideContainer>
             <TooltipContainer position="bottom-end" content={issueData.key}>

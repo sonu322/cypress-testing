@@ -1,4 +1,3 @@
-// import Page, { Grid, GridColumn } from "@atlaskit/page";
 import React from "react";
 import { Dropdown } from "./Dropdown";
 import { ButtonGroup } from "@atlaskit/button";
@@ -21,8 +20,6 @@ export const Toolbar = ({
 }) => {
   return (
     <Container>
-      {/* <Grid spacing="compact">
-        <GridColumn medium={10}> */}
       <ButtonGroup>
         {options &&
           filter &&
@@ -36,8 +33,6 @@ export const Toolbar = ({
             />
           ))}
       </ButtonGroup>
-      {/* </GridColumn>
-      </Grid> */}
       <CardFieldsDropdown
         issueFields={issueFields}
         selectedIssueFields={selectedIssueFields}
