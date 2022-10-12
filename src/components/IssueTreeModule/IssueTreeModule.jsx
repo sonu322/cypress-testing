@@ -101,15 +101,11 @@ export const IssueTreeModule = () => {
     const fetchFieldsData = async () => {
       Promise.all([ProjectAPI(), IssueFieldsAPI()]).then(
         ([project, results]) => {
-          console.log("fields!!!");
-          console.log(results);
           const newResults = results.map((result) => {
             if (result.key.includes("customfield_")) {
-              console.log("custom!!!");
               result.customKey = result.name
                 .replace(/[\s, -]/g, "")
                 .toLowerCase();
-              console.log(result.key, result.name, result.customKey);
             } else {
               result.customKey = result.key;
             }
@@ -146,9 +142,6 @@ export const IssueTreeModule = () => {
               }
             }
           });
-          console.log("selected");
-          console.log(selectedFields);
-          console.log(allOptions);
           setIssueFields(allOptions);
           setSelectedIssueFields(selectedFields);
         }
