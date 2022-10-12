@@ -7,10 +7,10 @@ import Avatar from "@atlaskit/avatar";
 import URLSearchParams from "@ungap/url-search-params";
 import { Icon } from "./Icon";
 import { TooltipContainer } from "./TooltipContainer";
-
+// varibles
 const searcher = new URLSearchParams(location.search);
 const xdm = searcher.get("xdm_e");
-
+// styled components
 const IssueKey = styled.a`
   text-overflow: ellipsis;
   font-size: 12px;
@@ -53,7 +53,10 @@ const FooterSideContainer = styled.div`
   gap: 8px;
 `;
 const SummaryContainer = styled.div``;
+
+// main function
 export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
+  // variables
   const storyPointsInfo = useMemo(() => {
     let field = issueFields.find((field) => field.customKey == "storypoints");
     if (!field) {
@@ -64,14 +67,11 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
     field.isSelected = selectedIssueFields.includes(field.key);
     return field;
   }, [issueFields, selectedIssueFields]);
-
-  console.log(storyPointsInfo);
   const priorityInfo = useMemo(() => {
     const field = issueFields.find((field) => field.customKey == "priority");
     field.isSelected = selectedIssueFields.includes(field.key);
     return field;
   }, [issueFields, selectedIssueFields]);
-
   const issueTypeInfo = useMemo(() => {
     const field = issueFields.find((field) => field.customKey == "issuetype");
     field.isSelected = selectedIssueFields.includes(field.key);
@@ -83,11 +83,9 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
     return field;
   }, [issueFields, selectedIssueFields]);
 
-  console.log("from card");
-  console.log(issueData);
-
   if (issueData && issueData.fields) {
     const issueUrl = `${xdm}/browse/${issueData.key}`;
+    // component to render
     return (
       <Container>
         {/* header */}
