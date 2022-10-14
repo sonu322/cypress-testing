@@ -1,46 +1,45 @@
-import React from "react";
+import React, {useCallback} from "react";
 import DropdownMenu, {
   DropdownItemCheckboxGroup,
   DropdownItemCheckbox,
 } from "@atlaskit/dropdown-menu";
 export const Dropdown = ({
-  filteredKeyOptions,
-  keyName,
-  updateFilteredKeyOptions,
-  keyOptions,
+  selectedOptions,
+  dropdownName,
+  updateSelectedOptions,
+  options,
 }) => {
-  const handleOptionClick = (e, id) => {
-    if (filteredKeyOptions) {
-      let updated = [];
-      if (filteredKeyOptions.includes(id)) {
-        updated = filteredKeyOptions.filter((item, index) => item != id);
+  const handleOptionClick = useCallback(
+    (id) => {
+      let updatedList = [];
+      if (selectedOptions.includes(id)) {
+        updatedList = selectedOptions.filter((fieldId) => fieldId != id);
       } else {
-        updated = [...filteredKeyOptions, id];
+        updatedList = [...selectedOptions, id];
       }
-      updateFilteredKeyOptions(keyName, updated);
-    }
-  };
+      updateSelectedOptions(updatedList);
+    },
+    [selectedOptions, updateSelectedOptions]
+  );
   return (
     <>
       <DropdownMenu
         triggerType="button"
-        trigger={keyName}
+        trigger={dropdownName}
         shouldFlip={false}
         position="bottom right"
         isCompact={true}
       >
         <DropdownItemCheckboxGroup>
-          {keyOptions &&
-            keyOptions.map((option) => (
+          {options &&
+            options.map((option) => (
               <DropdownItemCheckbox
                 key={option.id}
                 id={option.id}
                 isSelected={
-                  filteredKeyOptions
-                    ? filteredKeyOptions.includes(option.id)
-                    : false
+                  selectedOptions ? selectedOptions.includes(option.id) : false
                 }
-                onClick={(e) => handleOptionClick(e, option.id)}
+                onClick={() => handleOptionClick(option.id)}
               >
                 {option.name}
               </DropdownItemCheckbox>

@@ -9,6 +9,25 @@ export const Container = styled.div`
   justify-content: space-between;
   width: 100%;
 `;
+const IssueOptionsDropdown = ({
+  keyName,
+  options,
+  selectedOptions,
+  updateSelectedOptions,
+}) => {
+  const updateSelectedFieldOptions = (updatedList) => {
+    updateSelectedOptions(keyName, updatedList);
+  };
+  return (
+    <Dropdown
+      key={keyName}
+      dropdownName={keyName}
+      options={options}
+      selectedOptions={selectedOptions}
+      updateSelectedOptions={updateSelectedFieldOptions}
+    />
+  );
+};
 export const Toolbar = ({
   options,
   filter,
@@ -24,19 +43,20 @@ export const Toolbar = ({
         {options &&
           filter &&
           keyNames.map((keyName) => (
-            <Dropdown
+            <IssueOptionsDropdown
               key={keyName}
               keyName={keyName}
-              keyOptions={options[keyName]}
-              filteredKeyOptions={filter[keyName]}
-              updateFilteredKeyOptions={updateFilteredKeyOptions}
+              options={options[keyName]}
+              selectedOptions={filter[keyName]}
+              updateSelectedOptions={updateFilteredKeyOptions}
             />
           ))}
       </ButtonGroup>
-      <CardFieldsDropdown
-        issueFields={issueFields}
-        selectedIssueFields={selectedIssueFields}
-        setSelectedIssueFields={setSelectedIssueFields}
+      <Dropdown
+        dropdownName={"Issue Card Fields"}
+        options={issueFields}
+        selectedOptions={selectedIssueFields}
+        updateSelectedOptions={setSelectedIssueFields}
       />
     </Container>
   );

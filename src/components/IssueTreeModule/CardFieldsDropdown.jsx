@@ -4,23 +4,21 @@ import DropdownMenu, {
   DropdownItemCheckbox,
 } from "@atlaskit/dropdown-menu";
 export const CardFieldsDropdown = ({
-  issueFields,
-  selectedIssueFields,
-  setSelectedIssueFields,
+  options,
+  selectedOptions,
+  updateSelectedOptions,
 }) => {
   const handleOptionClick = useCallback(
-    (key) => {
-      if (selectedIssueFields) {
-        let updated = [];
-        if (selectedIssueFields.includes(key)) {
-          updated = selectedIssueFields.filter((fieldKey) => fieldKey != key);
-        } else {
-          updated = [...selectedIssueFields, key];
-        }
-        setSelectedIssueFields(updated);
+    (id) => {
+      let updatedList = [];
+      if (selectedOptions.includes(id)) {
+        updatedList = selectedOptions.filter((fieldId) => fieldId != id);
+      } else {
+        updatedList = [...selectedOptions, id];
       }
+      updateSelectedOptions(updatedList);
     },
-    [selectedIssueFields, setSelectedIssueFields]
+    [selectedOptions, updateSelectedOptions]
   );
   return (
     <>
@@ -32,17 +30,15 @@ export const CardFieldsDropdown = ({
         isCompact={true}
       >
         <DropdownItemCheckboxGroup>
-          {issueFields &&
-            issueFields.map((option) => (
+          {options &&
+            options.map((option) => (
               <DropdownItemCheckbox
-                key={option.key}
-                id={option.key}
+                key={option.id}
+                id={option.id}
                 isSelected={
-                  selectedIssueFields
-                    ? selectedIssueFields.includes(option.key)
-                    : false
+                  selectedOptions ? selectedOptions.includes(option.id) : false
                 }
-                onClick={() => handleOptionClick(option.key)}
+                onClick={() => handleOptionClick(option.id)}
               >
                 {option.name}
               </DropdownItemCheckbox>
