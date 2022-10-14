@@ -24,7 +24,14 @@ let root = {
     },
   },
 };
-const fixedFieldNames = ["summary", "subtasks", "parent", "issuelinks", "status", "resolution"];
+const fixedFieldNames = [
+  "summary",
+  "subtasks",
+  "parent",
+  "issuelinks",
+  "status",
+  "resolution",
+];
 export const IssueTreeModule = () => {
   const [options, setOptions] = useState({});
   const [filter, setFilter] = useState({});
@@ -125,32 +132,40 @@ export const IssueTreeModule = () => {
             fieldNames.push("storypointestimate");
           }
           let selectedFieldIds = [];
-          let allOptions = [];
+          let fieldsMap = new Map();
           fieldNames.forEach((name) => {
             const field = newResults.find((result) => result.customKey == name);
             if (field) {
-              allOptions.push(field);
+              // fieldsMap.push(field);
+              fieldsMap.set(field.customKey, field);
               if (!fixedFieldNames.includes(name)) {
                 selectedFieldIds.push(field.id);
               }
             }
           });
-          setIssueFields(allOptions);
+          setIssueFields(fieldsMap);
           setSelectedIssueFieldIds(selectedFieldIds);
         }
       );
     };
     fetchFieldsData();
   }, []);
-
+  console.log(issueFields);
   const updateFilteredKeyOptions = (key, keyOptions) => {
     let newFilter = { ...filter };
     newFilter[key] = keyOptions;
     setFilter(newFilter);
   };
-  const issueCardOptions = issueFields.filter(
-    (field) => !fixedFieldNames.includes(field.customKey)
-  );
+  let issueCardOptions = [];
+  for (let fieldId of issueFields.keys()) {
+    if (!fixedFieldNames.includes(fieldId)) {
+      issueCardOptions.push(issueFields.get(fieldId));
+    }
+  }
+  // how to check use memo: change dropdown, console log will run again.
+  // but put it in use callback, it wontrun
+  console.log("issuecardoptions");
+  console.log(issueCardOptions);
   return (
     <div>
       <Toolbar

@@ -234,9 +234,12 @@ export const IssueTree = ({
   issueFields,
 }) => {
   useEffect(() => {
-    if (issueFields && issueFields.length > 0) {
-      const fieldKeys = issueFields.map((field) => field.key);
-      IssueLinkAPI(null, fieldKeys).then((data) => {
+    if (issueFields && issueFields.size>0) {
+      const fieldIds = [];
+      for(let field of issueFields.values()) {
+        fieldIds.push(field.id)
+      }
+      IssueLinkAPI(null, fieldIds).then((data) => {
         const value = formatIssue(data, null, null);
         root.items[data.id] = value.data;
         root.items["0"].children.push(data.id);

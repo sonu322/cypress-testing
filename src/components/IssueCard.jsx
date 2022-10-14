@@ -55,10 +55,16 @@ const FooterSideContainer = styled.div`
 const SummaryContainer = styled.div``;
 
 // main function
-export const IssueCard = ({ issueData, selectedIssueFieldIds, issueFields }) => {
+export const IssueCard = ({
+  issueData,
+  selectedIssueFieldIds,
+  issueFields,
+}) => {
   // variables
   const storyPointsInfo = useMemo(() => {
-    let field = issueFields.find((field) => field.customKey == "storypoints");
+    // let field = issueFields.find((field) => field.customKey == "storypoints");
+    let field = issueFields.get("storypoints");
+    console.log(field)
     if (!field) {
       field = issueFields.find(
         (field) => field.customKey == "storypointestimate"
@@ -68,23 +74,27 @@ export const IssueCard = ({ issueData, selectedIssueFieldIds, issueFields }) => 
     return field;
   }, [issueFields, selectedIssueFieldIds]);
   const priorityInfo = useMemo(() => {
-    const field = issueFields.find((field) => field.customKey == "priority");
+    const field = issueFields.get("priority");
+    console.log(field);
     field.isSelected = selectedIssueFieldIds.includes(field.key);
     return field;
   }, [issueFields, selectedIssueFieldIds]);
   const issueTypeInfo = useMemo(() => {
-    const field = issueFields.find((field) => field.customKey == "issuetype");
+    const field = issueFields.get("issuetype");
     field.isSelected = selectedIssueFieldIds.includes(field.key);
     return field;
   }, [issueFields, selectedIssueFieldIds]);
   const assigneeInfo = useMemo(() => {
-    const field = issueFields.find((field) => field.customKey == "assignee");
+    const field = issueFields.get("assignee");
     field.isSelected = selectedIssueFieldIds.includes(field.key);
     return field;
   }, [issueFields, selectedIssueFieldIds]);
 
   if (issueData && issueData.fields && xdm) {
     const issueUrl = `${xdm}/browse/${issueData.key}`;
+    console.log("storypointsinfo")
+    console.log(issueData.fields)
+    console.log(issueData.fields[storyPointsInfo.key])
     // component to render
     return (
       <Container>
@@ -101,9 +111,7 @@ export const IssueCard = ({ issueData, selectedIssueFieldIds, issueFields }) => 
                 position="bottom-end"
                 content={issueData.fields.issuetype.name}
               >
-                <Icon
-                  src={issueData.fields.issuetype.iconUrl}
-                />
+                <Icon src={issueData.fields.issuetype.iconUrl} />
               </TooltipContainer>
             )}
             {priorityInfo.isSelected && issueData.fields.priority && (
@@ -111,9 +119,7 @@ export const IssueCard = ({ issueData, selectedIssueFieldIds, issueFields }) => 
                 position="bottom-end"
                 content={issueData.fields.priority.name}
               >
-                <Icon
-                  src={issueData.fields.priority.iconUrl}
-                />
+                <Icon src={issueData.fields.priority.iconUrl} />
               </TooltipContainer>
             )}
             {storyPointsInfo.isSelected &&
