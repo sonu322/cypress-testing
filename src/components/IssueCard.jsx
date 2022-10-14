@@ -64,37 +64,43 @@ export const IssueCard = ({
   const storyPointsInfo = useMemo(() => {
     // let field = issueFields.find((field) => field.customKey == "storypoints");
     let field = issueFields.get("storypoints");
-    console.log(field)
+    console.log(field);
     if (!field) {
       field = issueFields.find(
         (field) => field.customKey == "storypointestimate"
       );
     }
     field.isSelected = selectedIssueFieldIds.includes(field.key);
+    field.value = issueData.fields[field.key];
     return field;
-  }, [issueFields, selectedIssueFieldIds]);
+  }, [issueFields, selectedIssueFieldIds, issueData]);
   const priorityInfo = useMemo(() => {
     const field = issueFields.get("priority");
     console.log(field);
     field.isSelected = selectedIssueFieldIds.includes(field.key);
+    field.value = issueData.fields[field.key];
     return field;
-  }, [issueFields, selectedIssueFieldIds]);
+  }, [issueFields, selectedIssueFieldIds, issueData]);
+  console.log("priorityinfo");
+  console.log(priorityInfo);
   const issueTypeInfo = useMemo(() => {
     const field = issueFields.get("issuetype");
     field.isSelected = selectedIssueFieldIds.includes(field.key);
+    field.value = issueData.fields[field.key];
     return field;
-  }, [issueFields, selectedIssueFieldIds]);
+  }, [issueFields, selectedIssueFieldIds, issueData]);
   const assigneeInfo = useMemo(() => {
     const field = issueFields.get("assignee");
     field.isSelected = selectedIssueFieldIds.includes(field.key);
+    field.value = issueData.fields[field.key];
     return field;
-  }, [issueFields, selectedIssueFieldIds]);
+  }, [issueFields, selectedIssueFieldIds, issueData]);
 
   if (issueData && issueData.fields && xdm) {
     const issueUrl = `${xdm}/browse/${issueData.key}`;
-    console.log("storypointsinfo")
-    console.log(issueData.fields)
-    console.log(issueData.fields[storyPointsInfo.key])
+    console.log("storypointsinfo");
+    console.log(issueData.fields);
+    console.log(issueData.fields[storyPointsInfo.key]);
     // component to render
     return (
       <Container>
@@ -109,32 +115,27 @@ export const IssueCard = ({
             {issueTypeInfo.isSelected && (
               <TooltipContainer
                 position="bottom-end"
-                content={issueData.fields.issuetype.name}
+                content={issueTypeInfo.value.name}
               >
-                <Icon src={issueData.fields.issuetype.iconUrl} />
+                <Icon src={issueTypeInfo.value.iconUrl} />
               </TooltipContainer>
             )}
-            {priorityInfo.isSelected && issueData.fields.priority && (
+            {priorityInfo.isSelected && priorityInfo.value && (
               <TooltipContainer
                 position="bottom-end"
-                content={issueData.fields.priority.name}
+                content={priorityInfo.value.name}
               >
-                <Icon src={issueData.fields.priority.iconUrl} />
+                <Icon src={priorityInfo.value.iconUrl} />
               </TooltipContainer>
             )}
-            {storyPointsInfo.isSelected &&
-              issueData.fields[storyPointsInfo.key] && (
-                <TooltipContainer
-                  position="bottom-end"
-                  content={
-                    issueData.fields[storyPointsInfo.key] +
-                    " " +
-                    storyPointsInfo.name
-                  }
-                >
-                  <Badge>{issueData.fields[storyPointsInfo.key]}</Badge>
-                </TooltipContainer>
-              )}
+            {storyPointsInfo.isSelected && storyPointsInfo.value && (
+              <TooltipContainer
+                position="bottom-end"
+                content={storyPointsInfo.value + " " + storyPointsInfo.name}
+              >
+                <Badge>{storyPointsInfo.value}</Badge>
+              </TooltipContainer>
+            )}
           </FooterSideContainer>
           <FooterSideContainer>
             <TooltipContainer position="bottom-end" content={issueData.key}>
@@ -150,16 +151,14 @@ export const IssueCard = ({
               <TooltipContainer
                 position="bottom-end"
                 content={
-                  issueData.fields[assigneeInfo.key]
-                    ? "Assignee: " +
-                      issueData.fields[assigneeInfo.key].displayName
+                  assigneeInfo.value
+                    ? "Assignee: " + assigneeInfo.value.displayName
                     : "Unassigned"
                 }
               >
                 <Avatar
                   src={
-                    issueData.fields[assigneeInfo.key] &&
-                    issueData.fields[assigneeInfo.key].avatarUrls["16x16"]
+                    assigneeInfo.value && assigneeInfo.value.avatarUrls["16x16"]
                   }
                 ></Avatar>
               </TooltipContainer>

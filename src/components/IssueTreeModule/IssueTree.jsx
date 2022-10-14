@@ -234,10 +234,10 @@ export const IssueTree = ({
   issueFields,
 }) => {
   useEffect(() => {
-    if (issueFields && issueFields.size>0) {
+    if (issueFields && issueFields.size > 0) {
       const fieldIds = [];
-      for(let field of issueFields.values()) {
-        fieldIds.push(field.id)
+      for (let field of issueFields.values()) {
+        fieldIds.push(field.id);
       }
       IssueLinkAPI(null, fieldIds).then((data) => {
         const value = formatIssue(data, null, null);
