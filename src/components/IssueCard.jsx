@@ -102,8 +102,6 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
                 content={issueData.fields.issuetype.name}
               >
                 <Icon
-                  height={16}
-                  width={16}
                   src={issueData.fields.issuetype.iconUrl}
                 />
               </TooltipContainer>
@@ -114,8 +112,6 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
                 content={issueData.fields.priority.name}
               >
                 <Icon
-                  height={16}
-                  width={16}
                   src={issueData.fields.priority.iconUrl}
                 />
               </TooltipContainer>
