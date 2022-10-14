@@ -1,3 +1,5 @@
+import URLSearchParams from "@ungap/url-search-params";
+
 export const UUID = () => {
   function s4() {
     return Math.floor((1 + Math.random()) * 0x10000)
@@ -7,7 +9,7 @@ export const UUID = () => {
   return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4();
 };
 
-export const csv = function(rows, header) {
+export const csv = function (rows, header) {
   let content = "";
   if (header) {
     content += `"indent","key","link","summary","type","status","priorty"\n`;
@@ -15,7 +17,7 @@ export const csv = function(rows, header) {
     content += `"","","","","","",""\n`;
   }
 
-  rows.forEach(row => {
+  rows.forEach((row) => {
     const { indent, key, link, summary, type, status, priority } = row;
     content += `"${indent}","${key}","${link}","${summary}","${type}","${status}","${priority}"\n`;
   });
@@ -41,7 +43,7 @@ export const download = (type, content) => {
   }
 };
 
-export const getStatusAppearance = category => {
+export const getStatusAppearance = (category) => {
   const know = ["default", "inprogress", "moved", "new", "removed", "success"];
   let color = category.colorName;
   let type = "default";
@@ -62,4 +64,9 @@ export const getStatusAppearance = category => {
   }
 
   return type;
+};
+export const getQueryParam = (paramName) => {
+  const searcher = new URLSearchParams(location.search);
+  const paramValue = searcher.get(paramName);
+  return paramValue;
 };

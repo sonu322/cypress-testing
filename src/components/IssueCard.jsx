@@ -4,12 +4,12 @@ import { colors } from "@atlaskit/theme";
 import styled, { css } from "styled-components";
 import Badge from "@atlaskit/badge";
 import Avatar from "@atlaskit/avatar";
-import URLSearchParams from "@ungap/url-search-params";
 import { Icon } from "./Icon";
 import { TooltipContainer } from "./TooltipContainer";
+import { getQueryParam } from "../util";
 // varibles
-const searcher = new URLSearchParams(location.search);
-const xdm = searcher.get("xdm_e");
+const xdm = getQueryParam("xdm_e");
+
 // styled components
 const IssueKey = styled.a`
   text-overflow: ellipsis;
@@ -83,7 +83,7 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
     return field;
   }, [issueFields, selectedIssueFields]);
 
-  if (issueData && issueData.fields) {
+  if (issueData && issueData.fields && xdm) {
     const issueUrl = `${xdm}/browse/${issueData.key}`;
     // component to render
     return (
