@@ -34,17 +34,13 @@ export const IssueLinkAPI = async (
   ]
 ) => {
   const getKey = () => {
-    if (key) {
-      return Promise.resolve(key);
-    } else {
-      return new Promise((resolve) => {
-        AP.context.getContext((res) => {
-          resolve(res.jira.issue.id);
-        });
+    return new Promise((resolve) => {
+      AP.context.getContext((res) => {
+        resolve(res.jira.issue.id);
       });
-    }
+    });
   };
-  const input = await getKey();
+  const input = key || (await getKey());
   let queries = [];
   fields.forEach((field) => {
     queries.push(`fields=${field}`);
