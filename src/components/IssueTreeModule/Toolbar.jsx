@@ -2,32 +2,14 @@ import React from "react";
 import { Dropdown } from "./Dropdown";
 import { ButtonGroup } from "@atlaskit/button";
 import styled from "styled-components";
-import { CardFieldsDropdown } from "./CardFieldsDropdown";
+import { IssueOptionsDropdown } from "./IssueOptionsDropdown";
 
 export const Container = styled.div`
   display: flex;
   justify-content: space-between;
   width: 100%;
 `;
-const IssueOptionsDropdown = ({
-  keyName,
-  options,
-  selectedOptions,
-  updateSelectedOptions,
-}) => {
-  const updateSelectedFieldOptions = (updatedList) => {
-    updateSelectedOptions(keyName, updatedList);
-  };
-  return (
-    <Dropdown
-      key={keyName}
-      dropdownName={keyName}
-      options={options}
-      selectedOptions={selectedOptions}
-      updateSelectedOptions={updateSelectedFieldOptions}
-    />
-  );
-};
+
 export const Toolbar = ({
   options,
   filter,
