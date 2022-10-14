@@ -16,8 +16,8 @@ export const Toolbar = ({
   updateFilteredKeyOptions,
   keyNames,
   issueFields,
-  selectedIssueFields,
-  setSelectedIssueFields,
+  selectedIssueFieldIds,
+  setSelectedIssueFieldIds,
 }) => {
   return (
     <Container>
@@ -37,8 +37,8 @@ export const Toolbar = ({
       <Dropdown
         dropdownName={"Issue Card Fields"}
         options={issueFields}
-        selectedOptions={selectedIssueFields}
-        updateSelectedOptions={setSelectedIssueFields}
+        selectedOptions={selectedIssueFieldIds}
+        updateSelectedOptions={setSelectedIssueFieldIds}
       />
     </Container>
   );

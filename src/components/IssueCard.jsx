@@ -55,7 +55,7 @@ const FooterSideContainer = styled.div`
 const SummaryContainer = styled.div``;
 
 // main function
-export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
+export const IssueCard = ({ issueData, selectedIssueFieldIds, issueFields }) => {
   // variables
   const storyPointsInfo = useMemo(() => {
     let field = issueFields.find((field) => field.customKey == "storypoints");
@@ -64,24 +64,24 @@ export const IssueCard = ({ issueData, selectedIssueFields, issueFields }) => {
         (field) => field.customKey == "storypointestimate"
       );
     }
-    field.isSelected = selectedIssueFields.includes(field.key);
+    field.isSelected = selectedIssueFieldIds.includes(field.key);
     return field;
-  }, [issueFields, selectedIssueFields]);
+  }, [issueFields, selectedIssueFieldIds]);
   const priorityInfo = useMemo(() => {
     const field = issueFields.find((field) => field.customKey == "priority");
-    field.isSelected = selectedIssueFields.includes(field.key);
+    field.isSelected = selectedIssueFieldIds.includes(field.key);
     return field;
-  }, [issueFields, selectedIssueFields]);
+  }, [issueFields, selectedIssueFieldIds]);
   const issueTypeInfo = useMemo(() => {
     const field = issueFields.find((field) => field.customKey == "issuetype");
-    field.isSelected = selectedIssueFields.includes(field.key);
+    field.isSelected = selectedIssueFieldIds.includes(field.key);
     return field;
-  }, [issueFields, selectedIssueFields]);
+  }, [issueFields, selectedIssueFieldIds]);
   const assigneeInfo = useMemo(() => {
     const field = issueFields.find((field) => field.customKey == "assignee");
-    field.isSelected = selectedIssueFields.includes(field.key);
+    field.isSelected = selectedIssueFieldIds.includes(field.key);
     return field;
-  }, [issueFields, selectedIssueFields]);
+  }, [issueFields, selectedIssueFieldIds]);
 
   if (issueData && issueData.fields && xdm) {
     const issueUrl = `${xdm}/browse/${issueData.key}`;

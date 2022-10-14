@@ -230,7 +230,7 @@ export const IssueTree = ({
   isFetched,
   setIsFetched,
   filter,
-  selectedIssueFields,
+  selectedIssueFieldIds,
   issueFields,
 }) => {
   useEffect(() => {
@@ -309,7 +309,7 @@ export const IssueTree = ({
       ) : (
         <IssueCard
           issueData={item.allData ? item.allData : null}
-          selectedIssueFields={selectedIssueFields}
+          selectedIssueFieldIds={selectedIssueFieldIds}
           issueFields={issueFields}
         />
       )}

@@ -31,7 +31,7 @@ export const IssueTreeModule = () => {
   const [tree, setTree] = useState(mutateTree(root, "0", { isExpanded: true }));
   const [isFetched, setIsFetched] = useState(false);
   const [issueFields, setIssueFields] = useState([]);
-  const [selectedIssueFields, setSelectedIssueFields] = useState([]);
+  const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState([]);
   const exportTree = () => {
     const root = tree.items[tree.rootId];
     const rootChildren = root.children;
@@ -124,19 +124,19 @@ export const IssueTreeModule = () => {
           } else {
             fieldNames.push("storypointestimate");
           }
-          let selectedFields = [];
+          let selectedFieldIds = [];
           let allOptions = [];
           fieldNames.forEach((name) => {
             const field = newResults.find((result) => result.customKey == name);
             if (field) {
               allOptions.push(field);
               if (!fixedFieldNames.includes(name)) {
-                selectedFields.push(field.key);
+                selectedFieldIds.push(field.id);
               }
             }
           });
           setIssueFields(allOptions);
-          setSelectedIssueFields(selectedFields);
+          setSelectedIssueFieldIds(selectedFieldIds);
         }
       );
     };
@@ -160,8 +160,8 @@ export const IssueTreeModule = () => {
         updateFilteredKeyOptions={updateFilteredKeyOptions}
         keyNames={["priorities", "linkTypes", "issueTypes"]}
         issueFields={issueCardOptions}
-        selectedIssueFields={selectedIssueFields}
-        setSelectedIssueFields={setSelectedIssueFields}
+        selectedIssueFieldIds={selectedIssueFieldIds}
+        setSelectedIssueFieldIds={setSelectedIssueFieldIds}
       />
       <IssueTree
         tree={tree}
@@ -170,7 +170,7 @@ export const IssueTreeModule = () => {
         setIsFetched={setIsFetched}
         filter={filter}
         root={root}
-        selectedIssueFields={selectedIssueFields}
+        selectedIssueFieldIds={selectedIssueFieldIds}
         issueFields={issueFields}
       />
       {Object.keys(filter).map((keyName) => (
