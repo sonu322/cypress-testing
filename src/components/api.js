@@ -16,22 +16,41 @@ export const PriorityAPI = async () => {
   return Promise.resolve(JSON.parse(response.body));
 };
 
-export const IssueLinkAPI = async (key) => {
+export const IssueFieldsAPI = async () => {
+  const response = await AP.request("/rest/api/3/field");
+  return Promise.resolve(JSON.parse(response.body));
+};
+
+export const IssueLinkAPI = async (
+  key,
+  fields = [
+    "summary",
+    "subtasks",
+    "parent",
+    "issuelinks",
+    "issuetype",
+    "priority",
+    "status",
+  ]
+) => {
   const getKey = () => {
-    if (key) {
-      return Promise.resolve(key);
-    } else {
-      return new Promise((resolve) => {
-        AP.context.getContext((res) => {
-          resolve(res.jira.issue.id);
-        });
+    return new Promise((resolve) => {
+      AP.context.getContext((res) => {
+        resolve(res.jira.issue.id);
       });
-    }
+    });
   };
-  const input = await getKey();
-  const response = await AP.request(
-    `/rest/api/3/issue/${input}?fields=summary&fields=subtasks&fields=parent&fields=issuelinks&fields=issuetype&fields=priority&fields=status`
-  );
+  const input = key || (await getKey());
+  let queries = [];
+  fields.forEach((field) => {
+    queries.push(`fields=${field}`);
+  });
+  const queriesString = queries.join("&");
+  let url = `/rest/api/3/issue/${input}`;
+  if (queriesString.length > 0) {
+    url = url + "?" + queriesString;
+  }
+  const response = await AP.request(url);
 
   return Promise.resolve(JSON.parse(response.body));
 };
@@ -44,6 +63,24 @@ export const IssueAPI = async (id) => {
 
 export const FilterAPI = async () => {
   const response = await AP.request(`/rest/api/3/filter/search`);
+
+  return Promise.resolve(JSON.parse(response.body));
+};
+
+export const ProjectAPI = async (key) => {
+  const getKey = () => {
+    if (key) {
+      return Promise.resolve(key);
+    } else {
+      return new Promise((resolve) => {
+        AP.context.getContext((res) => {
+          resolve(res.jira.project.key);
+        });
+      });
+    }
+  };
+  const input = await getKey();
+  const response = await AP.request(`/rest/api/3/project/${input}`);
 
   return Promise.resolve(JSON.parse(response.body));
 };

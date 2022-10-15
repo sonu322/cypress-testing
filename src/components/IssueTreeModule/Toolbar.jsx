@@ -1,33 +1,45 @@
-import Page, { Grid, GridColumn } from "@atlaskit/page";
-import React, { useState } from "react";
-import { IssueTypeAPI, LinkTypeAPI, PriorityAPI } from "../api";
+import React from "react";
 import { Dropdown } from "./Dropdown";
-import Button, { ButtonGroup } from "@atlaskit/button";
+import { ButtonGroup } from "@atlaskit/button";
+import styled from "styled-components";
+import { IssueOptionsDropdown } from "./IssueOptionsDropdown";
+
+export const Container = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`;
+
 export const Toolbar = ({
   options,
   filter,
   updateFilteredKeyOptions,
   keyNames,
+  issueFields,
+  selectedIssueFieldIds,
+  setSelectedIssueFieldIds,
 }) => {
   return (
-    <div>
-      <Grid spacing="compact">
-        <GridColumn medium={10}>
-          <ButtonGroup>
-            {options &&
-              filter &&
-              keyNames.map((keyName) => (
-                <Dropdown
-                  key={keyName}
-                  keyName={keyName}
-                  keyOptions={options[keyName]}
-                  filteredKeyOptions={filter[keyName]}
-                  updateFilteredKeyOptions={updateFilteredKeyOptions}
-                />
-              ))}
-          </ButtonGroup>
-        </GridColumn>
-      </Grid>
-    </div>
+    <Container>
+      <ButtonGroup>
+        {options &&
+          filter &&
+          keyNames.map((keyName) => (
+            <IssueOptionsDropdown
+              key={keyName}
+              keyName={keyName}
+              options={options[keyName]}
+              selectedOptions={filter[keyName]}
+              updateSelectedOptions={updateFilteredKeyOptions}
+            />
+          ))}
+      </ButtonGroup>
+      <Dropdown
+        dropdownName={"Issue Card Fields"}
+        options={issueFields}
+        selectedOptions={selectedIssueFieldIds}
+        updateSelectedOptions={setSelectedIssueFieldIds}
+      />
+    </Container>
   );
 };

@@ -1,7 +1,7 @@
+/* eslint-disable no-undef */
 const ngrok = require("ngrok");
 const jq = require("node-jq");
 const fs = require("fs");
-
 (async function () {
   try {
     const url = await ngrok.connect(1234);
