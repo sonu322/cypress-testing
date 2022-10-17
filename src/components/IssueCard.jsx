@@ -59,10 +59,31 @@ export const IssueCard = ({
   issueData,
   selectedIssueFieldIds,
   issueFields,
+  issueCardOptionsMap,
 }) => {
+  for (const field of issueCardOptionsMap.values()) {
+    field.isSelected = selectedIssueFieldIds.includes(field.key);
+    field.value = issueData.fields[field.key];
+  }
+
+  console.log("issueCardOptionsMap");
+  console.log(issueCardOptionsMap);
+  // ----
+  const fieldCustomKeys = ["issuetype", "priority", "status", "assignee"];
+  let storyPointsFieldName = issueFields.get("storypoints")
+    ? "storypoints"
+    : "storypointestimate";
+  fieldCustomKeys.push(storyPointsFieldName);
   // variables
+
+  fieldCustomKeys.forEach((customKey) => {
+    const field = issueFields.get(customKey);
+    console.log(field);
+    field.isSelected = selectedIssueFieldIds.includes(field.key);
+    field.value = issueData.fields[field.key];
+    return field;
+  });
   const storyPointsInfo = useMemo(() => {
-    // let field = issueFields.find((field) => field.customKey == "storypoints");
     let field = issueFields.get("storypoints");
     console.log(field);
     if (!field) {

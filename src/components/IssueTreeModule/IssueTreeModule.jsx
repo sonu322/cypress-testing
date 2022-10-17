@@ -156,10 +156,10 @@ export const IssueTreeModule = () => {
     newFilter[key] = keyOptions;
     setFilter(newFilter);
   };
-  let issueCardOptions = [];
-  for (let fieldId of issueFields.keys()) {
-    if (!fixedFieldNames.includes(fieldId)) {
-      issueCardOptions.push(issueFields.get(fieldId));
+  let issueCardOptions = new Map(issueFields);
+  for (let fieldId of issueCardOptions.keys()) {
+    if (fixedFieldNames.includes(fieldId)) {
+      issueCardOptions.delete(fieldId);
     }
   }
   // how to check use memo: change dropdown, console log will run again.
@@ -174,7 +174,7 @@ export const IssueTreeModule = () => {
         filter={filter}
         updateFilteredKeyOptions={updateFilteredKeyOptions}
         keyNames={["priorities", "linkTypes", "issueTypes"]}
-        issueFields={issueCardOptions}
+        issueCardOptionsMap={issueCardOptions}
         selectedIssueFieldIds={selectedIssueFieldIds}
         setSelectedIssueFieldIds={setSelectedIssueFieldIds}
       />
@@ -185,8 +185,10 @@ export const IssueTreeModule = () => {
         setIsFetched={setIsFetched}
         filter={filter}
         root={root}
+        issueCardOptionsMap={issueCardOptions}
         selectedIssueFieldIds={selectedIssueFieldIds}
         issueFields={issueFields}
+        cardFields={options}
       />
       {Object.keys(filter).map((keyName) => (
         <div key={keyName}>
