@@ -5,7 +5,7 @@ export const StoryPointsInfo = ({ content }) => {
   if (content.value) {
     let {value, name} = content;
     return (
-      <TooltipContainer position="bottom-end" content={value + " " + name}>
+      <TooltipContainer content={value + " " + name}>
         <Badge>{value}</Badge>
       </TooltipContainer>
     );

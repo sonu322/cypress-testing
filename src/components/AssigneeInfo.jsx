@@ -13,7 +13,7 @@ export const AssigneeInfo = ({ content }) => {
   }
 
   return (
-    <TooltipContainer position="bottom-end" content={message}>
+    <TooltipContainer content={message}>
       <Avatar src={imgSrc}></Avatar>
     </TooltipContainer>
   );

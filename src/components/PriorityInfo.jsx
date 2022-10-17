@@ -5,7 +5,7 @@ export const PriorityInfo = ({ content }) => {
   if (content.value) {
     const { name, iconUrl } = content.value;
     return (
-      <TooltipContainer position="bottom-end" content={name}>
+      <TooltipContainer content={name}>
         <Icon src={iconUrl} />
       </TooltipContainer>
     );

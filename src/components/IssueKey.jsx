@@ -21,7 +21,7 @@ const xdm = getQueryParam("xdm_e");
 export const IssueKey = ({ issueKey, isResolved }) => {
   const issueUrl = `${xdm}/browse/${issueKey}`;
   return (
-    <TooltipContainer position="bottom-end" content={issueKey}>
+    <TooltipContainer content={issueKey}>
       <StyledIssueKey target="_blank" href={issueUrl} isResolved={isResolved}>
         {issueKey}
       </StyledIssueKey>

@@ -4,7 +4,7 @@ import { Icon } from "./Icon";
 export const IssueTypeInfo = ({content}) => {
   const { name, iconUrl } = content.value;
   return (
-    <TooltipContainer position="bottom-end" content={name}>
+    <TooltipContainer content={name}>
       <Icon src={iconUrl} />
     </TooltipContainer>
   );

@@ -69,17 +69,13 @@ export const FilterAPI = async () => {
 
 export const ProjectAPI = async (key) => {
   const getKey = () => {
-    if (key) {
-      return Promise.resolve(key);
-    } else {
-      return new Promise((resolve) => {
-        AP.context.getContext((res) => {
-          resolve(res.jira.project.key);
-        });
+    return new Promise((resolve) => {
+      AP.context.getContext((res) => {
+        resolve(res.jira.project.key);
       });
-    }
+    });
   };
-  const input = await getKey();
+  const input = key || (await getKey());
   const response = await AP.request(`/rest/api/3/project/${input}`);
 
   return Promise.resolve(JSON.parse(response.body));
