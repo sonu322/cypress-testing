@@ -2,28 +2,13 @@
 import React, { useMemo } from "react";
 import { colors } from "@atlaskit/theme";
 import styled from "styled-components";
-import Avatar from "@atlaskit/avatar";
-import { TooltipContainer } from "./TooltipContainer";
 import { IssueTypeInfo } from "./IssueTypeInfo";
 import { PriorityInfo } from "./PriorityInfo";
 import { StoryPointsInfo } from "./StoryPointsInfo";
 import { IssueKey } from "./IssueKey";
-// varibles
+import { AssigneeInfo } from "./AssigneeInfo";
+import { IssueSummary } from "./IssueSummary";
 
-// styled components
-// const IssueKey = styled.a`
-//   text-overflow: ellipsis;
-//   font-size: 12px;
-//   font-weight: 600;
-//   color: ${colors.N400};
-//   text-decoration: none;
-//   cursor: pointer;
-//   ${(props) =>
-//     props.isResolved &&
-//     css`
-//       text-decoration: line-through;
-//     `};
-// `;
 const Container = styled.div`
   color: ${colors.N800};
   box-shadow: rgba(23, 43, 77, 0.2) 0px 1px 1px 0px,
@@ -52,7 +37,6 @@ const FooterSideContainer = styled.div`
   align-items: center;
   gap: 8px;
 `;
-const SummaryContainer = styled.div``;
 
 // main function
 export const IssueCard = ({
@@ -70,19 +54,7 @@ export const IssueCard = ({
     console.log(copy);
     return copy;
   }, [issueCardOptionsMap, issueData, selectedIssueFieldIds]);
-  // ----
-  // const fieldCustomKeys = ["issuetype", "priority", "status", "assignee"];
 
-  // fieldCustomKeys.push(storyPointsFieldName);
-  // // variables
-
-  // fieldCustomKeys.forEach((customKey) => {
-  //   const field = issueFields.get(customKey);
-  //   console.log(field);
-  //   field.isSelected = selectedIssueFieldIds.includes(field.key);
-  //   field.value = issueData.fields[field.key];
-  //   return field;
-  // });
   const storyPointsInfo = useMemo(() => {
     return (
       cardOptionsDataMap.get("storypoints") ??
@@ -109,11 +81,7 @@ export const IssueCard = ({
     return (
       <Container>
         {/* header */}
-        <TooltipContainer content={issueData.fields.summary} position="bottom">
-          <SummaryContainer
-            
-          >{issueData.fields.summary}</SummaryContainer>
-        </TooltipContainer>
+        <IssueSummary content={issueData.fields.summary} />
 
         {/* footer */}
         <CardFooter>
@@ -127,32 +95,11 @@ export const IssueCard = ({
             )}
           </FooterSideContainer>
           <FooterSideContainer>
-            {/* <TooltipContainer position="bottom-end" content={issueData.key}>
-              <IssueKey
-                target="_blank"
-                href={issueUrl}
-                isResolved={issueData.fields.resolution}
-              >
-                {issueData.key}
-              </IssueKey>
-            </TooltipContainer> */}
-            <IssueKey isResolved={issueData.fields.resolution} issueKey={issueData.key} />
-            {assigneeInfo.isSelected && (
-              <TooltipContainer
-                position="bottom-end"
-                content={
-                  assigneeInfo.value
-                    ? "Assignee: " + assigneeInfo.value.displayName
-                    : "Unassigned"
-                }
-              >
-                <Avatar
-                  src={
-                    assigneeInfo.value && assigneeInfo.value.avatarUrls["16x16"]
-                  }
-                ></Avatar>
-              </TooltipContainer>
-            )}
+            <IssueKey
+              isResolved={issueData.fields.resolution}
+              issueKey={issueData.key}
+            />
+            {assigneeInfo.isSelected && <AssigneeInfo content={assigneeInfo} />}
           </FooterSideContainer>
         </CardFooter>
       </Container>
