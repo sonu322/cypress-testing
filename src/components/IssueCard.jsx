@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import React, { useState } from "react";
+import React from "react";
 import { colors } from "@atlaskit/theme";
 import styled from "styled-components";
 import { IssueTypeInfo } from "./IssueTypeInfo";
@@ -44,7 +44,6 @@ export const IssueCard = ({
   selectedIssueFieldIds,
   issueCardOptionsMap,
 }) => {
-  let [count, setCount] = useState(0);
   let cardOptionsDataMap;
   let copy = new Map(issueCardOptionsMap);
   for (const field of copy.values()) {
@@ -65,7 +64,6 @@ export const IssueCard = ({
     return (
       <Container>
         {/* header */}
-        <button onClick={() => setCount(count + 1)}>{count}</button>
         <IssueSummary content={issueData.fields.summary} />
 
         {/* footer */}
