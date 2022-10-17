@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { colors } from "@atlaskit/theme";
 import styled, { css } from "styled-components";
 import Badge from "@atlaskit/badge";
@@ -61,13 +61,14 @@ export const IssueCard = ({
   issueFields,
   issueCardOptionsMap,
 }) => {
-  for (const field of issueCardOptionsMap.values()) {
-    field.isSelected = selectedIssueFieldIds.includes(field.key);
-    field.value = issueData.fields[field.key];
-  }
-
-  console.log("issueCardOptionsMap");
-  console.log(issueCardOptionsMap);
+  useCallback(() => {
+    for (const field of issueCardOptionsMap.values()) {
+      field.isSelected = selectedIssueFieldIds.includes(field.key);
+      field.value = issueData.fields[field.key];
+    }
+    console.log("issueCardOptionsMap");
+    console.log(issueCardOptionsMap);
+  }, [issueCardOptionsMap, issueData, selectedIssueFieldIds]);
   // ----
   const fieldCustomKeys = ["issuetype", "priority", "status", "assignee"];
   let storyPointsFieldName = issueFields.get("storypoints")
