@@ -9,6 +9,9 @@ import {
 import { Toolbar } from "./Toolbar";
 import { IssueTree } from "./IssueTree";
 import { mutateTree } from "@atlaskit/tree";
+import ErrorIcon from "@atlaskit/icon/glyph/error";
+import Banner from "@atlaskit/banner";
+import { ErrorBanner } from "../ErrorBanner";
 let root = {
   rootId: "0",
   items: {
@@ -165,6 +168,8 @@ export const IssueTreeModule = () => {
   // but put it in use callback, it wontrun
   return (
     <div>
+      <ErrorBanner></ErrorBanner>
+
       <Toolbar
         exportTree={exportTree}
         options={options}
