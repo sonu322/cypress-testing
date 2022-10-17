@@ -15,10 +15,11 @@ export const Toolbar = ({
   filter,
   updateFilteredKeyOptions,
   keyNames,
-  issueFields,
   selectedIssueFieldIds,
   setSelectedIssueFieldIds,
+  issueCardOptionsMap,
 }) => {
+  const issueCardOptions = Array.from(issueCardOptionsMap.values());
   return (
     <Container>
       <ButtonGroup>
@@ -36,7 +37,7 @@ export const Toolbar = ({
       </ButtonGroup>
       <Dropdown
         dropdownName={"Issue Card Fields"}
-        options={issueFields}
+        options={issueCardOptions}
         selectedOptions={selectedIssueFieldIds}
         updateSelectedOptions={setSelectedIssueFieldIds}
       />

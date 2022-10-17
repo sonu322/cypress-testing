@@ -38,7 +38,6 @@
     "eslint": "^8.24.0",
     "eslint-plugin-react": "^7.31.8",
     "flow-bin": "^0.98.1",
-    "node-jq": "^2.3.3",
     "node-sass": "^7.0.1",
     "parcel-bundler": "^1.12.5",
     "parcel-plugin-static-files-copy": "^2.6.0",

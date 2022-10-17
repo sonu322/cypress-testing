@@ -232,6 +232,7 @@ export const IssueTree = ({
   filter,
   selectedIssueFieldIds,
   issueFields,
+  issueCardOptionsMap
 }) => {
   useEffect(() => {
     if (issueFields && issueFields.size > 0) {
@@ -313,7 +314,7 @@ export const IssueTree = ({
         <IssueCard
           issueData={item.allData ? item.allData : null}
           selectedIssueFieldIds={selectedIssueFieldIds}
-          issueFields={issueFields}
+          issueCardOptionsMap={issueCardOptionsMap}
         />
       )}
     </div>
