@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import React, { useMemo } from "react";
+import React, { useState } from "react";
 import { colors } from "@atlaskit/theme";
 import styled from "styled-components";
 import { IssueTypeInfo } from "./IssueTypeInfo";
@@ -44,43 +44,28 @@ export const IssueCard = ({
   selectedIssueFieldIds,
   issueCardOptionsMap,
 }) => {
-  let cardOptionsDataMap = useMemo(() => {
-    let copy = new Map(issueCardOptionsMap);
-    for (const field of copy.values()) {
-      field.isSelected = selectedIssueFieldIds.includes(field.key);
-      field.value = issueData.fields[field.key];
-    }
-    console.log("copy");
-    console.log(copy);
-    return copy;
-  }, [issueCardOptionsMap, issueData, selectedIssueFieldIds]);
+  let [count, setCount] = useState(0);
+  let cardOptionsDataMap;
+  let copy = new Map(issueCardOptionsMap);
+  for (const field of copy.values()) {
+    field.isSelected = selectedIssueFieldIds.includes(field.key);
+    field.value = issueData.fields[field.key];
+  }
+  cardOptionsDataMap = copy;
 
-  const storyPointsInfo = useMemo(() => {
-    return (
-      cardOptionsDataMap.get("storypoints") ??
-      cardOptionsDataMap.get("storypointestimate")
-    );
-  }, [cardOptionsDataMap]);
-  const priorityInfo = useMemo(() => {
-    return cardOptionsDataMap.get("priority");
-  }, [cardOptionsDataMap]);
-  console.log("priorityinfo");
-  console.log(priorityInfo);
-  const issueTypeInfo = useMemo(() => {
-    return cardOptionsDataMap.get("issuetype");
-  }, [cardOptionsDataMap]);
-  const assigneeInfo = useMemo(() => {
-    return cardOptionsDataMap.get("assignee");
-  }, [cardOptionsDataMap]);
+  const storyPointsInfo =
+    cardOptionsDataMap.get("storypoints") ??
+    cardOptionsDataMap.get("storypointestimate");
+  const priorityInfo = cardOptionsDataMap.get("priority");
+  const issueTypeInfo = cardOptionsDataMap.get("issuetype");
+  const assigneeInfo = cardOptionsDataMap.get("assignee");
 
   if (issueData && issueData.fields) {
-    console.log("storypointsinfo");
-    console.log(issueData.fields);
-    console.log(issueData.fields[storyPointsInfo.key]);
     // component to render
     return (
       <Container>
         {/* header */}
+        <button onClick={() => setCount(count + 1)}>{count}</button>
         <IssueSummary content={issueData.fields.summary} />
 
         {/* footer */}

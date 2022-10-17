@@ -150,7 +150,6 @@ export const IssueTreeModule = () => {
     };
     fetchFieldsData();
   }, []);
-  console.log(issueFields);
   const updateFilteredKeyOptions = (key, keyOptions) => {
     let newFilter = { ...filter };
     newFilter[key] = keyOptions;
@@ -164,8 +163,6 @@ export const IssueTreeModule = () => {
   }
   // how to check use memo: change dropdown, console log will run again.
   // but put it in use callback, it wontrun
-  console.log("issuecardoptions");
-  console.log(issueCardOptions);
   return (
     <div>
       <Toolbar

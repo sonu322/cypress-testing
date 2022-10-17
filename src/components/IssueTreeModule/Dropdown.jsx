@@ -1,4 +1,4 @@
-import React, {useCallback} from "react";
+import React from "react";
 import DropdownMenu, {
   DropdownItemCheckboxGroup,
   DropdownItemCheckbox,
@@ -9,18 +9,15 @@ export const Dropdown = ({
   updateSelectedOptions,
   options,
 }) => {
-  const handleOptionClick = useCallback(
-    (id) => {
-      let updatedList = [];
-      if (selectedOptions.includes(id)) {
-        updatedList = selectedOptions.filter((fieldId) => fieldId != id);
-      } else {
-        updatedList = [...selectedOptions, id];
-      }
-      updateSelectedOptions(updatedList);
-    },
-    [selectedOptions, updateSelectedOptions]
-  );
+  const handleOptionClick = (id) => {
+    let updatedList = [];
+    if (selectedOptions.includes(id)) {
+      updatedList = selectedOptions.filter((fieldId) => fieldId != id);
+    } else {
+      updatedList = [...selectedOptions, id];
+    }
+    updateSelectedOptions(updatedList);
+  };
   return (
     <>
       <DropdownMenu
