@@ -6,8 +6,13 @@ export const IssueTypeAPI = async () => {
 
 export const LinkTypeAPI = async () => {
   const response = await AP.request("/rest/api/3/issueLinkType");
-
-  return Promise.resolve(JSON.parse(response.body).issueLinkTypes);
+  const data = JSON.parse(response.body).issueLinkTypes;
+  if (data && data.issueLinkTypes) {
+    return Promise.resolve(data.issueLinkTypes);
+  } else {
+    const error = new Error("Some error occured fetching Link types");
+    return Promise.reject(error);
+  }
 };
 
 export const PriorityAPI = async () => {
@@ -69,9 +74,13 @@ export const FilterAPI = async () => {
 
 export const ProjectAPI = async (key) => {
   const getKey = () => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       AP.context.getContext((res) => {
-        resolve(res.jira.project.key);
+        if (res && res.jira) {
+          resolve(res.jira.project.key);
+        } else {
+          reject("Project could not be fetched");
+        }
       });
     });
   };

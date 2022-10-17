@@ -11,7 +11,7 @@ import { IssueTree } from "./IssueTree";
 import { mutateTree } from "@atlaskit/tree";
 import ErrorIcon from "@atlaskit/icon/glyph/error";
 import Banner from "@atlaskit/banner";
-import { ErrorBanner } from "../ErrorBanner";
+import { ErrorsList } from "../ErrorsList";
 let root = {
   rootId: "0",
   items: {
@@ -36,12 +36,20 @@ const fixedFieldNames = [
   "resolution",
 ];
 export const IssueTreeModule = () => {
+  const [errors, setErrors] = useState([]);
   const [options, setOptions] = useState({});
   const [filter, setFilter] = useState({});
   const [tree, setTree] = useState(mutateTree(root, "0", { isExpanded: true }));
   const [isFetched, setIsFetched] = useState(false);
   const [issueFields, setIssueFields] = useState([]);
   const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState([]);
+  const handleSingleError = (error) => {
+    setErrors([...errors, error]);
+  };
+  const handleMultipleErrors = (newErrors) => {
+    newErrors = errors.concat(newErrors)
+    setErrors(newErrors)
+  }
   const exportTree = () => {
     const root = tree.items[tree.rootId];
     const rootChildren = root.children;
@@ -88,8 +96,8 @@ export const IssueTreeModule = () => {
   };
   useEffect(() => {
     const fetchDropdownsData = async () => {
-      Promise.all([PriorityAPI(), LinkTypeAPI(), IssueTypeAPI()]).then(
-        (results) => {
+      Promise.all([PriorityAPI(), LinkTypeAPI(), IssueTypeAPI()])
+        .then((results) => {
           const optionsData = {
             priorities: results[0],
             linkTypes: results[1],
@@ -102,8 +110,11 @@ export const IssueTreeModule = () => {
             issueTypes: optionsData.issueTypes.map((item) => item.id),
           };
           setFilter(ids);
-        }
-      );
+        })
+        .catch((newErrors) => {
+          console.log(newErrors);
+          handleMultipleErrors(newErrors)
+        });
     };
     fetchDropdownsData();
   }, []);
@@ -164,11 +175,10 @@ export const IssueTreeModule = () => {
       issueCardOptions.delete(fieldId);
     }
   }
-  // how to check use memo: change dropdown, console log will run again.
-  // but put it in use callback, it wontrun
+
   return (
     <div>
-      <ErrorBanner></ErrorBanner>
+      {errors && <ErrorsList errors={errors} />}
 
       <Toolbar
         exportTree={exportTree}
