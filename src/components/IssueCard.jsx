@@ -7,6 +7,9 @@ import Avatar from "@atlaskit/avatar";
 import { Icon } from "./Icon";
 import { TooltipContainer } from "./TooltipContainer";
 import { getQueryParam } from "../util";
+import { IssueTypeInfo } from "./IssueTypeInfo";
+import { PriorityInfo } from "./PriorityInfo";
+import { StoryPointsInfo } from "./StoryPointsInfo";
 // varibles
 const xdm = getQueryParam("xdm_e");
 
@@ -72,7 +75,7 @@ export const IssueCard = ({
   }, [issueCardOptionsMap, issueData, selectedIssueFieldIds]);
   // ----
   // const fieldCustomKeys = ["issuetype", "priority", "status", "assignee"];
-  
+
   // fieldCustomKeys.push(storyPointsFieldName);
   // // variables
 
@@ -84,7 +87,10 @@ export const IssueCard = ({
   //   return field;
   // });
   const storyPointsInfo = useMemo(() => {
-    return cardOptionsDataMap.get("storypoints") ?? cardOptionsDataMap.get("storypointestimate");
+    return (
+      cardOptionsDataMap.get("storypoints") ??
+      cardOptionsDataMap.get("storypointestimate")
+    );
   }, [cardOptionsDataMap]);
   const priorityInfo = useMemo(() => {
     return cardOptionsDataMap.get("priority");
@@ -108,35 +114,20 @@ export const IssueCard = ({
       <Container>
         {/* header */}
         <TooltipContainer content={issueData.fields.summary} position="bottom">
-          <SummaryContainer>{issueData.fields.summary}</SummaryContainer>
+          <SummaryContainer
+            
+          >{issueData.fields.summary}</SummaryContainer>
         </TooltipContainer>
 
         {/* footer */}
         <CardFooter>
           <FooterSideContainer>
             {issueTypeInfo.isSelected && (
-              <TooltipContainer
-                position="bottom-end"
-                content={issueTypeInfo.value.name}
-              >
-                <Icon src={issueTypeInfo.value.iconUrl} />
-              </TooltipContainer>
+              <IssueTypeInfo content={issueTypeInfo} />
             )}
-            {priorityInfo.isSelected && priorityInfo.value && (
-              <TooltipContainer
-                position="bottom-end"
-                content={priorityInfo.value.name}
-              >
-                <Icon src={priorityInfo.value.iconUrl} />
-              </TooltipContainer>
-            )}
-            {storyPointsInfo.isSelected && storyPointsInfo.value && (
-              <TooltipContainer
-                position="bottom-end"
-                content={storyPointsInfo.value + " " + storyPointsInfo.name}
-              >
-                <Badge>{storyPointsInfo.value}</Badge>
-              </TooltipContainer>
+            {priorityInfo.isSelected && <PriorityInfo content={priorityInfo} />}
+            {storyPointsInfo.isSelected && (
+              <StoryPointsInfo content={storyPointsInfo}></StoryPointsInfo>
             )}
           </FooterSideContainer>
           <FooterSideContainer>
@@ -144,7 +135,7 @@ export const IssueCard = ({
               <IssueKey
                 target="_blank"
                 href={issueUrl}
-                isResolved={issueData.fields.resolution ? true : false}
+                isResolved={issueData.fields.resolution}
               >
                 {issueData.key}
               </IssueKey>
