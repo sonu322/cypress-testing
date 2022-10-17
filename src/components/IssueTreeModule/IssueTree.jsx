@@ -314,7 +314,6 @@ export const IssueTree = ({
         <IssueCard
           issueData={item.allData ? item.allData : null}
           selectedIssueFieldIds={selectedIssueFieldIds}
-          issueFields={issueFields}
           issueCardOptionsMap={issueCardOptionsMap}
         />
       )}

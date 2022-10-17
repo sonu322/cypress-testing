@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 import { colors } from "@atlaskit/theme";
 import styled, { css } from "styled-components";
 import Badge from "@atlaskit/badge";
@@ -58,65 +58,45 @@ const SummaryContainer = styled.div``;
 export const IssueCard = ({
   issueData,
   selectedIssueFieldIds,
-  issueFields,
   issueCardOptionsMap,
 }) => {
-  useCallback(() => {
-    for (const field of issueCardOptionsMap.values()) {
+  let cardOptionsDataMap = useMemo(() => {
+    let copy = new Map(issueCardOptionsMap);
+    for (const field of copy.values()) {
       field.isSelected = selectedIssueFieldIds.includes(field.key);
       field.value = issueData.fields[field.key];
     }
-    console.log("issueCardOptionsMap");
-    console.log(issueCardOptionsMap);
+    console.log("copy");
+    console.log(copy);
+    return copy;
   }, [issueCardOptionsMap, issueData, selectedIssueFieldIds]);
   // ----
-  const fieldCustomKeys = ["issuetype", "priority", "status", "assignee"];
-  let storyPointsFieldName = issueFields.get("storypoints")
-    ? "storypoints"
-    : "storypointestimate";
-  fieldCustomKeys.push(storyPointsFieldName);
-  // variables
+  // const fieldCustomKeys = ["issuetype", "priority", "status", "assignee"];
+  
+  // fieldCustomKeys.push(storyPointsFieldName);
+  // // variables
 
-  fieldCustomKeys.forEach((customKey) => {
-    const field = issueFields.get(customKey);
-    console.log(field);
-    field.isSelected = selectedIssueFieldIds.includes(field.key);
-    field.value = issueData.fields[field.key];
-    return field;
-  });
+  // fieldCustomKeys.forEach((customKey) => {
+  //   const field = issueFields.get(customKey);
+  //   console.log(field);
+  //   field.isSelected = selectedIssueFieldIds.includes(field.key);
+  //   field.value = issueData.fields[field.key];
+  //   return field;
+  // });
   const storyPointsInfo = useMemo(() => {
-    let field = issueFields.get("storypoints");
-    console.log(field);
-    if (!field) {
-      field = issueFields.find(
-        (field) => field.customKey == "storypointestimate"
-      );
-    }
-    field.isSelected = selectedIssueFieldIds.includes(field.key);
-    field.value = issueData.fields[field.key];
-    return field;
-  }, [issueFields, selectedIssueFieldIds, issueData]);
+    return cardOptionsDataMap.get("storypoints") ?? cardOptionsDataMap.get("storypointestimate");
+  }, [cardOptionsDataMap]);
   const priorityInfo = useMemo(() => {
-    const field = issueFields.get("priority");
-    console.log(field);
-    field.isSelected = selectedIssueFieldIds.includes(field.key);
-    field.value = issueData.fields[field.key];
-    return field;
-  }, [issueFields, selectedIssueFieldIds, issueData]);
+    return cardOptionsDataMap.get("priority");
+  }, [cardOptionsDataMap]);
   console.log("priorityinfo");
   console.log(priorityInfo);
   const issueTypeInfo = useMemo(() => {
-    const field = issueFields.get("issuetype");
-    field.isSelected = selectedIssueFieldIds.includes(field.key);
-    field.value = issueData.fields[field.key];
-    return field;
-  }, [issueFields, selectedIssueFieldIds, issueData]);
+    return cardOptionsDataMap.get("issuetype");
+  }, [cardOptionsDataMap]);
   const assigneeInfo = useMemo(() => {
-    const field = issueFields.get("assignee");
-    field.isSelected = selectedIssueFieldIds.includes(field.key);
-    field.value = issueData.fields[field.key];
-    return field;
-  }, [issueFields, selectedIssueFieldIds, issueData]);
+    return cardOptionsDataMap.get("assignee");
+  }, [cardOptionsDataMap]);
 
   if (issueData && issueData.fields && xdm) {
     const issueUrl = `${xdm}/browse/${issueData.key}`;
