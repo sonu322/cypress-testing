@@ -1,32 +1,29 @@
 /* eslint-disable indent */
 import React, { useMemo } from "react";
 import { colors } from "@atlaskit/theme";
-import styled, { css } from "styled-components";
-import Badge from "@atlaskit/badge";
+import styled from "styled-components";
 import Avatar from "@atlaskit/avatar";
-import { Icon } from "./Icon";
 import { TooltipContainer } from "./TooltipContainer";
-import { getQueryParam } from "../util";
 import { IssueTypeInfo } from "./IssueTypeInfo";
 import { PriorityInfo } from "./PriorityInfo";
 import { StoryPointsInfo } from "./StoryPointsInfo";
+import { IssueKey } from "./IssueKey";
 // varibles
-const xdm = getQueryParam("xdm_e");
 
 // styled components
-const IssueKey = styled.a`
-  text-overflow: ellipsis;
-  font-size: 12px;
-  font-weight: 600;
-  color: ${colors.N400};
-  text-decoration: none;
-  cursor: pointer;
-  ${(props) =>
-    props.isResolved &&
-    css`
-      text-decoration: line-through;
-    `};
-`;
+// const IssueKey = styled.a`
+//   text-overflow: ellipsis;
+//   font-size: 12px;
+//   font-weight: 600;
+//   color: ${colors.N400};
+//   text-decoration: none;
+//   cursor: pointer;
+//   ${(props) =>
+//     props.isResolved &&
+//     css`
+//       text-decoration: line-through;
+//     `};
+// `;
 const Container = styled.div`
   color: ${colors.N800};
   box-shadow: rgba(23, 43, 77, 0.2) 0px 1px 1px 0px,
@@ -104,8 +101,7 @@ export const IssueCard = ({
     return cardOptionsDataMap.get("assignee");
   }, [cardOptionsDataMap]);
 
-  if (issueData && issueData.fields && xdm) {
-    const issueUrl = `${xdm}/browse/${issueData.key}`;
+  if (issueData && issueData.fields) {
     console.log("storypointsinfo");
     console.log(issueData.fields);
     console.log(issueData.fields[storyPointsInfo.key]);
@@ -131,7 +127,7 @@ export const IssueCard = ({
             )}
           </FooterSideContainer>
           <FooterSideContainer>
-            <TooltipContainer position="bottom-end" content={issueData.key}>
+            {/* <TooltipContainer position="bottom-end" content={issueData.key}>
               <IssueKey
                 target="_blank"
                 href={issueUrl}
@@ -139,7 +135,8 @@ export const IssueCard = ({
               >
                 {issueData.key}
               </IssueKey>
-            </TooltipContainer>
+            </TooltipContainer> */}
+            <IssueKey isResolved={issueData.fields.resolution} issueKey={issueData.key} />
             {assigneeInfo.isSelected && (
               <TooltipContainer
                 position="bottom-end"
