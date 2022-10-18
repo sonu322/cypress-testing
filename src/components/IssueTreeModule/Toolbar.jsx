@@ -1,12 +1,11 @@
 import React from "react";
 import { Dropdown } from "./Dropdown";
-import Button, { ButtonGroup } from "@atlaskit/button";
+import { ButtonGroup } from "@atlaskit/button";
 import styled from "styled-components";
 import { IssueOptionsDropdown } from "./IssueOptionsDropdown";
-import ExportIcon from "@atlaskit/icon/glyph/export";
-import QuestionIcon from "@atlaskit/icon/glyph/question";
-import { HelpLink } from "../../constants"
+import { helpLink } from "../../constants";
 import { ExportContent } from "../ExportContent";
+import { HelpLink } from "../HelpLink";
 export const Container = styled.div`
   display: flex;
   justify-content: space-between;
@@ -21,7 +20,7 @@ export const Toolbar = ({
   selectedIssueFieldIds,
   setSelectedIssueFieldIds,
   issueCardOptionsMap,
-  exportTree
+  exportTree,
 }) => {
   const issueCardOptions = Array.from(issueCardOptionsMap.values());
   return (
@@ -51,12 +50,7 @@ export const Toolbar = ({
             description={"export issue tree to csv"}
             exportContent={exportTree}
           />
-          <Button
-            appearance="default"
-            target="_blank"
-            href={HelpLink}
-            iconBefore={<QuestionIcon />}
-          />
+          <HelpLink description={"Get help"} href={helpLink} />
         </ButtonGroup>
       </div>
     </Container>
