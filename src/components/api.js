@@ -135,9 +135,6 @@ export const ProjectAPI = async (key) => {
     });
   };
   const input = key || (await getKey());
-  // const response = await AP.request(`/rest/api/3/project/${input}`);
-
-  // return Promise.resolve(JSON.parse(response.body));
   return AP.request(`/rest/api/3/project/${input}`)
     .then((response) => JSON.parse(response.body))
     .then((data) => {
