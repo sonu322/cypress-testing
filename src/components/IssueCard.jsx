@@ -54,7 +54,7 @@ export const IssueCard = ({
     field.value = issueData.fields[field.key];
   }
   copy.get("assignee").isSelected =
-    copy.get("assignee").isSelected && isIssueExpanded;
+    copy.get("assignee").isSelected;
   cardOptionsDataMap = copy;
 
   const storyPointsInfo =
