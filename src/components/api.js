@@ -1,26 +1,72 @@
 export const IssueTypeAPI = async () => {
-  const response = await AP.request("/rest/api/3/issuetype");
-
-  return Promise.resolve(JSON.parse(response.body));
+  return AP.request("/rest/api/3/issuetype")
+    .then((response) => JSON.parse(response.body))
+    .then((data) => {
+      if (data) {
+        return data;
+      } else {
+        throw new Error("Some error occurred fetching issue types");
+      }
+    })
+    .catch((error) => {
+      const newError = new Error(
+        "Some error occurred fetching issue issue types"
+      );
+      console.log(error);
+      throw newError;
+    });
 };
 
 export const LinkTypeAPI = async () => {
-  const response = await AP.request("/rest/api/3/issueLinkType");
-
-  return Promise.resolve(JSON.parse(response.body).issueLinkTypes);
+  return AP.request("/rest/api/3/issueLinkType")
+    .then((response) => JSON.parse(response.body))
+    .then((data) => {
+      if (data && data.issueLinkTypes) {
+        return data.issueLinkTypes;
+      } else {
+        throw new Error("Some error occurred fetching issue link types");
+      }
+    })
+    .catch((error) => {
+      const newError = new Error("Some error fetching issue link types");
+      console.log(error);
+      throw newError;
+    });
 };
 
 export const PriorityAPI = async () => {
-  const response = await AP.request("/rest/api/3/priority");
-
-  return Promise.resolve(JSON.parse(response.body));
+  return AP.request("/rest/api/3/priority")
+    .then((response) => JSON.parse(response.body))
+    .then((data) => {
+      if (data) {
+        return data;
+      } else {
+        throw new Error("some error occurred fetching priorities");
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      const newError = new Error("Some error fetching issue priorities");
+      throw newError;
+    });
 };
 
 export const IssueFieldsAPI = async () => {
-  const response = await AP.request("/rest/api/3/field");
-  return Promise.resolve(JSON.parse(response.body));
+  return AP.request("/rest/api/3/field")
+    .then((response) => JSON.parse(response.body))
+    .then((data) => {
+      if (data) {
+        return data;
+      } else {
+        throw new Error("some error occurred fetching fields");
+      }
+    })
+    .catch((error) => {
+      const newError = new Error("Some error fetching issue fields");
+      console.log(error);
+      throw newError;
+    });
 };
-
 export const IssueLinkAPI = async (
   key,
   fields = [
@@ -50,9 +96,16 @@ export const IssueLinkAPI = async (
   if (queriesString.length > 0) {
     url = url + "?" + queriesString;
   }
-  const response = await AP.request(url);
 
-  return Promise.resolve(JSON.parse(response.body));
+  return AP.request(url)
+    .then((response) => {
+      return JSON.parse(response.body);
+    })
+    .catch((error) => {
+      console.log(error);
+      const newError = new Error(`some error occurred fetching issue ${input}`);
+      throw newError;
+    });
 };
 
 export const IssueAPI = async (id) => {
@@ -69,16 +122,33 @@ export const FilterAPI = async () => {
 
 export const ProjectAPI = async (key) => {
   const getKey = () => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       AP.context.getContext((res) => {
-        resolve(res.jira.project.key);
+        if (res && res.jira) {
+          resolve(res.jira.project.key);
+        } else {
+          reject("Project could not be fetched");
+        }
       });
     });
   };
   const input = key || (await getKey());
-  const response = await AP.request(`/rest/api/3/project/${input}`);
-
-  return Promise.resolve(JSON.parse(response.body));
+  return AP.request(`/rest/api/3/project/${input}`)
+    .then((response) => JSON.parse(response.body))
+    .then((data) => {
+      if (data) {
+        return data;
+      } else {
+        throw new Error("Some error occurred fetching Project details");
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      const newError = new Error(
+        "Some error occurred fetching Project details"
+      );
+      throw newError;
+    });
 };
 
 /*
