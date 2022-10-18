@@ -1,31 +1,73 @@
 export const IssueTypeAPI = async () => {
-  const response = await AP.request("/rest/api/3/issuetype");
-
-  return Promise.resolve(JSON.parse(response.body));
+  // used wrong url to test
+  return AP.request("/rest/api/3/issuetypee")
+    .then((response) => JSON.parse(response.body))
+    .then((data) => {
+      if (data) {
+        return data;
+      } else {
+        throw new Error("Some error occurred fetching issue types");
+      }
+    })
+    .catch((error) => {
+      const newError = new Error(
+        "Some error occurred fetching issue issue types"
+      );
+      console.log(error);
+      throw newError;
+    });
 };
 
 export const LinkTypeAPI = async () => {
-  const response = await AP.request("/rest/api/3/issueLinkType");
-  const data = JSON.parse(response.body).issueLinkTypes;
-  if (data && data.issueLinkTypes) {
-    return Promise.resolve(data.issueLinkTypes);
-  } else {
-    const error = new Error("Some error occured fetching Link types");
-    return Promise.reject(error);
-  }
+  return AP.request("/rest/api/3/issueLinkType")
+    .then((response) => JSON.parse(response.body))
+    .then((data) => {
+      if (data && data.issueLinkTypes) {
+        return data.issueLinkTypes;
+      } else {
+        throw new Error("Some error occurred fetching issue link types");
+      }
+    })
+    .catch((error) => {
+      const newError = new Error("Some error fetching issue link types");
+      console.log(error);
+      throw newError;
+    });
 };
 
 export const PriorityAPI = async () => {
-  const response = await AP.request("/rest/api/3/priority");
-
-  return Promise.resolve(JSON.parse(response.body));
+  return AP.request("/rest/api/3/priority")
+    .then((response) => JSON.parse(response.body))
+    .then((data) => {
+      if (data) {
+        return data;
+      } else {
+        throw new Error("some error occurred fetching priorities");
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      const newError = new Error("Some error fetching issue priorities");
+      throw newError;
+    });
 };
 
 export const IssueFieldsAPI = async () => {
-  const response = await AP.request("/rest/api/3/field");
-  return Promise.resolve(JSON.parse(response.body));
+  return AP.request("/rest/api/3/field")
+    .then((response) => JSON.parse(response.body))
+    .then((data) => {
+      if (data) {
+        return data;
+      } else {
+        throw new Error("some error occurred fetching fields");
+      }
+    })
+    .catch((error) => {
+      const newError = new Error("Some error fetching issue fields");
+      console.log(error);
+      throw newError;
+    });
 };
-
 export const IssueLinkAPI = async (
   key,
   fields = [
@@ -51,13 +93,21 @@ export const IssueLinkAPI = async (
     queries.push(`fields=${field}`);
   });
   const queriesString = queries.join("&");
-  let url = `/rest/api/3/issue/${input}`;
+  // used wrong url to test
+  let url = `/rest/api/3/issue/${input}s`;
   if (queriesString.length > 0) {
     url = url + "?" + queriesString;
   }
-  const response = await AP.request(url);
 
-  return Promise.resolve(JSON.parse(response.body));
+  return AP.request(url)
+    .then((response) => {
+      return JSON.parse(response.body);
+    })
+    .catch((error) => {
+      console.log(error);
+      const newError = new Error(`some error occurred fetching issue ${input}`);
+      throw newError;
+    });
 };
 
 export const IssueAPI = async (id) => {

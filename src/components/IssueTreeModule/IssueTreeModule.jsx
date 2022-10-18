@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   IssueTypeAPI,
   LinkTypeAPI,
@@ -9,8 +9,6 @@ import {
 import { Toolbar } from "./Toolbar";
 import { IssueTree } from "./IssueTree";
 import { mutateTree } from "@atlaskit/tree";
-import ErrorIcon from "@atlaskit/icon/glyph/error";
-import Banner from "@atlaskit/banner";
 import { ErrorsList } from "../ErrorsList";
 let root = {
   rootId: "0",
@@ -47,9 +45,9 @@ export const IssueTreeModule = () => {
     setErrors([...errors, error]);
   };
   const handleMultipleErrors = (newErrors) => {
-    newErrors = errors.concat(newErrors)
-    setErrors(newErrors)
-  }
+    newErrors = errors.concat(newErrors);
+    setErrors(newErrors);
+  };
   const exportTree = () => {
     const root = tree.items[tree.rootId];
     const rootChildren = root.children;
@@ -112,16 +110,15 @@ export const IssueTreeModule = () => {
           setFilter(ids);
         })
         .catch((newErrors) => {
-          console.log(newErrors);
-          handleMultipleErrors(newErrors)
+          handleMultipleErrors(newErrors);
         });
     };
     fetchDropdownsData();
   }, []);
   useEffect(() => {
     const fetchFieldsData = async () => {
-      Promise.all([ProjectAPI(), IssueFieldsAPI()]).then(
-        ([project, results]) => {
+      Promise.all([ProjectAPI(), IssueFieldsAPI()])
+        .then(([project, results]) => {
           const newResults = results.map((result) => {
             if (result.key.includes("customfield_")) {
               result.customKey = result.name
@@ -159,8 +156,10 @@ export const IssueTreeModule = () => {
           });
           setIssueFields(fieldsMap);
           setSelectedIssueFieldIds(selectedFieldIds);
-        }
-      );
+        })
+        .catch((errors) => {
+          handleMultipleErrors(errors);
+        });
     };
     fetchFieldsData();
   }, []);
@@ -201,6 +200,7 @@ export const IssueTreeModule = () => {
         selectedIssueFieldIds={selectedIssueFieldIds}
         issueFields={issueFields}
         cardFields={options}
+        handleError={handleSingleError}
       />
       {Object.keys(filter).map((keyName) => (
         <div key={keyName}>

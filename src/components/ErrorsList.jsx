@@ -5,9 +5,11 @@ import styled from "styled-components";
 
 const Container = styled.div`
   margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 `;
 export const ErrorsList = ({ errors }) => {
-  console.log(errors);
   return (
     <Container>
       {errors.map((error, index) => {
