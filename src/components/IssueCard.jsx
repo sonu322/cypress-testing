@@ -30,7 +30,7 @@ const CardFooter = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-between;
-  margin-top: 10px;
+  // margin-top: 10px;
 `;
 const FooterSideContainer = styled.div`
   display: flex;

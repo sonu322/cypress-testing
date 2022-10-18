@@ -62,6 +62,7 @@ const formatIssueData = (data, parent) => {
     priority: data.fields.priority,
     status: data.fields.status,
     isType: false,
+    allData: data
   };
 };
 const formatIssue = (data, parentTypeID, parentIssueID) => {
@@ -90,7 +91,7 @@ const formatIssue = (data, parentTypeID, parentIssueID) => {
 
   for (const issue of data.fields.subtasks) {
     if (issue.id !== parentIssueID) {
-      const issueID = UUID();
+      const issueID = UUID(); //`${data.id}-${issue.id}`;
       subTasks.push(issueID);
       items.push({
         id: issueID,
@@ -151,7 +152,8 @@ const formatIssue = (data, parentTypeID, parentIssueID) => {
     return typeIDMap.get(key);
   };
 
-  for (const { type, inwardIssue, outwardIssue } of data.fields.issuelinks) {
+  for (const { id, type, inwardIssue, outwardIssue } of data.fields
+    .issuelinks) {
     if (
       (inwardIssue && inwardIssue.id !== parentIssueID) ||
       (outwardIssue && outwardIssue.id !== parentIssueID)
@@ -180,7 +182,7 @@ const formatIssue = (data, parentTypeID, parentIssueID) => {
 
       const map = typeMap.get(typeID);
       if (inwardIssue) {
-        const issueID = UUID();
+        const issueID = UUID(); //`${data.id}-${inwardIssue.id}`;
         map.children.push(issueID);
         items.push({
           id: issueID,
@@ -206,21 +208,10 @@ const formatIssue = (data, parentTypeID, parentIssueID) => {
     }
   }
 
-  for (const [value] of typeMap) {
+  for (const [key, value] of typeMap) {
     items.push(value);
   }
-  console.log({
-    children: items,
-    data: {
-      id: data.id,
-      children: ids,
-      hasChildren: hasChildren,
-      isChildrenLoading: false,
-      isExpanded: true,
-      data: formatIssueData(data),
-      allData: data,
-    },
-  });
+
   return {
     children: items,
     data: {
@@ -230,7 +221,6 @@ const formatIssue = (data, parentTypeID, parentIssueID) => {
       isChildrenLoading: false,
       isExpanded: true,
       data: formatIssueData(data),
-      allData: data,
     },
   };
 };
@@ -244,7 +234,7 @@ export const IssueTree = ({
   selectedIssueFieldIds,
   issueFields,
   issueCardOptionsMap,
-  handleError
+  handleError,
 }) => {
   useEffect(() => {
     if (issueFields && issueFields.size > 0) {
@@ -252,21 +242,25 @@ export const IssueTree = ({
       for (let field of issueFields.values()) {
         fieldIds.push(field.id);
       }
-      IssueLinkAPI(null, fieldIds).then((data) => {
-        const value = formatIssue(data, null, null);
-        root.items[data.id] = value.data;
-        root.items["0"].children.push(data.id);
-        for (const child of value.children) {
-          root.items[child.id] = child;
-        }
-        setTree(mutateTree(root, "0", { isExpanded: true }));
-        setIsFetched(true);
-      }).catch(error => handleError(error));
+      IssueLinkAPI(null, fieldIds)
+        .then((data) => {
+          const value = formatIssue(data, null, null);
+          console.log("From useeff");
+          console.log(value);
+          root.items[data.id] = value.data;
+          root.items["0"].children.push(data.id);
+          for (const child of value.children) {
+            root.items[child.id] = child;
+          }
+          setTree(mutateTree(root, "0", { isExpanded: true }));
+          setIsFetched(true);
+        })
+        .catch((error) => handleError(error));
     }
   }, [issueFields, root, setIsFetched, setTree]);
 
   const SideIcon = ({ item, onExpand, onCollapse }) => {
-    console.log(item)
+    console.log(item);
     if (item.isChildrenLoading) {
       return (
         <SpinnerContainer onClick={() => onCollapse(item.id)}>
@@ -281,7 +275,7 @@ export const IssueTree = ({
           appearance="subtle-link"
           onClick={() => onCollapse(item.id)}
         >
-          d<ChevronDownIcon label="" size={16} />
+          <ChevronDownIcon label="" size={16} />
         </Button>
       ) : (
         <Button
@@ -289,7 +283,7 @@ export const IssueTree = ({
           appearance="subtle-link"
           onClick={() => onExpand(item.id)}
         >
-          r<ChevronRightIcon label="" size={16} />
+          <ChevronRightIcon label="" size={16} />
         </Button>
       );
     }
@@ -308,30 +302,34 @@ export const IssueTree = ({
     return style;
   };
 
-  const renderItem = ({ item, onExpand, onCollapse, provided, depth }) => (
-    <div
-      style={getItemStyle(depth)}
-      ref={provided.innerRef}
-      {...provided.dragHandleProps}
-    >
-      <SideIcon
-        item={item}
-        onExpand={onExpand}
-        onCollapse={onCollapse}
-      ></SideIcon>
-      {item.data && item.data.isType ? (
-        <LinkTypeContainer>
-          {item.data ? item.data.title : "No Name"}
-        </LinkTypeContainer>
-      ) : (
-        <IssueCard
-          issueData={item.allData ? item.allData : null}
-          selectedIssueFieldIds={selectedIssueFieldIds}
-          issueCardOptionsMap={issueCardOptionsMap}
-        />
-      )}
-    </div>
-  );
+  const renderItem = ({ item, onExpand, onCollapse, provided, depth }) => {
+    console.log(item);
+    console.log("from renderitem");
+    return (
+      <div
+        style={getItemStyle(depth)}
+        ref={provided.innerRef}
+        {...provided.dragHandleProps}
+      >
+        <SideIcon
+          item={item}
+          onExpand={onExpand}
+          onCollapse={onCollapse}
+        ></SideIcon>
+        {item.data && item.data.isType ? (
+          <LinkTypeContainer>
+            {item.data ? item.data.title : "No Name"}
+          </LinkTypeContainer>
+        ) : (
+          <IssueCard
+            issueData={item.data.allData ? item.data.allData : null}
+            selectedIssueFieldIds={selectedIssueFieldIds}
+            issueCardOptionsMap={issueCardOptionsMap}
+          />
+        )}
+      </div>
+    );
+  };
   const onExpand = (itemId) => {
     setTree(mutateTree(tree, itemId, { isChildrenLoading: true }));
 
@@ -414,6 +412,8 @@ export const IssueTree = ({
     Object.keys(tree.items).forEach((key) => {
       const item = JSON.parse(JSON.stringify(tree.items[key]));
       if (item.data) {
+        console.log("from is fetched");
+        console.log(item);
         const data = item.data;
         if (key == tree.rootId || rootChildren.includes(key)) {
           hiddedTree.items[key] = item;
@@ -438,7 +438,8 @@ export const IssueTree = ({
       }
     });
   }
-
+  console.log("before");
+  console.log(hiddedTree);
   const keys = Object.keys(hiddedTree.items);
   keys.forEach((key) => {
     const item = hiddedTree.items[key];
@@ -447,7 +448,8 @@ export const IssueTree = ({
       item.hasChildren = false;
     }
   });
-
+  console.log("after");
+  console.log(hiddedTree);
   return (
     <Container>
       <Tree
