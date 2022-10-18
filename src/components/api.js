@@ -1,6 +1,5 @@
 export const IssueTypeAPI = async () => {
-  // used wrong url to test
-  return AP.request("/rest/api/3/issuetypee")
+  return AP.request("/rest/api/3/issuetype")
     .then((response) => JSON.parse(response.body))
     .then((data) => {
       if (data) {
@@ -93,8 +92,7 @@ export const IssueLinkAPI = async (
     queries.push(`fields=${field}`);
   });
   const queriesString = queries.join("&");
-  // used wrong url to test
-  let url = `/rest/api/3/issue/${input}s`;
+  let url = `/rest/api/3/issue/${input}`;
   if (queriesString.length > 0) {
     url = url + "?" + queriesString;
   }
