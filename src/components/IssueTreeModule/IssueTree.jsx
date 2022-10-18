@@ -249,8 +249,6 @@ export const IssueTree = ({
       IssueLinkAPI(null, fieldIds)
         .then((data) => {
           const value = formatIssue(data, null, null);
-          console.log("From useeff");
-          console.log(value);
           root.items[data.id] = value.data;
           root.items["0"].children.push(data.id);
           for (const child of value.children) {
@@ -264,7 +262,6 @@ export const IssueTree = ({
   }, [issueFields, root, setIsFetched, setTree]);
 
   const SideIcon = ({ item, onExpand, onCollapse }) => {
-    console.log(item);
     if (item.isChildrenLoading) {
       return (
         <SpinnerContainer onClick={() => onCollapse(item.id)}>
@@ -307,8 +304,6 @@ export const IssueTree = ({
   };
 
   const renderItem = ({ item, onExpand, onCollapse, provided, depth }) => {
-    console.log(item);
-    console.log("from renderitem");
     return (
       <div
         style={getItemStyle(depth)}
@@ -336,15 +331,11 @@ export const IssueTree = ({
     );
   };
   const onExpand = (itemId) => {
-    console.log("on expand !!!!!!!!!!!!");
     setTree(mutateTree(tree, itemId, { isChildrenLoading: true }));
 
     const ntree = tree;
     const item = ntree.items[itemId];
-    console.log(item);
     if (item.hasChildren && item.children.length > 0) {
-      console.log("has children");
-      console.log(item);
 
       setTree(
         mutateTree(ntree, itemId, {
@@ -355,7 +346,6 @@ export const IssueTree = ({
     } else {
       const fieldIds = getFeildIds(issueFields);
       IssueLinkAPI(item.data ? item.data.id : null, fieldIds).then((data) => {
-        console.log("called on expand condition");
         let parent = (item.data || {}).parent;
         const parentType = parent ? ntree.items[parent] : null;
         parent = parent
@@ -367,10 +357,7 @@ export const IssueTree = ({
         const parentIssueID = ((parentIssue || {}).data || {}).id;
 
         const value = formatIssue(data, parentTypeID, parentIssueID);
-        console.log("from on exapnad");
-        console.log(value);
         ntree.items[itemId].data = value.data.data;
-        console.log("children");
         for (const child of value.children) {
           if (!ntree.items[child.id]) {
             ntree.items[child.id] = child;
@@ -426,8 +413,6 @@ export const IssueTree = ({
     Object.keys(tree.items).forEach((key) => {
       const item = JSON.parse(JSON.stringify(tree.items[key]));
       if (item.data) {
-        console.log("from is fetched");
-        console.log(item);
         const data = item.data;
         
         if (key == tree.rootId || rootChildren.includes(key)) {
@@ -454,8 +439,7 @@ export const IssueTree = ({
       }
     });
   }
-  console.log("before");
-  console.log(hiddedTree);
+
   const keys = Object.keys(hiddedTree.items);
   keys.forEach((key) => {
     const item = hiddedTree.items[key];
@@ -464,8 +448,6 @@ export const IssueTree = ({
       item.hasChildren = false;
     }
   });
-  console.log("after");
-  console.log(hiddedTree);
   return (
     <Container>
       <Tree

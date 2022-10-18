@@ -45,8 +45,6 @@ export const IssueCard = ({
   issueCardOptionsMap,
   isIssueExpanded,
 }) => {
-  console.log("called!!!!!!!!isseu card");
-  console.log(issueData);
   let cardOptionsDataMap;
   let copy = new Map(issueCardOptionsMap);
   for (const field of copy.values()) {
