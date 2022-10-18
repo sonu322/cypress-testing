@@ -1,25 +1,14 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
-import ChevronDownIcon from "@atlaskit/icon/glyph/chevron-down";
-import ChevronRightIcon from "@atlaskit/icon/glyph/chevron-right";
-import Spinner from "@atlaskit/spinner";
-import Button from "@atlaskit/button";
 import { colors } from "@atlaskit/theme";
 import { IssueLinkAPI } from "../api";
 import { formatIssue, getFieldIds } from "../../util/issueTreeUtils";
 import Tree, { mutateTree } from "@atlaskit/tree";
 import { IssueCard } from "../IssueCard";
-
+import { ExpansionToggler } from "../ExpansionToggler";
 const PADDING_LEVEL = 30;
 
-const Box = styled.span`
-  display: flex;
-  width: 24px;
-  height: 32px;
-  justify-content: center;
-  font-size: 12px;
-  line-height: 32px;
-`;
+
 
 const LinkTypeContainer = styled.div`
   display: flex;
@@ -39,16 +28,6 @@ const Container = styled.div`
   display: flex;
 `;
 
-const SpinnerContainer = styled.span`
-  display: flex;
-  min-width: 24px;
-  width: 24px;
-  height: 32px;
-  justify-content: center;
-  font-size: 12px;
-  line-height: 32px;
-  padding-top: 8px;
-`;
 
 export const IssueTree = ({
   root,
@@ -63,7 +42,6 @@ export const IssueTree = ({
   handleError,
 }) => {
   useEffect(() => {
-    
     if (issueFields && issueFields.size > 0) {
       console.log("use eff called");
       const fieldIds = getFieldIds(issueFields);
@@ -83,36 +61,6 @@ export const IssueTree = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [issueFields]);
 
-  const ExpansionToggler = ({ isLoading, item, onExpand, onCollapse }) => {
-    if (isLoading) {
-      return (
-        <SpinnerContainer onClick={() => onCollapse(item.id)}>
-          <Spinner size={16} />
-        </SpinnerContainer>
-      );
-    }
-    if (item.hasChildren) {
-      return item.isExpanded ? (
-        <Button
-          spacing="none"
-          appearance="subtle-link"
-          onClick={() => onCollapse(item.id)}
-        >
-          <ChevronDownIcon label="" size={16} />
-        </Button>
-      ) : (
-        <Button
-          spacing="none"
-          appearance="subtle-link"
-          onClick={() => onExpand(item.id)}
-        >
-          <ChevronRightIcon label="" size={16} />
-        </Button>
-      );
-    }
-
-    return <Box />;
-  };
   const getItemStyle = (depth) => {
     const style = {
       margin: ".5em 0",
@@ -134,9 +82,11 @@ export const IssueTree = ({
       >
         <ExpansionToggler
           item={item}
+          isExpanded={item.isExpanded}
           isLoading={item.isChildrenLoading}
-          onExpand={onExpand}
-          onCollapse={onCollapse}
+          onExpand={() => onExpand(item.id)}
+          onCollapse={() => onCollapse(item.id)}
+          isTogglerDisabled={!item.hasChildren}
         ></ExpansionToggler>
         {item.data && item.data.isType ? (
           <LinkTypeContainer>
@@ -153,7 +103,7 @@ export const IssueTree = ({
       </div>
     );
   };
-  const onExpand = (itemId) => {
+  const handleExpand = (itemId) => {
     setTree(mutateTree(tree, itemId, { isChildrenLoading: true }));
 
     const ntree = tree;
@@ -199,7 +149,7 @@ export const IssueTree = ({
     }
   };
 
-  const onCollapse = (itemId) => {
+  const handleCollapse = (itemId) => {
     setTree(
       mutateTree(tree, itemId, {
         isExpanded: false,
@@ -272,12 +222,11 @@ export const IssueTree = ({
   });
   return (
     <Container>
-      sgsdgfsd
       <Tree
         tree={hiddedTree}
         renderItem={renderItem}
-        onExpand={onExpand}
-        onCollapse={onCollapse}
+        onExpand={handleExpand}
+        onCollapse={handleCollapse}
         isDragEnabled={false}
       />
     </Container>

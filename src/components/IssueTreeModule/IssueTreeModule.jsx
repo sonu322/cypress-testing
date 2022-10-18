@@ -190,7 +190,7 @@ export const IssueTreeModule = () => {
         issueCardOptionsMap={issueCardOptions}
         selectedIssueFieldIds={selectedIssueFieldIds}
         setSelectedIssueFieldIds={setSelectedIssueFieldIds}
-      />fasd
+      />
       <IssueTree
         tree={tree}
         setTree={setTree}
