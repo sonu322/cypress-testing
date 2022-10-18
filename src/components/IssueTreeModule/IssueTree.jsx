@@ -209,7 +209,18 @@ const formatIssue = (data, parentTypeID, parentIssueID) => {
   for (const [value] of typeMap) {
     items.push(value);
   }
-
+  console.log({
+    children: items,
+    data: {
+      id: data.id,
+      children: ids,
+      hasChildren: hasChildren,
+      isChildrenLoading: false,
+      isExpanded: true,
+      data: formatIssueData(data),
+      allData: data,
+    },
+  });
   return {
     children: items,
     data: {
@@ -232,7 +243,7 @@ export const IssueTree = ({
   filter,
   selectedIssueFieldIds,
   issueFields,
-  issueCardOptionsMap
+  issueCardOptionsMap,
 }) => {
   useEffect(() => {
     if (issueFields && issueFields.size > 0) {
@@ -254,6 +265,7 @@ export const IssueTree = ({
   }, [issueFields, root, setIsFetched, setTree]);
 
   const SideIcon = ({ item, onExpand, onCollapse }) => {
+    console.log(item)
     if (item.isChildrenLoading) {
       return (
         <SpinnerContainer onClick={() => onCollapse(item.id)}>
