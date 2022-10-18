@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   IssueTypeAPI,
   LinkTypeAPI,
@@ -9,6 +9,8 @@ import {
 import { Toolbar } from "./Toolbar";
 import { IssueTree } from "./IssueTree";
 import { mutateTree } from "@atlaskit/tree";
+import { download, csv } from "../../util";
+import { ErrorsList } from "../ErrorsList";
 let root = {
   rootId: "0",
   items: {
@@ -33,12 +35,20 @@ const fixedFieldNames = [
   "resolution",
 ];
 export const IssueTreeModule = () => {
+  const [errors, setErrors] = useState([]);
   const [options, setOptions] = useState({});
   const [filter, setFilter] = useState({});
   const [tree, setTree] = useState(mutateTree(root, "0", { isExpanded: true }));
   const [isFetched, setIsFetched] = useState(false);
   const [issueFields, setIssueFields] = useState([]);
   const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState([]);
+  const handleSingleError = (error) => {
+    setErrors([...errors, error]);
+  };
+  const handleMultipleErrors = (newErrors) => {
+    newErrors = errors.concat(newErrors);
+    setErrors(newErrors);
+  };
   const exportTree = () => {
     const root = tree.items[tree.rootId];
     const rootChildren = root.children;
@@ -80,13 +90,14 @@ export const IssueTreeModule = () => {
     };
 
     process(tree.items[rootChildren[0]], 1);
+    download("csv", csv(contents, true));
 
-    return contents;
+    // return contents;
   };
   useEffect(() => {
     const fetchDropdownsData = async () => {
-      Promise.all([PriorityAPI(), LinkTypeAPI(), IssueTypeAPI()]).then(
-        (results) => {
+      Promise.all([PriorityAPI(), LinkTypeAPI(), IssueTypeAPI()])
+        .then((results) => {
           const optionsData = {
             priorities: results[0],
             linkTypes: results[1],
@@ -99,15 +110,17 @@ export const IssueTreeModule = () => {
             issueTypes: optionsData.issueTypes.map((item) => item.id),
           };
           setFilter(ids);
-        }
-      );
+        })
+        .catch((newErrors) => {
+          handleMultipleErrors(newErrors);
+        });
     };
     fetchDropdownsData();
   }, []);
   useEffect(() => {
     const fetchFieldsData = async () => {
-      Promise.all([ProjectAPI(), IssueFieldsAPI()]).then(
-        ([project, results]) => {
+      Promise.all([ProjectAPI(), IssueFieldsAPI()])
+        .then(([project, results]) => {
           const newResults = results.map((result) => {
             if (result.key.includes("customfield_")) {
               result.customKey = result.name
@@ -145,8 +158,10 @@ export const IssueTreeModule = () => {
           });
           setIssueFields(fieldsMap);
           setSelectedIssueFieldIds(selectedFieldIds);
-        }
-      );
+        })
+        .catch((errors) => {
+          handleMultipleErrors(errors);
+        });
     };
     fetchFieldsData();
   }, []);
@@ -161,10 +176,11 @@ export const IssueTreeModule = () => {
       issueCardOptions.delete(fieldId);
     }
   }
-  // how to check use memo: change dropdown, console log will run again.
-  // but put it in use callback, it wontrun
+
   return (
     <div>
+      {errors && <ErrorsList errors={errors} />}
+
       <Toolbar
         exportTree={exportTree}
         options={options}
@@ -186,6 +202,7 @@ export const IssueTreeModule = () => {
         selectedIssueFieldIds={selectedIssueFieldIds}
         issueFields={issueFields}
         cardFields={options}
+        handleError={handleSingleError}
       />
       {Object.keys(filter).map((keyName) => (
         <div key={keyName}>
