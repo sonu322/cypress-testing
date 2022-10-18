@@ -135,9 +135,25 @@ export const ProjectAPI = async (key) => {
     });
   };
   const input = key || (await getKey());
-  const response = await AP.request(`/rest/api/3/project/${input}`);
+  // const response = await AP.request(`/rest/api/3/project/${input}`);
 
-  return Promise.resolve(JSON.parse(response.body));
+  // return Promise.resolve(JSON.parse(response.body));
+  return AP.request(`/rest/api/3/project/${input}`)
+    .then((response) => JSON.parse(response.body))
+    .then((data) => {
+      if (data) {
+        return data;
+      } else {
+        throw new Error("Some error occurred fetching Project details");
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      const newError = new Error(
+        "Some error occurred fetching Project details"
+      );
+      throw newError;
+    });
 };
 
 /*
