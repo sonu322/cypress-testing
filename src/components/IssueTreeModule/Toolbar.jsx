@@ -47,7 +47,7 @@ export const Toolbar = ({
             updateSelectedOptions={setSelectedIssueFieldIds}
           />
           <ExportContent
-            description={"export issue tree to csv"}
+            description={"Export issue tree to csv"}
             exportContent={exportTree}
           />
           <HelpLink description={"Get help"} href={helpLink} />
