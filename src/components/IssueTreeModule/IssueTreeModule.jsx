@@ -9,6 +9,7 @@ import {
 import { Toolbar } from "./Toolbar";
 import { IssueTree } from "./IssueTree";
 import { mutateTree } from "@atlaskit/tree";
+import { download, csv } from "../../util";
 import { ErrorsList } from "../ErrorsList";
 let root = {
   rootId: "0",
@@ -89,8 +90,9 @@ export const IssueTreeModule = () => {
     };
 
     process(tree.items[rootChildren[0]], 1);
+    download("csv", csv(contents, true));
 
-    return contents;
+    // return contents;
   };
   useEffect(() => {
     const fetchDropdownsData = async () => {

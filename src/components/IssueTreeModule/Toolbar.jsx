@@ -3,7 +3,9 @@ import { Dropdown } from "./Dropdown";
 import { ButtonGroup } from "@atlaskit/button";
 import styled from "styled-components";
 import { IssueOptionsDropdown } from "./IssueOptionsDropdown";
-
+import { helpLink } from "../../constants";
+import { ExportContent } from "../ExportContent";
+import { HelpLink } from "../HelpLink";
 export const Container = styled.div`
   display: flex;
   justify-content: space-between;
@@ -18,6 +20,7 @@ export const Toolbar = ({
   selectedIssueFieldIds,
   setSelectedIssueFieldIds,
   issueCardOptionsMap,
+  exportTree,
 }) => {
   const issueCardOptions = Array.from(issueCardOptionsMap.values());
   return (
@@ -35,12 +38,21 @@ export const Toolbar = ({
             />
           ))}
       </ButtonGroup>
-      <Dropdown
-        dropdownName={"Issue Card Fields"}
-        options={issueCardOptions}
-        selectedOptions={selectedIssueFieldIds}
-        updateSelectedOptions={setSelectedIssueFieldIds}
-      />
+      <div>
+        <ButtonGroup>
+          <Dropdown
+            dropdownName={"Issue Card Fields"}
+            options={issueCardOptions}
+            selectedOptions={selectedIssueFieldIds}
+            updateSelectedOptions={setSelectedIssueFieldIds}
+          />
+          <ExportContent
+            description={"Export issue tree to csv"}
+            exportContent={exportTree}
+          />
+          <HelpLink description={"Get help"} href={helpLink} />
+        </ButtonGroup>
+      </div>
     </Container>
   );
 };
