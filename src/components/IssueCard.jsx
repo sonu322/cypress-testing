@@ -43,15 +43,18 @@ export const IssueCard = ({
   issueData,
   selectedIssueFieldIds,
   issueCardOptionsMap,
+  isIssueExpanded,
 }) => {
-  console.log("called!!!!!!!!isseu card")
-  console.log(issueData)
+  console.log("called!!!!!!!!isseu card");
+  console.log(issueData);
   let cardOptionsDataMap;
   let copy = new Map(issueCardOptionsMap);
   for (const field of copy.values()) {
     field.isSelected = selectedIssueFieldIds.includes(field.key);
     field.value = issueData.fields[field.key];
   }
+  copy.get("assignee").isSelected =
+    copy.get("assignee").isSelected && isIssueExpanded;
   cardOptionsDataMap = copy;
 
   const storyPointsInfo =

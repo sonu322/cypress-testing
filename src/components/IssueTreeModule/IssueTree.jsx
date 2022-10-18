@@ -60,15 +60,16 @@ const SpinnerContainer = styled.span`
 
 const formatIssueData = (data, parent) => {
   return {
-    title: data.key,
-    id: data.id,
+    ...data,
+    // title: data.key,
+    // id: data.id,
     parent: parent,
-    summary: data.fields.summary,
-    type: data.fields.issuetype,
-    priority: data.fields.priority,
-    status: data.fields.status,
+    // summary: data.fields.summary,
+    // type: data.fields.issuetype,
+    // priority: data.fields.priority,
+    // status: data.fields.status,
     isType: false,
-    allData: data,
+    // allData: data,
   };
 };
 const formatIssue = (data, parentTypeID, parentIssueID) => {
@@ -325,25 +326,26 @@ export const IssueTree = ({
           </LinkTypeContainer>
         ) : (
           <IssueCard
-            issueData={item.data.allData ? item.data.allData : null}
+            issueData={item.data ?? null}
             selectedIssueFieldIds={selectedIssueFieldIds}
             issueCardOptionsMap={issueCardOptionsMap}
+            isIssueExpanded={item.isExpanded}
           />
         )}
       </div>
     );
   };
   const onExpand = (itemId) => {
-    console.log("on expand !!!!!!!!!!!!")
+    console.log("on expand !!!!!!!!!!!!");
     setTree(mutateTree(tree, itemId, { isChildrenLoading: true }));
 
     const ntree = tree;
     const item = ntree.items[itemId];
-    console.log(item)
+    console.log(item);
     if (item.hasChildren && item.children.length > 0) {
-      console.log("has children")
+      console.log("has children");
       console.log(item);
-      
+
       setTree(
         mutateTree(ntree, itemId, {
           isExpanded: true,
@@ -351,9 +353,9 @@ export const IssueTree = ({
         })
       );
     } else {
-      const fieldIds = getFeildIds(issueFields)
+      const fieldIds = getFeildIds(issueFields);
       IssueLinkAPI(item.data ? item.data.id : null, fieldIds).then((data) => {
-        console.log("called on expand condition")
+        console.log("called on expand condition");
         let parent = (item.data || {}).parent;
         const parentType = parent ? ntree.items[parent] : null;
         parent = parent
@@ -367,9 +369,8 @@ export const IssueTree = ({
         const value = formatIssue(data, parentTypeID, parentIssueID);
         console.log("from on exapnad");
         console.log(value);
-        ntree.items[itemId].data = value.data.data
-        console.log("children")
-        // change - danger
+        ntree.items[itemId].data = value.data.data;
+        console.log("children");
         for (const child of value.children) {
           if (!ntree.items[child.id]) {
             ntree.items[child.id] = child;
@@ -428,6 +429,7 @@ export const IssueTree = ({
         console.log("from is fetched");
         console.log(item);
         const data = item.data;
+        
         if (key == tree.rootId || rootChildren.includes(key)) {
           hiddedTree.items[key] = item;
         } else {
@@ -440,9 +442,10 @@ export const IssueTree = ({
               hiddedTree.items[key] = item;
             }
           } else {
+            const { issuetype, priority } = data.fields;
             if (
-              (issueTypes.length === 0 || issueTypes.includes(data.type.id)) &&
-              (priorities.length === 0 || priorities.includes(data.priority.id))
+              (issueTypes.length === 0 || issueTypes.includes(issuetype.id)) &&
+              (priorities.length === 0 || priorities.includes(priority.id))
             ) {
               hiddedTree.items[key] = item;
             }
