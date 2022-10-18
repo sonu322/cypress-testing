@@ -9,7 +9,7 @@ import {
 import { Toolbar } from "./Toolbar";
 import { IssueTree } from "./IssueTree";
 import { mutateTree } from "@atlaskit/tree";
-import {download, csv} from '../../util'
+import { download, csv } from "../../util";
 let root = {
   rootId: "0",
   items: {
@@ -41,7 +41,6 @@ export const IssueTreeModule = () => {
   const [issueFields, setIssueFields] = useState([]);
   const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState([]);
   const exportTree = () => {
-    console.log("export tree called")
     const root = tree.items[tree.rootId];
     const rootChildren = root.children;
 

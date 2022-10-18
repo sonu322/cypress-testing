@@ -6,6 +6,7 @@ import { IssueOptionsDropdown } from "./IssueOptionsDropdown";
 import ExportIcon from "@atlaskit/icon/glyph/export";
 import QuestionIcon from "@atlaskit/icon/glyph/question";
 import { HelpLink } from "../../constants"
+import { ExportContent } from "../ExportContent";
 export const Container = styled.div`
   display: flex;
   justify-content: space-between;
@@ -46,10 +47,9 @@ export const Toolbar = ({
             selectedOptions={selectedIssueFieldIds}
             updateSelectedOptions={setSelectedIssueFieldIds}
           />
-          <Button
-            appearance="default"
-            iconBefore={<ExportIcon />}
-            onClick={exportTree}
+          <ExportContent
+            description={"export issue tree to csv"}
+            exportContent={exportTree}
           />
           <Button
             appearance="default"
