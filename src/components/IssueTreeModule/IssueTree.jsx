@@ -6,19 +6,11 @@ import Spinner from "@atlaskit/spinner";
 import Button from "@atlaskit/button";
 import { colors } from "@atlaskit/theme";
 import { IssueLinkAPI } from "../api";
-import { UUID } from "../../util";
+import { formatIssue, getFieldIds } from "../../util/issueTreeUtils";
 import Tree, { mutateTree } from "@atlaskit/tree";
 import { IssueCard } from "../IssueCard";
-const getFeildIds = (issueFields) => {
-  const fieldIds = [];
-  for (let field of issueFields.values()) {
-    fieldIds.push(field.id);
-  }
-  return fieldIds;
-};
+
 const PADDING_LEVEL = 30;
-const SUB_TASKS = "Subtasks";
-const PARENT = "Parent";
 
 const Box = styled.span`
   display: flex;
@@ -58,179 +50,6 @@ const SpinnerContainer = styled.span`
   padding-top: 8px;
 `;
 
-const formatIssueData = (data, parent) => {
-  return {
-    ...data,
-    // title: data.key,
-    // id: data.id,
-    parent: parent,
-    // summary: data.fields.summary,
-    // type: data.fields.issuetype,
-    // priority: data.fields.priority,
-    // status: data.fields.status,
-    isType: false,
-    // allData: data,
-  };
-};
-const formatIssue = (data, parentTypeID, parentIssueID) => {
-  let hasChildren = false;
-  const ids = [];
-  const typeMap = new Map();
-  const items = [];
-  const subTasks = [];
-  const subTypeID = UUID(); //`${data.id}-0`;
-  if (data.fields.subtasks.length > 0) {
-    typeMap.set(SUB_TASKS, {
-      id: subTypeID,
-      children: subTasks,
-      hasChildren: true,
-      isChildrenLoading: false,
-      isExpanded: true,
-      data: {
-        id: "-1",
-        parent: data.id,
-        title: SUB_TASKS,
-        summary: "Issue Sub Tasks",
-        isType: true,
-      },
-    });
-  }
-
-  for (const issue of data.fields.subtasks) {
-    if (issue.id !== parentIssueID) {
-      const issueID = UUID(); //`${data.id}-${issue.id}`;
-      subTasks.push(issueID);
-      items.push({
-        id: issueID,
-        children: [],
-        hasChildren: true,
-        isChildrenLoading: false,
-        isExpanded: false,
-        data: formatIssueData(issue, subTypeID),
-      });
-    }
-  }
-  if (subTasks.length === 0) {
-    typeMap.delete(SUB_TASKS);
-  } else {
-    hasChildren = true;
-    ids.push(subTypeID);
-  }
-
-  if (data.fields.parent) {
-    const parentIssueLinkID = UUID();
-    const parentIssueTypeID = UUID();
-    const parent = data.fields.parent;
-    if (parent.id !== parentIssueID) {
-      typeMap.set(PARENT, {
-        id: parentIssueLinkID,
-        children: [parentIssueTypeID],
-        hasChildren: true,
-        isChildrenLoading: false,
-        isExpanded: true,
-        data: {
-          id: "-1",
-          parent: data.id,
-          title: PARENT,
-          summary: "Issue parent",
-          isType: true,
-        },
-      });
-
-      items.push({
-        id: parentIssueTypeID,
-        children: [],
-        hasChildren: true,
-        isChildrenLoading: false,
-        isExpanded: false,
-        data: formatIssueData(parent, parentIssueLinkID),
-      });
-
-      ids.push(parentIssueLinkID);
-    }
-  }
-
-  const typeIDMap = new Map();
-  const getTypeID = (id, inwards) => {
-    const key = id + (inwards ? "-inwards" : "-outwards");
-    if (!typeIDMap.has(key)) {
-      typeIDMap.set(key, UUID());
-    }
-    return typeIDMap.get(key);
-  };
-
-  for (const { id, type, inwardIssue, outwardIssue } of data.fields
-    .issuelinks) {
-    if (
-      (inwardIssue && inwardIssue.id !== parentIssueID) ||
-      (outwardIssue && outwardIssue.id !== parentIssueID)
-    ) {
-      hasChildren = true;
-      const inwards = inwardIssue ? true : false;
-      const typeID = getTypeID(type.id, inwards); //`${data.id}-${type.id}`;
-      if (!typeMap.has(typeID)) {
-        typeMap.set(typeID, {
-          id: typeID,
-          children: [],
-          hasChildren: true,
-          isChildrenLoading: false,
-          isExpanded: true,
-          data: {
-            id: type.id,
-            parent: data.id,
-            title: inwards ? type.inward : type.outward,
-            name: data.name,
-            summary: `${type.inward} <- ${type.outward}`,
-            isType: true,
-          },
-        });
-        ids.push(typeID);
-      }
-
-      const map = typeMap.get(typeID);
-      if (inwardIssue) {
-        const issueID = UUID(); //`${data.id}-${inwardIssue.id}`;
-        map.children.push(issueID);
-        items.push({
-          id: issueID,
-          children: [],
-          hasChildren: true,
-          isChildrenLoading: false,
-          isExpanded: false,
-          data: formatIssueData(inwardIssue, typeID),
-        });
-      }
-      if (outwardIssue) {
-        const issueID = UUID(); //`${data.id}-${outwardIssue.id}`;
-        map.children.push(issueID);
-        items.push({
-          id: issueID,
-          children: [],
-          hasChildren: true,
-          isChildrenLoading: false,
-          isExpanded: false,
-          data: formatIssueData(outwardIssue, typeID),
-        });
-      }
-    }
-  }
-
-  for (const [key, value] of typeMap) {
-    items.push(value);
-  }
-
-  return {
-    children: items,
-    data: {
-      id: data.id,
-      children: ids,
-      hasChildren: hasChildren,
-      isChildrenLoading: false,
-      isExpanded: true,
-      data: formatIssueData(data),
-    },
-  };
-};
 export const IssueTree = ({
   root,
   tree,
@@ -244,9 +63,11 @@ export const IssueTree = ({
   handleError,
 }) => {
   useEffect(() => {
+    
     if (issueFields && issueFields.size > 0) {
-      const fieldIds = getFeildIds(issueFields);
-      IssueLinkAPI(null, fieldIds)
+      console.log("use eff called");
+      const fieldIds = getFieldIds(issueFields);
+      IssueLinkAPI(null, fieldIds) // fetches root issue
         .then((data) => {
           const value = formatIssue(data, null, null);
           root.items[data.id] = value.data;
@@ -259,10 +80,11 @@ export const IssueTree = ({
         })
         .catch((error) => handleError(error));
     }
-  }, [issueFields, root, setIsFetched, setTree]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [issueFields]);
 
-  const SideIcon = ({ item, onExpand, onCollapse }) => {
-    if (item.isChildrenLoading) {
+  const ExpansionToggler = ({ isLoading, item, onExpand, onCollapse }) => {
+    if (isLoading) {
       return (
         <SpinnerContainer onClick={() => onCollapse(item.id)}>
           <Spinner size={16} />
@@ -310,11 +132,12 @@ export const IssueTree = ({
         ref={provided.innerRef}
         {...provided.dragHandleProps}
       >
-        <SideIcon
+        <ExpansionToggler
           item={item}
+          isLoading={item.isChildrenLoading}
           onExpand={onExpand}
           onCollapse={onCollapse}
-        ></SideIcon>
+        ></ExpansionToggler>
         {item.data && item.data.isType ? (
           <LinkTypeContainer>
             {item.data ? item.data.title : "No Name"}
@@ -336,7 +159,6 @@ export const IssueTree = ({
     const ntree = tree;
     const item = ntree.items[itemId];
     if (item.hasChildren && item.children.length > 0) {
-
       setTree(
         mutateTree(ntree, itemId, {
           isExpanded: true,
@@ -344,7 +166,7 @@ export const IssueTree = ({
         })
       );
     } else {
-      const fieldIds = getFeildIds(issueFields);
+      const fieldIds = getFieldIds(issueFields);
       IssueLinkAPI(item.data ? item.data.id : null, fieldIds).then((data) => {
         let parent = (item.data || {}).parent;
         const parentType = parent ? ntree.items[parent] : null;
@@ -414,7 +236,7 @@ export const IssueTree = ({
       const item = JSON.parse(JSON.stringify(tree.items[key]));
       if (item.data) {
         const data = item.data;
-        
+
         if (key == tree.rootId || rootChildren.includes(key)) {
           hiddedTree.items[key] = item;
         } else {
@@ -450,6 +272,7 @@ export const IssueTree = ({
   });
   return (
     <Container>
+      sgsdgfsd
       <Tree
         tree={hiddedTree}
         renderItem={renderItem}

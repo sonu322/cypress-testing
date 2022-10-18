@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, {useEffect, useState } from "react";
 import {
   IssueTypeAPI,
   LinkTypeAPI,
@@ -45,10 +45,7 @@ export const IssueTreeModule = () => {
   const handleSingleError = (error) => {
     setErrors([...errors, error]);
   };
-  const handleMultipleErrors = (newErrors) => {
-    newErrors = errors.concat(newErrors);
-    setErrors(newErrors);
-  };
+
   const exportTree = () => {
     const root = tree.items[tree.rootId];
     const rootChildren = root.children;
@@ -95,6 +92,10 @@ export const IssueTreeModule = () => {
     // return contents;
   };
   useEffect(() => {
+    const handleMultipleErrors = (newErrors) => {
+      newErrors = errors.concat(newErrors);
+      setErrors(newErrors);
+    };
     const fetchDropdownsData = async () => {
       Promise.all([PriorityAPI(), LinkTypeAPI(), IssueTypeAPI()])
         .then((results) => {
@@ -115,9 +116,6 @@ export const IssueTreeModule = () => {
           handleMultipleErrors(newErrors);
         });
     };
-    fetchDropdownsData();
-  }, []);
-  useEffect(() => {
     const fetchFieldsData = async () => {
       Promise.all([ProjectAPI(), IssueFieldsAPI()])
         .then(([project, results]) => {
@@ -163,7 +161,9 @@ export const IssueTreeModule = () => {
           handleMultipleErrors(errors);
         });
     };
+    fetchDropdownsData();
     fetchFieldsData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const updateFilteredKeyOptions = (key, keyOptions) => {
     let newFilter = { ...filter };
@@ -190,7 +190,7 @@ export const IssueTreeModule = () => {
         issueCardOptionsMap={issueCardOptions}
         selectedIssueFieldIds={selectedIssueFieldIds}
         setSelectedIssueFieldIds={setSelectedIssueFieldIds}
-      />
+      />fasd
       <IssueTree
         tree={tree}
         setTree={setTree}
