@@ -9,7 +9,13 @@ import { IssueLinkAPI } from "../api";
 import { UUID } from "../../util";
 import Tree, { mutateTree } from "@atlaskit/tree";
 import { IssueCard } from "../IssueCard";
-
+const getFeildIds = (issueFields) => {
+  const fieldIds = [];
+  for (let field of issueFields.values()) {
+    fieldIds.push(field.id);
+  }
+  return fieldIds;
+};
 const PADDING_LEVEL = 30;
 const SUB_TASKS = "Subtasks";
 const PARENT = "Parent";
@@ -62,7 +68,7 @@ const formatIssueData = (data, parent) => {
     priority: data.fields.priority,
     status: data.fields.status,
     isType: false,
-    allData: data
+    allData: data,
   };
 };
 const formatIssue = (data, parentTypeID, parentIssueID) => {
@@ -238,10 +244,7 @@ export const IssueTree = ({
 }) => {
   useEffect(() => {
     if (issueFields && issueFields.size > 0) {
-      const fieldIds = [];
-      for (let field of issueFields.values()) {
-        fieldIds.push(field.id);
-      }
+      const fieldIds = getFeildIds(issueFields);
       IssueLinkAPI(null, fieldIds)
         .then((data) => {
           const value = formatIssue(data, null, null);
@@ -331,20 +334,26 @@ export const IssueTree = ({
     );
   };
   const onExpand = (itemId) => {
+    console.log("on expand !!!!!!!!!!!!")
     setTree(mutateTree(tree, itemId, { isChildrenLoading: true }));
 
     const ntree = tree;
     const item = ntree.items[itemId];
-
+    console.log(item)
     if (item.hasChildren && item.children.length > 0) {
+      console.log("has children")
+      console.log(item);
+      
       setTree(
         mutateTree(ntree, itemId, {
           isExpanded: true,
           isChildrenLoading: false,
         })
       );
-    } else if (item.hasChildren && item.children.length === 0) {
-      IssueLinkAPI(item.data ? item.data.id : null).then((data) => {
+    } else {
+      const fieldIds = getFeildIds(issueFields)
+      IssueLinkAPI(item.data ? item.data.id : null, fieldIds).then((data) => {
+        console.log("called on expand condition")
         let parent = (item.data || {}).parent;
         const parentType = parent ? ntree.items[parent] : null;
         parent = parent
@@ -356,7 +365,11 @@ export const IssueTree = ({
         const parentIssueID = ((parentIssue || {}).data || {}).id;
 
         const value = formatIssue(data, parentTypeID, parentIssueID);
-
+        console.log("from on exapnad");
+        console.log(value);
+        ntree.items[itemId].data = value.data.data
+        console.log("children")
+        // change - danger
         for (const child of value.children) {
           if (!ntree.items[child.id]) {
             ntree.items[child.id] = child;

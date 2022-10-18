@@ -44,6 +44,8 @@ export const IssueCard = ({
   selectedIssueFieldIds,
   issueCardOptionsMap,
 }) => {
+  console.log("called!!!!!!!!isseu card")
+  console.log(issueData)
   let cardOptionsDataMap;
   let copy = new Map(issueCardOptionsMap);
   for (const field of copy.values()) {
