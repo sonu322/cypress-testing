@@ -232,7 +232,8 @@ export const IssueTree = ({
   filter,
   selectedIssueFieldIds,
   issueFields,
-  issueCardOptionsMap
+  issueCardOptionsMap,
+  handleError
 }) => {
   useEffect(() => {
     if (issueFields && issueFields.size > 0) {
@@ -249,7 +250,7 @@ export const IssueTree = ({
         }
         setTree(mutateTree(root, "0", { isExpanded: true }));
         setIsFetched(true);
-      });
+      }).catch(error => handleError(error));
     }
   }, [issueFields, root, setIsFetched, setTree]);
 
