@@ -1,8 +1,10 @@
 import { mutateTree } from "@atlaskit/tree";
 import { IssueLinkAPI } from "../components/api";
 import { csv, download, UUID } from "./index";
+// constants
 const SUB_TASKS = "Subtasks";
 const PARENT = "Parent";
+// root node
 const root = {
   rootId: "0",
   items: {
@@ -18,6 +20,8 @@ const root = {
     },
   },
 };
+
+// maps card fields data and returns array of field ids
 export const getFieldIds = (issueFields) => {
   const fieldIds = [];
   for (let field of issueFields.values()) {
@@ -25,6 +29,172 @@ export const getFieldIds = (issueFields) => {
   }
   return fieldIds;
 };
+// format issue data
+export const formatIssueData = (data, parent) => {
+  return {
+    ...data,
+    parent: parent,
+    isType: false,
+  };
+};
+// formats an issue
+export const formatIssue = (data, parentTypeID, parentIssueID) => {
+  let hasChildren = false;
+  // holds all type ids for issue
+  const typeIds = [];
+  // holds data of types
+  const typeMap = new Map();
+  // holds all cards objects
+  const items = [];
+
+  // SETTING SUBTASK TYPE CARD
+  const subTasks = [];
+  // generate and id for type
+  const subTypeID = UUID();
+  if (data.fields.subtasks.length > 0) {
+    typeMap.set(SUB_TASKS, {
+      id: subTypeID,
+      children: subTasks,
+      hasChildren: true,
+      isChildrenLoading: false,
+      isExpanded: true,
+      data: {
+        id: "-1",
+        parent: data.id,
+        title: SUB_TASKS,
+        summary: "Issue Sub Tasks",
+        isType: true,
+      },
+    });
+  }
+  // POPULATING SUBTASKS
+  for (const issue of data.fields.subtasks) {
+    if (issue.id !== parentIssueID) {
+      // generate id for issue
+      const issueID = UUID();
+      // push id into subTasks
+      subTasks.push(issueID);
+      // push issue data object into items
+      items.push({
+        id: issueID,
+        children: [],
+        hasChildren: true,
+        isChildrenLoading: false,
+        isExpanded: false,
+        data: formatIssueData(issue, subTypeID),
+      });
+    }
+  }
+  if (subTasks.length === 0) {
+    typeMap.delete(SUB_TASKS);
+  } else {
+    hasChildren = true;
+    typeIds.push(subTypeID);
+  }
+  // POPUPULATING PARENT
+  if (data.fields.parent) {
+    const parentIssueTypeID = UUID();
+    const parentIssueLinkID = UUID();
+    const parent = data.fields.parent;
+    if (parent.id !== parentIssueID) {
+      typeMap.set(PARENT, {
+        id: parentIssueTypeID,
+        children: [parentIssueLinkID],
+        hasChildren: true,
+        isChildrenLoading: false,
+        isExpanded: true,
+        data: {
+          id: "-1",
+          parent: data.id,
+          title: PARENT,
+          summary: "Issue parent",
+          isType: true,
+        },
+      });
+
+      items.push({
+        id: parentIssueLinkID,
+        children: [],
+        hasChildren: true,
+        isChildrenLoading: false,
+        isExpanded: false,
+        data: formatIssueData(parent, parentIssueTypeID),
+      });
+
+      typeIds.push(parentIssueTypeID);
+    }
+  }
+  // POPULATING OTHER LINKED ISSUES
+  const typeIDMap = new Map();
+  const getTypeID = (id, isLinkInwards) => {
+    const key = id + (isLinkInwards ? "-inwards" : "-outwards");
+    if (!typeIDMap.has(key)) {
+      typeIDMap.set(key, UUID());
+    }
+    return typeIDMap.get(key);
+  };
+  // loop through all linked issues
+  for (const { type, inwardIssue, outwardIssue } of data.fields.issuelinks) {
+    if (
+      (inwardIssue && inwardIssue.id !== parentIssueID) ||
+      (outwardIssue && outwardIssue.id !== parentIssueID)
+    ) {
+      hasChildren = true;
+      // check if issue is linked inwards or outwards. ex: is caused by / causes
+      const isLinkInwards = inwardIssue ? true : false;
+      const typeID = getTypeID(type.id, isLinkInwards); //`${data.id}-${type.id}`;
+      if (!typeMap.has(typeID)) {
+        typeMap.set(typeID, {
+          id: typeID,
+          children: [],
+          hasChildren: true,
+          isChildrenLoading: false,
+          isExpanded: true,
+          data: {
+            id: type.id,
+            parent: data.id,
+            title: isLinkInwards ? type.inward : type.outward,
+            name: data.name,
+            summary: `${type.inward} <- ${type.outward}`,
+            isType: true,
+          },
+        });
+        typeIds.push(typeID);
+      }
+
+      const typeData = typeMap.get(typeID);
+      const issue = inwardIssue ?? outwardIssue;
+
+      const issueID = UUID();
+      typeData.children.push(issueID);
+      items.push({
+        id: issueID,
+        children: [],
+        hasChildren: true,
+        isChildrenLoading: false,
+        isExpanded: false,
+        data: formatIssueData(issue, typeID),
+      });
+    }
+  }
+  // push all types into items
+  for (const [_key, value] of typeMap) {
+    items.push(value);
+  }
+
+  return {
+    children: items,
+    data: {
+      id: data.id,
+      children: typeIds,
+      hasChildren: hasChildren,
+      isChildrenLoading: false,
+      isExpanded: true,
+      data: formatIssueData(data),
+    },
+  };
+};
+// populates initial tree by calling api and formatting data
 export const populateInitialTree = (issueFields, setTree, handleError) => {
   const fieldIds = getFieldIds(issueFields);
   IssueLinkAPI(null, fieldIds) // fetches root issue
@@ -47,181 +217,6 @@ export const populateInitialTree = (issueFields, setTree, handleError) => {
     })
     .catch((error) => handleError(error));
 };
-export const formatIssueData = (data, parent) => {
-  return {
-    ...data,
-    // title: data.key,
-    // id: data.id,
-    parent: parent,
-    // summary: data.fields.summary,
-    // type: data.fields.issuetype,
-    // priority: data.fields.priority,
-    // status: data.fields.status,
-    isType: false,
-    // allData: data,
-  };
-};
-export const formatIssue = (data, parentTypeID, parentIssueID) => {
-  console.log("format issue called");
-  console.log(data);
-  let hasChildren = false;
-  const ids = [];
-  const typeMap = new Map();
-  const items = [];
-  const subTasks = [];
-  const subTypeID = UUID(); //`${data.id}-0`;
-  if (data.fields.subtasks.length > 0) {
-    typeMap.set(SUB_TASKS, {
-      id: subTypeID,
-      children: subTasks,
-      hasChildren: true,
-      isChildrenLoading: false,
-      isExpanded: true,
-      data: {
-        id: "-1",
-        parent: data.id,
-        title: SUB_TASKS,
-        summary: "Issue Sub Tasks",
-        isType: true,
-      },
-    });
-  }
-
-  for (const issue of data.fields.subtasks) {
-    if (issue.id !== parentIssueID) {
-      const issueID = UUID();
-      subTasks.push(issueID);
-      items.push({
-        id: issueID,
-        children: [],
-        hasChildren: true,
-        isChildrenLoading: false,
-        isExpanded: false,
-        data: formatIssueData(issue, subTypeID),
-      });
-    }
-  }
-  if (subTasks.length === 0) {
-    typeMap.delete(SUB_TASKS);
-  } else {
-    hasChildren = true;
-    ids.push(subTypeID);
-  }
-
-  if (data.fields.parent) {
-    const parentIssueLinkID = UUID();
-    const parentIssueTypeID = UUID();
-    const parent = data.fields.parent;
-    if (parent.id !== parentIssueID) {
-      typeMap.set(PARENT, {
-        id: parentIssueLinkID,
-        children: [parentIssueTypeID],
-        hasChildren: true,
-        isChildrenLoading: false,
-        isExpanded: true,
-        data: {
-          id: "-1",
-          parent: data.id,
-          title: PARENT,
-          summary: "Issue parent",
-          isType: true,
-        },
-      });
-
-      items.push({
-        id: parentIssueTypeID,
-        children: [],
-        hasChildren: true,
-        isChildrenLoading: false,
-        isExpanded: false,
-        data: formatIssueData(parent, parentIssueLinkID),
-      });
-
-      ids.push(parentIssueLinkID);
-    }
-  }
-
-  const typeIDMap = new Map();
-  const getTypeID = (id, inwards) => {
-    const key = id + (inwards ? "-inwards" : "-outwards");
-    if (!typeIDMap.has(key)) {
-      typeIDMap.set(key, UUID());
-    }
-    return typeIDMap.get(key);
-  };
-
-  for (const { type, inwardIssue, outwardIssue } of data.fields.issuelinks) {
-    if (
-      (inwardIssue && inwardIssue.id !== parentIssueID) ||
-      (outwardIssue && outwardIssue.id !== parentIssueID)
-    ) {
-      hasChildren = true;
-      const inwards = inwardIssue ? true : false;
-      const typeID = getTypeID(type.id, inwards); //`${data.id}-${type.id}`;
-      if (!typeMap.has(typeID)) {
-        typeMap.set(typeID, {
-          id: typeID,
-          children: [],
-          hasChildren: true,
-          isChildrenLoading: false,
-          isExpanded: true,
-          data: {
-            id: type.id,
-            parent: data.id,
-            title: inwards ? type.inward : type.outward,
-            name: data.name,
-            summary: `${type.inward} <- ${type.outward}`,
-            isType: true,
-          },
-        });
-        ids.push(typeID);
-      }
-
-      const map = typeMap.get(typeID);
-      if (inwardIssue) {
-        const issueID = UUID(); //`${data.id}-${inwardIssue.id}`;
-        map.children.push(issueID);
-        items.push({
-          id: issueID,
-          children: [],
-          hasChildren: true,
-          isChildrenLoading: false,
-          isExpanded: false,
-          data: formatIssueData(inwardIssue, typeID),
-        });
-      }
-      if (outwardIssue) {
-        const issueID = UUID(); //`${data.id}-${outwardIssue.id}`;
-        map.children.push(issueID);
-        items.push({
-          id: issueID,
-          children: [],
-          hasChildren: true,
-          isChildrenLoading: false,
-          isExpanded: false,
-          data: formatIssueData(outwardIssue, typeID),
-        });
-      }
-    }
-  }
-
-  for (const [_key, value] of typeMap) {
-    items.push(value);
-  }
-
-  return {
-    children: items,
-    data: {
-      id: data.id,
-      children: ids,
-      hasChildren: hasChildren,
-      isChildrenLoading: false,
-      isExpanded: true,
-      data: formatIssueData(data),
-    },
-  };
-};
-
 export const filterTree = (filter, tree) => {
   const filteredTree = mutateTree(root, "0", { isExpanded: true });
   if (filter && tree) {
