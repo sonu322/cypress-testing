@@ -47,9 +47,12 @@ export const IssueTree = ({
       const fieldIds = getFieldIds(issueFields);
       IssueLinkAPI(null, fieldIds) // fetches root issue
         .then((data) => {
-          const value = formatIssue(data, null, null);
-          root.items[data.id] = value.data;
-          root.items["0"].children.push(data.id);
+          console.log("data!!1")
+          console.log(data)
+          const value = formatIssue(data.rootIssueData, null, null);
+          console.log(value)
+          root.items[data.rootIssueData.id] = value.data;
+          root.items["0"].children.push(data.rootIssueData.id);
           for (const child of value.children) {
             root.items[child.id] = child;
           }

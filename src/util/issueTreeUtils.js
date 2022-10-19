@@ -165,7 +165,7 @@ export const formatIssue = (data, parentTypeID, parentIssueID) => {
     }
   }
 
-  for (const [key, value] of typeMap) {
+  for (const [_key, value] of typeMap) {
     items.push(value);
   }
 

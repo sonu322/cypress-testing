@@ -1,6 +1,18 @@
 /* eslint-disable no-undef */
 import { formatIssue } from "../util/issueTreeUtils";
-
+const getKey = () => {
+  return new Promise(
+    (resolve) => {
+      AP.context.getContext((res) => {
+        resolve(res.jira.issue.id);
+      });
+    },
+    (reject) => {
+      let err = new Error("something went wrong fetching issue key");
+      reject(err);
+    }
+  );
+};
 export const IssueTypeAPI = async () => {
   return AP.request("/rest/api/3/issuetype")
     .then((response) => JSON.parse(response.body))
@@ -82,13 +94,13 @@ export const IssueAPI = async (
     "status",
   ]
 ) => {
-  const getKey = () => {
-    return new Promise((resolve) => {
-      AP.context.getContext((res) => {
-        resolve(res.jira.issue.id);
-      });
-    });
-  };
+  // const getKey = () => {
+  //   return new Promise((resolve) => {
+  //     AP.context.getContext((res) => {
+  //       resolve(res.jira.issue.id);
+  //     });
+  //   });
+  // };
   const input = key || (await getKey());
   let queries = [];
   fields.forEach((field) => {
@@ -122,42 +134,49 @@ export const IssueLinkAPI = async (
     "status",
   ]
 ) => {
-  const getKey = () => {
-    return new Promise((resolve) => {
-      AP.context.getContext((res) => {
-        resolve(res.jira.issue.id);
-      });
-    });
-  };
   const input = key || (await getKey());
-  let queries = [];
-  fields.forEach((field) => {
-    queries.push(`fields=${field}`);
-  });
-  const queriesString = queries.join("&");
-  let url = `/rest/api/3/issue/${input}`;
-  if (queriesString.length > 0) {
-    url = url + "?" + queriesString;
-  }
+  // let queries = [];
+  // fields.forEach((field) => {
+  //   queries.push(`fields=${field}`);
+  // });
+  // const queriesString = queries.join("&");
+  // let url = `/rest/api/3/issue/${input}`;
+  // if (queriesString.length > 0) {
+  //   url = url + "?" + queriesString;
+  // }
 
-  const rootIssueData = await AP.request(url)
-    .then((response) => JSON.parse(response.body))
-    .catch((error) => {
-      console.log(error);
-      const newError = new Error(`some error occurred fetching issue ${input}`);
-      throw newError;
-    });
+  // const rootIssueData = await AP.request(url)
+  const rootIssueData = await IssueAPI().catch((error) => {
+    console.log(error);
+    const newError = new Error(`some error occurred fetching issue ${input}`);
+    throw newError;
+  });
   const formattedRootIssueData = formatIssue(rootIssueData);
   const relatedIssues = formattedRootIssueData.children;
-  let relatedIssueIds;
+  let relatedIssueIds = [];
   if (relatedIssues) {
-    relatedIssueIds = relatedIssues.map((issue) => issue.id);
+    console.log(relatedIssues);
+    relatedIssues.forEach((issue) => {
+      if (!issue.data.isType) {
+        relatedIssueIds.push(issue.data.id);
+      }
+    });
+    // relatedIssueIds = relatedIssues.map((issue) => issue.data.id);
   }
-  let relatedIssuesData;// fix
-  if(relatedIssueIds) {
-    console.log(relatedIssueIds)
-    
+  // fix
+  if (relatedIssueIds) {
+    console.log("related issue ids");
+    console.log(relatedIssueIds);
   }
+  const relatedIssuesData = await IssueSearchAPI(
+    `id in (${relatedIssueIds})`,
+    null,
+    null,
+    fields
+  );
+  console.log(relatedIssuesData);
+  console.log(rootIssueData)
+  return {rootIssueData, relatedIssuesData};
 };
 
 // export const IssueAPI = async (id) => {
@@ -225,11 +244,11 @@ const _accumulator = (results, startIndex, maxResults, query, total) => {
 };
 */
 
-export const IssueSearchAPI = async (jql, start, max) => {
+export const IssueSearchAPI = async (jql, start, max, fields) => {
   const query = () => {
     return new Promise((resolve, reject) => {
       const data = {
-        fields: [
+        fields: fields ?? [
           "summay",
           "subtasks",
           "parent",
@@ -238,8 +257,8 @@ export const IssueSearchAPI = async (jql, start, max) => {
           "priority",
           "status",
         ],
-        startAt: start,
-        maxResults: max,
+        startAt: start ?? 0,
+        maxResults: max ?? 500,
         jql: jql,
       };
 
