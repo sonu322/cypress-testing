@@ -5,9 +5,6 @@ import { formatIssue, getFieldIds } from "../../util/issueTreeUtils";
 import Tree, { mutateTree } from "@atlaskit/tree";
 import { IssueItem } from "./IssueItem";
 
-
-
-
 const Container = styled.div`
   display: flex;
 `;
@@ -53,9 +50,6 @@ export const IssueTree = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [issueFields]);
 
-
-
-  
   const handleExpand = (itemId) => {
     setTree(mutateTree(tree, itemId, { isChildrenLoading: true }));
 
@@ -118,7 +112,7 @@ export const IssueTree = ({
     );
   };
 
-  const hiddedTree = mutateTree(
+  const filteredTree = mutateTree(
     {
       rootId: "0",
       items: {
@@ -148,7 +142,7 @@ export const IssueTree = ({
         const data = item.data;
 
         if (key == tree.rootId || rootChildren.includes(key)) {
-          hiddedTree.items[key] = item;
+          filteredTree.items[key] = item;
         } else {
           if (data.isType) {
             if (
@@ -156,7 +150,7 @@ export const IssueTree = ({
               linkTypes.includes(data.id) ||
               data.id === "-1"
             ) {
-              hiddedTree.items[key] = item;
+              filteredTree.items[key] = item;
             }
           } else {
             const { issuetype, priority } = data.fields;
@@ -164,7 +158,7 @@ export const IssueTree = ({
               (issueTypes.length === 0 || issueTypes.includes(issuetype.id)) &&
               (priorities.length === 0 || priorities.includes(priority.id))
             ) {
-              hiddedTree.items[key] = item;
+              filteredTree.items[key] = item;
             }
           }
         }
@@ -172,23 +166,27 @@ export const IssueTree = ({
     });
   }
 
-  const keys = Object.keys(hiddedTree.items);
+  const keys = Object.keys(filteredTree.items);
   keys.forEach((key) => {
-    const item = hiddedTree.items[key];
+    const item = filteredTree.items[key];
     item.children = item.children.filter((i) => keys.includes(i));
     if (item.children.length === 0 && item.isExpanded) {
       item.hasChildren = false;
     }
   });
-  const renderItem = ({...props}) => {
+  const renderItem = ({ ...props }) => {
     return (
-      <IssueItem {...props} issueCardOptionsMap={issueCardOptionsMap} selectedIssueFieldIds={selectedIssueFieldIds}/>
+      <IssueItem
+        {...props}
+        issueCardOptionsMap={issueCardOptionsMap}
+        selectedIssueFieldIds={selectedIssueFieldIds}
+      />
     );
   };
   return (
     <Container>
       <Tree
-        tree={hiddedTree}
+        tree={filteredTree}
         renderItem={renderItem}
         onExpand={handleExpand}
         onCollapse={handleCollapse}
