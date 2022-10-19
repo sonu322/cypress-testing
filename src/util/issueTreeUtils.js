@@ -227,6 +227,9 @@ export const filterTree = (filter, tree) => {
           filteredTree.items[key] = item;
         } else {
           if (data.isType) {
+            // executes is no link type is selected / 
+            // current link type is present in selected link types / 
+            // type is non-removable
             if (
               linkTypes.length === 0 ||
               linkTypes.includes(data.id) ||
@@ -286,55 +289,7 @@ export const populateInitialTree = (issueFields, setTree, handleError) => {
     })
     .catch((error) => handleError(error));
 };
-// export const filterTree = (filter, tree) => {
-//   const filteredTree = mutateTree(root, "0", { isExpanded: true });
-//   if (filter && tree) {
-//     const { linkTypes, issueTypes, priorities } = filter;
-//     const root = tree.items[tree.rootId];
-//     const rootChildren = root.children;
-//     const keys = Object.keys(tree.items);
-//     keys.forEach((key) => {
-//       const item = JSON.parse(JSON.stringify(tree.items[key]));
-//       if (item.data) {
-//         const data = item.data;
 
-//         if (key == tree.rootId || rootChildren.includes(key)) {
-//           filteredTree.items[key] = item;
-//         } else {
-//           if (data.isType) {
-//             if (
-//               linkTypes.length === 0 ||
-//               linkTypes.includes(data.id) ||
-//               data.id === "-1"
-//             ) {
-//               console.log(linkTypes);
-//               console.log(data);
-//               // executes is no link type is selected / current link type is present in selected link types / or type is non-removable
-//               filteredTree.items[key] = item;
-//             }
-//           } else {
-//             const { issuetype, priority } = data.fields;
-//             if (
-//               (issueTypes.length === 0 || issueTypes.includes(issuetype.id)) &&
-//               (priorities.length === 0 || priorities.includes(priority.id))
-//             ) {
-//               filteredTree.items[key] = item;
-//             }
-//           }
-//         }
-//       }
-//     });
-//     // let filteredKeys = Object.keys(filteredTree.items);
-//     // filteredKeys.forEach((key) => {
-//     //   const item = filteredTree.items[key];
-//     //   item.children = item.children.filter((i) => filteredKeys.includes(i));
-//     //   if (item.children.length === 0 && item.isExpanded) {
-//     //     item.hasChildren = false;
-//     //   }
-//     // });
-//   }
-//   return filteredTree;
-// };
 
 export const exportTree = (tree) => {
   const root = tree.items[tree.rootId];
