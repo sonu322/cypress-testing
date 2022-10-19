@@ -247,6 +247,14 @@ export const filterTree = (filter, tree) => {
       }
     });
   }
+  const keys = Object.keys(filteredTree.items);
+  keys.forEach((key) => {
+    const item = filteredTree.items[key];
+    item.children = item.children.filter((i) => keys.includes(i));
+    if (item.children.length === 0 && item.isExpanded) {
+      item.hasChildren = false;
+    }
+  });
   return filteredTree;
 };
 
