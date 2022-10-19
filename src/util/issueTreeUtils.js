@@ -208,7 +208,8 @@ export const filterTree = (filter, tree) => {
     const { linkTypes, issueTypes, priorities } = filter;
     const root = tree.items[tree.rootId];
     const rootChildren = root.children;
-    Object.keys(tree.items).forEach((key) => {
+    const keys = Object.keys(tree.items);
+    keys.forEach((key) => {
       const item = JSON.parse(JSON.stringify(tree.items[key]));
       if (item.data) {
         const data = item.data;
@@ -236,11 +237,17 @@ export const filterTree = (filter, tree) => {
         }
       }
     });
+    let filteredKeys = Object.keys(filteredTree.items);
+    filteredKeys.forEach((key) => {
+      const item = filteredTree.items[key];
+      item.children = item.children.filter((i) => filteredKeys.includes(i));
+      if (item.children.length === 0 && item.isExpanded) {
+        item.hasChildren = false;
+      }
+    });
   }
   return filteredTree;
 };
-
-
 
 export const exportTree = (tree) => {
   const root = tree.items[tree.rootId];
@@ -265,7 +272,6 @@ export const exportTree = (tree) => {
       if (data.isType) {
         content.link = data.title;
       } else {
-
         // TODO: make fields dynamic
         content.key = data.key;
         content.summary = data.fields.summary;

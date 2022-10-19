@@ -30,9 +30,9 @@ export const IssueTree = ({
         .then((data) => {
           const {rootIssueData, relatedIssuesData} = data;
           const value = formatIssue(rootIssueData, null, null);
-          
-          root.items[rootIssueData.id] = value.data;
-          root.items["0"].children.push(rootIssueData.id);
+          const newTree = {...root};
+          newTree.items[rootIssueData.id] = value.data;
+          newTree.items["0"].children.push(rootIssueData.id);
           for (const child of value.children) {
             let childData = relatedIssuesData.issues.find(
               (issue) => issue.id == child.data.id
@@ -40,9 +40,9 @@ export const IssueTree = ({
             if (childData) {
               child.data.fields = childData.fields;
             }
-            root.items[child.id] = child;
+            newTree.items[child.id] = child;
           }
-          setTree(mutateTree(root, "0", { isExpanded: true }));
+          setTree(mutateTree(newTree, "0", { isExpanded: true }));
         })
         .catch((error) => handleError(error));
     }
@@ -52,11 +52,11 @@ export const IssueTree = ({
   const handleExpand = (itemId) => {
     setTree(mutateTree(tree, itemId, { isChildrenLoading: true }));
 
-    const ntree = tree;
-    const item = ntree.items[itemId];
+    const newTree = {...tree};
+    const item = newTree.items[itemId];
     if (item.hasChildren && item.children.length > 0) {
       setTree(
-        mutateTree(ntree, itemId, {
+        mutateTree(newTree, itemId, {
           isExpanded: true,
           isChildrenLoading: false,
         })
@@ -66,17 +66,16 @@ export const IssueTree = ({
       IssueLinkAPI(item.data ? item.data.id : null, fieldIds).then((data) => {
         const { rootIssueData, relatedIssuesData } = data;
         let parent = (item.data || {}).parent;
-        const parentType = parent ? ntree.items[parent] : null;
+        const parentType = parent ? newTree.items[parent] : null;
         parent = parent
-          ? ((ntree.items[parent] || {}).data || {}).parent
+          ? ((newTree.items[parent] || {}).data || {}).parent
           : null;
-        const parentIssue = parent ? ntree.items[parent] : null;
+        const parentIssue = parent ? newTree.items[parent] : null;
 
         const parentTypeID = ((parentType || {}).data || {}).id;
         const parentIssueID = ((parentIssue || {}).data || {}).id;
 
         const value = formatIssue(rootIssueData, parentTypeID, parentIssueID);
-        // ntree.items[itemId].data = value.data.data;
         for (const child of value.children) {
           let childData = relatedIssuesData.issues.find(
             (issue) => issue.id == child.data.id
@@ -84,8 +83,8 @@ export const IssueTree = ({
           if (childData) {
             child.data.fields = childData.fields;
           }
-          if (!ntree.items[child.id]) {
-            ntree.items[child.id] = child;
+          if (!newTree.items[child.id]) {
+            newTree.items[child.id] = child;
           }
         }
 
@@ -93,7 +92,7 @@ export const IssueTree = ({
         item.children = value.data.children;
 
         setTree(
-          mutateTree(ntree, itemId, {
+          mutateTree(newTree, itemId, {
             isExpanded: true,
             isChildrenLoading: false,
           })
@@ -112,46 +111,8 @@ export const IssueTree = ({
   };
 
   let filteredTree = filterTree(filter, tree);
-  // const { linkTypes, issueTypes, priorities } = filter;
-  // const root = tree.items[tree.rootId];
-  // const rootChildren = root.children;
-  // Object.keys(tree.items).forEach((key) => {
-  //   const item = JSON.parse(JSON.stringify(tree.items[key]));
-  //   if (item.data) {
-  //     const data = item.data;
 
-  //     if (key == tree.rootId || rootChildren.includes(key)) {
-  //       filteredTree.items[key] = item;
-  //     } else {
-  //       if (data.isType) {
-  //         if (
-  //           linkTypes.length === 0 ||
-  //           linkTypes.includes(data.id) ||
-  //           data.id === "-1"
-  //         ) {
-  //           filteredTree.items[key] = item;
-  //         }
-  //       } else {
-  //         const { issuetype, priority } = data.fields;
-  //         if (
-  //           (issueTypes.length === 0 || issueTypes.includes(issuetype.id)) &&
-  //           (priorities.length === 0 || priorities.includes(priority.id))
-  //         ) {
-  //           filteredTree.items[key] = item;
-  //         }
-  //       }
-  //     }
-  //   }
-  // });
-
-  const keys = Object.keys(filteredTree.items);
-  keys.forEach((key) => {
-    const item = filteredTree.items[key];
-    item.children = item.children.filter((i) => keys.includes(i));
-    if (item.children.length === 0 && item.isExpanded) {
-      item.hasChildren = false;
-    }
-  });
+  
   const renderItem = ({ ...props }) => {
     return (
       <IssueItem
