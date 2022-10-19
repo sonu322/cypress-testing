@@ -1,14 +1,12 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
-import { IssueLinkAPI } from "../api";
 import {
   filterTree,
-  formatIssue,
-  getFieldIds,
   handleCollapse,
   handleExpand,
+  populateInitialTree,
 } from "../../util/issueTreeUtils";
-import Tree, { mutateTree } from "@atlaskit/tree";
+import Tree from "@atlaskit/tree";
 import { IssueItem } from "./IssueItem";
 
 const Container = styled.div`
@@ -16,7 +14,7 @@ const Container = styled.div`
 `;
 
 export const IssueTree = ({
-  root,
+  // root,
   tree,
   setTree,
   filter,
@@ -27,26 +25,7 @@ export const IssueTree = ({
 }) => {
   useEffect(() => {
     if (issueFields && issueFields.size > 0) {
-      const fieldIds = getFieldIds(issueFields);
-      IssueLinkAPI(null, fieldIds) // fetches root issue
-        .then((data) => {
-          const { rootIssueData, relatedIssuesData } = data;
-          const value = formatIssue(rootIssueData, null, null);
-          const newTree = { ...root };
-          newTree.items[rootIssueData.id] = value.data;
-          newTree.items["0"].children.push(rootIssueData.id);
-          for (const child of value.children) {
-            let childData = relatedIssuesData.issues.find(
-              (issue) => issue.id == child.data.id
-            );
-            if (childData) {
-              child.data.fields = childData.fields;
-            }
-            newTree.items[child.id] = child;
-          }
-          setTree(mutateTree(newTree, "0", { isExpanded: true }));
-        })
-        .catch((error) => handleError(error));
+      populateInitialTree(issueFields, setTree, handleError);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [issueFields]);

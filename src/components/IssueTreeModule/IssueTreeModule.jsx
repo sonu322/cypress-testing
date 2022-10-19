@@ -148,7 +148,7 @@ export const IssueTreeModule = () => {
         tree={tree}
         setTree={setTree}
         filter={filter}
-        root={root}
+        // root={root}
         issueCardOptionsMap={issueCardOptions}
         selectedIssueFieldIds={selectedIssueFieldIds}
         issueFields={issueFields}

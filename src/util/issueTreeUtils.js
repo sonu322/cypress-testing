@@ -3,12 +3,49 @@ import { IssueLinkAPI } from "../components/api";
 import { csv, download, UUID } from "./index";
 const SUB_TASKS = "Subtasks";
 const PARENT = "Parent";
+const root = {
+  rootId: "0",
+  items: {
+    0: {
+      id: "0",
+      children: [],
+      hasChildren: true,
+      isExpanded: true,
+      isChildrenLoading: false,
+      data: {
+        title: "Fake Root Node",
+      },
+    },
+  },
+};
 export const getFieldIds = (issueFields) => {
   const fieldIds = [];
   for (let field of issueFields.values()) {
     fieldIds.push(field.id);
   }
   return fieldIds;
+};
+export const populateInitialTree = (issueFields, setTree, handleError) => {
+  const fieldIds = getFieldIds(issueFields);
+  IssueLinkAPI(null, fieldIds) // fetches root issue
+    .then((data) => {
+      const { rootIssueData, relatedIssuesData } = data;
+      const value = formatIssue(rootIssueData, null, null);
+      const newTree = { ...root };
+      newTree.items[rootIssueData.id] = value.data;
+      newTree.items["0"].children.push(rootIssueData.id);
+      for (const child of value.children) {
+        let childData = relatedIssuesData.issues.find(
+          (issue) => issue.id == child.data.id
+        );
+        if (childData) {
+          child.data.fields = childData.fields;
+        }
+        newTree.items[child.id] = child;
+      }
+      setTree(mutateTree(newTree, "0", { isExpanded: true }));
+    })
+    .catch((error) => handleError(error));
 };
 export const formatIssueData = (data, parent) => {
   return {
@@ -186,25 +223,7 @@ export const formatIssue = (data, parentTypeID, parentIssueID) => {
 };
 
 export const filterTree = (filter, tree) => {
-  const filteredTree = mutateTree(
-    {
-      rootId: "0",
-      items: {
-        0: {
-          id: "0",
-          children: [],
-          hasChildren: true,
-          isExpanded: true,
-          isChildrenLoading: false,
-          data: {
-            title: "Fake Root Node",
-          },
-        },
-      },
-    },
-    "0",
-    { isExpanded: true }
-  );
+  const filteredTree = mutateTree(root, "0", { isExpanded: true });
   if (filter && tree) {
     const { linkTypes, issueTypes, priorities } = filter;
     const root = tree.items[tree.rootId];
@@ -296,7 +315,6 @@ export const exportTree = (tree) => {
 
   // return contents;
 };
-
 
 export const handleCollapse = (itemId, tree, setTree) => {
   setTree(
