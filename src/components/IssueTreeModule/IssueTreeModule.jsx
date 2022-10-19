@@ -39,7 +39,6 @@ export const IssueTreeModule = () => {
   const [options, setOptions] = useState({});
   const [filter, setFilter] = useState({});
   const [tree, setTree] = useState(mutateTree(root, "0", { isExpanded: true }));
-  const [isFetched, setIsFetched] = useState(false);
   const [issueFields, setIssueFields] = useState([]);
   const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState([]);
   const handleSingleError = (error) => {
@@ -194,8 +193,6 @@ export const IssueTreeModule = () => {
       <IssueTree
         tree={tree}
         setTree={setTree}
-        isFetched={isFetched}
-        setIsFetched={setIsFetched}
         filter={filter}
         root={root}
         issueCardOptionsMap={issueCardOptions}

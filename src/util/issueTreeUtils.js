@@ -1,3 +1,4 @@
+import { mutateTree } from "@atlaskit/tree";
 import { UUID } from "./index";
 const SUB_TASKS = "Subtasks";
 const PARENT = "Parent";
@@ -181,4 +182,60 @@ export const formatIssue = (data, parentTypeID, parentIssueID) => {
       data: formatIssueData(data),
     },
   };
+};
+
+export const filterTree = (filter, tree) => {
+  const filteredTree = mutateTree(
+    {
+      rootId: "0",
+      items: {
+        0: {
+          id: "0",
+          children: [],
+          hasChildren: true,
+          isExpanded: true,
+          isChildrenLoading: false,
+          data: {
+            title: "Fake Root Node",
+          },
+        },
+      },
+    },
+    "0",
+    { isExpanded: true }
+  );
+  if (filter && tree) {
+    const { linkTypes, issueTypes, priorities } = filter;
+    const root = tree.items[tree.rootId];
+    const rootChildren = root.children;
+    Object.keys(tree.items).forEach((key) => {
+      const item = JSON.parse(JSON.stringify(tree.items[key]));
+      if (item.data) {
+        const data = item.data;
+
+        if (key == tree.rootId || rootChildren.includes(key)) {
+          filteredTree.items[key] = item;
+        } else {
+          if (data.isType) {
+            if (
+              linkTypes.length === 0 ||
+              linkTypes.includes(data.id) ||
+              data.id === "-1"
+            ) {
+              filteredTree.items[key] = item;
+            }
+          } else {
+            const { issuetype, priority } = data.fields;
+            if (
+              (issueTypes.length === 0 || issueTypes.includes(issuetype.id)) &&
+              (priorities.length === 0 || priorities.includes(priority.id))
+            ) {
+              filteredTree.items[key] = item;
+            }
+          }
+        }
+      }
+    });
+  }
+  return filteredTree;
 };

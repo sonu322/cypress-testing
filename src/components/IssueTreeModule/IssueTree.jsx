@@ -1,7 +1,11 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import { IssueLinkAPI } from "../api";
-import { formatIssue, getFieldIds } from "../../util/issueTreeUtils";
+import {
+  filterTree,
+  formatIssue,
+  getFieldIds,
+} from "../../util/issueTreeUtils";
 import Tree, { mutateTree } from "@atlaskit/tree";
 import { IssueItem } from "./IssueItem";
 
@@ -13,8 +17,6 @@ export const IssueTree = ({
   root,
   tree,
   setTree,
-  isFetched,
-  setIsFetched,
   filter,
   selectedIssueFieldIds,
   issueFields,
@@ -43,7 +45,6 @@ export const IssueTree = ({
             root.items[child.id] = child;
           }
           setTree(mutateTree(root, "0", { isExpanded: true }));
-          setIsFetched(true);
         })
         .catch((error) => handleError(error));
     }
@@ -112,59 +113,38 @@ export const IssueTree = ({
     );
   };
 
-  const filteredTree = mutateTree(
-    {
-      rootId: "0",
-      items: {
-        0: {
-          id: "0",
-          children: [],
-          hasChildren: true,
-          isExpanded: true,
-          isChildrenLoading: false,
-          data: {
-            title: "Fake Root Node",
-          },
-        },
-      },
-    },
-    "0",
-    { isExpanded: true }
-  );
+  let filteredTree = filterTree(filter, tree);
+  // const { linkTypes, issueTypes, priorities } = filter;
+  // const root = tree.items[tree.rootId];
+  // const rootChildren = root.children;
+  // Object.keys(tree.items).forEach((key) => {
+  //   const item = JSON.parse(JSON.stringify(tree.items[key]));
+  //   if (item.data) {
+  //     const data = item.data;
 
-  if (isFetched) {
-    const { linkTypes, issueTypes, priorities } = filter;
-    const root = tree.items[tree.rootId];
-    const rootChildren = root.children;
-    Object.keys(tree.items).forEach((key) => {
-      const item = JSON.parse(JSON.stringify(tree.items[key]));
-      if (item.data) {
-        const data = item.data;
-
-        if (key == tree.rootId || rootChildren.includes(key)) {
-          filteredTree.items[key] = item;
-        } else {
-          if (data.isType) {
-            if (
-              linkTypes.length === 0 ||
-              linkTypes.includes(data.id) ||
-              data.id === "-1"
-            ) {
-              filteredTree.items[key] = item;
-            }
-          } else {
-            const { issuetype, priority } = data.fields;
-            if (
-              (issueTypes.length === 0 || issueTypes.includes(issuetype.id)) &&
-              (priorities.length === 0 || priorities.includes(priority.id))
-            ) {
-              filteredTree.items[key] = item;
-            }
-          }
-        }
-      }
-    });
-  }
+  //     if (key == tree.rootId || rootChildren.includes(key)) {
+  //       filteredTree.items[key] = item;
+  //     } else {
+  //       if (data.isType) {
+  //         if (
+  //           linkTypes.length === 0 ||
+  //           linkTypes.includes(data.id) ||
+  //           data.id === "-1"
+  //         ) {
+  //           filteredTree.items[key] = item;
+  //         }
+  //       } else {
+  //         const { issuetype, priority } = data.fields;
+  //         if (
+  //           (issueTypes.length === 0 || issueTypes.includes(issuetype.id)) &&
+  //           (priorities.length === 0 || priorities.includes(priority.id))
+  //         ) {
+  //           filteredTree.items[key] = item;
+  //         }
+  //       }
+  //     }
+  //   }
+  // });
 
   const keys = Object.keys(filteredTree.items);
   keys.forEach((key) => {
