@@ -24,7 +24,7 @@ export const formatIssueData = (data, parent) => {
 };
 export const formatIssue = (data, parentTypeID, parentIssueID) => {
   console.log("format issue called");
-  console.log(data)
+  console.log(data);
   let hasChildren = false;
   const ids = [];
   const typeMap = new Map();

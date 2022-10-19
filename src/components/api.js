@@ -115,6 +115,41 @@ export const IssueAPI = async (
       throw newError;
     });
 };
+export const IssueSearchAPI = async (jql, start, max, fields) => {
+  const query = () => {
+    return new Promise((resolve, reject) => {
+      const data = {
+        fields: fields ?? [
+          "summay",
+          "subtasks",
+          "parent",
+          "issuelinks",
+          "issuetype",
+          "priority",
+          "status",
+        ],
+        startAt: start ?? 0,
+        maxResults: max ?? 500,
+        jql: jql,
+      };
+
+      AP.request({
+        type: "POST",
+        contentType: "application/json",
+        url: "/rest/api/3/search",
+        data: JSON.stringify(data),
+        success: (response) => {
+          resolve(JSON.parse(response));
+        },
+        error: (err) => {
+          reject(err);
+        },
+      });
+    });
+  };
+
+  return query();
+};
 export const IssueLinkAPI = async (key, fields) => {
   const input = key || (await getKey());
   const rootIssueData = await IssueAPI(input).catch((error) => {
@@ -132,12 +167,6 @@ export const IssueLinkAPI = async (key, fields) => {
         relatedIssueIds.push(issue.data.id);
       }
     });
-    // relatedIssueIds = relatedIssues.map((issue) => issue.data.id);
-  }
-  // fix
-  if (relatedIssueIds) {
-    console.log("related issue ids");
-    console.log(relatedIssueIds);
   }
   const relatedIssuesData = await IssueSearchAPI(
     `id in (${relatedIssueIds})`,
@@ -150,11 +179,6 @@ export const IssueLinkAPI = async (key, fields) => {
   return { rootIssueData, relatedIssuesData };
 };
 
-// export const IssueAPI = async (id) => {
-//   const response = await AP.request(`/rest/api/3/issue/${id}`);
-
-//   return Promise.resolve(JSON.parse(response.body));
-// };
 
 export const FilterAPI = async () => {
   const response = await AP.request("/rest/api/3/filter/search");
@@ -193,62 +217,5 @@ export const ProjectAPI = async (key) => {
     });
 };
 
-/*
-const _accumulator = (results, startIndex, maxResults, query, total) => {
-  return new Promise((resolve, reject) => {
-    const loop = offset => {
-      query(offset, maxResults)
-        .then(data => {
-          if (data.length) {
-            results.push(...data);
-            if (!total || results.length < total) {
-              loop(offset + maxResults);
-            }
-          } else {
-            resolve(results);
-          }
-        })
-        .catch(reject);
-    };
-    loop(startIndex); //starting collection
-  });
-};
-*/
 
-export const IssueSearchAPI = async (jql, start, max, fields) => {
-  const query = () => {
-    return new Promise((resolve, reject) => {
-      const data = {
-        fields: fields ?? [
-          "summay",
-          "subtasks",
-          "parent",
-          "issuelinks",
-          "issuetype",
-          "priority",
-          "status",
-        ],
-        startAt: start ?? 0,
-        maxResults: max ?? 500,
-        jql: jql,
-      };
 
-      AP.request({
-        type: "POST",
-        contentType: "application/json",
-        url: "/rest/api/3/search",
-        data: JSON.stringify(data),
-        success: (response) => {
-          resolve(JSON.parse(response));
-        },
-        error: (err) => {
-          reject(err);
-        },
-      });
-    });
-  };
-
-  return query();
-
-  //return _accumulator(results, start, 50, query, total);
-};
