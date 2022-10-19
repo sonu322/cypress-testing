@@ -14,7 +14,6 @@ const Container = styled.div`
 `;
 
 export const IssueTree = ({
-  // root,
   tree,
   setTree,
   filter,

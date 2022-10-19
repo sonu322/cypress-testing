@@ -89,7 +89,7 @@ export const formatIssue = (data, parentTypeID, parentIssueID) => {
 
   for (const issue of data.fields.subtasks) {
     if (issue.id !== parentIssueID) {
-      const issueID = UUID(); //`${data.id}-${issue.id}`;
+      const issueID = UUID();
       subTasks.push(issueID);
       items.push({
         id: issueID,
