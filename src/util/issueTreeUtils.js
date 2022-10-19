@@ -1,4 +1,5 @@
 import { mutateTree } from "@atlaskit/tree";
+import { IssueLinkAPI } from "../components/api";
 import { csv, download, UUID } from "./index";
 const SUB_TASKS = "Subtasks";
 const PARENT = "Parent";
@@ -304,4 +305,56 @@ export const handleCollapse = (itemId, tree, setTree) => {
       isChildrenLoading: false,
     })
   );
+};
+
+export const handleExpand = (itemId, tree, setTree, issueFields) => {
+  setTree(mutateTree(tree, itemId, { isChildrenLoading: true }));
+
+  const newTree = { ...tree };
+  const item = newTree.items[itemId];
+  if (item.hasChildren && item.children.length > 0) {
+    setTree(
+      mutateTree(newTree, itemId, {
+        isExpanded: true,
+        isChildrenLoading: false,
+      })
+    );
+  } else {
+    const fieldIds = getFieldIds(issueFields);
+    IssueLinkAPI(item.data ? item.data.id : null, fieldIds).then((data) => {
+      const { rootIssueData, relatedIssuesData } = data;
+      let parent = (item.data || {}).parent;
+      const parentType = parent ? newTree.items[parent] : null;
+      parent = parent
+        ? ((newTree.items[parent] || {}).data || {}).parent
+        : null;
+      const parentIssue = parent ? newTree.items[parent] : null;
+
+      const parentTypeID = ((parentType || {}).data || {}).id;
+      const parentIssueID = ((parentIssue || {}).data || {}).id;
+
+      const value = formatIssue(rootIssueData, parentTypeID, parentIssueID);
+      for (const child of value.children) {
+        let childData = relatedIssuesData.issues.find(
+          (issue) => issue.id == child.data.id
+        );
+        if (childData) {
+          child.data.fields = childData.fields;
+        }
+        if (!newTree.items[child.id]) {
+          newTree.items[child.id] = child;
+        }
+      }
+
+      item.hasChildren = value.data.hasChildren;
+      item.children = value.data.children;
+
+      setTree(
+        mutateTree(newTree, itemId, {
+          isExpanded: true,
+          isChildrenLoading: false,
+        })
+      );
+    });
+  }
 };
