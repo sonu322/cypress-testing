@@ -25,18 +25,16 @@ export const IssueTree = ({
 }) => {
   useEffect(() => {
     if (issueFields && issueFields.size > 0) {
-      console.log("use eff called");
       const fieldIds = getFieldIds(issueFields);
       IssueLinkAPI(null, fieldIds) // fetches root issue
         .then((data) => {
-          console.log("data!!1");
-          console.log(data);
-          const value = formatIssue(data.rootIssueData, null, null);
-          console.log(value);
-          root.items[data.rootIssueData.id] = value.data;
-          root.items["0"].children.push(data.rootIssueData.id);
+          const {rootIssueData, relatedIssuesData} = data;
+          const value = formatIssue(rootIssueData, null, null);
+          
+          root.items[rootIssueData.id] = value.data;
+          root.items["0"].children.push(rootIssueData.id);
           for (const child of value.children) {
-            let childData = data.relatedIssuesData.issues.find(
+            let childData = relatedIssuesData.issues.find(
               (issue) => issue.id == child.data.id
             );
             if (childData) {
