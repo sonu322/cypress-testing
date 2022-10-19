@@ -292,6 +292,7 @@ export const populateInitialTree = (issueFields, setTree, handleError) => {
 
 
 export const exportTree = (tree) => {
+  // TODO: make fields dynamic
   const root = tree.items[tree.rootId];
   const rootChildren = root.children;
 
@@ -314,7 +315,7 @@ export const exportTree = (tree) => {
       if (data.isType) {
         content.link = data.title;
       } else {
-        // TODO: make fields dynamic
+        
         content.key = data.key;
         content.summary = data.fields.summary;
         content.type = data.fields.issuetype.name;
@@ -363,26 +364,28 @@ export const handleExpand = (itemId, tree, setTree, issueFields) => {
     const fieldIds = getFieldIds(issueFields);
     IssueLinkAPI(item.data ? item.data.id : null, fieldIds).then((data) => {
       const { rootIssueData, relatedIssuesData } = data;
-      let parent = (item.data || {}).parent;
-      const parentType = parent ? newTree.items[parent] : null;
-      parent = parent
-        ? ((newTree.items[parent] || {}).data || {}).parent
+      let parentTypeUUID = (item.data || {}).parent;
+      const parentType = parentTypeUUID ? newTree.items[parentTypeUUID] : null;
+
+      let parentIssueUUID = parentTypeUUID
+        ? ((newTree.items[parentTypeUUID] || {}).data || {}).parent
         : null;
-      const parentIssue = parent ? newTree.items[parent] : null;
+
+      const parentIssue = parentIssueUUID ? newTree.items[parentIssueUUID] : null;
 
       const parentTypeID = ((parentType || {}).data || {}).id;
       const parentIssueID = ((parentIssue || {}).data || {}).id;
 
       const value = formatIssue(rootIssueData, parentTypeID, parentIssueID);
-      for (const child of value.children) {
+      for (const childIssue of value.children) {
         let childData = relatedIssuesData.issues.find(
-          (issue) => issue.id == child.data.id
+          (issue) => issue.id == childIssue.data.id
         );
         if (childData) {
-          child.data.fields = childData.fields;
+          childIssue.data.fields = childData.fields;
         }
-        if (!newTree.items[child.id]) {
-          newTree.items[child.id] = child;
+        if (!newTree.items[childIssue.id]) {
+          newTree.items[childIssue.id] = childIssue;
         }
       }
 
