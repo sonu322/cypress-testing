@@ -8,8 +8,6 @@ import { IssueCard } from "../IssueCard";
 import { ExpansionToggler } from "../ExpansionToggler";
 const PADDING_LEVEL = 30;
 
-
-
 const LinkTypeContainer = styled.div`
   display: flex;
   height: 32px;
@@ -27,7 +25,6 @@ const LinkTypeContainer = styled.div`
 const Container = styled.div`
   display: flex;
 `;
-
 
 export const IssueTree = ({
   root,
@@ -47,13 +44,19 @@ export const IssueTree = ({
       const fieldIds = getFieldIds(issueFields);
       IssueLinkAPI(null, fieldIds) // fetches root issue
         .then((data) => {
-          console.log("data!!1")
-          console.log(data)
+          console.log("data!!1");
+          console.log(data);
           const value = formatIssue(data.rootIssueData, null, null);
-          console.log(value)
+          console.log(value);
           root.items[data.rootIssueData.id] = value.data;
           root.items["0"].children.push(data.rootIssueData.id);
           for (const child of value.children) {
+            let childData = data.relatedIssuesData.issues.find(
+              (issue) => issue.id == child.data.id
+            );
+            if (childData) {
+              child.data.fields = childData.fields;
+            }
             root.items[child.id] = child;
           }
           setTree(mutateTree(root, "0", { isExpanded: true }));
@@ -121,6 +124,7 @@ export const IssueTree = ({
     } else {
       const fieldIds = getFieldIds(issueFields);
       IssueLinkAPI(item.data ? item.data.id : null, fieldIds).then((data) => {
+        const { rootIssueData, relatedIssuesData } = data;
         let parent = (item.data || {}).parent;
         const parentType = parent ? ntree.items[parent] : null;
         parent = parent
@@ -131,9 +135,15 @@ export const IssueTree = ({
         const parentTypeID = ((parentType || {}).data || {}).id;
         const parentIssueID = ((parentIssue || {}).data || {}).id;
 
-        const value = formatIssue(data, parentTypeID, parentIssueID);
-        ntree.items[itemId].data = value.data.data;
+        const value = formatIssue(rootIssueData, parentTypeID, parentIssueID);
+        // ntree.items[itemId].data = value.data.data;
         for (const child of value.children) {
+          let childData = relatedIssuesData.issues.find(
+            (issue) => issue.id == child.data.id
+          );
+          if (childData) {
+            child.data.fields = childData.fields;
+          }
           if (!ntree.items[child.id]) {
             ntree.items[child.id] = child;
           }

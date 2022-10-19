@@ -94,13 +94,6 @@ export const IssueAPI = async (
     "status",
   ]
 ) => {
-  // const getKey = () => {
-  //   return new Promise((resolve) => {
-  //     AP.context.getContext((res) => {
-  //       resolve(res.jira.issue.id);
-  //     });
-  //   });
-  // };
   const input = key || (await getKey());
   let queries = [];
   fields.forEach((field) => {
@@ -122,31 +115,9 @@ export const IssueAPI = async (
       throw newError;
     });
 };
-export const IssueLinkAPI = async (
-  key,
-  fields = [
-    "summary",
-    "subtasks",
-    "parent",
-    "issuelinks",
-    "issuetype",
-    "priority",
-    "status",
-  ]
-) => {
+export const IssueLinkAPI = async (key, fields) => {
   const input = key || (await getKey());
-  // let queries = [];
-  // fields.forEach((field) => {
-  //   queries.push(`fields=${field}`);
-  // });
-  // const queriesString = queries.join("&");
-  // let url = `/rest/api/3/issue/${input}`;
-  // if (queriesString.length > 0) {
-  //   url = url + "?" + queriesString;
-  // }
-
-  // const rootIssueData = await AP.request(url)
-  const rootIssueData = await IssueAPI().catch((error) => {
+  const rootIssueData = await IssueAPI(input).catch((error) => {
     console.log(error);
     const newError = new Error(`some error occurred fetching issue ${input}`);
     throw newError;
@@ -175,8 +146,8 @@ export const IssueLinkAPI = async (
     fields
   );
   console.log(relatedIssuesData);
-  console.log(rootIssueData)
-  return {rootIssueData, relatedIssuesData};
+  console.log(rootIssueData);
+  return { rootIssueData, relatedIssuesData };
 };
 
 // export const IssueAPI = async (id) => {
