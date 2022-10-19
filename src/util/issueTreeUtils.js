@@ -364,6 +364,7 @@ export const handleExpand = (itemId, tree, setTree, issueFields) => {
     const fieldIds = getFieldIds(issueFields);
     IssueLinkAPI(item.data ? item.data.id : null, fieldIds).then((data) => {
       const { rootIssueData, relatedIssuesData } = data;
+      // TODO: is the format to prevent errors:` || {} ` good enough or not - review it
       let parentTypeUUID = (item.data || {}).parent;
       const parentType = parentTypeUUID ? newTree.items[parentTypeUUID] : null;
 
