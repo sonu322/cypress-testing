@@ -5,6 +5,7 @@ import {
   filterTree,
   formatIssue,
   getFieldIds,
+  handleCollapse,
 } from "../../util/issueTreeUtils";
 import Tree, { mutateTree } from "@atlaskit/tree";
 import { IssueItem } from "./IssueItem";
@@ -28,9 +29,9 @@ export const IssueTree = ({
       const fieldIds = getFieldIds(issueFields);
       IssueLinkAPI(null, fieldIds) // fetches root issue
         .then((data) => {
-          const {rootIssueData, relatedIssuesData} = data;
+          const { rootIssueData, relatedIssuesData } = data;
           const value = formatIssue(rootIssueData, null, null);
-          const newTree = {...root};
+          const newTree = { ...root };
           newTree.items[rootIssueData.id] = value.data;
           newTree.items["0"].children.push(rootIssueData.id);
           for (const child of value.children) {
@@ -52,7 +53,7 @@ export const IssueTree = ({
   const handleExpand = (itemId) => {
     setTree(mutateTree(tree, itemId, { isChildrenLoading: true }));
 
-    const newTree = {...tree};
+    const newTree = { ...tree };
     const item = newTree.items[itemId];
     if (item.hasChildren && item.children.length > 0) {
       setTree(
@@ -101,18 +102,12 @@ export const IssueTree = ({
     }
   };
 
-  const handleCollapse = (itemId) => {
-    setTree(
-      mutateTree(tree, itemId, {
-        isExpanded: false,
-        isChildrenLoading: false,
-      })
-    );
+  const onCollapse = (itemId) => {
+    handleCollapse(itemId, tree, setTree);
   };
 
   let filteredTree = filterTree(filter, tree);
 
-  
   const renderItem = ({ ...props }) => {
     return (
       <IssueItem
@@ -128,7 +123,7 @@ export const IssueTree = ({
         tree={filteredTree}
         renderItem={renderItem}
         onExpand={handleExpand}
-        onCollapse={handleCollapse}
+        onCollapse={onCollapse}
         isDragEnabled={false}
       />
     </Container>

@@ -295,3 +295,13 @@ export const exportTree = (tree) => {
 
   // return contents;
 };
+
+
+export const handleCollapse = (itemId, tree, setTree) => {
+  setTree(
+    mutateTree(tree, itemId, {
+      isExpanded: false,
+      isChildrenLoading: false,
+    })
+  );
+};
