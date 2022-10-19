@@ -38,7 +38,15 @@ export const IssueTree = ({
   };
 
   let filteredTree = filterTree(filter, tree);
-
+  console.log(filteredTree);
+  const keys = Object.keys(filteredTree.items);
+  keys.forEach((key) => {
+    const item = filteredTree.items[key];
+    item.children = item.children.filter((i) => keys.includes(i));
+    if (item.children.length === 0 && item.isExpanded) {
+      item.hasChildren = false;
+    }
+  });
   const renderItem = ({ ...props }) => {
     return (
       <IssueItem
