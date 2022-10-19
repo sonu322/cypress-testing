@@ -1,27 +1,13 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
-import { colors } from "@atlaskit/theme";
 import { IssueLinkAPI } from "../api";
 import { formatIssue, getFieldIds } from "../../util/issueTreeUtils";
 import Tree, { mutateTree } from "@atlaskit/tree";
-import { IssueCard } from "../IssueCard";
-import { ExpansionToggler } from "../ExpansionToggler";
-const PADDING_LEVEL = 30;
+import { IssueItem } from "./IssueItem";
 
-const LinkTypeContainer = styled.div`
-  display: flex;
-  height: 32px;
-  line-height: 32px;
-  border: none;
-  border-radius: 3px;
-  box-sizing: border-box;
-  background-color: ${colors.N30}
-  fill: ${colors.N30};
-  padding-left: 6px;
-  padding-right: 6px;
-  font-weight: 500;
-  text-transform: capitalize;
-`;
+
+
+
 const Container = styled.div`
   display: flex;
 `;
@@ -67,48 +53,9 @@ export const IssueTree = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [issueFields]);
 
-  const getItemStyle = (depth) => {
-    const style = {
-      margin: ".5em 0",
-      display: "flex",
-      marginLeft: "0px",
-    };
 
-    style["marginLeft"] = PADDING_LEVEL * depth + "px";
 
-    return style;
-  };
-
-  const renderItem = ({ item, onExpand, onCollapse, provided, depth }) => {
-    return (
-      <div
-        style={getItemStyle(depth)}
-        ref={provided.innerRef}
-        {...provided.dragHandleProps}
-      >
-        <ExpansionToggler
-          item={item}
-          isExpanded={item.isExpanded}
-          isLoading={item.isChildrenLoading}
-          onExpand={() => onExpand(item.id)}
-          onCollapse={() => onCollapse(item.id)}
-          isTogglerDisabled={!item.hasChildren}
-        ></ExpansionToggler>
-        {item.data && item.data.isType ? (
-          <LinkTypeContainer>
-            {item.data ? item.data.title : "No Name"}
-          </LinkTypeContainer>
-        ) : (
-          <IssueCard
-            issueData={item.data ?? null}
-            selectedIssueFieldIds={selectedIssueFieldIds}
-            issueCardOptionsMap={issueCardOptionsMap}
-            isIssueExpanded={item.isExpanded}
-          />
-        )}
-      </div>
-    );
-  };
+  
   const handleExpand = (itemId) => {
     setTree(mutateTree(tree, itemId, { isChildrenLoading: true }));
 
@@ -233,6 +180,11 @@ export const IssueTree = ({
       item.hasChildren = false;
     }
   });
+  const renderItem = ({...props}) => {
+    return (
+      <IssueItem {...props} issueCardOptionsMap={issueCardOptionsMap} selectedIssueFieldIds={selectedIssueFieldIds}/>
+    );
+  };
   return (
     <Container>
       <Tree
