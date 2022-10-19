@@ -30,7 +30,7 @@ const CardFooter = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-between;
-  margin-top: 10px;
+  // margin-top: 10px;
 `;
 const FooterSideContainer = styled.div`
   display: flex;
@@ -50,6 +50,8 @@ export const IssueCard = ({
     field.isSelected = selectedIssueFieldIds.includes(field.key);
     field.value = issueData.fields[field.key];
   }
+  copy.get("assignee").isSelected =
+    copy.get("assignee").isSelected;
   cardOptionsDataMap = copy;
 
   const storyPointsInfo =

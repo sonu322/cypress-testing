@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, {useEffect, useState } from "react";
 import {
   IssueTypeAPI,
   LinkTypeAPI,
@@ -9,8 +9,8 @@ import {
 import { Toolbar } from "./Toolbar";
 import { IssueTree } from "./IssueTree";
 import { mutateTree } from "@atlaskit/tree";
-import { download, csv } from "../../util";
 import { ErrorsList } from "../ErrorsList";
+import { exportTree } from "../../util/issueTreeUtils";
 let root = {
   rootId: "0",
   items: {
@@ -39,62 +39,16 @@ export const IssueTreeModule = () => {
   const [options, setOptions] = useState({});
   const [filter, setFilter] = useState({});
   const [tree, setTree] = useState(mutateTree(root, "0", { isExpanded: true }));
-  const [isFetched, setIsFetched] = useState(false);
   const [issueFields, setIssueFields] = useState([]);
   const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState([]);
   const handleSingleError = (error) => {
     setErrors([...errors, error]);
   };
-  const handleMultipleErrors = (newErrors) => {
-    newErrors = errors.concat(newErrors);
-    setErrors(newErrors);
-  };
-  const exportTree = () => {
-    const root = tree.items[tree.rootId];
-    const rootChildren = root.children;
-
-    const contents = [];
-
-    const process = (item, indent) => {
-      if (!item) return;
-      const content = {
-        indent: indent,
-        key: "",
-        link: "",
-        summary: "",
-        type: "",
-        status: "",
-        priority: "",
-      };
-
-      if (item.data) {
-        const data = item.data;
-        if (data.isType) {
-          content.link = data.title;
-        } else {
-          content.key = data.title;
-          content.summary = data.summary;
-          content.type = data.type.name;
-          content.status = data.status.name;
-          content.priority = data.priority.name;
-        }
-      }
-
-      contents.push(content);
-      if (item.hasChildren) {
-        const nextIndent = indent + 1;
-        item.children.forEach((key) => {
-          process(tree.items[key], nextIndent);
-        });
-      }
-    };
-
-    process(tree.items[rootChildren[0]], 1);
-    download("csv", csv(contents, true));
-
-    // return contents;
-  };
   useEffect(() => {
+    const handleMultipleErrors = (newErrors) => {
+      newErrors = errors.concat(newErrors);
+      setErrors(newErrors);
+    };
     const fetchDropdownsData = async () => {
       Promise.all([PriorityAPI(), LinkTypeAPI(), IssueTypeAPI()])
         .then((results) => {
@@ -115,9 +69,6 @@ export const IssueTreeModule = () => {
           handleMultipleErrors(newErrors);
         });
     };
-    fetchDropdownsData();
-  }, []);
-  useEffect(() => {
     const fetchFieldsData = async () => {
       Promise.all([ProjectAPI(), IssueFieldsAPI()])
         .then(([project, results]) => {
@@ -163,7 +114,9 @@ export const IssueTreeModule = () => {
           handleMultipleErrors(errors);
         });
     };
+    fetchDropdownsData();
     fetchFieldsData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const updateFilteredKeyOptions = (key, keyOptions) => {
     let newFilter = { ...filter };
@@ -182,7 +135,7 @@ export const IssueTreeModule = () => {
       {errors && <ErrorsList errors={errors} />}
 
       <Toolbar
-        exportTree={exportTree}
+        exportTree={() => exportTree(tree)}
         options={options}
         filter={filter}
         updateFilteredKeyOptions={updateFilteredKeyOptions}
@@ -194,10 +147,8 @@ export const IssueTreeModule = () => {
       <IssueTree
         tree={tree}
         setTree={setTree}
-        isFetched={isFetched}
-        setIsFetched={setIsFetched}
         filter={filter}
-        root={root}
+        // root={root}
         issueCardOptionsMap={issueCardOptions}
         selectedIssueFieldIds={selectedIssueFieldIds}
         issueFields={issueFields}

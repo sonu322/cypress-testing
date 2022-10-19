@@ -35,6 +35,15 @@
           "i18n": "issue.tab.name"
         },
         "key": "lxp-issue-tab"
+      },
+      {
+        "url": "/index.html",
+        "weight": 100,
+        "name": {
+          "value": "Links Explorer legacy",
+          "i18n": "issue.tab.name"
+        },
+        "key": "lxp-issue-tab-legacy"
       }
     ],
     "generalPages": [
