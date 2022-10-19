@@ -1,3 +1,6 @@
+/* eslint-disable no-undef */
+import { formatIssue } from "../util/issueTreeUtils";
+
 export const IssueTypeAPI = async () => {
   return AP.request("/rest/api/3/issuetype")
     .then((response) => JSON.parse(response.body))
@@ -67,7 +70,7 @@ export const IssueFieldsAPI = async () => {
       throw newError;
     });
 };
-export const IssueLinkAPI = async (
+export const IssueAPI = async (
   key,
   fields = [
     "summary",
@@ -107,15 +110,64 @@ export const IssueLinkAPI = async (
       throw newError;
     });
 };
+export const IssueLinkAPI = async (
+  key,
+  fields = [
+    "summary",
+    "subtasks",
+    "parent",
+    "issuelinks",
+    "issuetype",
+    "priority",
+    "status",
+  ]
+) => {
+  const getKey = () => {
+    return new Promise((resolve) => {
+      AP.context.getContext((res) => {
+        resolve(res.jira.issue.id);
+      });
+    });
+  };
+  const input = key || (await getKey());
+  let queries = [];
+  fields.forEach((field) => {
+    queries.push(`fields=${field}`);
+  });
+  const queriesString = queries.join("&");
+  let url = `/rest/api/3/issue/${input}`;
+  if (queriesString.length > 0) {
+    url = url + "?" + queriesString;
+  }
 
-export const IssueAPI = async (id) => {
-  const response = await AP.request(`/rest/api/3/issue/${id}`);
-
-  return Promise.resolve(JSON.parse(response.body));
+  const rootIssueData = await AP.request(url)
+    .then((response) => JSON.parse(response.body))
+    .catch((error) => {
+      console.log(error);
+      const newError = new Error(`some error occurred fetching issue ${input}`);
+      throw newError;
+    });
+  const formattedRootIssueData = formatIssue(rootIssueData);
+  const relatedIssues = formattedRootIssueData.children;
+  let relatedIssueIds;
+  if (relatedIssues) {
+    relatedIssueIds = relatedIssues.map((issue) => issue.id);
+  }
+  let relatedIssuesData;// fix
+  if(relatedIssueIds) {
+    console.log(relatedIssueIds)
+    
+  }
 };
 
+// export const IssueAPI = async (id) => {
+//   const response = await AP.request(`/rest/api/3/issue/${id}`);
+
+//   return Promise.resolve(JSON.parse(response.body));
+// };
+
 export const FilterAPI = async () => {
-  const response = await AP.request(`/rest/api/3/filter/search`);
+  const response = await AP.request("/rest/api/3/filter/search");
 
   return Promise.resolve(JSON.parse(response.body));
 };
@@ -174,7 +226,6 @@ const _accumulator = (results, startIndex, maxResults, query, total) => {
 */
 
 export const IssueSearchAPI = async (jql, start, max) => {
-  const results = [];
   const query = () => {
     return new Promise((resolve, reject) => {
       const data = {
@@ -195,7 +246,7 @@ export const IssueSearchAPI = async (jql, start, max) => {
       AP.request({
         type: "POST",
         contentType: "application/json",
-        url: `/rest/api/3/search`,
+        url: "/rest/api/3/search",
         data: JSON.stringify(data),
         success: (response) => {
           resolve(JSON.parse(response));

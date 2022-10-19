@@ -37,7 +37,7 @@
     "@babel/preset-env": "^7.4.4",
     "@babel/preset-react": "^7.0.0",
     "cssnano": "^4.1.10",
-    "eslint": "^8.24.0",
+    "eslint": "^8.25.0",
     "eslint-plugin-react": "^7.31.8",
     "flow-bin": "^0.98.1",
     "node-sass": "^7.0.1",
@@ -54,7 +54,9 @@
     "upload-dev": "aws --profile otpl s3 sync ./dist s3://lxp-cloud-dev --delete",
     "upload": "aws --profile otpl s3 sync ./dist s3://lxp-cloud",
     "serve": "node serve.js",
-    "flow": "flow"
+    "flow": "flow",
+    "lint": "eslint 'src/**/*.{js,jsx}'",
+    "lint:fix": "eslint 'src/**/*.{js,jsx}' --fix"
   },
   "staticFiles": {
     "staticPath": [

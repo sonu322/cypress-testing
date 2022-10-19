@@ -43,7 +43,6 @@ export const IssueCard = ({
   issueData,
   selectedIssueFieldIds,
   issueCardOptionsMap,
-  isIssueExpanded,
 }) => {
   let cardOptionsDataMap;
   let copy = new Map(issueCardOptionsMap);
