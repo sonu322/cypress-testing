@@ -161,7 +161,6 @@ export const IssueLinkAPI = async (key, fields) => {
   const relatedIssues = formattedRootIssueData.children;
   let relatedIssueIds = [];
   if (relatedIssues) {
-    console.log(relatedIssues);
     relatedIssues.forEach((issue) => {
       if (!issue.data.isType) {
         relatedIssueIds.push(issue.data.id);
@@ -174,8 +173,6 @@ export const IssueLinkAPI = async (key, fields) => {
     null,
     fields
   );
-  console.log(relatedIssuesData);
-  console.log(rootIssueData);
   return { rootIssueData, relatedIssuesData };
 };
 

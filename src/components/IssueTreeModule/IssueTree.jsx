@@ -38,7 +38,6 @@ export const IssueTree = ({
   };
 
   let filteredTree = filterTree(filter, tree);
-  console.log(filteredTree);
 
   const renderItem = ({ ...props }) => {
     return (
