@@ -1,5 +1,5 @@
 import { mutateTree } from "@atlaskit/tree";
-import { UUID } from "./index";
+import { csv, download, UUID } from "./index";
 const SUB_TASKS = "Subtasks";
 const PARENT = "Parent";
 export const getFieldIds = (issueFields) => {
@@ -238,4 +238,54 @@ export const filterTree = (filter, tree) => {
     });
   }
   return filteredTree;
+};
+
+
+
+export const exportTree = (tree) => {
+  const root = tree.items[tree.rootId];
+  const rootChildren = root.children;
+
+  const contents = [];
+
+  const process = (item, indent) => {
+    if (!item) return;
+    const content = {
+      indent: indent,
+      key: "",
+      link: "",
+      summary: "",
+      type: "",
+      status: "",
+      priority: "",
+    };
+
+    if (item.data) {
+      const data = item.data;
+      if (data.isType) {
+        content.link = data.title;
+      } else {
+
+        // TODO: make fields dynamic
+        content.key = data.key;
+        content.summary = data.fields.summary;
+        content.type = data.fields.issuetype.name;
+        content.status = data.fields.status.name;
+        content.priority = data.fields.priority.name;
+      }
+    }
+
+    contents.push(content);
+    if (item.hasChildren) {
+      const nextIndent = indent + 1;
+      item.children.forEach((key) => {
+        process(tree.items[key], nextIndent);
+      });
+    }
+  };
+
+  process(tree.items[rootChildren[0]], 1);
+  download("csv", csv(contents, true));
+
+  // return contents;
 };
