@@ -54,7 +54,7 @@ export const IssueTreeModule = () => {
       console.log(dropdownName, dropdownOptions)
       setOptions((prevOptions) => {
         let newOptions = { ...prevOptions };
-        prevOptions[dropdownName] = dropdownOptions;
+        newOptions[dropdownName] = dropdownOptions;
         return newOptions;
       });
       const ids = dropdownOptions.map((option) => option.id);
