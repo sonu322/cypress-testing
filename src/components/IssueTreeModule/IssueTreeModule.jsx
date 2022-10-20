@@ -203,17 +203,6 @@ export const IssueTreeModule = () => {
         cardFields={options}
         handleError={handleNewError}
       />
-      {Object.keys(filter).map((keyName) => (
-        <div key={keyName}>
-          ---
-          {filter[keyName].map((item) => (
-            <div key={item}>
-              {keyName}:{item}
-            </div>
-          ))}
-          ---
-        </div>
-      ))}
     </div>
   );
 };
