@@ -9,9 +9,6 @@ export const Dropdown = ({
   updateSelectedOptions,
   options,
 }) => {
-  console.log("from dropdown");
-  console.log(options);
-  console.log(selectedOptions);
   const handleOptionClick = (id) => {
     let updatedList = [];
     if (selectedOptions.includes(id)) {

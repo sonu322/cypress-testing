@@ -42,12 +42,11 @@ export const IssueTreeModule = () => {
   const [tree, setTree] = useState(mutateTree(root, "0", { isExpanded: true }));
   const [issueFields, setIssueFields] = useState([]);
   const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState([]);
-  const handleSingleError = (error) => {
+  const handleNewError = (error) => {
     setErrors((prevErrors) => [...prevErrors, error]);
   };
   useEffect(() => {
     const handleFetchedOptions = (dropdownName, dropdownOptions) => {
-      console.log(dropdownName, dropdownOptions);
       setOptions((prevOptions) => {
         let newOptions = { ...prevOptions };
         newOptions[dropdownName] = dropdownOptions;
@@ -66,22 +65,16 @@ export const IssueTreeModule = () => {
         handleFetchedOptions("priorities", response);
         return response;
       } catch (error) {
-        console.log("catche caleld priorities");
-        console.log(error);
-        handleSingleError(error);
+        handleNewError(error);
       }
     };
     const fetchIssueTypes = async () => {
       try {
         let response = await IssueTypeAPI();
-        console.log("issue types");
-        console.log(response);
         handleFetchedOptions("issueTypes", response);
         return response;
       } catch (error) {
-        console.log("catche caleld");
-        console.log(error);
-        handleSingleError(error);
+        handleNewError(error);
       }
     };
     const fetchLinkTypes = async () => {
@@ -90,15 +83,13 @@ export const IssueTreeModule = () => {
         handleFetchedOptions("linkTypes", response);
         return response;
       } catch (error) {
-        console.log("catche caleld");
-        console.log(error);
-        handleSingleError(error);
+        handleNewError(error);
       }
     };
 
     const fetchFieldsData = async () => {
       let promises = [
-        ProjectAPI().catch((err) => handleSingleError(err)),
+        ProjectAPI().catch((err) => handleNewError(err)),
         IssueFieldsAPI(),
       ];
       try {
@@ -143,20 +134,16 @@ export const IssueTreeModule = () => {
         setIssueFields(fieldsMap);
         setSelectedIssueFieldIds(selectedFieldIds);
       } catch (error) {
-        handleSingleError(error);
+        handleNewError(error);
       }
     };
     let issueTypes = fetchIssueTypes();
-    console.log("returned issuetypes");
-    console.log(issueTypes);
     let linkTypes = fetchLinkTypes();
     let priorities = fetchPriorities();
     {
       issueTypes &&
         issueTypes.length &&
         setOptions((prevOptions) => {
-          console.log("setting options issueTypes");
-          console.log(issueTypes);
           return {
             ...prevOptions,
             issueTypes: issueTypes,
@@ -214,7 +201,7 @@ export const IssueTreeModule = () => {
         selectedIssueFieldIds={selectedIssueFieldIds}
         issueFields={issueFields}
         cardFields={options}
-        handleError={handleSingleError}
+        handleError={handleNewError}
       />
       {Object.keys(filter).map((keyName) => (
         <div key={keyName}>

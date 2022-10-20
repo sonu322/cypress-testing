@@ -10,8 +10,6 @@ const Container = styled.div`
   gap: 8px;
 `;
 export const ErrorsList = ({ errors }) => {
-  console.log("from errors linst");
-  console.log(errors);
   return (
     <Container>
       {errors.map((error, index) => {
