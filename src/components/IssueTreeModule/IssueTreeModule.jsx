@@ -46,7 +46,6 @@ export const IssueTreeModule = () => {
     setErrors((prevErrors) => [...prevErrors, error]);
   };
   useEffect(() => {
-
     const handleFetchedOptions = (dropdownName, dropdownOptions) => {
       console.log(dropdownName, dropdownOptions);
       setOptions((prevOptions) => {
@@ -102,52 +101,50 @@ export const IssueTreeModule = () => {
         ProjectAPI().catch((err) => handleSingleError(err)),
         IssueFieldsAPI(),
       ];
-      Promise.all(promises)
+      try {
+        let [project, results] = await Promise.all(promises);
+        const newResults = results.map((result) => {
+          if (result.key.includes("customfield_")) {
+            result.customKey = result.name
+              .replace(/[\s, -]/g, "")
+              .toLowerCase();
+          } else {
+            result.customKey = result.key;
+          }
+          return result;
+        });
+        const fieldNames = [
+          ...fixedFieldNames,
+          "issuetype",
+          "priority",
+          "status",
+          "assignee",
+        ];
 
-        .then(([project, results]) => {
-          const newResults = results.map((result) => {
-            if (result.key.includes("customfield_")) {
-              result.customKey = result.name
-                .replace(/[\s, -]/g, "")
-                .toLowerCase();
-            } else {
-              result.customKey = result.key;
-            }
-            return result;
-          });
-          const fieldNames = [
-            ...fixedFieldNames,
-            "issuetype",
-            "priority",
-            "status",
-            "assignee",
-          ];
-
-          if (project) {
-            if (project.style == "classic") {
-              fieldNames.push("storypoints");
-            } else {
-              fieldNames.push("storypointestimate");
+        if (project) {
+          if (project.style == "classic") {
+            fieldNames.push("storypoints");
+          } else {
+            fieldNames.push("storypointestimate");
+          }
+        }
+        let selectedFieldIds = [];
+        let fieldsMap = new Map();
+        fieldNames.forEach((name) => {
+          const field = newResults.find((result) => result.customKey == name);
+          if (field) {
+            // fieldsMap.push(field);
+            fieldsMap.set(field.customKey, field);
+            if (!fixedFieldNames.includes(name)) {
+              selectedFieldIds.push(field.id);
             }
           }
-          let selectedFieldIds = [];
-          let fieldsMap = new Map();
-          fieldNames.forEach((name) => {
-            const field = newResults.find((result) => result.customKey == name);
-            if (field) {
-              // fieldsMap.push(field);
-              fieldsMap.set(field.customKey, field);
-              if (!fixedFieldNames.includes(name)) {
-                selectedFieldIds.push(field.id);
-              }
-            }
-          });
-          setIssueFields(fieldsMap);
-          setSelectedIssueFieldIds(selectedFieldIds);
-        })
-        .catch((error) => {
-          handleSingleError(error);
         });
+        setIssueFields(fieldsMap);
+        setSelectedIssueFieldIds(selectedFieldIds);
+      } catch (error) {
+        handleSingleError(error);
+      }
     };
     let issueTypes = fetchIssueTypes();
     console.log("returned issuetypes");
