@@ -50,8 +50,6 @@ export const IssueCard = ({
     field.isSelected = selectedIssueFieldIds.includes(field.key);
     field.value = issueData.fields[field.key];
   }
-  copy.get("assignee").isSelected =
-    copy.get("assignee").isSelected;
   cardOptionsDataMap = copy;
 
   const storyPointsInfo =

@@ -23,8 +23,8 @@ export const Toolbar = ({
   exportTree,
 }) => {
   const issueCardOptions = Array.from(issueCardOptionsMap.values());
-  console.log("options")
-  console.log(options)
+  console.log("options");
+  console.log(options);
   return (
     <Container>
       <ButtonGroup>

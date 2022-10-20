@@ -46,10 +46,7 @@ export const IssueTreeModule = () => {
     setErrors((prevErrors) => [...prevErrors, error]);
   };
   useEffect(() => {
-    const handleMultipleErrors = (newErrors) => {
-      newErrors = errors.concat(newErrors);
-      setErrors(newErrors);
-    };
+
     const handleFetchedOptions = (dropdownName, dropdownOptions) => {
       console.log(dropdownName, dropdownOptions);
       setOptions((prevOptions) => {
