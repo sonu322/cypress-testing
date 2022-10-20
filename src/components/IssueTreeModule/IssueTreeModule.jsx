@@ -124,7 +124,6 @@ export const IssueTreeModule = () => {
         fieldNames.forEach((name) => {
           const field = newResults.find((result) => result.customKey == name);
           if (field) {
-            // fieldsMap.push(field);
             fieldsMap.set(field.customKey, field);
             if (!fixedFieldNames.includes(name)) {
               selectedFieldIds.push(field.id);
