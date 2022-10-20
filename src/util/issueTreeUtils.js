@@ -227,10 +227,11 @@ export const filterTree = (filter, tree) => {
           filteredTree.items[key] = item;
         } else {
           if (data.isType) {
-            // executes is no link type is selected / 
-            // current link type is present in selected link types / 
+            // executes is no link type is selected /
+            // current link type is present in selected link types /
             // type is non-removable
             if (
+              !linkTypes ||
               linkTypes.length === 0 ||
               linkTypes.includes(data.id) ||
               data.id === "-1"
@@ -240,8 +241,12 @@ export const filterTree = (filter, tree) => {
           } else {
             const { issuetype, priority } = data.fields;
             if (
-              (issueTypes.length === 0 || issueTypes.includes(issuetype.id)) &&
-              (priorities.length === 0 || priorities.includes(priority.id))
+              (!issueTypes ||
+                issueTypes.length === 0 ||
+                issueTypes.includes(issuetype.id)) &&
+              (!priorities ||
+                priorities.length === 0 ||
+                priorities.includes(priority.id))
             ) {
               filteredTree.items[key] = item;
             }
@@ -261,35 +266,42 @@ export const filterTree = (filter, tree) => {
   return filteredTree;
 };
 
-
 // populates initial tree by calling api and formatting data
-export const populateInitialTree = (issueFields, setTree, handleError) => {
+export const populateInitialTree = async (
+  issueFields,
+  setTree,
+  handleError
+) => {
   const fieldIds = getFieldIds(issueFields);
-  IssueLinkAPI(null, fieldIds) // fetches root issue
-    .then((data) => {
-      const { rootIssueData, relatedIssuesData } = data; // fetched data
-      const value = formatIssue(rootIssueData, null, null);
-      const newTree = { ...root };
-      newTree.items[rootIssueData.id] = value.data;
-      // make actual root a child of fake(hidden) root node
-      newTree.items["0"].children.push(rootIssueData.id);
-      for (const childIssue of value.children) {
-        let childData = relatedIssuesData.issues.find(
-          (issue) => issue.id == childIssue.data.id
-        );
-        if (childData) {
-          // populate child issue with fetched information
-          childIssue.data.fields = childData.fields;
-        }
-        // set issue in tree items
-        newTree.items[childIssue.id] = childIssue;
+  // fetches root issue
+  try {
+    console.log("from populate tre");
+    const data = await IssueLinkAPI(null, fieldIds);
+    const { rootIssueData, relatedIssuesData } = data; // fetched data
+    const value = formatIssue(rootIssueData, null, null);
+    const newTree = { ...root };
+    newTree.items[rootIssueData.id] = value.data;
+    // make actual root a child of fake(hidden) root node
+    newTree.items["0"].children.push(rootIssueData.id);
+    for (const childIssue of value.children) {
+      let childData = relatedIssuesData.issues.find(
+        (issue) => issue.id == childIssue.data.id
+      );
+      if (childData) {
+        // populate child issue with fetched information
+        childIssue.data.fields = childData.fields;
       }
-      // expand tree
-      setTree(mutateTree(newTree, "0", { isExpanded: true }));
-    })
-    .catch((error) => handleError(error));
+      // set issue in tree items
+      newTree.items[childIssue.id] = childIssue;
+    }
+    // expand tree
+    setTree(mutateTree(newTree, "0", { isExpanded: true }));
+  } catch (error) {
+    console.log("from issue tree ");
+    console.log(error);
+    handleError(error);
+  }
 };
-
 
 export const exportTree = (tree) => {
   // TODO: make fields dynamic
@@ -315,7 +327,6 @@ export const exportTree = (tree) => {
       if (data.isType) {
         content.link = data.title;
       } else {
-        
         content.key = data.key;
         content.summary = data.fields.summary;
         content.type = data.fields.issuetype.name;
@@ -348,7 +359,7 @@ export const handleCollapse = (itemId, tree, setTree) => {
   );
 };
 
-export const handleExpand = (itemId, tree, setTree, issueFields) => {
+export const handleExpand = async (itemId, tree, setTree, issueFields, handleError) => {
   setTree(mutateTree(tree, itemId, { isChildrenLoading: true }));
 
   const newTree = { ...tree };
@@ -362,20 +373,22 @@ export const handleExpand = (itemId, tree, setTree, issueFields) => {
     );
   } else {
     const fieldIds = getFieldIds(issueFields);
-    IssueLinkAPI(item.data ? item.data.id : null, fieldIds).then((data) => {
+    try {
+      const data = await IssueLinkAPI(item.data ? item.data.id : null, fieldIds);
       const { rootIssueData, relatedIssuesData } = data;
+      // TODO: is the format to prevent errors:` || {} ` good enough or not - review it
       let parentTypeUUID = (item.data || {}).parent;
       const parentType = parentTypeUUID ? newTree.items[parentTypeUUID] : null;
-
+  
       let parentIssueUUID = parentTypeUUID
         ? ((newTree.items[parentTypeUUID] || {}).data || {}).parent
         : null;
-
+  
       const parentIssue = parentIssueUUID ? newTree.items[parentIssueUUID] : null;
-
+  
       const parentTypeID = ((parentType || {}).data || {}).id;
       const parentIssueID = ((parentIssue || {}).data || {}).id;
-
+  
       const value = formatIssue(rootIssueData, parentTypeID, parentIssueID);
       for (const childIssue of value.children) {
         let childData = relatedIssuesData.issues.find(
@@ -388,16 +401,20 @@ export const handleExpand = (itemId, tree, setTree, issueFields) => {
           newTree.items[childIssue.id] = childIssue;
         }
       }
-
+  
       item.hasChildren = value.data.hasChildren;
       item.children = value.data.children;
-
+  
       setTree(
         mutateTree(newTree, itemId, {
           isExpanded: true,
           isChildrenLoading: false,
         })
       );
-    });
+    }
+    catch (error) {
+      setTree(mutateTree(tree, itemId, { isChildrenLoading: false }));
+      handleError(error);
+    }
   }
 };

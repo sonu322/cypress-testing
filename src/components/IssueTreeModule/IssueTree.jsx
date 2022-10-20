@@ -30,7 +30,7 @@ export const IssueTree = ({
   }, [issueFields]);
 
   const onExpand = (itemId) => {
-    handleExpand(itemId, tree, setTree, issueFields);
+    handleExpand(itemId, tree, setTree, issueFields, handleError);
   };
 
   const onCollapse = (itemId) => {

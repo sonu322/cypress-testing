@@ -182,7 +182,6 @@ export const FilterAPI = async () => {
 
   return Promise.resolve(JSON.parse(response.body));
 };
-
 export const ProjectAPI = async (key) => {
   const getKey = () => {
     return new Promise((resolve, reject) => {
