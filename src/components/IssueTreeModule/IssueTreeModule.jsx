@@ -137,32 +137,9 @@ export const IssueTreeModule = () => {
         handleNewError(error);
       }
     };
-    let issueTypes = fetchIssueTypes();
-    let linkTypes = fetchLinkTypes();
-    let priorities = fetchPriorities();
-    {
-      issueTypes &&
-        issueTypes.length &&
-        setOptions((prevOptions) => {
-          return {
-            ...prevOptions,
-            issueTypes: issueTypes,
-          };
-        });
-    }
-    {
-      linkTypes &&
-        linkTypes.length &&
-        setOptions((prevOptions) => ({ ...prevOptions, linkTypes: linkTypes }));
-    }
-    {
-      priorities &&
-        priorities.length &&
-        setOptions((prevOptions) => ({
-          ...prevOptions,
-          priorities: priorities,
-        }));
-    }
+    fetchIssueTypes();
+    fetchLinkTypes();
+    fetchPriorities();
     fetchFieldsData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
