@@ -75,7 +75,7 @@ export const IssueCard = ({
               <IssueTypeInfo content={issueTypeInfo} />
             )}
             {priorityInfo.isSelected && <PriorityInfo content={priorityInfo} />}
-            {storyPointsInfo.isSelected && (
+            {storyPointsInfo && storyPointsInfo.isSelected && (
               <StoryPointsInfo content={storyPointsInfo}></StoryPointsInfo>
             )}
           </FooterSideContainer>

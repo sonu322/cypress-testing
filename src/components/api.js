@@ -184,13 +184,13 @@ export const FilterAPI = async () => {
 
   return Promise.resolve(JSON.parse(response.body));
 };
-
+// remove error
 export const ProjectAPI = async (key) => {
   const getKey = () => {
     return new Promise((resolve, reject) => {
       AP.context.getContext((res) => {
         if (res && res.jira) {
-          resolve(res.jira.project.key);
+          resolve(res.jira.project.keyy);
         } else {
           reject("Project could not be fetched");
         }

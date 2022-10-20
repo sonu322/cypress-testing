@@ -51,7 +51,7 @@ export const IssueTreeModule = () => {
       setErrors(newErrors);
     };
     const handleFetchedOptions = (dropdownName, dropdownOptions) => {
-      console.log(dropdownName, dropdownOptions)
+      console.log(dropdownName, dropdownOptions);
       setOptions((prevOptions) => {
         let newOptions = { ...prevOptions };
         newOptions[dropdownName] = dropdownOptions;
@@ -101,7 +101,12 @@ export const IssueTreeModule = () => {
     };
 
     const fetchFieldsData = async () => {
-      Promise.all([ProjectAPI(), IssueFieldsAPI()])
+      let promises = [
+        ProjectAPI().catch((err) => handleSingleError(err)),
+        IssueFieldsAPI(),
+      ];
+      Promise.all(promises)
+
         .then(([project, results]) => {
           const newResults = results.map((result) => {
             if (result.key.includes("customfield_")) {
@@ -121,10 +126,12 @@ export const IssueTreeModule = () => {
             "assignee",
           ];
 
-          if (project.style == "classic") {
-            fieldNames.push("storypoints");
-          } else {
-            fieldNames.push("storypointestimate");
+          if (project) {
+            if (project.style == "classic") {
+              fieldNames.push("storypoints");
+            } else {
+              fieldNames.push("storypointestimate");
+            }
           }
           let selectedFieldIds = [];
           let fieldsMap = new Map();
@@ -141,8 +148,8 @@ export const IssueTreeModule = () => {
           setIssueFields(fieldsMap);
           setSelectedIssueFieldIds(selectedFieldIds);
         })
-        .catch((errors) => {
-          handleMultipleErrors(errors);
+        .catch((error) => {
+          handleSingleError(error);
         });
     };
     let issueTypes = fetchIssueTypes();
