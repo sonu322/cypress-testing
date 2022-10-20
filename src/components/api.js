@@ -33,7 +33,8 @@ export const IssueTypeAPI = async () => {
 };
 
 export const LinkTypeAPI = async () => {
-  return AP.request("/rest/api/3/issueLinkType")
+  // remove typo
+  return AP.request("/rest/api/3/issueLinkTypee")
     .then((response) => JSON.parse(response.body))
     .then((data) => {
       if (data && data.issueLinkTypes) {
@@ -50,7 +51,8 @@ export const LinkTypeAPI = async () => {
 };
 
 export const PriorityAPI = async () => {
-  return AP.request("/rest/api/3/priority")
+  // remove typo
+  return AP.request("/rest/api/3/priorityyyy")
     .then((response) => JSON.parse(response.body))
     .then((data) => {
       if (data) {

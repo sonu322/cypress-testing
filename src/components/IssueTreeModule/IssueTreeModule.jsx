@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   IssueTypeAPI,
   LinkTypeAPI,
@@ -11,6 +11,7 @@ import { IssueTree } from "./IssueTree";
 import { mutateTree } from "@atlaskit/tree";
 import { ErrorsList } from "../ErrorsList";
 import { exportTree } from "../../util/issueTreeUtils";
+
 let root = {
   rootId: "0",
   items: {
@@ -42,33 +43,63 @@ export const IssueTreeModule = () => {
   const [issueFields, setIssueFields] = useState([]);
   const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState([]);
   const handleSingleError = (error) => {
-    setErrors([...errors, error]);
+    setErrors((prevErrors) => [...prevErrors, error]);
   };
   useEffect(() => {
     const handleMultipleErrors = (newErrors) => {
       newErrors = errors.concat(newErrors);
       setErrors(newErrors);
     };
-    const fetchDropdownsData = async () => {
-      Promise.all([PriorityAPI(), LinkTypeAPI(), IssueTypeAPI()])
-        .then((results) => {
-          const optionsData = {
-            priorities: results[0],
-            linkTypes: results[1],
-            issueTypes: results[2],
-          };
-          setOptions(optionsData);
-          const ids = {
-            priorities: optionsData.priorities.map((item) => item.id),
-            linkTypes: optionsData.linkTypes.map((item) => item.id),
-            issueTypes: optionsData.issueTypes.map((item) => item.id),
-          };
-          setFilter(ids);
-        })
-        .catch((newErrors) => {
-          handleMultipleErrors(newErrors);
-        });
+    const handleFetchedOptions = (dropdownName, dropdownOptions) => {
+      console.log(dropdownName, dropdownOptions)
+      setOptions((prevOptions) => {
+        let newOptions = { ...prevOptions };
+        prevOptions[dropdownName] = dropdownOptions;
+        return newOptions;
+      });
+      const ids = dropdownOptions.map((option) => option.id);
+      setFilter((prevFilter) => {
+        let newFilter = { ...prevFilter };
+        newFilter[dropdownName] = ids;
+        return newFilter;
+      });
     };
+    const fetchPriorities = async () => {
+      try {
+        let response = await PriorityAPI();
+        handleFetchedOptions("priorities", response);
+        return response;
+      } catch (error) {
+        console.log("catche caleld priorities");
+        console.log(error);
+        handleSingleError(error);
+      }
+    };
+    const fetchIssueTypes = async () => {
+      try {
+        let response = await IssueTypeAPI();
+        console.log("issue types");
+        console.log(response);
+        handleFetchedOptions("issueTypes", response);
+        return response;
+      } catch (error) {
+        console.log("catche caleld");
+        console.log(error);
+        handleSingleError(error);
+      }
+    };
+    const fetchLinkTypes = async () => {
+      try {
+        let response = await LinkTypeAPI();
+        handleFetchedOptions("linkTypes", response);
+        return response;
+      } catch (error) {
+        console.log("catche caleld");
+        console.log(error);
+        handleSingleError(error);
+      }
+    };
+
     const fetchFieldsData = async () => {
       Promise.all([ProjectAPI(), IssueFieldsAPI()])
         .then(([project, results]) => {
@@ -114,9 +145,38 @@ export const IssueTreeModule = () => {
           handleMultipleErrors(errors);
         });
     };
-    fetchDropdownsData();
+    let issueTypes = fetchIssueTypes();
+    console.log("returned issuetypes");
+    console.log(issueTypes);
+    let linkTypes = fetchLinkTypes();
+    let priorities = fetchPriorities();
+    {
+      issueTypes &&
+        issueTypes.length &&
+        setOptions((prevOptions) => {
+          console.log("setting options issueTypes");
+          console.log(issueTypes);
+          return {
+            ...prevOptions,
+            issueTypes: issueTypes,
+          };
+        });
+    }
+    {
+      linkTypes &&
+        linkTypes.length &&
+        setOptions((prevOptions) => ({ ...prevOptions, linkTypes: linkTypes }));
+    }
+    {
+      priorities &&
+        priorities.length &&
+        setOptions((prevOptions) => ({
+          ...prevOptions,
+          priorities: priorities,
+        }));
+    }
     fetchFieldsData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const updateFilteredKeyOptions = (key, keyOptions) => {
     let newFilter = { ...filter };

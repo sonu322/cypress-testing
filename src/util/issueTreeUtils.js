@@ -231,7 +231,7 @@ export const filterTree = (filter, tree) => {
             // current link type is present in selected link types / 
             // type is non-removable
             if (
-              linkTypes.length === 0 ||
+              !linkTypes || linkTypes.length === 0 ||
               linkTypes.includes(data.id) ||
               data.id === "-1"
             ) {
@@ -240,8 +240,8 @@ export const filterTree = (filter, tree) => {
           } else {
             const { issuetype, priority } = data.fields;
             if (
-              (issueTypes.length === 0 || issueTypes.includes(issuetype.id)) &&
-              (priorities.length === 0 || priorities.includes(priority.id))
+              (!issueTypes || issueTypes.length === 0 || issueTypes.includes(issuetype.id)) &&
+              (!priorities || priorities.length === 0 || priorities.includes(priority.id))
             ) {
               filteredTree.items[key] = item;
             }
