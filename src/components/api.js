@@ -14,6 +14,7 @@ const getKey = () => {
   );
 };
 export const IssueTypeAPI = async () => {
+
   return AP.request("/rest/api/3/issuetype")
     .then((response) => JSON.parse(response.body))
     .then((data) => {
@@ -33,8 +34,7 @@ export const IssueTypeAPI = async () => {
 };
 
 export const LinkTypeAPI = async () => {
-  // remove typo
-  return AP.request("/rest/api/3/issueLinkTypee")
+  return AP.request("/rest/api/3/issueLinkType")
     .then((response) => JSON.parse(response.body))
     .then((data) => {
       if (data && data.issueLinkTypes) {
@@ -51,8 +51,8 @@ export const LinkTypeAPI = async () => {
 };
 
 export const PriorityAPI = async () => {
-  // remove typo
-  return AP.request("/rest/api/3/priorityyyy")
+
+  return AP.request("/rest/api/3/priority")
     .then((response) => JSON.parse(response.body))
     .then((data) => {
       if (data) {
