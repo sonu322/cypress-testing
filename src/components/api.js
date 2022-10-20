@@ -14,7 +14,6 @@ const getKey = () => {
   );
 };
 export const IssueTypeAPI = async () => {
-
   return AP.request("/rest/api/3/issuetype")
     .then((response) => JSON.parse(response.body))
     .then((data) => {
@@ -51,7 +50,6 @@ export const LinkTypeAPI = async () => {
 };
 
 export const PriorityAPI = async () => {
-
   return AP.request("/rest/api/3/priority")
     .then((response) => JSON.parse(response.body))
     .then((data) => {
