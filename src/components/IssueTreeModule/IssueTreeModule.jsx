@@ -1,16 +1,10 @@
-import React, { useEffect, useState } from "react";
-import {
-  IssueTypeAPI,
-  LinkTypeAPI,
-  PriorityAPI,
-  IssueFieldsAPI,
-  ProjectAPI,
-} from "../api";
+import React, { useEffect, useState, useContext } from "react";
 import { Toolbar } from "./Toolbar";
 import { IssueTree } from "./IssueTree";
 import { mutateTree } from "@atlaskit/tree";
 import { ErrorsList } from "../ErrorsList";
 import { exportTree } from "../../util/issueTreeUtils";
+import { APIContext } from "../../context/api";
 
 let root = {
   rootId: "0",
@@ -36,6 +30,7 @@ const fixedFieldNames = [
   "resolution",
 ];
 export const IssueTreeModule = () => {
+  const api = useContext(APIContext)
   const [errors, setErrors] = useState([]);
   const [options, setOptions] = useState({});
   const [filter, setFilter] = useState({});
@@ -61,7 +56,7 @@ export const IssueTreeModule = () => {
     };
     const fetchPriorities = async () => {
       try {
-        let response = await PriorityAPI();
+        let response = await api.getPriorities();
         handleFetchedOptions("priorities", response);
         return response;
       } catch (error) {
@@ -70,7 +65,7 @@ export const IssueTreeModule = () => {
     };
     const fetchIssueTypes = async () => {
       try {
-        let response = await IssueTypeAPI();
+        let response = await api.getIssueTypes();
         handleFetchedOptions("issueTypes", response);
         return response;
       } catch (error) {
@@ -79,7 +74,7 @@ export const IssueTreeModule = () => {
     };
     const fetchLinkTypes = async () => {
       try {
-        let response = await LinkTypeAPI();
+        let response = await api.getIssueLinkTypes();
         handleFetchedOptions("linkTypes", response);
         return response;
       } catch (error) {
@@ -89,8 +84,8 @@ export const IssueTreeModule = () => {
 
     const fetchFieldsData = async () => {
       let promises = [
-        ProjectAPI().catch((err) => handleNewError(err)),
-        IssueFieldsAPI(),
+        api.getCurrentProject().catch((err) => handleNewError(err)),
+        api.getIssueFields(),
       ];
       try {
         let [project, results] = await Promise.all(promises);

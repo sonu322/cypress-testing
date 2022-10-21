@@ -173,6 +173,7 @@ export const IssueLinkAPI = async (key, fields) => {
     null,
     fields
   );
+  console.log(relatedIssuesData);
   return { rootIssueData, relatedIssuesData };
 };
 

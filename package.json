@@ -38,6 +38,7 @@
     "@babel/preset-react": "^7.0.0",
     "cssnano": "^4.1.10",
     "eslint": "^8.25.0",
+    "eslint-config-standard-with-typescript": "^23.0.0",
     "eslint-plugin-react": "^7.31.8",
     "flow-bin": "^0.98.1",
     "node-sass": "^7.0.1",
@@ -46,7 +47,7 @@
     "shelljs": "^0.8.5"
   },
   "scripts": {
-    "start": "parcel serve --no-source-maps public/*.html",
+    "start": "parcel serve --no-source-maps public/issueTreeModuleEntry.html",
     "prebuild-dev": "/bin/bash prebuild_dev.sh",
     "prebuild": "/bin/bash prebuild.sh",
     "build": "parcel build --no-source-maps --no-minify public/*.html",
