@@ -22,6 +22,7 @@
     "@atlaskit/theme": "^12.2.1",
     "@atlaskit/tooltip": "^17.5.17",
     "@atlaskit/tree": "^6.0.0",
+    "@atlassianlabs/jql-editor-connect": "^1.0.2",
     "@ungap/url-search-params": "^0.1.2",
     "eslint-plugin-react-hooks": "^5.0.0-next-2cf4352e1-20221011",
     "localtunnel": "^2.0.2",

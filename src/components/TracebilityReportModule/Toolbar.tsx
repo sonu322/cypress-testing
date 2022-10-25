@@ -7,13 +7,17 @@ import { Dropdown } from "../Dropdown";
 import { helpLink } from "../../constants";
 import { HelpLink } from "../HelpLink";
 import { ExportContent } from "../ExportContent";
+import { JQLEditor } from "../JQLEditor";
 const MainBar = styled.div`
-  display: flex;
   background-color: ${colors.N20}
   padding: 10px;
   border-radius: 3px;
-  justify-content: space-between;
 `;
+const FlexContainer = styled.div`
+display: flex;
+flex-grow: 1;
+justify-content: space-between;
+`
 
 export const Toolbar = ({
   issueCardOptionsMap,
@@ -25,10 +29,15 @@ export const Toolbar = ({
   const issueCardOptions = Array.from(issueCardOptionsMap.values());
   return (
     <MainBar>
+      <JQLEditor></JQLEditor>
+      <FlexContainer>
       <JQLSelectDropdown
         selectedFilterId={selectedFilterId}
         setSelectedFilterId={setSelectedFilterId}
       />
+      
+      
+      
       <div>
         <ButtonGroup>
           <Dropdown
@@ -47,6 +56,9 @@ export const Toolbar = ({
           <HelpLink description={"Get help"} href={helpLink} />
         </ButtonGroup>
       </div>
+      </FlexContainer>
+            
     </MainBar>
+
   );
 };
