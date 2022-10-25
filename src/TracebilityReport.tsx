@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import LicenseContainer from "./components/LicenseContainer";
-import TabularContent, { TracebilityReportModule } from "./components/TracebilityReportModule/TracebilityReportModule";
+import { TracebilityReportModule } from "./components/TracebilityReportModule/TracebilityReportModule";
 import { APIContext } from "./context/api";
 
 const TracebilityReport = () => {

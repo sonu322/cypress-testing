@@ -11,5 +11,5 @@ const App = document.getElementById("app");
 
 ReactDOM.render(
   <APIContext.Provider value={api}>
-    <TracebilityReport context={APIContext}/>
+    <TracebilityReport/>
   </APIContext.Provider>, App);

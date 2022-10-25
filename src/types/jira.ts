@@ -113,3 +113,18 @@ export interface JiraAvatarUrls {
   '16x16': string;
   '32x32': string;
 }
+export interface JiraFiltersResponse {
+  self: string;
+  maxResults: number;
+  startAt: number;
+  total: number;
+  isLast: boolean;
+  values: JiraFilter[];
+}
+
+export interface JiraFilter {
+  expand: string;
+  self: string;
+  id: string;
+  name: string;
+}

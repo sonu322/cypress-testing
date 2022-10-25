@@ -12,6 +12,8 @@ import LXPAPI, {
 } from "../types/api";
 
 import {
+  JiraFilter,
+  JiraFiltersResponse,
   JiraIssue,
   JiraIssueFull,
   JiraIssueLink,
@@ -252,9 +254,26 @@ export default class CloudImpl implements LXPAPI {
       throw new Error("Error in searching issues: " + error.message);
     }
   }
+  private _convertFilter(filter: JiraFilter): Filter {
+    return {
+      ...filter
+    }
+  }
+  // getFilters(): Promise < Filter[] > {
+  //   throw new Error("Method not implemented.");
+  // }
+  async getFilters(): Promise < Filter[] > {
+    try {
+      let response = await this._AP.request("/rest/api/3/filter/search");
+      let filtersResponseData: JiraFiltersResponse = (response.body && JSON.parse(response.body));
 
-  getFilters(): Promise < Filter[] > {
-    throw new Error("Method not implemented.");
+      filtersResponseData || throwError("Filters data could not be fetched.");
+
+      return filtersResponseData.values.map((item) => this._convertFilter(item));
+    } catch (error) {
+      console.error(error);
+      throw new Error("Error in fetching the issue filters - " + error.message);
+    }
   }
 
   private _convertProject(project){

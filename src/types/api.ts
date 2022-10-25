@@ -11,6 +11,8 @@ export interface IssuePriority extends IssueOption {
   statusColor: string;
 }
 
+
+
 export interface IssueField {
   id: ID;
   key: string;
@@ -69,7 +71,10 @@ export interface IssueType extends IssueOption {
 export interface IssueLinkType extends IssueOption { }
 
 export interface Filter {
-
+  expand: string;
+  self: string;
+  id: string;
+  name: string;
 }
 
 export interface Project {
