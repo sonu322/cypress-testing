@@ -1,65 +1,112 @@
-import React, { useState } from "react";
-import ReactDOM from "react-dom";
-import URLSearchParams from "@ungap/url-search-params";
-import LicenseContainer from "./components/LicenseContainer";
-import Page, { Grid, GridColumn } from "@atlaskit/page";
-import TabularContent from "../home/TabularContent";
+import React, { useContext, useEffect, useState } from "react";
+import Page  from "@atlaskit/page"; 
 import styled from "styled-components";
-import {Header} from './Header'
-import { TracebilityContext } from "./tracebilityContext";
+import { APIContext } from "../../context/api";
+
+import PageHeader from "@atlaskit/page-header";
+import { Toolbar } from "./Toolbar";
+import { IssueField } from "../../types/api";
 const FullWidthContainer = styled.div`
   width: 100%;
 `;
-
-// class Main extends React.Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {};
-//   }
-
-//   updateFilter = (filter) => {
-//     const jql = "filter=" + filter.id;
-//     this.table.update(jql);
-//   };
-
-//   render() {
-//     const { filter } = this.state;
-//     return (
-//       <Page>
-//         <FullWidthContainer>
-//           <Grid spacing="compact" layout="fluid">
-//             <GridColumn>
-//               <Header filter={(filter) => this.updateFilter(filter)} />
-//             </GridColumn>
-//           </Grid>
-//           <Grid spacing="compact" layout="fluid">
-//             <GridColumn>
-//               <TabularContent
-//                 xdm={this.props.xdm}
-//                 onRef={(ref) => (this.table = ref)}
-//               />
-//             </GridColumn>
-//           </Grid>
-//         </FullWidthContainer>
-//       </Page>
-//     );
-//   }
-// }
+const fixedFieldNames = [
+  "summary",
+  "subtasks",
+  "parent",
+  "issuelinks",
+  "status",
+  "resolution",
+];
 
 
 export const TracebilityReportModule = () => {
   const [selectedFilterId, setSelectedFilterId] = useState<string | null>(null);
-  const tracebilityContextValue = {
-    selectedFilterId,
-    setSelectedFilterId
+  const api = useContext(APIContext);
+  const handleNewError = (err: unknown) => {
+    // TODO: add error handling
+    console.log(err);
+  };
+  const [issueFields, setIssueFields] = useState<Map<string, IssueField>>(
+    new Map()
+  );
+  const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState<string[]>(
+    []
+  );
+  useEffect(() => {
+    const fetchFieldsData = async () => {
+      let promises = [
+        api.getCurrentProject().catch((err) => handleNewError(err)),
+        api.getIssueFields(),
+      ];
+      try {
+        let [project, results] = await Promise.all(promises);
+        const newResults = results.map((result) => {
+          if (result.key.includes("customfield_")) {
+            result.customKey = result.name
+              .replace(/[\s, -]/g, "")
+              .toLowerCase();
+          } else {
+            result.customKey = result.key;
+          }
+          return result;
+        });
+        const fieldNames = [
+          ...fixedFieldNames,
+          "issuetype",
+          "priority",
+          "status",
+          "assignee",
+        ];
+
+        if (project) {
+          if (project.style == "classic") {
+            fieldNames.push("storypoints");
+          } else {
+            fieldNames.push("storypointestimate");
+          }
+        }
+        let selectedFieldIds: string[] = [];
+        let fieldsMap = new Map();
+        fieldNames.forEach((name) => {
+          const field = newResults.find((result) => result.customKey == name);
+          if (field) {
+            fieldsMap.set(field.customKey, field);
+            if (!fixedFieldNames.includes(name)) {
+              selectedFieldIds.push(field.id);
+            }
+          }
+        });
+        setIssueFields(fieldsMap);
+        setSelectedIssueFieldIds(selectedFieldIds);
+      } catch (error) {
+        handleNewError(error);
+      }
+    };
+    fetchFieldsData();
+  }, []);
+  let issueCardOptionsMap = new Map(issueFields);
+  for (let fieldId of issueCardOptionsMap.keys()) {
+    if (fixedFieldNames.includes(fieldId)) {
+      issueCardOptionsMap.delete(fieldId);
+    }
   }
   return (
-    <TracebilityContext.Provider value={tracebilityContextValue}>
-    <Page>
-      <FullWidthContainer>
-      <Header />
-      </FullWidthContainer>
-    </Page>
-    </TracebilityContext.Provider>
-  )
-}
+      <Page>
+        <FullWidthContainer>
+          <PageHeader
+            bottomBar={
+              <Toolbar
+                selectedFilterId={selectedFilterId}
+                setSelectedFilterId={setSelectedFilterId}
+                issueCardOptionsMap={issueCardOptionsMap}
+                selectedIssueFieldIds={selectedIssueFieldIds}
+                setSelectedIssueFieldIds={setSelectedIssueFieldIds}
+              />
+            }
+          >
+            Links Explorer Traceability and Reports
+          </PageHeader>
+        </FullWidthContainer>
+      </Page>
+  );
+};

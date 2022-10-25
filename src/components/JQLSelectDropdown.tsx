@@ -3,12 +3,10 @@ import Button, { ButtonGroup } from "@atlaskit/button";
 import { DropdownSingleSelect } from "./DropdownSingleSelect";
 import { APIContext } from "../context/api";
 import { Filter } from "../types/api";
-import { TracebilityContext } from "./TracebilityReportModule/tracebilityContext";
 
-export const JQLSelectDropdown = () => {
+export const JQLSelectDropdown = ({selectedFilterId, setSelectedFilterId}) => {
   const api = useContext(APIContext);
   const [filters, setFilters] = useState<Filter[]>([]);
-    const {selectedFilterId, setSelectedFilterId} = useContext(TracebilityContext)
   useEffect(() => {
     const fetchFilters = async () => {
       try {
