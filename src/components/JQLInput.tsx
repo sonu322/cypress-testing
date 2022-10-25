@@ -1,4 +1,4 @@
-import React, { useEffect,useState,  useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import Button, { ButtonGroup } from "@atlaskit/button";
@@ -15,30 +15,40 @@ const MainBar = styled.div`
 
 export const JQLInput = () => {
   const api = useContext(APIContext);
-  const [filters, setFilters] = useState<Filter[]>([])
-    const [selectedFilterId, setSelectedFilterId] = useState<String>()
+  const [filters, setFilters] = useState<Filter[]>([]);
+  const [selectedFilterId, setSelectedFilterId] = useState<String>();
   useEffect(() => {
     const fetchFilters = async () => {
       try {
         let response = await api.getFilters();
-        setFilters(response)
+        setFilters(response);
         return response;
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     };
     fetchFilters();
   }, []);
-  const selectedOptionName = filters.find(filter => filter.id == selectedFilterId)?.name
+
+  const selectedOption = filters.find(
+    (filter) => filter.id == selectedFilterId
+  );
+  const fetchFilteredIssues = () => {
+    // const jql = "filter=" + selectedOption?.id;
+    //TODO: fetch filtered ids
+  };
   return (
     <MainBar>
       <ButtonGroup>
-        <DropdownSingleSelect dropdownName={selectedOptionName ?? "Select filter"} 
-        options={filters}
-        selectedOptionId={selectedFilterId}
-        updateSelectedOptionId={setSelectedFilterId}      
+        <DropdownSingleSelect
+          dropdownName={selectedOption?.name ?? "Select filter"}
+          options={filters}
+          selectedOptionId={selectedFilterId}
+          updateSelectedOptionId={setSelectedFilterId}
         ></DropdownSingleSelect>
-        <Button appearance="primary">Apply</Button>
+        <Button appearance="primary" onClick={fetchFilteredIssues}>
+          Apply
+        </Button>
       </ButtonGroup>
     </MainBar>
   );
