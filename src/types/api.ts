@@ -78,7 +78,7 @@ export interface Filter {
 }
 
 export interface Project {
-
+  style: string;
 }
 
 export default interface LXPAPI {

@@ -5,7 +5,7 @@ import { APIContext } from "../../context/api";
 
 import PageHeader from "@atlaskit/page-header";
 import { Toolbar } from "./Toolbar";
-import { IssueField } from "../../types/api";
+import { IssueField, Project } from "../../types/api";
 const FullWidthContainer = styled.div`
   width: 100%;
 `;
