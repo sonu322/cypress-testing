@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import Button, { ButtonGroup } from "@atlaskit/button";
 import { Dropdown } from "./Dropdown";
-import { FilterAPI } from "./api";
 import { APIContext } from "../context/api";
 import { Filter } from "../types/api";
 
