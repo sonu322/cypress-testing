@@ -1,18 +1,26 @@
 import React from "react";
-import { JQLEditorConnect } from "@atlassianlabs/jql-editor-connect";
-import styled from "styled-components";
-const Container = styled.div`
-flex-grow: 1;
-display: flex;
-height: 64px;
-max-width: 480px;
-overflow: auto;
-`
-export const JQLEditor = () => {
-  const onSearch = (jql: string) => {
-    // Do some action on search
-    console.log(jql)
-  };
+import Button from "@atlaskit/button";
+// @ts-ignore
+const _AP: any = AP;
+var options = {
+  jql: "project = ACJS",
+  header: "Filter Issues with JQL Query",
+  descriptionText: "Enter query below",
+  submitText: "Use filter",
+  cancelText: "Cancel",
+};
 
-  return <Container><JQLEditorConnect query={""} onSearch={onSearch} locale={"en"} /></Container>;
+export const JQLEditor = ({ setSelectedFilterId }) => {
+  var callback = function ({ jql }: { jql: string }) {
+    console.log(jql);
+    setSelectedFilterId(jql);
+  };
+  const openJQLEditor = () => {
+    _AP.jira.showJQLEditor(options, callback);
+  };
+  return (
+    <Button appearance="primary" onClick={openJQLEditor}>
+      Use JQL Editor
+    </Button>
+  );
 };

@@ -29,19 +29,8 @@ export const Toolbar = ({
   selectedFilterId,
   setSelectedFilterId,
 }) => {
-  const [showEditor, setShowEditor] = useState(false);
   const issueCardOptions = Array.from(issueCardOptionsMap.values());
-  var options = {
-    jql: "project = ACJS",
-    header: "My title",
-    descriptionText: "My custom description text for dialog",
-    submitText: "My submit label",
-    cancelText: "My cancel label",
-  };
 
-  var callback = function (obj) {
-    console.log(obj);
-  };
 
   return (
     <MainBar>
@@ -50,12 +39,7 @@ export const Toolbar = ({
           selectedFilterId={selectedFilterId}
           setSelectedFilterId={setSelectedFilterId}
         />
-        <Button
-          appearance="primary"
-          onClick={() => AP.jira.showJQLEditor(options, callback)}
-        >
-          Use JQL
-        </Button>
+        <JQLEditor setSelectedFilterId={setSelectedFilterId}/>
       </FlexContainer>
 
       <div>
