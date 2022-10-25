@@ -50,7 +50,6 @@ export const TracebilityReportModule = () => {
   return (
     <Page>
       <FullWidthContainer>
-      Tracebility report module
       <Header />
       </FullWidthContainer>
     </Page>
