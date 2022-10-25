@@ -48,10 +48,10 @@
     ],
     "generalPages": [
       {
-        "url": "/home.html",
+        "url": "/tracebilityReportModuleEntry.html",
         "location": "system.top.navigation.bar",
         "name": {
-          "value": "Links Explorer",
+          "value": "Links Explorerr",
           "i18n": "general.page.name"
         },
         "conditions": [
