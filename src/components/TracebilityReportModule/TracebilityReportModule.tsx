@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import URLSearchParams from "@ungap/url-search-params";
 import LicenseContainer from "./components/LicenseContainer";
@@ -6,6 +6,7 @@ import Page, { Grid, GridColumn } from "@atlaskit/page";
 import TabularContent from "../home/TabularContent";
 import styled from "styled-components";
 import {Header} from './Header'
+import { TracebilityContext } from "./tracebilityContext";
 const FullWidthContainer = styled.div`
   width: 100%;
 `;
@@ -47,11 +48,18 @@ const FullWidthContainer = styled.div`
 
 
 export const TracebilityReportModule = () => {
+  const [selectedFilterId, setSelectedFilterId] = useState<string | null>(null);
+  const tracebilityContextValue = {
+    selectedFilterId,
+    setSelectedFilterId
+  }
   return (
+    <TracebilityContext.Provider value={tracebilityContextValue}>
     <Page>
       <FullWidthContainer>
       <Header />
       </FullWidthContainer>
     </Page>
+    </TracebilityContext.Provider>
   )
 }

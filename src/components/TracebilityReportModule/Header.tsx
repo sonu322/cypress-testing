@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import styled from "styled-components";
 import PageHeader from "@atlaskit/page-header";
 import { colors } from "@atlaskit/theme";
-import { JQLInput } from "../JQLInput";
+import { Toolbar } from "./Toolbar";
 const MainBar = styled.div`
   display: flex;
   background-color: ${colors.N20}
@@ -41,7 +41,7 @@ const MainBar = styled.div`
 
 export const Header = () => {
   return (
-    <PageHeader bottomBar={<JQLInput />}>
+    <PageHeader bottomBar={<Toolbar />}>
       Links Explorer Traceability and Reports
     </PageHeader>
   );

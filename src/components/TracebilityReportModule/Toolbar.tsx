@@ -2,18 +2,20 @@ import React, { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import Button, { ButtonGroup } from "@atlaskit/button";
-import { DropdownSingleSelect } from "./DropdownSingleSelect";
-import { APIContext } from "../context/api";
-import { Filter } from "../types/api";
+import { DropdownSingleSelect } from "../DropdownSingleSelect";
+import { APIContext } from "../../context/api";
+import { Filter } from "../../types/api";
+import { JQLSelectDropdown } from "../JQLSelectDropdown";
 
 const MainBar = styled.div`
   display: flex;
   background-color: ${colors.N20}
   padding: 10px;
   border-radius: 3px;
+  justify-content: space-between;
 `;
 
-export const JQLInput = () => {
+export const Toolbar = () => {
   const api = useContext(APIContext);
   const [filters, setFilters] = useState<Filter[]>([]);
   const [selectedFilterId, setSelectedFilterId] = useState<String>();
@@ -39,17 +41,7 @@ export const JQLInput = () => {
   };
   return (
     <MainBar>
-      <ButtonGroup>
-        <DropdownSingleSelect
-          dropdownName={selectedOption?.name ?? "Select filter"}
-          options={filters}
-          selectedOptionId={selectedFilterId}
-          updateSelectedOptionId={setSelectedFilterId}
-        ></DropdownSingleSelect>
-        <Button appearance="primary" onClick={fetchFilteredIssues}>
-          Apply
-        </Button>
-      </ButtonGroup>
+      <JQLSelectDropdown />
     </MainBar>
   );
 };
