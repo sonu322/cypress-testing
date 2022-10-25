@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useContext } from "react";
+import React from "react";
 import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
-import { APIContext } from "../../context/api";
 import { JQLSelectDropdown } from "../JQLSelectDropdown";
 import { ButtonGroup } from "@atlaskit/button";
 import { Dropdown } from "../Dropdown";
