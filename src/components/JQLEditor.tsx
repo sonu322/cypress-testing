@@ -4,6 +4,9 @@ import styled from "styled-components";
 const Container = styled.div`
 flex-grow: 1;
 display: flex;
+height: 64px;
+max-width: 480px;
+overflow: auto;
 `
 export const JQLEditor = () => {
   const onSearch = (jql: string) => {
