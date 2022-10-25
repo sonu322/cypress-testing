@@ -3,7 +3,8 @@ import Button from "@atlaskit/button";
 // @ts-ignore
 const _AP: any = AP;
 var options = {
-  jql: "project = ACJS",
+  jql: "ORDER BY Rank ASC",
+  // TODO: replace with a good placeholder filter
   header: "Filter Issues with JQL Query",
   descriptionText: "Enter query below",
   submitText: "Use filter",
