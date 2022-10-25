@@ -1,9 +1,9 @@
-import React, { useContext, useState } from "react";
+import React, { Component } from "react";
 import Spinner from "@atlaskit/spinner";
 import styled from "styled-components";
 import Button from "@atlaskit/button";
-import {IssueSearchAPI} from '../api.js'
-import { FilterAPI } from "../api.js";
+import { IssueSearchAPI } from "../api";
+import { FilterAPI } from "../api";
 import { colors } from "@atlaskit/theme";
 import Lozenge from "@atlaskit/lozenge";
 import Tabs from "@atlaskit/tabs";
@@ -25,7 +25,7 @@ const TableContainer = styled.div`
 
 const IssueContainer = styled.span`
   display: inline-flex;
-  background-color: ${colors.N30};
+  background-color: ${colors.N30}
   fill: ${colors.N30};
   padding: 4px;
   border: none;
@@ -43,7 +43,7 @@ const Icon = styled.span`
 
 const Key = styled.span`
   display: flex;
-  background-color: ${colors.N10};
+  background-color: ${colors.N10}
   fill: ${colors.N10};
   border-radius: 4px;
   padding: 0 4px;
@@ -52,7 +52,7 @@ const Key = styled.span`
 `;
 
 const LinkName = styled.span`
-  color: ${colors.N600};
+  color: ${colors.N600}
   height: 16px;
   line-height: 1;
   font-weight: bold;
@@ -66,8 +66,10 @@ const ListItem = styled.div`
 
 const ROWS_PER_PAGE = 20;
 
-const TabularContent = () =>  {
-    const [state, setState] = useState({
+class TabularContent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       defined: false,
       fetching: false,
       jql: "",
@@ -76,22 +78,22 @@ const TabularContent = () =>  {
       gettingMore: false,
       noMore: false,
       selectedTab: 0,
-    });
+    };
   }
 
-  function selectTab(index) {
-    setState({
+  selectTab(index) {
+    this.setState({
       selectedTab: index,
     });
   }
 
-  function fetch() {
-    const { jql, start, data } = state;
+  fetch() {
+    const { jql, start, data } = this.state;
     IssueSearchAPI(jql, start, ROWS_PER_PAGE).then((result) => {
       const { issues, total } = result;
       const updatedStart = start + ROWS_PER_PAGE;
       data.push(...issues);
-      setState({
+      this.setState({
         gettingMore: false,
         start: updatedStart,
         fetching: false,
@@ -101,19 +103,19 @@ const TabularContent = () =>  {
     });
   }
 
-  function more() {
-    setState(
+  more() {
+    this.setState(
       {
         gettingMore: true,
       },
       () => {
-        fetch();
+        this.fetch();
       }
     );
   }
 
-  function update(jql) {
-    setState(
+  update(jql) {
+    this.setState(
       {
         defined: true,
         fetching: true,
@@ -122,27 +124,25 @@ const TabularContent = () =>  {
         start: 0,
       },
       () => {
-        fetch();
+        this.fetch();
       }
     );
   }
 
   componentDidMount() {
     this._isMounted = true;
-    this.props.onRef(this);
   }
 
   componentWillUnmount() {
     this._isMounted = false;
-    this.props.onRef(null);
   }
 
   renderKey(key) {
-    const url = `${this.props.xdm}/browse/${key}`;
+    // const url = `${this.props.xdm}/browse/${key}`;
     return (
-      <a target="_blank" href={url}>
-        {key}
-      </a>
+      // <a target="_blank" href={url}>
+        key
+      {/* </a> */}
     );
   }
 
@@ -377,3 +377,12 @@ const TabularContent = () =>  {
 }
 
 export default TabularContent;
+
+
+export const TracebilityReportModule = () => {
+  return (
+    <Container>
+      Tracebility report module
+    </Container>
+  )
+}

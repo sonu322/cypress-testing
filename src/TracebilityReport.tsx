@@ -1,11 +1,12 @@
 import React, { useContext } from "react";
 import LicenseContainer from "./components/LicenseContainer";
+import TabularContent, { TracebilityReportModule } from "./components/TracebilityReportModule/TracebilityReportModule";
 import { APIContext } from "./context/api";
 
 const TracebilityReport = () => {
   const api = useContext(APIContext);
   if (api.hasValidLicense()) {
-    return <div>Tracebility module</div>;
+    return <TracebilityReportModule></TracebilityReportModule>;
   }
   return <LicenseContainer></LicenseContainer>;
 };
