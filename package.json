@@ -38,6 +38,7 @@
     "@babel/preset-react": "^7.0.0",
     "cssnano": "^4.1.10",
     "eslint": "^8.25.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-config-standard-with-typescript": "^23.0.0",
     "eslint-plugin-react": "^7.31.8",
     "flow-bin": "^0.98.1",
