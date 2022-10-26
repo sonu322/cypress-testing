@@ -6,7 +6,7 @@ import { APIContext } from "../../context/api";
 import PageHeader from "@atlaskit/page-header";
 import { Toolbar } from "./Toolbar";
 import { IssueField } from "../../types/api";
-import { Table } from "./Table";
+import { Main } from "./Main";
 const FullWidthContainer = styled.div`
   width: 100%;
 `;
@@ -20,7 +20,9 @@ const fixedFieldNames = [
 ];
 
 export const TracebilityReportModule = () => {
-  const [selectedJQLString, setSelectedJQLString] = useState<string | null>(null);
+  const [selectedJQLString, setSelectedJQLString] = useState<string | null>(
+    null
+  );
   const api = useContext(APIContext);
   const handleNewError = (err: unknown) => {
     // TODO: add error handling
@@ -163,7 +165,7 @@ export const TracebilityReportModule = () => {
         >
           Links Explorer Traceability and Reports
         </PageHeader>
-        <Table
+        <Main
           jqlString={selectedJQLString}
           handleNewError={handleNewError}
           issueFields={issueFields}
