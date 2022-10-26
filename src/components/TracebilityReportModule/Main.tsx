@@ -41,6 +41,13 @@ export const Main = ({
     }
   }, [jqlString]);
   if (Boolean(jqlString) && filteredIssues != null) {
+    if (filteredIssues.length === 0) {
+      return (
+        <Container>
+          <em>No matching issues</em>
+        </Container>
+      );
+    }
     return (
       <Container>
         <Report
