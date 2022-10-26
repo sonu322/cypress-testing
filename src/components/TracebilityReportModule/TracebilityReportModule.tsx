@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import Page  from "@atlaskit/page"; 
+import Page from "@atlaskit/page";
 import styled from "styled-components";
 import { APIContext } from "../../context/api";
 
@@ -17,7 +17,6 @@ const fixedFieldNames = [
   "status",
   "resolution",
 ];
-
 
 export const TracebilityReportModule = () => {
   const [selectedFilterId, setSelectedFilterId] = useState<string | null>(null);
@@ -84,29 +83,29 @@ export const TracebilityReportModule = () => {
     };
     fetchFieldsData();
   }, []);
-  let issueCardOptionsMap = new Map(issueFields);
-  for (let fieldId of issueCardOptionsMap.keys()) {
+  const issueCardOptionsMap = new Map(issueFields);
+  for (const fieldId of issueCardOptionsMap.keys()) {
     if (fixedFieldNames.includes(fieldId)) {
       issueCardOptionsMap.delete(fieldId);
     }
   }
   return (
-      <Page>
-        <FullWidthContainer>
-          <PageHeader
-            bottomBar={
-              <Toolbar
-                selectedFilterId={selectedFilterId}
-                setSelectedFilterId={setSelectedFilterId}
-                issueCardOptionsMap={issueCardOptionsMap}
-                selectedIssueFieldIds={selectedIssueFieldIds}
-                setSelectedIssueFieldIds={setSelectedIssueFieldIds}
-              />
-            }
-          >
-            Links Explorer Traceability and Reports
-          </PageHeader>
-        </FullWidthContainer>
-      </Page>
+    <Page>
+      <FullWidthContainer>
+        <PageHeader
+          bottomBar={
+            <Toolbar
+              selectedFilterId={selectedFilterId}
+              setSelectedFilterId={setSelectedFilterId}
+              issueCardOptionsMap={issueCardOptionsMap}
+              selectedIssueFieldIds={selectedIssueFieldIds}
+              setSelectedIssueFieldIds={setSelectedIssueFieldIds}
+            />
+          }
+        >
+          Links Explorer Traceability and Reports
+        </PageHeader>
+      </FullWidthContainer>
+    </Page>
   );
 };

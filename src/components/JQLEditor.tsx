@@ -1,17 +1,20 @@
-import React from 'react';
-import Button from '@atlaskit/button';
+import React from "react";
+import Button from "@atlaskit/button";
 // @ts-expect-error
-const _AP: any = AP
+const _AP: any = AP;
 const options = {
-  jql: 'ORDER BY Rank ASC',
   // TODO: replace with a good placeholder filter
-  header: 'Filter Issues with JQL Query',
-  descriptionText: 'Enter query below',
-  submitText: 'Use filter',
-  cancelText: 'Cancel'
-}
+  header: "Filter Issues with JQL Query",
+  descriptionText: "Enter query below",
+  submitText: "Use filter",
+  cancelText: "Cancel",
+  jql: 'order by status ASC'
+};
 
-export const JQLEditor = ({ setSelectedFilterId }) => {
+export const JQLEditor = ({ selectedFilterId, setSelectedFilterId }) => {
+  if (selectedFilterId && selectedFilterId !== null) {
+    options.jql = selectedFilterId;
+  }
   const callback = function ({ jql }: { jql: string }) {
     console.log(jql);
     setSelectedFilterId(jql);

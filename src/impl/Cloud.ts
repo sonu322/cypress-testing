@@ -256,7 +256,8 @@ export default class CloudImpl implements LXPAPI {
   }
   private _convertFilter(filter: JiraFilter): Filter {
     return {
-      ...filter
+      ...filter,
+      id: `filter=${filter.id}`
     }
   }
   // getFilters(): Promise < Filter[] > {

@@ -39,7 +39,7 @@ export const Toolbar = ({
           selectedFilterId={selectedFilterId}
           setSelectedFilterId={setSelectedFilterId}
         />
-        <JQLEditor setSelectedFilterId={setSelectedFilterId}/>
+        <JQLEditor selectedFilterId={selectedFilterId} setSelectedFilterId={setSelectedFilterId}/>
       </FlexContainer>
 
       <div>
