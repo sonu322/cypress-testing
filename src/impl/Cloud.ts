@@ -228,28 +228,32 @@ export default class CloudImpl implements LXPAPI {
   }
 
   async searchIssues(jql: string, start?: number, max?: number, fields?: string[]): Promise<Issue[]> {
+    console.log("search issues called");
     try {
       const data = {
         fields: fields ?? this.defaultFields,
         startAt: start ?? 0,
         maxResults: max ?? 500,
-        jql
+        jql,
       };
-  
-      let issues: JiraIssueSearchResult = await this._AP.request({
+
+      const response = await this._AP.request({
         type: "POST",
         contentType: "application/json",
         url: "/rest/api/3/search",
-        data: JSON.stringify(data)
+        data: JSON.stringify(data),
       });
-  
+      const issuesData: JiraIssueSearchResult = JSON.parse(response.body);
+      console.log("issues", issuesData);
       let result: Issue[] = [];
-      const jiraIssues = issues && issues.issues || [];
-      for(let issue of jiraIssues){
+      const jiraIssues = issuesData && issuesData.issues;
+      for (let issue of jiraIssues) {
+        console.log("from api");
+        console.log(issue);
         result.push(this._convertIssue(issue));
       }
       return result;
-    } catch(error) {
+    } catch (error) {
       console.error(error);
       throw new Error("Error in searching issues: " + error.message);
     }

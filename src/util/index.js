@@ -70,3 +70,10 @@ export const getQueryParam = (paramName) => {
   const paramValue = searcher.get(paramName);
   return paramValue;
 };
+export const getFieldIds = (issueFields) => {
+  const fieldIds = [];
+  for (let field of issueFields.values()) {
+    fieldIds.push(field.id);
+  }
+  return fieldIds;
+};

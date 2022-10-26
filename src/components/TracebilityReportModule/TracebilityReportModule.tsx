@@ -6,6 +6,7 @@ import { APIContext } from "../../context/api";
 import PageHeader from "@atlaskit/page-header";
 import { Toolbar } from "./Toolbar";
 import { IssueField } from "../../types/api";
+import { Table } from "./Table";
 const FullWidthContainer = styled.div`
   width: 100%;
 `;
@@ -162,6 +163,13 @@ export const TracebilityReportModule = () => {
         >
           Links Explorer Traceability and Reports
         </PageHeader>
+        <Table
+          jqlString={selectedJQLString}
+          handleNewError={handleNewError}
+          issueFields={issueFields}
+          selectedIssueFieldIds={selectedIssueFieldIds}
+          selectedTableFieldIds={selectedTableFieldIds}
+        />
       </FullWidthContainer>
     </Page>
   );
