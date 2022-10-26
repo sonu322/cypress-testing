@@ -15,7 +15,7 @@ const MainBar = styled.div`
   border-radius: 3px;
   display: flex;
   justify-content: space-between;
-`;
+`
 const FlexContainer = styled.div`
   display: flex;
   gap: 8px;
