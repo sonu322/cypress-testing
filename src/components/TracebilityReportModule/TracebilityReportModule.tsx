@@ -31,6 +31,9 @@ export const TracebilityReportModule = () => {
   const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState<string[]>(
     []
   );
+  const [selectedTableFieldIds, setSelectedTableFieldIds] = useState(new Map());
+  const [tableFields, setTableFields] = useState(new Map());
+
   useEffect(() => {
     const fetchFieldsData = async () => {
       let promises = [
@@ -81,25 +84,79 @@ export const TracebilityReportModule = () => {
         handleNewError(error);
       }
     };
+    const fetchIssueTypes = async () => {
+      try {
+        const issueTypes = await api.getIssueTypes();
+        console.log(issueTypes);
+
+        setTableFields((prevState) => {
+          const newMap = new Map(prevState);
+          newMap.set("issueTypes", { name: "Issue Types", values: issueTypes });
+          return newMap;
+        });
+        setSelectedTableFieldIds((prevState) => {
+          const newMap = new Map(prevState);
+          newMap.set(
+            "issueTypes",
+            issueTypes.map((type) => type.id)
+          );
+          return newMap;
+        });
+      } catch (error) {
+        handleNewError(error);
+      }
+    };
+    const fetchLinkTypes = async () => {
+      try {
+        const issueLinkTypes = await api.getIssueLinkTypes();
+        console.log(issueLinkTypes);
+        setTableFields((prevState) => {
+          const newMap = new Map(prevState);
+          newMap.set("linkTypes", {
+            name: "Issue Link Types",
+            values: issueLinkTypes,
+          });
+          return newMap;
+        });
+        setSelectedTableFieldIds((prevState) => {
+          const newMap = new Map(prevState);
+          newMap.set(
+            "linkTypes",
+            issueLinkTypes.map((type) => type.id)
+          );
+          return newMap;
+        });
+      } catch (error) {
+        handleNewError(error);
+      }
+    };
     fetchFieldsData();
+    fetchIssueTypes();
+    fetchLinkTypes();
   }, []);
+  console.log("from main");
+  console.log(tableFields);
   const issueCardOptionsMap = new Map(issueFields);
   for (const fieldId of issueCardOptionsMap.keys()) {
     if (fixedFieldNames.includes(fieldId)) {
       issueCardOptionsMap.delete(fieldId);
     }
   }
+
   return (
     <Page>
       <FullWidthContainer>
         <PageHeader
           bottomBar={
             <Toolbar
-            selectedJQLString={selectedJQLString}
-            setSelectedJQLString={setSelectedJQLString}
+              selectedJQLString={selectedJQLString}
+              setSelectedJQLString={setSelectedJQLString}
               issueCardOptionsMap={issueCardOptionsMap}
               selectedIssueFieldIds={selectedIssueFieldIds}
               setSelectedIssueFieldIds={setSelectedIssueFieldIds}
+              selectedTableFieldIds={selectedTableFieldIds}
+              updateSelectedTableFieldIds={setSelectedTableFieldIds}
+              tableFields={tableFields}
             />
           }
         >

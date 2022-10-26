@@ -8,18 +8,17 @@ import { helpLink } from "../../constants";
 import { HelpLink } from "../HelpLink";
 import { ExportContent } from "../ExportContent";
 import { JQLEditor } from "../JQLEditor";
-
+import { TableFieldsDropdown } from "./TableFieldsDropdown";
 const MainBar = styled.div`
   background-color: ${colors.N20}
   padding: 10px;
   border-radius: 3px;
   display: flex;
   justify-content: space-between;
-`
+`;
 const FlexContainer = styled.div`
   display: flex;
   gap: 8px;
-
 `;
 
 export const Toolbar = ({
@@ -28,10 +27,14 @@ export const Toolbar = ({
   setSelectedIssueFieldIds,
   selectedJQLString,
   setSelectedJQLString,
+  selectedTableFieldIds,
+  updateSelectedTableFieldIds,
+  tableFields,
 }) => {
+  console.log("from toolbar");
   const issueCardOptions = Array.from(issueCardOptionsMap.values());
-
-
+  console.log(issueCardOptions);
+  console.log(selectedIssueFieldIds);
   return (
     <MainBar>
       <FlexContainer>
@@ -39,7 +42,17 @@ export const Toolbar = ({
           selectedFilterId={selectedJQLString}
           setSelectedFilterId={setSelectedJQLString}
         />
-        <JQLEditor selectedFilterId={selectedJQLString} setSelectedFilterId={setSelectedJQLString}/>
+        <JQLEditor
+          selectedFilterId={selectedJQLString}
+          setSelectedFilterId={setSelectedJQLString}
+        />
+        {tableFields && (
+          <TableFieldsDropdown
+            selectedOptions={selectedTableFieldIds}
+            updateSelectedOptionIds={updateSelectedTableFieldIds}
+            options={tableFields}
+          />
+        )}
       </FlexContainer>
 
       <div>
