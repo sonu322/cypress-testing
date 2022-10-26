@@ -26,8 +26,8 @@ export const Toolbar = ({
   issueCardOptionsMap,
   selectedIssueFieldIds,
   setSelectedIssueFieldIds,
-  selectedFilterId,
-  setSelectedFilterId,
+  selectedJQLString,
+  setSelectedJQLString,
 }) => {
   const issueCardOptions = Array.from(issueCardOptionsMap.values());
 
@@ -36,10 +36,10 @@ export const Toolbar = ({
     <MainBar>
       <FlexContainer>
         <JQLSelectDropdown
-          selectedFilterId={selectedFilterId}
-          setSelectedFilterId={setSelectedFilterId}
+          selectedFilterId={selectedJQLString}
+          setSelectedFilterId={setSelectedJQLString}
         />
-        <JQLEditor selectedFilterId={selectedFilterId} setSelectedFilterId={setSelectedFilterId}/>
+        <JQLEditor selectedFilterId={selectedJQLString} setSelectedFilterId={setSelectedJQLString}/>
       </FlexContainer>
 
       <div>

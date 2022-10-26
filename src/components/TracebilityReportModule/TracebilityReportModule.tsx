@@ -19,7 +19,7 @@ const fixedFieldNames = [
 ];
 
 export const TracebilityReportModule = () => {
-  const [selectedFilterId, setSelectedFilterId] = useState<string | null>(null);
+  const [selectedJQLString, setSelectedJQLString] = useState<string | null>(null);
   const api = useContext(APIContext);
   const handleNewError = (err: unknown) => {
     // TODO: add error handling
@@ -95,8 +95,8 @@ export const TracebilityReportModule = () => {
         <PageHeader
           bottomBar={
             <Toolbar
-              selectedFilterId={selectedFilterId}
-              setSelectedFilterId={setSelectedFilterId}
+            selectedJQLString={selectedJQLString}
+            setSelectedJQLString={setSelectedJQLString}
               issueCardOptionsMap={issueCardOptionsMap}
               selectedIssueFieldIds={selectedIssueFieldIds}
               setSelectedIssueFieldIds={setSelectedIssueFieldIds}
