@@ -39,12 +39,8 @@ export const TracebilityReportModule = () => {
 
   useEffect(() => {
     const fetchFieldsData = async () => {
-      let promises = [
-        api.getCurrentProject().catch((err) => handleNewError(err)),
-        api.getIssueFields(),
-      ];
       try {
-        let [project, results] = await Promise.all(promises);
+        let results = await api.getIssueFields();
         const newResults = results.map((result) => {
           if (result.key.includes("customfield_")) {
             result.customKey = result.name
@@ -61,15 +57,9 @@ export const TracebilityReportModule = () => {
           "priority",
           "status",
           "assignee",
+          "storypoints",
+          "storypointestimate",
         ];
-
-        if (project) {
-          if (project.style == "classic") {
-            fieldNames.push("storypoints");
-          } else {
-            fieldNames.push("storypointestimate");
-          }
-        }
         let selectedFieldIds: string[] = [];
         let fieldsMap = new Map();
         fieldNames.forEach((name) => {
