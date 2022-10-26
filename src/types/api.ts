@@ -32,6 +32,8 @@ export interface Issue {
   // assignee: IssueUser;
   // sprints: IssueSprint[];
   links: IssueLink[];
+  // TODO: fix type
+  fields: any;
 }
 
 export interface IssueSprint {

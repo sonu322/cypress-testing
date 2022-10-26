@@ -5,11 +5,12 @@ import { APIContext } from "../../context/api";
 import { Issue } from "../../types/api";
 import { getFieldIds } from "../../util";
 import styled from "styled-components";
-import { Table } from "./Table";
+import { Report } from "./Report";
 const Container = styled.div`
   padding: 4px;
 `;
 export const Main = ({
+  issueCardOptionsMap,
   jqlString,
   handleNewError,
   issueFields,
@@ -42,7 +43,12 @@ export const Main = ({
   if (Boolean(jqlString) && filteredIssues != null) {
     return (
       <Container>
-        <Table />
+        <Report
+          issueCardOptionsMap={issueCardOptionsMap}
+          issues={filteredIssues}
+          issueFieldIds={selectedIssueFieldIds}
+          tableFieldIds={selectedTableFieldIds}
+        />
         <div>
           <div>{jqlString}</div>
           <div>......</div>
@@ -59,7 +65,7 @@ export const Main = ({
   } else {
     return (
       <Container>
-        <em>Please select filter to view table</em>
+        <em>Please select filter to view report</em>
       </Container>
     );
   }

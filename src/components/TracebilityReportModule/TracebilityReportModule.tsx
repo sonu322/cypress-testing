@@ -166,6 +166,7 @@ export const TracebilityReportModule = () => {
           Links Explorer Traceability and Reports
         </PageHeader>
         <Main
+          issueCardOptionsMap={issueCardOptionsMap}
           jqlString={selectedJQLString}
           handleNewError={handleNewError}
           issueFields={issueFields}

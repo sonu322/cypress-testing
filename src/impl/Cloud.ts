@@ -200,13 +200,17 @@ export default class CloudImpl implements LXPAPI {
   private _convertIssue(issue: JiraIssueFull): Issue {
     return {
       id: issue.id,
-      issueKey: issue.key,
+      key: issue.key,
       summary: issue.fields?.summary,
       priority: this._convertPriority(issue.fields?.priority),
       type: this._convertIssueType(issue.fields?.issuetype),
       status: this._convertIssueStatus(issue.fields?.status),
-      links: this._convertLinks(issue.fields?.issuelinks || [], issue.fields?.subtasks || [])
-    }
+      links: this._convertLinks(
+        issue.fields?.issuelinks || [],
+        issue.fields?.subtasks || []
+      ),
+      fields: issue.fields,
+    };
   }
 
   async getIssueById(issueId ?: string, fields ?: string[]): Promise < Issue > {
