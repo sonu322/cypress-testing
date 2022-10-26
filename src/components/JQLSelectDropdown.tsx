@@ -28,16 +28,11 @@ export const JQLSelectDropdown = ({selectedFilterId, setSelectedFilterId}) => {
     //TODO: fetch filtered ids
   };
   return (
-      <ButtonGroup>
-        <DropdownSingleSelect
-          dropdownName={selectedOption?.name ?? "Select filter"}
-          options={filters}
-          selectedOptionId={selectedFilterId}
-          updateSelectedOptionId={setSelectedFilterId}
-        ></DropdownSingleSelect>
-        <Button appearance="primary" onClick={fetchFilteredIssues}>
-          Apply
-        </Button>
-      </ButtonGroup>
+    <DropdownSingleSelect
+      dropdownName={selectedOption?.name ?? "Select filter"}
+      options={filters}
+      selectedOptionId={selectedFilterId}
+      updateSelectedOptionId={setSelectedFilterId}
+    ></DropdownSingleSelect>
   );
 };
