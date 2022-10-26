@@ -5,16 +5,7 @@ export const TableFieldsDropdown = ({
   selectedOptions,
   updateSelectedOptionIds,
 }) => {
-  console.log("options");
-  console.log(options);
-
   return (
-    // <Dropdown
-    // selectedOptions={selectedOptions}
-    // dropdownName={"Choose table fields"}
-    // updateSelectedOptions={updateSelectedOptionIds}
-    // options={["asdf"]}
-    // ></Dropdown>
     <DropdownMultipleSectionsSelect
       selectedOptions={selectedOptions}
       dropdownName={"Choose table fields"}

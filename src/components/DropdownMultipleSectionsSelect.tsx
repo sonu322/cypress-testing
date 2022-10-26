@@ -23,22 +23,23 @@ export const DropdownMultipleSectionsSelect = ({
     newMap.set(groupKey, updatedList);
     updateSelectedOptions(newMap);
   };
-  let checkboxGroups = [];
-  for (const [key, value] of options.entries()) {
-    console.log(selectedOptions.get(key));
+  const checkboxGroups = [];
+  for (const [groupKey, groupData] of options.entries()) {
+    console.log(selectedOptions.get(groupKey));
     checkboxGroups.push(
-      <DropdownItemCheckboxGroup key={key} id={key} title={value.name}>
-        {value.values.map((option) => (
+      <DropdownItemCheckboxGroup
+        key={groupKey}
+        id={groupKey}
+        title={groupData.name}
+      >
+        {groupData.values.map((fieldData) => (
           <DropdownItemCheckbox
-            key={option.id}
-            id={option.id}
-            onClick={() => handleOptionClick(key, option.id)}
-            isSelected={
-              selectedOptions.get(key) &&
-              selectedOptions.get(key).includes(option.id)
-            }
+            key={fieldData.id}
+            id={fieldData.id}
+            onClick={() => handleOptionClick(groupKey, fieldData.id)}
+            isSelected={selectedOptions.get(groupKey)?.includes(fieldData.id)}
           >
-            {option.name}
+            {fieldData.name}
           </DropdownItemCheckbox>
         ))}
       </DropdownItemCheckboxGroup>

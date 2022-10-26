@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import { JQLSelectDropdown } from "../JQLSelectDropdown";
-import Button, { ButtonGroup } from "@atlaskit/button";
+import { ButtonGroup } from "@atlaskit/button";
 import { Dropdown } from "../Dropdown";
 import { helpLink } from "../../constants";
 import { HelpLink } from "../HelpLink";
@@ -46,7 +46,7 @@ export const Toolbar = ({
           selectedFilterId={selectedJQLString}
           setSelectedFilterId={setSelectedJQLString}
         />
-        {tableFields && (
+        {Boolean(tableFields) && (
           <TableFieldsDropdown
             selectedOptions={selectedTableFieldIds}
             updateSelectedOptionIds={updateSelectedTableFieldIds}
