@@ -75,7 +75,7 @@ export const Report = ({
 }) => {
   const upsurt = (holder, link, links) => {
     const issue = link.inwardIssue ?? link.outwardIssue;
-    if (tableFieldIds.get("issueTypes").includes(issue.issuetype.id)) {
+    if (tableFieldIds.get("issueTypes").includes(issue.fields.issuetype.id)) {
       let name = link.inwardIssue ? link.type.inward : link.type.outward;
       name = toTitleCase(name);
       if (!links.includes(name)) {
