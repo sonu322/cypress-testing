@@ -9,6 +9,8 @@ import { IssueField } from "../../types/api";
 import { Main } from "./Main";
 const FullWidthContainer = styled.div`
   width: 100%;
+  height: 100%;
+  background-color: pink;
 `;
 const fixedFieldNames = [
   "summary",
@@ -137,33 +139,31 @@ export const TracebilityReportModule = () => {
   }
 
   return (
-    <Page>
-      <FullWidthContainer>
-        <PageHeader
-          bottomBar={
-            <Toolbar
-              selectedJQLString={selectedJQLString}
-              setSelectedJQLString={setSelectedJQLString}
-              issueCardOptionsMap={issueCardOptionsMap}
-              selectedIssueFieldIds={selectedIssueFieldIds}
-              setSelectedIssueFieldIds={setSelectedIssueFieldIds}
-              selectedTableFieldIds={selectedTableFieldIds}
-              updateSelectedTableFieldIds={setSelectedTableFieldIds}
-              tableFields={tableFields}
-            />
-          }
-        >
-          Links Explorer Traceability and Reports
-        </PageHeader>
-        <Main
-          issueCardOptionsMap={issueCardOptionsMap}
-          jqlString={selectedJQLString}
-          handleNewError={handleNewError}
-          issueFields={issueFields}
-          selectedIssueFieldIds={selectedIssueFieldIds}
-          selectedTableFieldIds={selectedTableFieldIds}
-        />
-      </FullWidthContainer>
-    </Page>
+    <FullWidthContainer>
+      <PageHeader
+        bottomBar={
+          <Toolbar
+            selectedJQLString={selectedJQLString}
+            setSelectedJQLString={setSelectedJQLString}
+            issueCardOptionsMap={issueCardOptionsMap}
+            selectedIssueFieldIds={selectedIssueFieldIds}
+            setSelectedIssueFieldIds={setSelectedIssueFieldIds}
+            selectedTableFieldIds={selectedTableFieldIds}
+            updateSelectedTableFieldIds={setSelectedTableFieldIds}
+            tableFields={tableFields}
+          />
+        }
+      >
+        Links Explorer Traceability and Reports
+      </PageHeader>
+      <Main
+        issueCardOptionsMap={issueCardOptionsMap}
+        jqlString={selectedJQLString}
+        handleNewError={handleNewError}
+        issueFields={issueFields}
+        selectedIssueFieldIds={selectedIssueFieldIds}
+        selectedTableFieldIds={selectedTableFieldIds}
+      />
+    </FullWidthContainer>
   );
 };
