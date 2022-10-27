@@ -2,6 +2,12 @@ import React from "react";
 import styled from "styled-components";
 import { IssueCard } from "../IssueCard";
 import { colors } from "@atlaskit/theme";
+
+function toTitleCase(str) {
+  return str.replace(/\w\S*/g, function (txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+}
 const Container = styled.div`
   padding: 4px;
 `;
@@ -59,18 +65,59 @@ const ListItem = styled.div`
 
 const ROWS_PER_PAGE = 20;
 
+const upsurt = (holder, link, links) => {
+  const name = link.inwardIssue ? link.type.inward : link.type.outward;
+  if (!links.includes(name)) {
+    links.push(name);
+  }
+  if (!holder[name]) holder[name] = [];
+  holder[name].push(link.outwardIssue ? link.outwardIssue : link.inwardIssue);
+};
+
 export const Report = ({
   issues,
   tableFieldIds,
   issueFieldIds,
   issueCardOptionsMap,
 }) => {
-  const issue = issues[0];
+  // const issue = issues[0];
+  const links = [];
+  const classifieds = [];
+  issues.forEach((issue) => {
+    const fields = issue.fields;
+    const classified = {
+      issue,
+      parent: fields.parent,
+      subtasks: fields.subtasks,
+    };
+    if (fields.issuelinks) {
+      fields.issuelinks.forEach((link) => {
+        upsurt(classified, link, links);
+      });
+    }
+    classifieds.push(classified);
+  });
+  links.sort();
+  console.log("LInks!!!!");
+  console.log(links);
   return (
-    <IssueCard
-      issueData={issue}
-      selectedIssueFieldIds={issueFieldIds}
-      issueCardOptionsMap={issueCardOptionsMap}
-    ></IssueCard>
+    // <IssueCard
+    //   issueData={issue}
+    //   selectedIssueFieldIds={issueFieldIds}
+    //   issueCardOptionsMap={issueCardOptionsMap}
+    // ></IssueCard>
+    <table>
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Parent</th>
+          <th>Sub-tasks</th>
+          {links.map((link, i) => (
+            <th key={i}>{link}</th>
+          ))}
+        </tr>
+      </thead>
+    </table>
   );
 };
+ 
