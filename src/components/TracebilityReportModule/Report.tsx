@@ -82,6 +82,8 @@ export const Report = ({
   issueCardOptionsMap,
 }) => {
   // const issue = issues[0];
+  console.log("table field ids!!");
+  console.log(tableFieldIds);
   const links = [];
   const classifieds = [];
   issues.forEach((issue) => {
@@ -93,7 +95,9 @@ export const Report = ({
     };
     if (fields.issuelinks) {
       fields.issuelinks.forEach((link) => {
-        upsurt(classified, link, links);
+        if (tableFieldIds.get("linkTypes").includes(link.id)) {
+          upsurt(classified, link, links);
+        }
       });
     }
     classifieds.push(classified);
