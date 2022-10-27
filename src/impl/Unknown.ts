@@ -51,7 +51,7 @@ import LXPAPI, {
       start?: number,
       max?: number,
       fields?: string[]
-    ): Promise<Issue[]> {
+    ): Promise<{ issues: Issue[]; totalNumberOfIssues: number }> {
       throw new Error("Method not implemented.");
     }
   }

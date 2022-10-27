@@ -65,15 +65,7 @@ const ListItem = styled.div`
 
 const ROWS_PER_PAGE = 20;
 
-const upsurt = (holder, link, links) => {
-  let name = link.inwardIssue ? link.type.inward : link.type.outward;
-  name = toTitleCase(name);
-  if (!links.includes(name)) {
-    links.push(name);
-  }
-  if (!holder[name]) holder[name] = [];
-  holder[name].push(link.outwardIssue ? link.outwardIssue : link.inwardIssue);
-};
+
 
 export const Report = ({
   issues,
@@ -81,26 +73,40 @@ export const Report = ({
   issueFieldIds,
   issueCardOptionsMap,
 }) => {
+  const upsurt = (holder, link, links) => {
+    const issue = link.inwardIssue ?? link.outwardIssue;
+    if (tableFieldIds.get("issueTypes").includes(issue.issuetype.id)) {
+      let name = link.inwardIssue ? link.type.inward : link.type.outward;
+      name = toTitleCase(name);
+      if (!links.includes(name)) {
+        links.push(name);
+      }
+      if (!holder[name]) holder[name] = [];
+      holder[name].push(issue);
+    }
+  };
   // const issue = issues[0];
   console.log("table field ids!!");
   console.log(tableFieldIds);
   const links = [];
   const classifieds = [];
   issues.forEach((issue) => {
-    const fields = issue.fields;
-    const classified = {
-      issue,
-      parent: fields.parent,
-      subtasks: fields.subtasks,
-    };
-    if (fields.issuelinks) {
-      fields.issuelinks.forEach((link) => {
-        if (tableFieldIds.get("linkTypes").includes(link.id)) {
-          upsurt(classified, link, links);
-        }
-      });
+    if (tableFieldIds.get("issueTypes").includes(issue.type.id)) {
+      const fields = issue.fields;
+      const classified = {
+        issue,
+        parent: fields.parent,
+        subtasks: fields.subtasks,
+      };
+      if (fields.issuelinks) {
+        fields.issuelinks.forEach((link) => {
+          if (tableFieldIds.get("linkTypes").includes(link.id)) {
+            upsurt(classified, link, links);
+          }
+        });
+      }
+      classifieds.push(classified);
     }
-    classifieds.push(classified);
   });
   links.sort();
   console.log("LInks!!!!");

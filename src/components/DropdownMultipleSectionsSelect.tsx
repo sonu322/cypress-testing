@@ -51,7 +51,7 @@ export const DropdownMultipleSectionsSelect = ({
         triggerType="button"
         trigger={dropdownName}
         shouldFlip={false}
-        position="bottom right"
+        position="top"
         isCompact={true}
       >
         {checkboxGroups}
