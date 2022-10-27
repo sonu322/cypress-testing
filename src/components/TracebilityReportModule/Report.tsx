@@ -66,7 +66,8 @@ const ListItem = styled.div`
 const ROWS_PER_PAGE = 20;
 
 const upsurt = (holder, link, links) => {
-  const name = link.inwardIssue ? link.type.inward : link.type.outward;
+  let name = link.inwardIssue ? link.type.inward : link.type.outward;
+  name = toTitleCase(name);
   if (!links.includes(name)) {
     links.push(name);
   }
