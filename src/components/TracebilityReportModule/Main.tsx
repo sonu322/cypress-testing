@@ -8,6 +8,18 @@ import styled from "styled-components";
 import { Report } from "./Report";
 const Container = styled.div`
   padding: 4px;
+  width: 100%;
+  background: gray;
+  display: flex;
+  flex-direction: column;
+`;
+const EndContainer = styled.div`
+  background-color: blue;
+`;
+const GrowContainer = styled.div`
+  flex-grow: 1;
+  background: yellow;
+  display: flex;
 `;
 const DEFAULT_ROWS_PER_PAGE = 20;
 
@@ -57,44 +69,43 @@ export const Main = ({
     }
     return (
       <Container>
-        <Report
-          issueCardOptionsMap={issueCardOptionsMap}
-          issues={filteredIssues}
-          issueFieldIds={selectedIssueFieldIds}
-          tableFieldIds={selectedTableFieldIds}
-        />
-        <Button
-          // isLoading={gettingMore}
-          isDisabled={filteredIssues.length >= totalNumberOfIssues}
-          onClick={() => {
-            const fieldIds = getFieldIds(issueFields);
-            const fetchFilteredIssues = async () => {
-              try {
-                const searchResult = await api.searchIssues(
-                  jqlString,
-                  filteredIssues.length,
-                  totalNumberOfIssues,
-                  fieldIds
-                );
-                const issues = searchResult.issues;
+        <GrowContainer>
+          <Report
+            issueCardOptionsMap={issueCardOptionsMap}
+            issues={filteredIssues}
+            issueFieldIds={selectedIssueFieldIds}
+            tableFieldIds={selectedTableFieldIds}
+          />
+        </GrowContainer>
+        <EndContainer>
+          <Button
+            // isLoading={gettingMore}
+            isDisabled={filteredIssues.length >= totalNumberOfIssues}
+            onClick={() => {
+              const fieldIds = getFieldIds(issueFields);
+              const fetchFilteredIssues = async () => {
+                try {
+                  const searchResult = await api.searchIssues(
+                    jqlString,
+                    filteredIssues.length,
+                    totalNumberOfIssues,
+                    fieldIds
+                  );
+                  const issues = searchResult.issues;
 
-                console.log("from table!!!!", issues);
-                console.log(issues);
-                setFilteredIssues(filteredIssues.concat(issues));
-              } catch (error) {
-                handleNewError(error);
-              }
-            };
-            void fetchFilteredIssues();
-          }}
-        >
-          More
-        </Button>
-        <div>
-          <div>{jqlString}</div>
-          <div>......</div>
-          <div>{filteredIssues?.map((issue) => issue.id)}</div>
-        </div>
+                  console.log("from table!!!!", issues);
+                  console.log(issues);
+                  setFilteredIssues(filteredIssues.concat(issues));
+                } catch (error) {
+                  handleNewError(error);
+                }
+              };
+              void fetchFilteredIssues();
+            }}
+          >
+            More
+          </Button>
+        </EndContainer>
       </Container>
     );
   } else if (Boolean(jqlString) && filteredIssues == null) {

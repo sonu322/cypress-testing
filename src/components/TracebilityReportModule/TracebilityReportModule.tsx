@@ -11,6 +11,13 @@ const FullWidthContainer = styled.div`
   width: 100%;
   min-height: 100%;
   background-color: pink;
+  display: flex;
+  flex-direction: column;
+`;
+const GrowContainer = styled.div`
+  flex-grow: 1;
+  background: white;
+  display: flex;
 `;
 const fixedFieldNames = [
   "summary",
@@ -156,14 +163,16 @@ export const TracebilityReportModule = () => {
       >
         Links Explorer Traceability and Reports
       </PageHeader>
-      <Main
-        issueCardOptionsMap={issueCardOptionsMap}
-        jqlString={selectedJQLString}
-        handleNewError={handleNewError}
-        issueFields={issueFields}
-        selectedIssueFieldIds={selectedIssueFieldIds}
-        selectedTableFieldIds={selectedTableFieldIds}
-      />
+      <GrowContainer>
+        <Main
+          issueCardOptionsMap={issueCardOptionsMap}
+          jqlString={selectedJQLString}
+          handleNewError={handleNewError}
+          issueFields={issueFields}
+          selectedIssueFieldIds={selectedIssueFieldIds}
+          selectedTableFieldIds={selectedTableFieldIds}
+        />
+      </GrowContainer>
     </FullWidthContainer>
   );
 };
