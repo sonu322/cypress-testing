@@ -39,14 +39,24 @@ export const Report = ({
     const fields = issue.fields;
     const classified = {
       issue,
-      parent: fields.parent,
       subtasks: fields.subtasks.filter((issue) =>
         tableFieldIds.get("issueTypes").includes(issue.fields.issuetype.id)
       ),
     };
+    if (
+      fields.parent &&
+      tableFieldIds
+        .get("issueTypes")
+        .includes(fields.parent.fields.issuetype.id)
+    ) {
+      classified.parent = fields.parent;
+    }
     if (fields.issuelinks) {
       fields.issuelinks.forEach((link) => {
-        if (tableFieldIds.get("linkTypes").includes(link.id)) {
+        console.log("checking links!!!!!!!");
+        console.log(tableFieldIds.get("linkTypes"));
+        console.log(link);
+        if (tableFieldIds.get("linkTypes").includes(link.type.id)) {
           upsurt(classified, link, links);
         }
       });
