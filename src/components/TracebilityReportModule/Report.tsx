@@ -8,6 +8,9 @@ function toTitleCase(str) {
     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
   });
 }
+const Container = styled.div`
+  min-width: 100%;
+`;
 const BorderTr = styled.tr`
   border-bottom: 1px solid ${colors.N40};
 `;
@@ -73,78 +76,80 @@ export const Report = ({
     //   selectedIssueFieldIds={issueFieldIds}
     //   issueCardOptionsMap={issueCardOptionsMap}
     // ></IssueCard>
-    <table>
-      <thead>
-        <tr>
-          <th>Key</th>
-          <th>Parent</th>
-          <th>Sub-tasks</th>
-          {links.map((link, i) => (
-            <th key={i}>{link}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {classifieds.map((classified, i) => (
-          <BorderTr key={i}>
-            <td>
-              {" "}
-              <IssueCard
-                issueData={classified.issue}
-                selectedIssueFieldIds={issueFieldIds}
-                issueCardOptionsMap={issueCardOptionsMap}
-              ></IssueCard>
-            </td>
-            <td>
-              {" "}
-              {classified.parent ? (
+    <Container>
+      <table>
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Parent</th>
+            <th>Sub-tasks</th>
+            {links.map((link, i) => (
+              <th key={i}>{link}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {classifieds.map((classified, i) => (
+            <BorderTr key={i}>
+              <td>
+                {" "}
                 <IssueCard
-                  issueData={classified.parent}
+                  issueData={classified.issue}
                   selectedIssueFieldIds={issueFieldIds}
                   issueCardOptionsMap={issueCardOptionsMap}
                 ></IssueCard>
-              ) : (
-                <span>--</span>
-              )}
-            </td>
-            <td>
-              {classified.subtasks && classified.subtasks.length > 0 ? (
-                classified.subtasks.map((issue) => (
+              </td>
+              <td>
+                {" "}
+                {classified.parent ? (
                   <IssueCard
-                    key={issue.id}
-                    issueData={issue}
+                    issueData={classified.parent}
                     selectedIssueFieldIds={issueFieldIds}
                     issueCardOptionsMap={issueCardOptionsMap}
                   ></IssueCard>
-                ))
-              ) : (
-                <span>--</span>
-              )}
-            </td>
-            {links.map((link, j) => (
-              <td key={`${i}..${j}`}>
-                {classified[link] ? (
-                  classified[link].map((issue) => {
-                    if (issue) {
-                      return (
-                        <IssueCard
-                          key={issue.id}
-                          issueData={issue}
-                          selectedIssueFieldIds={issueFieldIds}
-                          issueCardOptionsMap={issueCardOptionsMap}
-                        ></IssueCard>
-                      );
-                    }
-                    return <span>--</span>;
-                  })
                 ) : (
                   <span>--</span>
                 )}
               </td>
-            ))}
-          </BorderTr>
-        ))}
-      </tbody>
-    </table>
+              <td>
+                {classified.subtasks && classified.subtasks.length > 0 ? (
+                  classified.subtasks.map((issue) => (
+                    <IssueCard
+                      key={issue.id}
+                      issueData={issue}
+                      selectedIssueFieldIds={issueFieldIds}
+                      issueCardOptionsMap={issueCardOptionsMap}
+                    ></IssueCard>
+                  ))
+                ) : (
+                  <span>--</span>
+                )}
+              </td>
+              {links.map((link, j) => (
+                <td key={`${i}..${j}`}>
+                  {classified[link] ? (
+                    classified[link].map((issue) => {
+                      if (issue) {
+                        return (
+                          <IssueCard
+                            key={issue.id}
+                            issueData={issue}
+                            selectedIssueFieldIds={issueFieldIds}
+                            issueCardOptionsMap={issueCardOptionsMap}
+                          ></IssueCard>
+                        );
+                      }
+                      return <span>--</span>;
+                    })
+                  ) : (
+                    <span>--</span>
+                  )}
+                </td>
+              ))}
+            </BorderTr>
+          ))}
+        </tbody>
+      </table>
+    </Container>
   );
 };
