@@ -105,6 +105,7 @@ export const Report = ({
   links.sort();
   console.log("LInks!!!!");
   console.log(links);
+  console.log(classifieds);
   return (
     // <IssueCard
     //   issueData={issue}
@@ -116,13 +117,60 @@ export const Report = ({
         <tr>
           <th>Key</th>
           <th>Parent</th>
-          <th>Sub-tasks</th>
+          {/* <th>Sub-tasks</th> */}
           {links.map((link, i) => (
             <th key={i}>{link}</th>
           ))}
         </tr>
       </thead>
+      <tbody>
+        {classifieds.map((classified, i) => (
+          <BorderTr key={i}>
+            <td>
+              {" "}
+              <IssueCard
+                issueData={classified.issue}
+                selectedIssueFieldIds={issueFieldIds}
+                issueCardOptionsMap={issueCardOptionsMap}
+              ></IssueCard>
+            </td>
+            <td>
+              {" "}
+              {classified.parent ? (
+                <IssueCard
+                  issueData={classified.parent}
+                  selectedIssueFieldIds={issueFieldIds}
+                  issueCardOptionsMap={issueCardOptionsMap}
+                ></IssueCard>
+              ) : (
+                <span>--</span>
+              )}
+            </td>
+            {/* <td>{this.renderIssues(classified.subtasks)}</td> */}
+            {links.map((link, j) => (
+              <td key={`${i}..${j}`}>
+                {classified[link] ? (
+                  classified[link].map((issue) => {
+                    if (issue) {
+                      return (
+                        <IssueCard
+                          key={issue.id}
+                          issueData={issue}
+                          selectedIssueFieldIds={issueFieldIds}
+                          issueCardOptionsMap={issueCardOptionsMap}
+                        ></IssueCard>
+                      );
+                    }
+                    return <span>--</span>;
+                  })
+                ) : (
+                  <span>--</span>
+                )}
+              </td>
+            ))}
+          </BorderTr>
+        ))}
+      </tbody>
     </table>
   );
 };
- 
