@@ -10,13 +10,11 @@ import { Main } from "./Main";
 const FullWidthContainer = styled.div`
   width: 100%;
   min-height: 100%;
-  background-color: pink;
   display: flex;
   flex-direction: column;
 `;
 const GrowContainer = styled.div`
   flex-grow: 1;
-  background: white;
   display: flex;
 `;
 const fixedFieldNames = [

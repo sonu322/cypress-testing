@@ -9,16 +9,11 @@ import { Report } from "./Report";
 const Container = styled.div`
   padding: 4px;
   width: 100%;
-  background: gray;
   display: flex;
   flex-direction: column;
 `;
-const EndContainer = styled.div`
-  background-color: blue;
-`;
 const GrowContainer = styled.div`
   flex-grow: 1;
-  background: yellow;
   display: flex;
 `;
 const DEFAULT_ROWS_PER_PAGE = 20;
@@ -77,7 +72,7 @@ export const Main = ({
             tableFieldIds={selectedTableFieldIds}
           />
         </GrowContainer>
-        <EndContainer>
+        <div>
           <Button
             // isLoading={gettingMore}
             isDisabled={filteredIssues.length >= totalNumberOfIssues}
@@ -105,7 +100,7 @@ export const Main = ({
           >
             More
           </Button>
-        </EndContainer>
+        </div>
       </Container>
     );
   } else if (Boolean(jqlString) && filteredIssues == null) {
