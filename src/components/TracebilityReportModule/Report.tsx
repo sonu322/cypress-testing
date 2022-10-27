@@ -123,7 +123,7 @@ export const Report = ({
         <tr>
           <th>Key</th>
           <th>Parent</th>
-          {/* <th>Sub-tasks</th> */}
+          <th>Sub-tasks</th>
           {links.map((link, i) => (
             <th key={i}>{link}</th>
           ))}
@@ -152,7 +152,20 @@ export const Report = ({
                 <span>--</span>
               )}
             </td>
-            {/* <td>{this.renderIssues(classified.subtasks)}</td> */}
+            <td>
+              {classified.subtasks && classified.subtasks.length > 0 ? (
+                classified.subtasks.map((issue) => (
+                  <IssueCard
+                    key={issue.id}
+                    issueData={issue}
+                    selectedIssueFieldIds={issueFieldIds}
+                    issueCardOptionsMap={issueCardOptionsMap}
+                  ></IssueCard>
+                ))
+              ) : (
+                <span>--</span>
+              )}
+            </td>
             {links.map((link, j) => (
               <td key={`${i}..${j}`}>
                 {classified[link] ? (
