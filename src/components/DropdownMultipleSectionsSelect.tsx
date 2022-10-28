@@ -3,15 +3,15 @@ import DropdownMenu, {
   DropdownItemCheckboxGroup,
   DropdownItemCheckbox,
 } from "@atlaskit/dropdown-menu";
+
+
 export const DropdownMultipleSectionsSelect = ({
   selectedOptions,
   dropdownName,
   updateSelectedOptions,
   options,
-}) => {
-  console.log("from dropdown mutiple");
-  console.log(options);
-  console.log(selectedOptions);
+}): JSX.Element => {
+  // click handler
   const handleOptionClick = (groupKey, id) => {
     const newMap = new Map(selectedOptions);
     let updatedList = [];
@@ -23,9 +23,10 @@ export const DropdownMultipleSectionsSelect = ({
     newMap.set(groupKey, updatedList);
     updateSelectedOptions(newMap);
   };
+
+  // groups of checkboxes
   const checkboxGroups = [];
   for (const [groupKey, groupData] of options.entries()) {
-    console.log(selectedOptions.get(groupKey));
     checkboxGroups.push(
       <DropdownItemCheckboxGroup
         key={groupKey}
@@ -45,6 +46,8 @@ export const DropdownMultipleSectionsSelect = ({
       </DropdownItemCheckboxGroup>
     );
   }
+
+  // render
   return (
     <>
       <DropdownMenu
