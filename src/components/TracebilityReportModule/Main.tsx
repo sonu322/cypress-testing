@@ -59,7 +59,29 @@ export const Main = ({
       fetchFilteredIssues();
     }
   }, [jqlString]);
-
+  const fetchMoreIssues = (): void => {
+    const fieldIds = getFieldIds(issueFields);
+    const fetchFilteredIssues = async (): Promise<void> => {
+      setAreIssuesLoading(true);
+      try {
+        const searchResult = await api.searchIssues(
+          jqlString,
+          filteredIssues.length,
+          totalNumberOfIssues,
+          fieldIds
+        );
+        const issues = searchResult.issues;
+        setFilteredIssues(filteredIssues.concat(issues));
+        if (issues != null) {
+          setAreIssuesLoading(false);
+        }
+      } catch (error) {
+        setAreIssuesLoading(false);
+        handleNewError(error);
+      }
+    };
+    void fetchFilteredIssues();
+  };
   if (Boolean(jqlString) && filteredIssues != null) {
     if (filteredIssues.length === 0) {
       return (
@@ -82,29 +104,7 @@ export const Main = ({
           <LoadingButton
             isLoading={areIssuesLoading}
             isDisabled={filteredIssues.length >= totalNumberOfIssues}
-            onClick={() => {
-              const fieldIds = getFieldIds(issueFields);
-              const fetchFilteredIssues = async () => {
-                setAreIssuesLoading(true);
-                try {
-                  const searchResult = await api.searchIssues(
-                    jqlString,
-                    filteredIssues.length,
-                    totalNumberOfIssues,
-                    fieldIds
-                  );
-                  const issues = searchResult.issues;
-                  setFilteredIssues(filteredIssues.concat(issues));
-                  if (issues != null) {
-                    setAreIssuesLoading(false);
-                  }
-                } catch (error) {
-                  setAreIssuesLoading(false);
-                  handleNewError(error);
-                }
-              };
-              void fetchFilteredIssues();
-            }}
+            onClick={fetchMoreIssues}
           >
             More
           </LoadingButton>
