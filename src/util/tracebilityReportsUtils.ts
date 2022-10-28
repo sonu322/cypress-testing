@@ -1,21 +1,26 @@
 import { download, toTitleCase } from "./index";
-export const exportReport = (selectedTableFieldIds, filteredIssues) => {
-  const upsurt = (holder, link, links) => {
-    const issue = link.inwardIssue ?? link.outwardIssue;
-    if (
-      selectedTableFieldIds
-        .get("issueTypes")
-        .includes(issue.fields.issuetype.id)
-    ) {
-      let name = link.inwardIssue ? link.type.inward : link.type.outward;
-      name = toTitleCase(name);
-      if (!links.includes(name)) {
-        links.push(name);
-      }
-      if (!holder[name]) holder[name] = [];
-      holder[name].push(issue);
+
+
+
+
+export const upsurt = (issuesHolder, currentLink, links, selectedTableFieldIds) => {
+  const issue = currentLink.inwardIssue ?? currentLink.outwardIssue;
+  if (
+    selectedTableFieldIds.get("issueTypes").includes(issue.fields.issuetype.id)
+  ) {
+    let name = currentLink.inwardIssue
+      ? currentLink.type.inward
+      : currentLink.type.outward;
+    name = toTitleCase(name);
+    if (!links.includes(name)) {
+      links.push(name);
     }
-  };
+    if (!issuesHolder[name]) issuesHolder[name] = [];
+    issuesHolder[name].push(issue);
+  }
+};
+
+export const processIssues = (selectedTableFieldIds, filteredIssues) => {
   console.log("table field ids!!");
   console.log(selectedTableFieldIds);
   const links = [];
@@ -44,19 +49,30 @@ export const exportReport = (selectedTableFieldIds, filteredIssues) => {
         console.log(selectedTableFieldIds.get("linkTypes"));
         console.log(link);
         if (selectedTableFieldIds.get("linkTypes").includes(link.type.id)) {
-          upsurt(classified, link, links);
+          upsurt(classified, link, links, selectedTableFieldIds);
         }
       });
     }
     classifieds.push(classified);
   });
   links.sort();
+  return {
+    classifieds,
+    links,
+  };
+};
+
+export const exportReport = (selectedTableFieldIds, filteredIssues) => {
+  const { classifieds, links } = processIssues(
+    selectedTableFieldIds,
+    filteredIssues
+  );
   links.unshift("subtasks");
   console.log("from report csv");
   console.log(classifieds);
   console.log(links);
   let content = "";
-  let headerLinks = ["Issue", "Parent"];
+  const headerLinks = ["Issue", "Parent"];
   links.forEach((link) => {
     headerLinks.push(`"${toTitleCase(link)}"`);
   });

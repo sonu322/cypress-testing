@@ -2,12 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { IssueCard } from "../IssueCard";
 import { colors } from "@atlaskit/theme";
-
-function toTitleCase(str) {
-  return str.replace(/\w\S*/g, function (txt) {
-    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-  });
-}
+import { toTitleCase } from "../../util";
 const Container = styled.div`
   width: 100%;
   height: 100%;
