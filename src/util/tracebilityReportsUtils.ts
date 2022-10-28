@@ -106,6 +106,7 @@ export const exportReport = (selectedTableFieldIds, filteredIssues) => {
     let rowContent = rowItems.toString();
     rowContent = rowContent += "\n";
     content += rowContent;
+    console.log(content);
   });
   download("csv", content);
 };

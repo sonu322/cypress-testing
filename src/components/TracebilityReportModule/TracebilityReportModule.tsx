@@ -38,10 +38,10 @@ export const TracebilityReportModule = (): JSX.Element => {
     []
   );
   const [selectedTableFieldIds, setSelectedTableFieldIds] = useState(new Map());
-  const [errors, setErrors] = useState<Error[]>([]);
+  const [errors, setErrors] = useState<unknown[]>([]);
   const [tableFields, setTableFields] = useState(new Map());
   const api = useContext(APIContext);
-  const handleNewError = (err: Error): void => {
+  const handleNewError = (err: unknown): void => {
     console.log(err);
     setErrors((prevErrors) => [...prevErrors, err]);
   };
