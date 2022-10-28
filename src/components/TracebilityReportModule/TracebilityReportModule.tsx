@@ -49,7 +49,7 @@ export const TracebilityReportModule = (): JSX.Element => {
   useEffect(() => {
     const fetchFieldsData = async () => {
       try {
-        let results = await api.getIssueFields();
+        const results = await api.getIssueFields();
         const newResults = results.map((result) => {
           if (result.key.includes("customfield_")) {
             result.customKey = result.name
@@ -69,8 +69,8 @@ export const TracebilityReportModule = (): JSX.Element => {
           "storypoints",
           "storypointestimate",
         ];
-        let selectedFieldIds: string[] = [];
-        let fieldsMap = new Map();
+        const selectedFieldIds: string[] = [];
+        const fieldsMap = new Map();
         fieldNames.forEach((name) => {
           const field = newResults.find((result) => result.customKey == name);
           if (field) {
