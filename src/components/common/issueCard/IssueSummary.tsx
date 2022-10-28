@@ -1,7 +1,11 @@
 import React from "react";
-import { TooltipContainer } from "./TooltipContainer";
+import { TooltipContainer } from "../TooltipContainer";
 
-export const IssueSummary = ({content}) => {
+export interface Props {
+  content: string;
+}
+
+export const IssueSummary = ({content}: Props ) => {
   return (
     <TooltipContainer content={content} position="bottom">
       <div>{content}</div>

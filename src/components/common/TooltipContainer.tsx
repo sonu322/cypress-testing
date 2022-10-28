@@ -1,8 +1,9 @@
 import React from "react";
 import Tooltip from "@atlaskit/tooltip";
-export const TooltipContainer = ({ content, position, children }) => {
+export const TooltipContainer = ({ content, position= "bottom-end", children }) => {
   return (
-    <Tooltip content={content} position={position ?? "bottom-end"}>
+    //@ts-ignore
+    <Tooltip content={content} position={position}>
       {(props) => <div {...props}>{children}</div>}
     </Tooltip>
   );

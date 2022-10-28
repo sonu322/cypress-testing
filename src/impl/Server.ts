@@ -11,6 +11,10 @@ import LXPAPI, {
 
 export default class ServerImpl implements LXPAPI {
   
+  searchIssues(jql: string, fields: IssueField[], start?: number, max?: number): Promise<Issue[]> {
+    throw new Error("Method not implemented.");
+  }
+  
   hasValidLicense(): boolean {
     throw new Error("Method not implemented.");
   }
@@ -35,7 +39,7 @@ export default class ServerImpl implements LXPAPI {
     throw new Error("Method not implemented.");
   }
   
-  getIssueWithLinks(issueId ? : string | undefined, fields ? : string[] | undefined): Promise < IssueWithLinkedIssues > {
+  getIssueWithLinks(fields: IssueField[], issueId ? : string | undefined): Promise < IssueWithLinkedIssues > {
     throw new Error("Method not implemented.");
   }
   
@@ -43,7 +47,7 @@ export default class ServerImpl implements LXPAPI {
     throw new Error("Method not implemented.");
   }
   
-  getIssueById(issueId: string): Promise < Issue > {
+  getIssueById(fields: IssueField[], issueId: string): Promise < Issue > {
     throw new Error("Method not implemented.");
   }
   

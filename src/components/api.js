@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import { formatIssue } from "../util/issueTreeUtils";
+import { formatIssue } from "../util/TreeUtils";
 const getKey = () => {
   return new Promise(
     (resolve) => {
@@ -173,7 +173,6 @@ export const IssueLinkAPI = async (key, fields) => {
     null,
     fields
   );
-  console.log(relatedIssuesData);
   return { rootIssueData, relatedIssuesData };
 };
 

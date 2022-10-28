@@ -29,7 +29,7 @@ export const download = (type, content) => {
   let source = null;
   let file = null;
   if ("csv" === type) {
-    source = `data:text/csv;charset=utf-8, + ${encodeURIComponent(content)}`;
+    source = `data:text/csv;charset=utf-8,${encodeURIComponent(content)}`;
     file = "links-explorer.csv";
   }
 

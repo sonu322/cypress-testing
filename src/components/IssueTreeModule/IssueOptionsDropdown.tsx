@@ -1,7 +1,8 @@
 import React from "react";
-import { Dropdown } from "./Dropdown";
+import { Dropdown } from "../common/Dropdown";
 export const IssueOptionsDropdown = ({
   keyName,
+  dropdownName,
   options,
   selectedOptions,
   updateSelectedOptions,
@@ -12,7 +13,7 @@ export const IssueOptionsDropdown = ({
   return (
     <Dropdown
       key={keyName}
-      dropdownName={keyName}
+      dropdownName={dropdownName}
       options={options}
       selectedOptions={selectedOptions}
       updateSelectedOptions={updateSelectedFieldOptions}

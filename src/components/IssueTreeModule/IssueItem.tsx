@@ -1,9 +1,9 @@
 import React from "react";
 import styled, { css } from "styled-components";
 import { colors } from "@atlaskit/theme";
+import { IssueCard } from "../common/issueCard/IssueCard";
+import { ExpansionToggler } from "./ExpansionToggler";
 
-import { IssueCard } from "../IssueCard";
-import { ExpansionToggler } from "../ExpansionToggler";
 const PADDING_LEVEL = 30;
 const LinkTypeContainer = styled.div`
   display: flex;
@@ -22,7 +22,7 @@ const LinkTypeContainer = styled.div`
 const getItemMargin = (depth) => {
   return PADDING_LEVEL * depth + "px";
 };
-const Container = styled.div`
+const Container = styled.div<any>`
   margin: 0.5rem 0;
   display: flex;
   margin-left: 0px;
@@ -32,25 +32,24 @@ const Container = styled.div`
       margin-left: ${marginLeft};
     `}
 `;
+
 export const IssueItem = ({
   item,
   onExpand,
   onCollapse,
   provided,
   depth,
-  selectedIssueFieldIds,
-  issueCardOptionsMap,
+  selectedIssueFieldIds
 }) => {
   const marginLeft = getItemMargin(depth);
+  
   return (
     <Container
-
       marginLeft={marginLeft}
       innerRef={provided.innerRef}
       {...provided.dragHandleProps}
     >
       <ExpansionToggler
-        item={item}
         isExpanded={item.isExpanded}
         isLoading={item.isChildrenLoading}
         onExpand={() => onExpand(item.id)}
@@ -65,8 +64,6 @@ export const IssueItem = ({
         <IssueCard
           issueData={item.data ?? null}
           selectedIssueFieldIds={selectedIssueFieldIds}
-          issueCardOptionsMap={issueCardOptionsMap}
-          isIssueExpanded={item.isExpanded}
         />
       )}
     </Container>

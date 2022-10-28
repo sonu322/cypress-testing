@@ -13,31 +13,37 @@ export interface IssuePriority extends IssueOption {
 
 export interface IssueField {
   id: ID;
-  key: string;
   name: string;
-  customKey: string;
+  jiraId: ID;
 }
 
 export interface Issue {
   id: ID;
   priority: IssuePriority;
   type: IssueType;
-  // fixVersions: IssueVersion[];
+  fixVersions: IssueVersion[];
   status: IssueStatus;
   summary: string;
-  // storyPoints: number;
+  isResolved: boolean;
+  storyPoints: number;
   issueKey: string;
-  // assignee: IssueUser;
-  // sprints: IssueSprint[];
+  assignee: IssueUser;
+  sprints: IssueSprint[];
   links: IssueLink[];
 }
 
 export interface IssueSprint {
-
+  id: number;
+  name: string;
+  state: string;
+  startDate: string;
+  endDate: string;
 }
 
 export interface IssueUser {
-
+  displayName: string;
+  active: boolean;
+  avatarUrl: string;
 }
 
 export interface IssueWithLinkedIssues extends Issue {
@@ -45,14 +51,18 @@ export interface IssueWithLinkedIssues extends Issue {
 }
 
 export interface IssueLink {
-  id: ID;
+  linkTypeId: ID;
   name: string;
   isInward: boolean;
   issueId: ID;
 }
 
 export interface IssueVersion {
-
+  id: ID;
+  name: string;
+  archived: boolean;
+  released: boolean;
+  releaseDate: string;
 }
 
 export interface IssueStatus extends IssueOption {
@@ -73,7 +83,18 @@ export interface Filter {
 }
 
 export interface Project {
+  style: string;
+}
 
+export interface IssueTreeFilter {
+  priorities: ID[],
+  issueTypes: ID[],
+  linkTypes: ID[]
+}
+
+export enum CustomLinkType {
+  SUBTASK = "SUBTASK",
+  PARENT = "PARENT"
 }
 
 export default interface LXPAPI {
@@ -90,11 +111,13 @@ export default interface LXPAPI {
 
   getIssueFields(): Promise<IssueField[]>;
 
-  getIssueWithLinks(issueId?: string, fields?: string[]): Promise<IssueWithLinkedIssues>;
+  getIssueWithLinks(fields: IssueField[], issueId?: string): Promise<IssueWithLinkedIssues>;
 
   getCurrentIssueId(): Promise<string>;
 
-  getIssueById(issueId: string): Promise<Issue>;
+  getIssueById(fields: IssueField[], issueId ?: string): Promise<Issue>;
+
+  searchIssues(jql: string, fields: IssueField[], start?: number, max?: number): Promise<Issue[]>;
 
   getFilters(): Promise<Filter[]>;
 

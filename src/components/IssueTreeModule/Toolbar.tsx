@@ -1,11 +1,12 @@
 import React from "react";
-import { Dropdown } from "./Dropdown";
+import { Dropdown } from "../common/Dropdown";
 import { ButtonGroup } from "@atlaskit/button";
 import styled from "styled-components";
 import { IssueOptionsDropdown } from "./IssueOptionsDropdown";
 import { helpLink } from "../../constants";
-import { ExportContent } from "../ExportContent";
-import { HelpLink } from "../HelpLink";
+import { ExportContent } from "../common/ExportContent";
+import { HelpLink } from "../common/HelpLink";
+
 export const Container = styled.div`
   display: flex;
   justify-content: space-between;
@@ -16,24 +17,24 @@ export const Toolbar = ({
   options,
   filter,
   updateFilteredKeyOptions,
-  keyNames,
+  filterDropdowns,
   selectedIssueFieldIds,
   setSelectedIssueFieldIds,
-  issueCardOptionsMap,
+  issueCardOptions,
   exportTree,
 }) => {
-  const issueCardOptions = Array.from(issueCardOptionsMap.values());
   return (
     <Container>
       <ButtonGroup>
         {options &&
           filter &&
-          keyNames.map((keyName) => (
+          filterDropdowns.map((fd) => (
             <IssueOptionsDropdown
-              key={keyName}
-              keyName={keyName}
-              options={options[keyName]}
-              selectedOptions={filter[keyName]}
+              key={fd.key}
+              keyName={fd.key}
+              dropdownName={fd.label}
+              options={options[fd.key]}
+              selectedOptions={filter[fd.key]}
               updateSelectedOptions={updateFilteredKeyOptions}
             />
           ))}

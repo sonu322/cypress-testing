@@ -1,25 +1,31 @@
-import React from "react";
-import { TooltipContainer } from "./TooltipContainer";
+import React, {useContext} from "react";
+import { TooltipContainer } from "../TooltipContainer";
 import styled, { css } from "styled-components";
 import { colors } from "@atlaskit/theme";
-import { getQueryParam } from "../util";
-const StyledIssueKey = styled.a`
+import { APIContext } from "../../../context/api";
+
+const StyledIssueKey = styled.a<any>`
   text-overflow: ellipsis;
   font-size: 12px;
   font-weight: 600;
   color: ${colors.N400};
   text-decoration: none;
   cursor: pointer;
-  ${(props) =>
+  ${(props: any) =>
     props.isResolved &&
     css`
       text-decoration: line-through;
     `};
 `;
-const xdm = getQueryParam("xdm_e");
 
-export const IssueKey = ({ issueKey, isResolved }) => {
-  const issueUrl = `${xdm}/browse/${issueKey}`;
+export interface Props {
+  issueKey: string;
+  isResolved: boolean;
+}
+
+export const IssueKey = ({ issueKey, isResolved }: Props) => {
+  const api = useContext(APIContext);
+  const issueUrl = `${api.getJiraBaseURL()}/browse/${issueKey}`;
   return (
     <TooltipContainer content={issueKey}>
       <StyledIssueKey target="_blank" href={issueUrl} isResolved={isResolved}>

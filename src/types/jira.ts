@@ -51,26 +51,36 @@ export interface JiraIssueFields {
   status: JiraIssueStatus;
   priority: JiraIssuePriority;
   issuetype: JiraIssueType;
+  assignee: JiraAssignee;
+  resolution: JiraResolution;
+  fixVersions: JiraVersion[];
+}
+
+export interface JiraSprint {
+  id: number;
+  name: string;
+  state: string;
+  startDate: string;
+  endDate: string;
 }
 
 export interface JiraIssueFieldsFull extends JiraIssueFields {
   issuelinks: JiraIssueLink[],
-  subtasks: JiraIssue[]
+  subtasks: JiraIssue[],
+  parent: JiraIssue
 }
 
 export interface JiraIssue {
   id: string;
   key: string;
   self: string;
-  fields: JiraIssueFields;
+  fields: JiraIssueFieldsFull;
 }
 
 export interface JiraIssueFull extends JiraIssue {
   expand: string;
   fields: JiraIssueFieldsFull;
   // customfield_10039?: number;
-  // assignee?: Assignee;
-  // resolution?: Resolution;
   // parent?: Subtask;
 }
 
@@ -90,7 +100,7 @@ export interface JiraIssueSearchResult {
   issues: JiraIssueFull[];
 }
 
-export interface Resolution {
+export interface JiraResolution {
   self: string;
   id: string;
   description: string;
@@ -112,4 +122,72 @@ export interface JiraAvatarUrls {
   '24x24': string;
   '16x16': string;
   '32x32': string;
+}
+
+export interface JiraProject {
+  expand: string;
+  self: string;
+  id: string;
+  key: string;
+  description: string;
+  lead: JiraProjectLead;
+  components: any[];
+  issueTypes: JiraIssueType[];
+  assigneeType: string;
+  versions: JiraProjectVersion[];
+  name: string;
+  roles: JiraRoles;
+  avatarUrls: JiraAvatarUrls;
+  projectTypeKey: string;
+  simplified: boolean;
+  style: string;
+  isPrivate: boolean;
+  properties: JiraProjectProperties;
+}
+
+export interface JiraProjectProperties {
+}
+
+export interface JiraRoles {
+  [roleName: string]: string;
+}
+
+export interface JiraProjectVersion extends JiraVersion {
+  userReleaseDate?: string;
+  projectId: number;
+  overdue?: boolean;
+}
+
+export interface JiraProjectLead {
+  self: string;
+  accountId: string;
+  avatarUrls: JiraAvatarUrls;
+  displayName: string;
+  active: boolean;
+}
+
+export interface JiraIssueField {
+  id: string;
+  key: string;
+  name: string;
+  custom: boolean;
+  orderable: boolean;
+  navigable: boolean;
+  searchable: boolean;
+  clauseNames: string[];
+  schema: JiraIssueFieldSchema;
+}
+
+export interface JiraIssueFieldSchema {
+  type: string;
+  system: string;
+}
+
+export interface JiraVersion {
+  self: string;
+  id: string;
+  name: string;
+  archived: boolean;
+  released: boolean;
+  releaseDate: string;
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import LicenseContainer from "./components/LicenseContainer";
+import LicenseContainer from "./components/common/LicenseContainer";
 import { IssueTreeModule } from "./components/IssueTreeModule/IssueTreeModule";
 import { APIContext } from "./context/api";
 

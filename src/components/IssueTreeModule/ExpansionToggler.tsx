@@ -42,13 +42,13 @@ export const ExpansionToggler = ({
   } else if (isExpanded) {
     return (
       <Button spacing="none" appearance="subtle-link" onClick={onCollapse}>
-        <ChevronDownIcon label="" size={16} />
+        <ChevronDownIcon label="" size="small" />
       </Button>
     );
   } else {
     return (
       <Button spacing="none" appearance="subtle-link" onClick={onExpand}>
-        <ChevronRightIcon label="" size={16} />
+        <ChevronRightIcon label="" size="small" />
       </Button>
     );
   }

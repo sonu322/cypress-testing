@@ -8,10 +8,10 @@ const IconContainer = styled.span`
   height: 16px;
 `;
 
-export const Icon = ({ width, height, src }) => {
+export const Icon = ({ width = 16, height = 16, src }) => {
   return (
     <IconContainer>
-      <img height={height ? height : 16} width={width ? width : 16} src={src} />
+      <img height={height} width={width} src={src} />
     </IconContainer>
   );
 };
