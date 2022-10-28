@@ -9,7 +9,9 @@ function toTitleCase(str) {
   });
 }
 const Container = styled.div`
-  min-width: 100%;
+  width: 70%;
+  background: pink;
+  overflow: auto;
 `;
 const BorderTr = styled.tr`
   border-bottom: 1px solid ${colors.N40};
