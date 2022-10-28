@@ -9,13 +9,15 @@ import { IssueField } from "../../types/api";
 import { Main } from "./Main";
 const FullWidthContainer = styled.div`
   width: 100%;
-  min-height: 100%;
+  height: 100%;
+  background: pink;
   display: flex;
   flex-direction: column;
 `;
 const GrowContainer = styled.div`
   flex-grow: 1;
   display: flex;
+  background: yellow;
 `;
 const fixedFieldNames = [
   "summary",

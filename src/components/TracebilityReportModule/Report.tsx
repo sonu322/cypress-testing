@@ -9,9 +9,10 @@ function toTitleCase(str) {
   });
 }
 const Container = styled.div`
-  width: 70%;
-  background: pink;
-  overflow: auto;
+  width: 100%;
+  height: 100%;
+
+  overflow: scroll;
 `;
 const BorderTr = styled.tr`
   border-bottom: 1px solid ${colors.N40};
