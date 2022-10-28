@@ -3,9 +3,10 @@ import Button from "@atlaskit/button";
 import Spinner from "@atlaskit/spinner";
 import { APIContext } from "../../context/api";
 import { Issue } from "../../types/api";
-import { getFieldIds } from "../../util";
+import { getFieldIds, csv, download } from "../../util";
 import styled from "styled-components";
 import { Report } from "./Report";
+
 const Container = styled.div`
   padding: 4px;
   width: 100%;
@@ -25,8 +26,9 @@ export const Main = ({
   issueFields,
   selectedIssueFieldIds,
   selectedTableFieldIds,
+  filteredIssues,
+  setFilteredIssues,
 }) => {
-  const [filteredIssues, setFilteredIssues] = useState<Issue[] | null>(null);
   const [startIndex, setStartIndex] = useState(0);
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const api = useContext(APIContext);

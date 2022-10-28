@@ -2,22 +2,25 @@ import React, { useContext, useEffect, useState } from "react";
 import Page from "@atlaskit/page";
 import styled from "styled-components";
 import { APIContext } from "../../context/api";
-
+import { getFieldIds, reportCsv, download } from "../../util";
 import PageHeader from "@atlaskit/page-header";
 import { Toolbar } from "./Toolbar";
 import { IssueField } from "../../types/api";
 import { Main } from "./Main";
+function toTitleCase(str) {
+  return str.replace(/\w\S*/g, function (txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+}
 const FullWidthContainer = styled.div`
   width: 100%;
   height: 100%;
-  background: pink;
   display: flex;
   flex-direction: column;
 `;
 const GrowContainer = styled.div`
   flex-grow: 1;
   display: flex;
-  background: yellow;
 `;
 const fixedFieldNames = [
   "summary",
@@ -29,6 +32,7 @@ const fixedFieldNames = [
 ];
 
 export const TracebilityReportModule = () => {
+  const [filteredIssues, setFilteredIssues] = useState<Issue[] | null>(null);
   const [selectedJQLString, setSelectedJQLString] = useState<string | null>(
     null
   );
@@ -45,7 +49,60 @@ export const TracebilityReportModule = () => {
   );
   const [selectedTableFieldIds, setSelectedTableFieldIds] = useState(new Map());
   const [tableFields, setTableFields] = useState(new Map());
-
+  const exportReport = () => {
+    const upsurt = (holder, link, links) => {
+      const issue = link.inwardIssue ?? link.outwardIssue;
+      if (
+        selectedTableFieldIds
+          .get("issueTypes")
+          .includes(issue.fields.issuetype.id)
+      ) {
+        let name = link.inwardIssue ? link.type.inward : link.type.outward;
+        name = toTitleCase(name);
+        if (!links.includes(name)) {
+          links.push(name);
+        }
+        if (!holder[name]) holder[name] = [];
+        holder[name].push(issue);
+      }
+    };
+    console.log("table field ids!!");
+    console.log(selectedTableFieldIds);
+    const links = [];
+    const classifieds = [];
+    filteredIssues.forEach((issue) => {
+      const fields = issue.fields;
+      const classified = {
+        issue,
+        subtasks: fields.subtasks.filter((issue) =>
+          selectedTableFieldIds
+            .get("issueTypes")
+            .includes(issue.fields.issuetype.id)
+        ),
+      };
+      if (
+        fields.parent &&
+        selectedTableFieldIds
+          .get("issueTypes")
+          .includes(fields.parent.fields.issuetype.id)
+      ) {
+        classified.parent = fields.parent;
+      }
+      if (fields.issuelinks) {
+        fields.issuelinks.forEach((link) => {
+          console.log("checking links!!!!!!!");
+          console.log(selectedTableFieldIds.get("linkTypes"));
+          console.log(link);
+          if (selectedTableFieldIds.get("linkTypes").includes(link.type.id)) {
+            upsurt(classified, link, links);
+          }
+        });
+      }
+      classifieds.push(classified);
+    });
+    links.sort();
+    download("csv", reportCsv(classifieds, links));
+  };
   useEffect(() => {
     const fetchFieldsData = async () => {
       try {
@@ -158,6 +215,7 @@ export const TracebilityReportModule = () => {
             selectedTableFieldIds={selectedTableFieldIds}
             updateSelectedTableFieldIds={setSelectedTableFieldIds}
             tableFields={tableFields}
+            exportReport={exportReport}
           />
         }
       >
@@ -171,6 +229,8 @@ export const TracebilityReportModule = () => {
           issueFields={issueFields}
           selectedIssueFieldIds={selectedIssueFieldIds}
           selectedTableFieldIds={selectedTableFieldIds}
+          filteredIssues={filteredIssues}
+          setFilteredIssues={setFilteredIssues}
         />
       </GrowContainer>
     </FullWidthContainer>
