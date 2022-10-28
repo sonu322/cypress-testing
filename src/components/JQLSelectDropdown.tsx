@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from "react";
-import Button, { ButtonGroup } from "@atlaskit/button";
 import { DropdownSingleSelect } from "./DropdownSingleSelect";
 import { APIContext } from "../context/api";
 import { Filter } from "../types/api";
@@ -18,7 +17,6 @@ export const JQLSelectDropdown = ({
         setFilters(response);
         return response;
       } catch (error) {
-        console.log(error);
         handleNewError(error);
       }
     };
@@ -28,10 +26,7 @@ export const JQLSelectDropdown = ({
   const selectedOption = filters.find(
     (filter) => filter.id == selectedFilterId
   );
-  const fetchFilteredIssues = () => {
-    // const jql = "filter=" + selectedOption?.id;
-    //TODO: fetch filtered ids
-  };
+
   return (
     <DropdownSingleSelect
       dropdownName={selectedOption?.name ?? "Select filter"}
