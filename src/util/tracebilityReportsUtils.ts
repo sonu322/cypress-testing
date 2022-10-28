@@ -3,7 +3,12 @@ import { download, toTitleCase } from "./index";
 
 
 
-export const upsurt = (issuesHolder, currentLink, links, selectedTableFieldIds) => {
+export const upsurt = (
+  issuesHolder,
+  currentLink,
+  links,
+  selectedTableFieldIds
+) => {
   const issue = currentLink.inwardIssue ?? currentLink.outwardIssue;
   if (
     selectedTableFieldIds.get("issueTypes").includes(issue.fields.issuetype.id)
@@ -11,7 +16,6 @@ export const upsurt = (issuesHolder, currentLink, links, selectedTableFieldIds) 
     let name = currentLink.inwardIssue
       ? currentLink.type.inward
       : currentLink.type.outward;
-    name = toTitleCase(name);
     if (!links.includes(name)) {
       links.push(name);
     }
@@ -55,7 +59,9 @@ export const processIssues = (selectedTableFieldIds, filteredIssues) => {
     }
     classifieds.push(classified);
   });
+
   links.sort();
+  links.unshift("subtasks");
   return {
     classifieds,
     links,
@@ -67,7 +73,7 @@ export const exportReport = (selectedTableFieldIds, filteredIssues) => {
     selectedTableFieldIds,
     filteredIssues
   );
-  links.unshift("subtasks");
+
   console.log("from report csv");
   console.log(classifieds);
   console.log(links);
