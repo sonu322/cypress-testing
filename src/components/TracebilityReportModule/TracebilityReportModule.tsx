@@ -134,6 +134,8 @@ export const TracebilityReportModule = (): JSX.Element => {
     fetchIssueTypes();
     fetchLinkTypes();
   }, []);
+  const isExportDisabled =
+    filteredIssues == null || filteredIssues.length === 0;
   const issueCardOptionsMap = new Map(issueFields);
   for (const fieldId of issueCardOptionsMap.keys()) {
     if (fixedFieldNames.includes(fieldId)) {
@@ -157,6 +159,7 @@ export const TracebilityReportModule = (): JSX.Element => {
             exportReport={() =>
               exportReport(selectedTableFieldIds, filteredIssues)
             }
+            isExportDisabled={isExportDisabled}
             handleNewError={handleNewError}
           />
         }

@@ -32,6 +32,7 @@ export const Toolbar = ({
   tableFields,
   exportReport,
   handleNewError,
+  isExportDisabled,
 }) => {
   const issueCardOptions = Array.from(issueCardOptionsMap.values());
   return (
@@ -64,10 +65,11 @@ export const Toolbar = ({
             updateSelectedOptions={setSelectedIssueFieldIds}
           />
           <ExportContent
-            description={"Export issue tree to csv"}
+            description={"Export report to csv"}
             exportContent={() => {
               exportReport();
             }}
+            isDisabled={isExportDisabled}
           />
           <HelpLink description={"Get help"} href={helpLink} />
         </ButtonGroup>
