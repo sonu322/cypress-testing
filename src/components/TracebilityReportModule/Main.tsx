@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import Button from "@atlaskit/button";
+import { LoadingButton } from "@atlaskit/button";
 import Spinner from "@atlaskit/spinner";
 import { APIContext } from "../../context/api";
 import { getFieldIds } from "../../util";
@@ -27,6 +27,8 @@ export const Main = ({
   selectedTableFieldIds,
   filteredIssues,
   setFilteredIssues,
+  areIssuesLoading,
+  setAreIssuesLoading,
 }) => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const api = useContext(APIContext);
@@ -34,6 +36,7 @@ export const Main = ({
     if (jqlString) {
       const fieldIds = getFieldIds(issueFields);
       const fetchFilteredIssues = async () => {
+        setAreIssuesLoading(true);
         try {
           const searchResult = await api.searchIssues(
             jqlString,
@@ -43,17 +46,20 @@ export const Main = ({
           );
           const issues = searchResult.issues;
           const totalNumberOfIssues = searchResult.totalNumberOfIssues;
-          console.log("from table!!!!", issues);
-          console.log(issues);
           setFilteredIssues(issues);
+          if (issues != null) {
+            setAreIssuesLoading(false);
+          }
           setTotalNumberOfIssues(totalNumberOfIssues);
         } catch (error) {
+          setAreIssuesLoading(false);
           handleNewError(error);
         }
       };
       fetchFilteredIssues();
     }
   }, [jqlString]);
+
   if (Boolean(jqlString) && filteredIssues != null) {
     if (filteredIssues.length === 0) {
       return (
@@ -73,12 +79,13 @@ export const Main = ({
           />
         </GrowContainer>
         <div>
-          <Button
-            // isLoading={gettingMore}
+          <LoadingButton
+            isLoading={areIssuesLoading}
             isDisabled={filteredIssues.length >= totalNumberOfIssues}
             onClick={() => {
               const fieldIds = getFieldIds(issueFields);
               const fetchFilteredIssues = async () => {
+                setAreIssuesLoading(true);
                 try {
                   const searchResult = await api.searchIssues(
                     jqlString,
@@ -87,11 +94,12 @@ export const Main = ({
                     fieldIds
                   );
                   const issues = searchResult.issues;
-
-                  console.log("from table!!!!", issues);
-                  console.log(issues);
                   setFilteredIssues(filteredIssues.concat(issues));
+                  if (issues != null) {
+                    setAreIssuesLoading(false);
+                  }
                 } catch (error) {
+                  setAreIssuesLoading(false);
                   handleNewError(error);
                 }
               };
@@ -99,11 +107,11 @@ export const Main = ({
             }}
           >
             More
-          </Button>
+          </LoadingButton>
         </div>
       </Container>
     );
-  } else if (Boolean(jqlString) && filteredIssues == null) {
+  } else if (Boolean(jqlString) && filteredIssues == null && areIssuesLoading) {
     return (
       <Container>
         <Spinner size="medium" />
