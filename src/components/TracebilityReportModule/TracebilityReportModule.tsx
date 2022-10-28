@@ -90,7 +90,6 @@ export const TracebilityReportModule = (): JSX.Element => {
     const fetchIssueTypes = async () => {
       try {
         const issueTypes = await api.getIssueTypes();
-        console.log(issueTypes);
 
         setTableFields((prevState) => {
           const newMap = new Map(prevState);
@@ -112,7 +111,6 @@ export const TracebilityReportModule = (): JSX.Element => {
     const fetchLinkTypes = async () => {
       try {
         const issueLinkTypes = await api.getIssueLinkTypes();
-        console.log(issueLinkTypes);
         setTableFields((prevState) => {
           const newMap = new Map(prevState);
           newMap.set("linkTypes", {
@@ -137,8 +135,6 @@ export const TracebilityReportModule = (): JSX.Element => {
     fetchIssueTypes();
     fetchLinkTypes();
   }, []);
-  console.log("from main");
-  console.log(tableFields);
   const issueCardOptionsMap = new Map(issueFields);
   for (const fieldId of issueCardOptionsMap.keys()) {
     if (fixedFieldNames.includes(fieldId)) {
