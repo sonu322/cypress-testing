@@ -2,8 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import Button from "@atlaskit/button";
 import Spinner from "@atlaskit/spinner";
 import { APIContext } from "../../context/api";
-import { Issue } from "../../types/api";
-import { getFieldIds, csv, download } from "../../util";
+import { getFieldIds } from "../../util";
 import styled from "styled-components";
 import { Report } from "./Report";
 
