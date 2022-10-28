@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { IssueCard } from "../IssueCard";
 import { colors } from "@atlaskit/theme";
 import { toTitleCase } from "../../util";
+import { processIssues } from "../../util/tracebilityReportsUtils";
 const Container = styled.div`
   width: 100%;
   height: 100%;
@@ -19,55 +20,7 @@ export const Report = ({
   issueFieldIds,
   issueCardOptionsMap,
 }) => {
-  const upsurt = (holder, link, links) => {
-    const issue = link.inwardIssue ?? link.outwardIssue;
-    if (tableFieldIds.get("issueTypes").includes(issue.fields.issuetype.id)) {
-      let name = link.inwardIssue ? link.type.inward : link.type.outward;
-      name = toTitleCase(name);
-      if (!links.includes(name)) {
-        links.push(name);
-      }
-      if (!holder[name]) holder[name] = [];
-      holder[name].push(issue);
-    }
-  };
-  // const issue = issues[0];
-  console.log("table field ids!!");
-  console.log(tableFieldIds);
-  const links = [];
-  const classifieds = [];
-  issues.forEach((issue) => {
-    const fields = issue.fields;
-    const classified = {
-      issue,
-      subtasks: fields.subtasks.filter((issue) =>
-        tableFieldIds.get("issueTypes").includes(issue.fields.issuetype.id)
-      ),
-    };
-    if (
-      fields.parent &&
-      tableFieldIds
-        .get("issueTypes")
-        .includes(fields.parent.fields.issuetype.id)
-    ) {
-      classified.parent = fields.parent;
-    }
-    if (fields.issuelinks) {
-      fields.issuelinks.forEach((link) => {
-        console.log("checking links!!!!!!!");
-        console.log(tableFieldIds.get("linkTypes"));
-        console.log(link);
-        if (tableFieldIds.get("linkTypes").includes(link.type.id)) {
-          upsurt(classified, link, links);
-        }
-      });
-    }
-    classifieds.push(classified);
-  });
-  links.sort();
-  console.log("LInks!!!!");
-  console.log(links);
-  console.log(classifieds);
+  const { classifieds, links } = processIssues(tableFieldIds, issues);
   return (
     // <IssueCard
     //   issueData={issue}
