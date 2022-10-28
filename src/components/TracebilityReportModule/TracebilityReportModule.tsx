@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { APIContext } from "../../context/api";
-import { toTitleCase, reportCsv, download } from "../../util";
 import PageHeader from "@atlaskit/page-header";
 import { Toolbar } from "./Toolbar";
 import { Issue, IssueField } from "../../types/api";
