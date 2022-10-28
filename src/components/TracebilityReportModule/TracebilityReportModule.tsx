@@ -7,6 +7,7 @@ import PageHeader from "@atlaskit/page-header";
 import { Toolbar } from "./Toolbar";
 import { IssueField } from "../../types/api";
 import { Main } from "./Main";
+import { ErrorsList } from "../ErrorsList";
 function toTitleCase(str) {
   return str.replace(/\w\S*/g, function (txt) {
     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -37,10 +38,7 @@ export const TracebilityReportModule = () => {
     null
   );
   const api = useContext(APIContext);
-  const handleNewError = (err: unknown) => {
-    // TODO: add error handling
-    console.log(err);
-  };
+
   const [issueFields, setIssueFields] = useState<Map<string, IssueField>>(
     new Map()
   );
@@ -48,7 +46,13 @@ export const TracebilityReportModule = () => {
     []
   );
   const [selectedTableFieldIds, setSelectedTableFieldIds] = useState(new Map());
+  const [errors, setErrors] = useState<Error[]>([]);
   const [tableFields, setTableFields] = useState(new Map());
+  const handleNewError = (err: Error): void => {
+    // TODO: add error handling
+    console.log(err);
+    setErrors((prevErrors) => [...prevErrors, err]);
+  };
   const exportReport = () => {
     const upsurt = (holder, link, links) => {
       const issue = link.inwardIssue ?? link.outwardIssue;
@@ -216,11 +220,13 @@ export const TracebilityReportModule = () => {
             updateSelectedTableFieldIds={setSelectedTableFieldIds}
             tableFields={tableFields}
             exportReport={exportReport}
+            handleNewError={handleNewError}
           />
         }
       >
         Links Explorer Traceability and Reports
       </PageHeader>
+      {errors && <ErrorsList errors={errors} />}
       <GrowContainer>
         <Main
           issueCardOptionsMap={issueCardOptionsMap}

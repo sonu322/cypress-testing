@@ -31,6 +31,7 @@ export const Toolbar = ({
   updateSelectedTableFieldIds,
   tableFields,
   exportReport,
+  handleNewError,
 }) => {
   console.log("from toolbar");
   const issueCardOptions = Array.from(issueCardOptionsMap.values());
@@ -42,6 +43,7 @@ export const Toolbar = ({
         <JQLSelectDropdown
           selectedFilterId={selectedJQLString}
           setSelectedFilterId={setSelectedJQLString}
+          handleNewError={handleNewError}
         />
         <JQLEditor
           selectedFilterId={selectedJQLString}

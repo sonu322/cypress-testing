@@ -4,7 +4,11 @@ import { DropdownSingleSelect } from "./DropdownSingleSelect";
 import { APIContext } from "../context/api";
 import { Filter } from "../types/api";
 
-export const JQLSelectDropdown = ({selectedFilterId, setSelectedFilterId}) => {
+export const JQLSelectDropdown = ({
+  selectedFilterId,
+  setSelectedFilterId,
+  handleNewError,
+}) => {
   const api = useContext(APIContext);
   const [filters, setFilters] = useState<Filter[]>([]);
   useEffect(() => {
@@ -15,6 +19,7 @@ export const JQLSelectDropdown = ({selectedFilterId, setSelectedFilterId}) => {
         return response;
       } catch (error) {
         console.log(error);
+        handleNewError(error);
       }
     };
     fetchFilters();

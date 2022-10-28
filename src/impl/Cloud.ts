@@ -304,18 +304,22 @@ export default class CloudImpl implements LXPAPI {
   // }
   async getFilters(): Promise<Filter[]> {
     try {
-      let response = await this._AP.request("/rest/api/3/filter/search");
+      let response = await this._AP.request("/rest/api/3/filter/searchssss");
       let filtersResponseData: JiraFiltersResponse =
         response.body && JSON.parse(response.body);
 
-      filtersResponseData || throwError("Filters data could not be fetched.");
+      filtersResponseData; 
 
       return filtersResponseData.values.map((item) =>
         this._convertFilter(item)
       );
     } catch (error) {
       console.error(error);
-      throw new Error("Error in fetching the issue filters - " + error.message);
+      let message = "Error in fetching the issue filters ";
+      if (error.message) {
+        message += " - " + error.message;
+      }
+      throw new Error(message);
     }
   }
 
