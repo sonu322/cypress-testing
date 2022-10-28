@@ -304,7 +304,7 @@ export default class CloudImpl implements LXPAPI {
   // }
   async getFilters(): Promise<Filter[]> {
     try {
-      let response = await this._AP.request("/rest/api/3/filter/searchssss");
+      let response = await this._AP.request("/rest/api/3/filter/search");
       let filtersResponseData: JiraFiltersResponse =
         response.body && JSON.parse(response.body);
 
