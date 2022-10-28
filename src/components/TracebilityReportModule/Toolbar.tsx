@@ -33,10 +33,7 @@ export const Toolbar = ({
   exportReport,
   handleNewError,
 }) => {
-  console.log("from toolbar");
   const issueCardOptions = Array.from(issueCardOptionsMap.values());
-  console.log(issueCardOptions);
-  console.log(selectedIssueFieldIds);
   return (
     <MainBar>
       <FlexContainer>
@@ -69,9 +66,7 @@ export const Toolbar = ({
           <ExportContent
             description={"Export issue tree to csv"}
             exportContent={() => {
-              // TODO: export report to csv
               exportReport();
-              console.log("exported");
             }}
           />
           <HelpLink description={"Get help"} href={helpLink} />
