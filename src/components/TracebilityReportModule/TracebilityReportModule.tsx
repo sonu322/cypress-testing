@@ -1,18 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
-import Page from "@atlaskit/page";
 import styled from "styled-components";
 import { APIContext } from "../../context/api";
-import { getFieldIds, reportCsv, download } from "../../util";
+import { toTitleCase, reportCsv, download } from "../../util";
 import PageHeader from "@atlaskit/page-header";
 import { Toolbar } from "./Toolbar";
 import { IssueField } from "../../types/api";
 import { Main } from "./Main";
 import { ErrorsList } from "../ErrorsList";
-function toTitleCase(str) {
-  return str.replace(/\w\S*/g, function (txt) {
-    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-  });
-}
+
 const FullWidthContainer = styled.div`
   width: 100%;
   height: 100%;
@@ -32,7 +27,7 @@ const fixedFieldNames = [
   "resolution",
 ];
 
-export const TracebilityReportModule = () => {
+export const TracebilityReportModule = (): JSX.Element => {
   const [filteredIssues, setFilteredIssues] = useState<Issue[] | null>(null);
   const [selectedJQLString, setSelectedJQLString] = useState<string | null>(
     null
