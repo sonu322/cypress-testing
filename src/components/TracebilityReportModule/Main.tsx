@@ -17,7 +17,7 @@ const GrowContainer = styled.div`
   display: flex;
 `;
 const DEFAULT_ROWS_PER_PAGE = 20;
-
+const START_INDEX = 0;
 export const Main = ({
   issueCardOptionsMap,
   jqlString,
@@ -28,7 +28,6 @@ export const Main = ({
   filteredIssues,
   setFilteredIssues,
 }) => {
-  const [startIndex, setStartIndex] = useState(0);
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const api = useContext(APIContext);
   useEffect(() => {
@@ -38,7 +37,7 @@ export const Main = ({
         try {
           const searchResult = await api.searchIssues(
             jqlString,
-            startIndex,
+            START_INDEX,
             DEFAULT_ROWS_PER_PAGE,
             fieldIds
           );
