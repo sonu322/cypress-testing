@@ -63,8 +63,6 @@ export const Main = ({
             fieldIds
           );
           const allRelatedIssues = searchAllRelatedIssuesResult.issues;
-          console.log("ALL RELATED ISSUES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-          console.log(searchAllRelatedIssuesResult);
           setAllRelatedIssues(allRelatedIssues);
           if (
             issues != null &&
@@ -112,8 +110,6 @@ export const Main = ({
           fieldIds
         );
         const allRelatedIssues = searchAllRelatedIssuesResult.issues;
-        console.log("ALL RELATED ISSUES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        console.log(searchAllRelatedIssuesResult);
         setFilteredIssues((prevIssues) => prevIssues.concat(issues));
         setAllRelatedIssues((prevIssues) =>
           prevIssues.concat(allRelatedIssues)

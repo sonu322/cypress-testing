@@ -33,14 +33,12 @@ export const getAllRelatedIssueIds = (issues: Issue[]): string[] => {
 export const getJQLStringFromIds = (ids: string[]): string => {
   const jqlComponents = ids.map((id) => `id=${id}`);
   const jqlString = jqlComponents.join(" OR ");
-  console.log(jqlString);
   return jqlString;
 };
 export const getAllRelatedIssuesJQLString = (issues: Issue[]): string => {
   const ids = getAllRelatedIssueIds(issues);
   return getJQLStringFromIds(ids);
 };
-
 
 export const upsurt = (
   issuesHolder,
@@ -140,9 +138,6 @@ export const exportReport = (selectedTableFieldIds, filteredIssues) => {
     filteredIssues
   );
 
-  console.log("from report csv");
-  console.log(classifieds);
-  console.log(links);
   let content = "";
   const headerLinks = ["Issue", "Parent"];
   links.forEach((link) => {
@@ -152,7 +147,6 @@ export const exportReport = (selectedTableFieldIds, filteredIssues) => {
   header = header += "\n";
   // if (header) {
   content += header;
-  console.log(header);
   // } else {
   //   content += `"","","","","","",""\n`;
   // }
@@ -163,8 +157,6 @@ export const exportReport = (selectedTableFieldIds, filteredIssues) => {
       let item = [];
       if (classified[link] && classified[link].length > 0) {
         classified[link].forEach((issue) => {
-          console.log("issue");
-          console.log(issue);
           if (issue && issue.key) {
             item.push(issue.key);
           } else {
@@ -187,7 +179,6 @@ export const exportReport = (selectedTableFieldIds, filteredIssues) => {
     let rowContent = rowItems.toString();
     rowContent = rowContent += "\n";
     content += rowContent;
-    console.log(content);
   });
   download("csv", content);
 };
