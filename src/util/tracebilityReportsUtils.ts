@@ -58,7 +58,7 @@ export const upsurt = (
     if (!links.includes(name)) {
       links.push(name);
     }
-    if (allRelatedIssues) {
+    if (allRelatedIssues !== null) {
       const fullIssue = getIssue(issue.id, allRelatedIssues);
       if (fullIssue != null) {
         if (!issuesHolder[name]) issuesHolder[name] = [];
@@ -93,7 +93,7 @@ export const processIssues = (
           .includes(fields.parent.fields.issuetype.id)
       )
     ) {
-      if (allRelatedIssues) {
+      if (allRelatedIssues !== null) {
         const parentIssue = getIssue(fields.parent.id, allRelatedIssues);
         if (parentIssue != null) {
           classified.parent = parentIssue;
@@ -109,7 +109,7 @@ export const processIssues = (
           .get("issueTypes")
           .includes(issue.fields.issuetype.id)
       );
-      if (allRelatedIssues) {
+      if (allRelatedIssues !== null) {
         const fullSubtasks: Issue[] = [];
         subtasks.forEach((subtask: Issue) => {
           const fullSubtask = getIssue(subtask.id, allRelatedIssues);
@@ -150,7 +150,8 @@ export const processIssues = (
 export const exportReport = (selectedTableFieldIds, filteredIssues): void => {
   const { classifieds, links } = processIssues(
     selectedTableFieldIds,
-    filteredIssues
+    filteredIssues,
+    null
   );
 
   let content = "";
@@ -160,11 +161,7 @@ export const exportReport = (selectedTableFieldIds, filteredIssues): void => {
   });
   let header = headerLinks.toString();
   header = header += "\n";
-  // if (header) {
   content += header;
-  // } else {
-  //   content += `"","","","","","",""\n`;
-  // }
 
   classifieds.forEach((classified) => {
     const rowItems = [];
