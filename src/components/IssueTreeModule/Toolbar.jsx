@@ -1,5 +1,5 @@
 import React from "react";
-import { Dropdown } from "./Dropdown";
+import { Dropdown } from "../Dropdown";
 import { ButtonGroup } from "@atlaskit/button";
 import styled from "styled-components";
 import { IssueOptionsDropdown } from "./IssueOptionsDropdown";

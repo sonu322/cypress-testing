@@ -51,10 +51,15 @@ export const IssueCard = ({
     field.value = issueData.fields[field.key];
   }
   cardOptionsDataMap = copy;
-
-  const storyPointsInfo =
-    cardOptionsDataMap.get("storypoints") ??
-    cardOptionsDataMap.get("storypointestimate");
+  let storyPointsInfo;
+  if (
+    cardOptionsDataMap.get("storypoints") &&
+    cardOptionsDataMap.get("storypoints").value
+  ) {
+    storyPointsInfo = cardOptionsDataMap.get("storypoints");
+  } else {
+    storyPointsInfo = cardOptionsDataMap.get("storypointestimate");
+  }
   const priorityInfo = cardOptionsDataMap.get("priority");
   const issueTypeInfo = cardOptionsDataMap.get("issuetype");
   const assigneeInfo = cardOptionsDataMap.get("assignee");

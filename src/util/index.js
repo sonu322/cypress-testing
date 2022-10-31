@@ -1,5 +1,9 @@
 import URLSearchParams from "@ungap/url-search-params";
-
+export function toTitleCase(str) {
+  return str.replace(/\w\S*/g, function (txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+}
 export const UUID = () => {
   function s4() {
     return Math.floor((1 + Math.random()) * 0x10000)
@@ -24,6 +28,66 @@ export const csv = function (rows, header) {
 
   return content;
 };
+export const reportCsv = function (classifieds, links) {
+  links.unshift("subtasks");
+  console.log("from report csv");
+  console.log(classifieds);
+  console.log(links);
+  let content = "";
+  let headerLinks = ["Issue", "Parent"];
+  links.forEach((link) => {
+    headerLinks.push(`"${toTitleCase(link)}"`);
+  });
+  let header = headerLinks.toString();
+  header = header += "\n";
+  // if (header) {
+  content += header;
+  console.log(header);
+  // } else {
+  //   content += `"","","","","","",""\n`;
+  // }
+
+  classifieds.forEach((classified) => {
+    const rowItems = [];
+    links.forEach((link) => {
+      let item = [];
+      if (classified[link] && classified[link].length > 0) {
+        classified[link].forEach((issue) => {
+          console.log("issue");
+          console.log(issue);
+          if (issue && issue.key) {
+            item.push(issue.key);
+          } else {
+            item.push("err");
+          }
+        });
+        item = item.toString();
+      } else {
+        item = "--";
+      }
+      rowItems.push(`"${item}"`);
+    });
+    // if(classified.subtasks) {
+    //   subtasks.forEach(subtask => {
+    //     rowItems.push(`"${subtask.key}"`)
+    //   });
+    // } else {
+    //   rowItems.push("")
+    // }
+    if (classified.parent) {
+      rowItems.unshift(`"${classified.parent.key}"`);
+    } else {
+      rowItems.unshift("--");
+    }
+    rowItems.unshift(`"${classified.issue.key}"`);
+
+    let rowContent = rowItems.toString();
+    rowContent = rowContent += "\n";
+    content += rowContent;
+  });
+  return content;
+};
+
 
 export const download = (type, content) => {
   let source = null;
@@ -69,4 +133,11 @@ export const getQueryParam = (paramName) => {
   const searcher = new URLSearchParams(location.search);
   const paramValue = searcher.get(paramName);
   return paramValue;
+};
+export const getFieldIds = (issueFields) => {
+  const fieldIds = [];
+  for (let field of issueFields.values()) {
+    fieldIds.push(field.id);
+  }
+  return fieldIds;
 };

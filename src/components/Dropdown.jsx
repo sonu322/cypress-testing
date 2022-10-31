@@ -18,6 +18,7 @@ export const Dropdown = ({
     }
     updateSelectedOptions(updatedList);
   };
+
   return (
     <>
       <DropdownMenu

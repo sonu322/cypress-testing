@@ -11,6 +11,8 @@ export interface IssuePriority extends IssueOption {
   statusColor: string;
 }
 
+
+
 export interface IssueField {
   id: ID;
   key: string;
@@ -30,6 +32,8 @@ export interface Issue {
   // assignee: IssueUser;
   // sprints: IssueSprint[];
   links: IssueLink[];
+  // TODO: fix type
+  fields: any;
 }
 
 export interface IssueSprint {
@@ -69,11 +73,14 @@ export interface IssueType extends IssueOption {
 export interface IssueLinkType extends IssueOption { }
 
 export interface Filter {
-
+  expand: string;
+  self: string;
+  id: string;
+  name: string;
 }
 
 export interface Project {
-
+  style: string;
 }
 
 export default interface LXPAPI {

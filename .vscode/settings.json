@@ -2,5 +2,6 @@
   "flow.pathToFlow": "${workspacFolder}/node_modules/.bin/flow",
   "typescript.format.enable": false,
   "javascript.validate.enable": false,
-  "javascript.format.enable": false
+  "javascript.format.enable": false,
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

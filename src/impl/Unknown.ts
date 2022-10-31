@@ -16,31 +16,42 @@ import LXPAPI, {
     getJiraBaseURL(): string {
       throw new Error("Method not implemented.");
     }
-    getPriorities(): Promise < IssuePriority[] > {
+    getPriorities(): Promise<IssuePriority[]> {
       throw new Error("Method not implemented.");
     }
-    getIssueTypes(): Promise < IssueType[] > {
+    getIssueTypes(): Promise<IssueType[]> {
       throw new Error("Method not implemented.");
     }
-    getIssueLinkTypes(): Promise < IssueLinkType[] > {
+    getIssueLinkTypes(): Promise<IssueLinkType[]> {
       throw new Error("Method not implemented.");
     }
-    getIssueFields(): Promise < IssueField[] > {
+    getIssueFields(): Promise<IssueField[]> {
       throw new Error("Method not implemented.");
     }
-    getIssueWithLinks(issueId ? : string | undefined, fields ? : string[] | undefined): Promise < IssueWithLinkedIssues > {
+    getIssueWithLinks(
+      issueId?: string | undefined,
+      fields?: string[] | undefined
+    ): Promise<IssueWithLinkedIssues> {
       throw new Error("Method not implemented.");
     }
-    getCurrentIssueId(): Promise < string > {
+    getCurrentIssueId(): Promise<string> {
       throw new Error("Method not implemented.");
     }
-    getIssueById(issueId: string): Promise < Issue > {
+    getIssueById(issueId: string): Promise<Issue> {
       throw new Error("Method not implemented.");
     }
-    getFilters(): Promise < Filter[] > {
+    getFilters(): Promise<Filter[]> {
       throw new Error("Method not implemented.");
     }
-    getCurrentProject(projectKey?: string): Promise < Project > {
+    getCurrentProject(projectKey?: string): Promise<Project> {
+      throw new Error("Method not implemented.");
+    }
+    searchIssues(
+      jql: string,
+      start?: number,
+      max?: number,
+      fields?: string[]
+    ): Promise<{ issues: Issue[]; totalNumberOfIssues: number }> {
       throw new Error("Method not implemented.");
     }
   }
