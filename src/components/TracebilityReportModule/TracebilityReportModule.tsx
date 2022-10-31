@@ -27,6 +27,7 @@ const fixedFieldNames = [
 ];
 
 export const TracebilityReportModule = (): JSX.Element => {
+  const [allIssues, setAllIssues] = useState<Issue[] | null>(null);
   const [filteredIssues, setFilteredIssues] = useState<Issue[] | null>(null);
   const [selectedJQLString, setSelectedJQLString] = useState<string | null>(
     null
@@ -131,9 +132,9 @@ export const TracebilityReportModule = (): JSX.Element => {
         handleNewError(error);
       }
     };
-    fetchFieldsData();
-    fetchIssueTypes();
-    fetchLinkTypes();
+    void fetchFieldsData();
+    void fetchIssueTypes();
+    void fetchLinkTypes();
   }, []);
   const isExportDisabled =
     filteredIssues == null || filteredIssues.length === 0;
@@ -178,6 +179,8 @@ export const TracebilityReportModule = (): JSX.Element => {
           selectedTableFieldIds={selectedTableFieldIds}
           filteredIssues={filteredIssues}
           setFilteredIssues={setFilteredIssues}
+          allIssues={allIssues}
+          setAllIssues={setAllIssues}
           areIssuesLoading={areIssuesLoading}
           setAreIssuesLoading={setAreIssuesLoading}
         />

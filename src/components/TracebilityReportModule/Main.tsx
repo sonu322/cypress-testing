@@ -27,6 +27,8 @@ export const Main = ({
   selectedTableFieldIds,
   filteredIssues,
   setFilteredIssues,
+  allIssues,
+  setAllIssues,
   areIssuesLoading,
   setAreIssuesLoading,
 }) => {
