@@ -57,10 +57,15 @@ export const Main = ({
             relatedIssuesjqlString.length,
             fieldIds
           );
+          const allRelatedIssues = allRelatedIssuesSearchResult.issues;
           console.log("ALL RELATED ISSUES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
           console.log(allRelatedIssuesSearchResult);
-          setAllRelatedIssues(allRelatedIssuesSearchResult.issues);
-          if (issues != null) {
+          setAllRelatedIssues(allRelatedIssues);
+          if (
+            issues != null &&
+            allRelatedIssues !== undefined &&
+            allRelatedIssues !== null
+          ) {
             setAreIssuesLoading(false);
           }
           setTotalNumberOfIssues(totalNumberOfIssues);
@@ -95,7 +100,11 @@ export const Main = ({
     };
     void fetchFilteredIssues();
   };
-  if (Boolean(jqlString) && filteredIssues != null) {
+  if (
+    Boolean(jqlString) &&
+    filteredIssues != null &&
+    allRelatedIssues != null
+  ) {
     if (filteredIssues.length === 0) {
       return (
         <Container>
@@ -109,7 +118,7 @@ export const Main = ({
           <Report
             allRelatedIssues={allRelatedIssues}
             issueCardOptionsMap={issueCardOptionsMap}
-            issues={filteredIssues}
+            filteredIssues={filteredIssues}
             issueFieldIds={selectedIssueFieldIds}
             tableFieldIds={selectedTableFieldIds}
           />

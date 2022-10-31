@@ -14,12 +14,17 @@ const BorderTr = styled.tr`
 `;
 
 export const Report = ({
-  issues,
+  filteredIssues,
   tableFieldIds,
   issueFieldIds,
   issueCardOptionsMap,
+  allRelatedIssues,
 }) => {
-  const { classifieds, links } = processIssues(tableFieldIds, issues);
+  const { classifieds, links } = processIssues(
+    tableFieldIds,
+    filteredIssues,
+    allRelatedIssues
+  );
   return (
     <Container>
       <table>
