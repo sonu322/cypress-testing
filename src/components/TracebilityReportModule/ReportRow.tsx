@@ -9,7 +9,7 @@ export const ReportRow = ({
   issueCardOptionsMap,
 }): JSX.Element[] => {
   const issueCell = (
-    <td>
+    <td key="issue">
       <IssueCard
         issueData={classified.issue}
         selectedIssueFieldIds={issueFieldIds}
@@ -18,7 +18,7 @@ export const ReportRow = ({
     </td>
   );
   const parentCell = (
-    <td>
+    <td key="parent">
       {classified.parent ? (
         <IssueCard
           issueData={classified.parent}
