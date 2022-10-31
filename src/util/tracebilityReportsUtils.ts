@@ -31,11 +31,6 @@ export const processIssues = (selectedTableFieldIds, filteredIssues) => {
     const fields = issue.fields;
     const classified = {
       issue,
-      subtasks: fields.subtasks.filter((issue) =>
-        selectedTableFieldIds
-          .get("issueTypes")
-          .includes(issue.fields.issuetype.id)
-      ),
     };
     if (
       Boolean(fields.parent) &&
@@ -50,6 +45,19 @@ export const processIssues = (selectedTableFieldIds, filteredIssues) => {
       );
       classified.parent = parentIssue;
     }
+
+    if (fields.subtasks != null) {
+      let subtasks = fields.subtasks.filter((issue) =>
+        selectedTableFieldIds
+          .get("issueTypes")
+          .includes(issue.fields.issuetype.id)
+      );
+      subtasks = subtasks.map((subtask) => {
+        return filteredIssues.find((issue) => issue.id === subtask.id);
+      });
+      classified.subtasks = subtasks;
+    }
+
     if (fields.issuelinks) {
       fields.issuelinks.forEach((link) => {
         console.log("checking links!!!!!!!");
