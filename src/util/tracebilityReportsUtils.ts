@@ -1,6 +1,11 @@
 import { Issue } from "../types/api";
 import { download, toTitleCase } from "./index";
 
+
+const getIssue = (id: string, issues: Issue[]): Issue | undefined => {
+  return issues.find((issue) => issue.id === id);
+};
+
 export const upsurt = (
   issuesHolder,
   currentLink,
@@ -40,10 +45,7 @@ export const processIssues = (selectedTableFieldIds, filteredIssues) => {
           .includes(fields.parent.fields.issuetype.id)
       )
     ) {
-      const parentIssue: Issue = filteredIssues.find(
-        (issue: Issue) => issue.id === fields.parent.id
-      );
-      classified.parent = parentIssue;
+      classified.parent = getIssue(fields.parent.id, filteredIssues);
     }
 
     if (fields.subtasks != null) {
