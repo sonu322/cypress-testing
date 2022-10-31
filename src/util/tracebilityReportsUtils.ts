@@ -54,10 +54,9 @@ export const processIssues = (selectedTableFieldIds, filteredIssues) => {
           .get("issueTypes")
           .includes(issue.fields.issuetype.id)
       );
-      subtasks = subtasks.map((subtask) => {
-        return filteredIssues.find((issue) => issue.id === subtask.id);
-      });
-      classified.subtasks = subtasks;
+      classified.subtasks = subtasks.map((subtask) =>
+        getIssue(subtask.id, filteredIssues)
+      );
     }
 
     if (fields.issuelinks) {
