@@ -1,7 +1,5 @@
+import { Issue } from "../types/api";
 import { download, toTitleCase } from "./index";
-
-
-
 
 export const upsurt = (
   issuesHolder,
@@ -40,12 +38,17 @@ export const processIssues = (selectedTableFieldIds, filteredIssues) => {
       ),
     };
     if (
-      fields.parent &&
-      selectedTableFieldIds
-        .get("issueTypes")
-        .includes(fields.parent.fields.issuetype.id)
+      Boolean(fields.parent) &&
+      Boolean(
+        selectedTableFieldIds
+          .get("issueTypes")
+          .includes(fields.parent.fields.issuetype.id)
+      )
     ) {
-      classified.parent = fields.parent;
+      const parentIssue: Issue = filteredIssues.find(
+        (issue: Issue) => issue.id === fields.parent.id
+      );
+      classified.parent = parentIssue;
     }
     if (fields.issuelinks) {
       fields.issuelinks.forEach((link) => {
