@@ -33,7 +33,7 @@ export const Toolbar = ({
   exportReport,
   handleNewError,
   isExportDisabled,
-}) => {
+}): JSX.Element => {
   const issueCardOptions = Array.from(issueCardOptionsMap.values());
   return (
     <MainBar>

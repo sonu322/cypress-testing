@@ -9,6 +9,7 @@ import {
   getAllRelatedIssueIds,
   getJQLStringFromIds,
 } from "../../util/tracebilityReportsUtils";
+import { Issue } from "../../types/api";
 
 const Container = styled.div`
   padding: 4px;
@@ -35,14 +36,14 @@ export const Main = ({
   setAllRelatedIssues,
   areIssuesLoading,
   setAreIssuesLoading,
-}) => {
+}): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
   const api = useContext(APIContext);
   useEffect(() => {
     if (jqlString) {
       const fieldIds = getFieldIds(issueFields);
-      const fetchFilteredIssues = async () => {
+      const fetchFilteredIssues = async (): Promise<void> => {
         setAreIssuesLoading(true);
         try {
           const searchResult = await api.searchIssues(
@@ -77,7 +78,7 @@ export const Main = ({
           handleNewError(error);
         }
       };
-      fetchFilteredIssues();
+      void fetchFilteredIssues();
     }
   }, [jqlString]);
   const fetchMoreIssues = (): void => {
@@ -105,8 +106,8 @@ export const Main = ({
           fieldIds
         );
         const allRelatedIssues = searchAllRelatedIssuesResult.issues;
-        setFilteredIssues((prevIssues) => prevIssues.concat(issues));
-        setAllRelatedIssues((prevIssues) =>
+        setFilteredIssues((prevIssues: Issue[]) => prevIssues.concat(issues));
+        setAllRelatedIssues((prevIssues: Issue[]) =>
           prevIssues.concat(allRelatedIssues)
         );
         if (issues != null) {

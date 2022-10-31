@@ -19,7 +19,7 @@ export const Report = ({
   issueFieldIds,
   issueCardOptionsMap,
   allRelatedIssues,
-}) => {
+}): JSX.Element => {
   const { classifieds, links } = processIssues(
     tableFieldIds,
     filteredIssues,

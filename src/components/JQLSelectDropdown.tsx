@@ -7,24 +7,24 @@ export const JQLSelectDropdown = ({
   selectedFilterId,
   setSelectedFilterId,
   handleNewError,
-}) => {
+}): JSX.Element => {
   const api = useContext(APIContext);
   const [filters, setFilters] = useState<Filter[]>([]);
   useEffect(() => {
-    const fetchFilters = async () => {
+    const fetchFilters = async (): Promise<void> => {
       try {
-        let response = await api.getFilters();
+        const response = await api.getFilters();
         setFilters(response);
-        return response;
       } catch (error) {
         handleNewError(error);
       }
     };
-    fetchFilters();
+    void fetchFilters();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const selectedOption = filters.find(
-    (filter) => filter.id == selectedFilterId
+    (filter) => filter.id === selectedFilterId
   );
 
   return (
