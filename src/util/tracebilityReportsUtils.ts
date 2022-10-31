@@ -98,7 +98,6 @@ export const processIssues = (selectedTableFieldIds, filteredIssues) => {
 
   links.sort();
   links.unshift("subtasks");
-  // links = removeEmptyLinks(classifieds, links);
   return {
     classifieds,
     links,
@@ -148,13 +147,6 @@ export const exportReport = (selectedTableFieldIds, filteredIssues) => {
       }
       rowItems.push(`"${item}"`);
     });
-    // if(classified.subtasks) {
-    //   subtasks.forEach(subtask => {
-    //     rowItems.push(`"${subtask.key}"`)
-    //   });
-    // } else {
-    //   rowItems.push("")
-    // }
     if (classified.parent) {
       rowItems.unshift(`"${classified.parent.key}"`);
     } else {

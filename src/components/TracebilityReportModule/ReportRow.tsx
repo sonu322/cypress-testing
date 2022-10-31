@@ -34,7 +34,7 @@ export const ReportRow = ({
   );
 
   const linkCells = links.map((link: string) => (
-    <td key={classified.issue.key + link + classified.issue.id}>
+    <td key={classified.issue.key + link}>
       {classified[link] != null && classified[link].length > 0 ? (
         classified[link].map((issue: Issue) => (
           <IssueCard
