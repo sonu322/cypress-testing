@@ -34,6 +34,7 @@ export const Main = ({
   setAreIssuesLoading,
 }) => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
+  const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
   const api = useContext(APIContext);
   useEffect(() => {
     if (jqlString) {
@@ -80,7 +81,7 @@ export const Main = ({
   const fetchMoreIssues = (): void => {
     const fieldIds = getFieldIds(issueFields);
     const fetchFilteredIssues = async (): Promise<void> => {
-      setAreIssuesLoading(true);
+      setAreMoreIssuesLoading(true);
       try {
         const searchResult = await api.searchIssues(
           jqlString,
@@ -91,16 +92,22 @@ export const Main = ({
         const issues = searchResult.issues;
         setFilteredIssues(filteredIssues.concat(issues));
         if (issues != null) {
-          setAreIssuesLoading(false);
+          setAreMoreIssuesLoading(false);
         }
       } catch (error) {
-        setAreIssuesLoading(false);
+        setAreMoreIssuesLoading(false);
         handleNewError(error);
       }
     };
     void fetchFilteredIssues();
   };
-  if (
+  if (areIssuesLoading) {
+    return (
+      <Container>
+        <Spinner size="medium" />
+      </Container>
+    );
+  } else if (
     Boolean(jqlString) &&
     filteredIssues != null &&
     allRelatedIssues != null
@@ -125,19 +132,13 @@ export const Main = ({
         </GrowContainer>
         <div>
           <LoadingButton
-            isLoading={areIssuesLoading}
+            isLoading={areMoreIssuesLoading}
             isDisabled={filteredIssues.length >= totalNumberOfIssues}
             onClick={fetchMoreIssues}
           >
             More
           </LoadingButton>
         </div>
-      </Container>
-    );
-  } else if (Boolean(jqlString) && filteredIssues == null && areIssuesLoading) {
-    return (
-      <Container>
-        <Spinner size="medium" />
       </Container>
     );
   } else {

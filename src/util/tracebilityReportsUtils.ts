@@ -96,7 +96,7 @@ export const processIssues = (
           fullSubtasks.push(fullSubtask);
         }
       });
-      classified.subtasks = subtasks;
+      classified.subtasks = fullSubtasks;
     }
 
     if (fields.issuelinks) {
