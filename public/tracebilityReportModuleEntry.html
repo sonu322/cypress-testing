@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://unpkg.com/@atlaskit/css-reset/dist/bundle.css" media="all" />
+    <script src="https://connect-cdn.atl-paas.net/all.js"></script>
+</head>
+<style>
+    #app {
+        height: 100%;
+        min-height: 20rem;
+        padding: 2px;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+    .full {
+        height: 100%;
+    }
+</style>
+
+<body >
+    <div class="ac-content full">
+        <div id="app" >Please wait.....</div>
+    </div>
+    <script>
+        AP.jira.initJQLEditor();
+        // Prepares the JQL Editor dialog in preparation for fast rendering.
+        // This method should be called on iframe load if it contains a JQL editor trigger.
+        // https://developer.atlassian.com/cloud/jira/platform/jsapi/jira/
+    </script>
+    <script src="../src/TracebilityReportCloud.tsx"></script>
+</body>
+
+</html

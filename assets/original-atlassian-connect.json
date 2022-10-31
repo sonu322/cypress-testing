@@ -48,10 +48,10 @@
     ],
     "generalPages": [
       {
-        "url": "/home.html",
+        "url": "/tracebilityReportModuleEntry.html",
         "location": "system.top.navigation.bar",
         "name": {
-          "value": "Links Explorer",
+          "value": "Links Explorerr",
           "i18n": "general.page.name"
         },
         "conditions": [
@@ -60,6 +60,20 @@
           }
         ],
         "key": "lxp-home-page"
+      },
+      {
+        "url": "/home.html",
+        "location": "system.top.navigation.bar",
+        "name": {
+          "value": "Links Explorer Legacy",
+          "i18n": "general.page.name"
+        },
+        "conditions": [
+          {
+            "condition": "user_is_logged_in"
+          }
+        ],
+        "key": "lxp-home-page-legacy"
       }
     ]
   }

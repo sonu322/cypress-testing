@@ -11,6 +11,8 @@ export interface IssuePriority extends IssueOption {
   statusColor: string;
 }
 
+
+
 export interface IssueField {
   id: ID;
   name: string;
@@ -30,6 +32,8 @@ export interface Issue {
   assignee: IssueUser;
   sprints: IssueSprint[];
   links: IssueLink[];
+  // TODO: fix type
+  // fields: any; //TODO: need discussion
 }
 
 export interface IssueSprint {
@@ -79,7 +83,10 @@ export interface IssueType extends IssueOption {
 export interface IssueLinkType extends IssueOption { }
 
 export interface Filter {
-
+  expand: string;
+  self: string;
+  id: string;
+  name: string;
 }
 
 export interface Project {
@@ -117,7 +124,7 @@ export default interface LXPAPI {
 
   getIssueById(fields: IssueField[], issueId ?: string): Promise<Issue>;
 
-  searchIssues(jql: string, fields: IssueField[], start?: number, max?: number): Promise<Issue[]>;
+  searchIssues(jql: string, fields: IssueField[], start?: number, max?: number): Promise<{ data: Issue[]; total: number }>;
 
   getFilters(): Promise<Filter[]>;
 

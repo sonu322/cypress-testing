@@ -191,3 +191,18 @@ export interface JiraVersion {
   released: boolean;
   releaseDate: string;
 }
+export interface JiraFiltersResponse {
+  self: string;
+  maxResults: number;
+  startAt: number;
+  total: number;
+  isLast: boolean;
+  values: JiraFilter[];
+}
+
+export interface JiraFilter {
+  expand: string;
+  self: string;
+  id: string;
+  name: string;
+}
