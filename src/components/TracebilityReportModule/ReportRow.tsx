@@ -1,4 +1,5 @@
 import React from "react";
+import { Issue } from "../../types/api";
 import { IssueCard } from "../IssueCard";
 
 export const ReportRow = ({
@@ -7,6 +8,8 @@ export const ReportRow = ({
   issueFieldIds,
   issueCardOptionsMap,
 }): JSX.Element[] => {
+  console.log("links!!!");
+  console.log(links);
   const issueCell = (
     <td>
       <IssueCard
@@ -30,10 +33,10 @@ export const ReportRow = ({
     </td>
   );
 
-  const linkCells = links.map((link) => (
-    <td key={classified.issue.key}>
+  const linkCells = links.map((link: string) => (
+    <td key={classified.issue.key + link + classified.issue.id}>
       {classified[link] != null && classified[link].length > 0 ? (
-        classified[link].map((issue) => (
+        classified[link].map((issue: Issue) => (
           <IssueCard
             key={issue.id}
             issueData={issue}

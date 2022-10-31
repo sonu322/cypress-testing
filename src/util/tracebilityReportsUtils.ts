@@ -2,9 +2,11 @@ import { Issue } from "../types/api";
 import { download, toTitleCase } from "./index";
 
 
-const getIssue = (id: string, issues: Issue[]): Issue | undefined => {
-  return issues.find((issue) => issue.id === id);
+const getIssue = (id: string, issues: Issue[]): Issue | null => {
+  return issues.find((issue) => issue.id === id) ?? null;
 };
+
+const removeEmptyLinks = (classifieds, links) => {};
 
 export const upsurt = (
   issuesHolder,
@@ -27,8 +29,9 @@ export const upsurt = (
     if (!links.includes(name)) {
       links.push(name);
     }
-    if (!issuesHolder[name]) issuesHolder[name] = [];
+
     if (fullIssue) {
+      if (!issuesHolder[name]) issuesHolder[name] = [];
       issuesHolder[name].push(fullIssue);
     }
   }
@@ -52,7 +55,10 @@ export const processIssues = (selectedTableFieldIds, filteredIssues) => {
           .includes(fields.parent.fields.issuetype.id)
       )
     ) {
-      classified.parent = getIssue(fields.parent.id, filteredIssues);
+      const parentIssue = getIssue(fields.parent.id, filteredIssues);
+      if (parentIssue != null) {
+        classified.parent = parentIssue;
+      }
     }
 
     if (fields.subtasks != null) {
@@ -61,9 +67,14 @@ export const processIssues = (selectedTableFieldIds, filteredIssues) => {
           .get("issueTypes")
           .includes(issue.fields.issuetype.id)
       );
-      classified.subtasks = subtasks.map((subtask) =>
-        getIssue(subtask.id, filteredIssues)
-      );
+      const fullSubtasks: Issue[] = [];
+      subtasks.forEach((subtask) => {
+        const fullSubtask = getIssue(subtask.id, filteredIssues);
+        if (fullSubtask != null) {
+          fullSubtasks.push(fullSubtask);
+        }
+      });
+      classified.subtasks = subtasks;
     }
 
     if (fields.issuelinks) {
@@ -87,6 +98,7 @@ export const processIssues = (selectedTableFieldIds, filteredIssues) => {
 
   links.sort();
   links.unshift("subtasks");
+  // links = removeEmptyLinks(classifieds, links);
   return {
     classifieds,
     links,

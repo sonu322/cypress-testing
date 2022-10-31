@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { IssueCard } from "../IssueCard";
 import { colors } from "@atlaskit/theme";
 import { processIssues } from "../../util/tracebilityReportsUtils";
 import { toTitleCase } from "../../util";
