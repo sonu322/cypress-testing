@@ -51,7 +51,7 @@ export const TracebilityReportModule = (): JSX.Element => {
   };
 
   useEffect(() => {
-    const fetchFieldsData = async () => {
+    const fetchFieldsData = async (): Promise<void> => {
       try {
         const results = await api.getIssueFields();
         const newResults = results.map((result) => {
@@ -90,7 +90,7 @@ export const TracebilityReportModule = (): JSX.Element => {
         handleNewError(error);
       }
     };
-    const fetchIssueTypes = async () => {
+    const fetchIssueTypes = async (): Promise<void> => {
       try {
         const issueTypes = await api.getIssueTypes();
 
@@ -111,7 +111,7 @@ export const TracebilityReportModule = (): JSX.Element => {
         handleNewError(error);
       }
     };
-    const fetchLinkTypes = async () => {
+    const fetchLinkTypes = async (): Promise<void> => {
       try {
         const issueLinkTypes = await api.getIssueLinkTypes();
         setTableFields((prevState) => {

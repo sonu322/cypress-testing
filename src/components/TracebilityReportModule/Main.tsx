@@ -92,11 +92,6 @@ export const Main = ({
           fieldIds
         );
         const issues = searchResult.issues;
-
-        // const relatedIssuesjqlString = getAllRelatedIssuesJQLString(
-        //   issues,
-        //   filteredIssues
-        // );
         const oldIssueIds = getAllRelatedIssueIds(filteredIssues);
         let newIssueIds = getAllRelatedIssueIds(issues);
         newIssueIds = newIssueIds.filter((id) => {
