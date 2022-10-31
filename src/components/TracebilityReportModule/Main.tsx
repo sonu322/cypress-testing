@@ -5,6 +5,7 @@ import { APIContext } from "../../context/api";
 import { getFieldIds } from "../../util";
 import styled from "styled-components";
 import { Report } from "./Report";
+import { getAllRelatedIssues } from "../../util/tracebilityReportsUtils";
 
 const Container = styled.div`
   padding: 4px;
@@ -27,8 +28,8 @@ export const Main = ({
   selectedTableFieldIds,
   filteredIssues,
   setFilteredIssues,
-  allIssues,
-  setAllIssues,
+  allRelatedIssues,
+  setAllRelatedIssues,
   areIssuesLoading,
   setAreIssuesLoading,
 }) => {
@@ -48,7 +49,12 @@ export const Main = ({
           );
           const issues = searchResult.issues;
           const totalNumberOfIssues = searchResult.totalNumberOfIssues;
+          const allRelatedIssues = await getAllRelatedIssues(issues);
+          console.log("all realted isseus");
+          console.log(allRelatedIssues);
+          //impolement
           setFilteredIssues(issues);
+          setAllRelatedIssues(allRelatedIssues);
           if (issues != null) {
             setAreIssuesLoading(false);
           }

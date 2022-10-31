@@ -6,8 +6,22 @@ const getIssue = (id: string, issues: Issue[]): Issue | null => {
   return issues.find((issue) => issue.id === id) ?? null;
 };
 
-const removeEmptyLinks = (classifieds, links) => {};
+export const getAllRelatedIssues = (issues: Issue[]) => {
+  const ids = [];
+  issues.forEach((issue) => {
+    ids.push(issue.id);
+    if (issue.fields.parent !== undefined) {
+      ids.push(issue.fields.parent.id);
+    }
+    if (issue.fields.subtasks !== undefined) {
+      issue.fields.subtasks.forEach((subtask) => {
+        ids.push(subtask.id);
+      });
+    }
+  });
 
+  return ids;
+};
 export const upsurt = (
   issuesHolder,
   currentLink,
