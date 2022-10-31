@@ -16,7 +16,7 @@ export const getAllRelatedIssueIds = (issues: Issue[]): string[] => {
       ids.push(issue.fields.parent.id);
     }
     if (issue.fields.subtasks !== undefined) {
-      issue.fields.subtasks.forEach((subtask) => {
+      issue.fields.subtasks.forEach((subtask: Issue) => {
         ids.push(subtask.id);
       });
     }
@@ -46,22 +46,29 @@ export const upsurt = (
   links,
   selectedTableFieldIds,
   allRelatedIssues
-) => {
+): void => {
   const issue = currentLink.inwardIssue ?? currentLink.outwardIssue;
-  const fullIssue = getIssue(issue.id, allRelatedIssues);
+
   if (
     selectedTableFieldIds.get("issueTypes").includes(issue.fields.issuetype.id)
   ) {
-    let name = currentLink.inwardIssue
+    const name = currentLink.inwardIssue
       ? currentLink.type.inward
       : currentLink.type.outward;
     if (!links.includes(name)) {
       links.push(name);
     }
-
-    if (fullIssue) {
-      if (!issuesHolder[name]) issuesHolder[name] = [];
-      issuesHolder[name].push(fullIssue);
+    if (allRelatedIssues) {
+      const fullIssue = getIssue(issue.id, allRelatedIssues);
+      if (fullIssue != null) {
+        if (!issuesHolder[name]) issuesHolder[name] = [];
+        issuesHolder[name].push(fullIssue);
+      }
+    } else {
+      if (issue != null) {
+        if (!issuesHolder[name]) issuesHolder[name] = [];
+        issuesHolder[name].push(issue);
+      }
     }
   }
 };
@@ -71,9 +78,9 @@ export const processIssues = (
   filteredIssues,
   allRelatedIssues
 ) => {
-  const links = [];
+  const links: string[] = [];
   const classifieds = [];
-  filteredIssues.forEach((issue) => {
+  filteredIssues.forEach((issue: Issue) => {
     const fields = issue.fields;
     const classified = {
       issue,
@@ -86,26 +93,34 @@ export const processIssues = (
           .includes(fields.parent.fields.issuetype.id)
       )
     ) {
-      const parentIssue = getIssue(fields.parent.id, allRelatedIssues);
-      if (parentIssue != null) {
-        classified.parent = parentIssue;
+      if (allRelatedIssues) {
+        const parentIssue = getIssue(fields.parent.id, allRelatedIssues);
+        if (parentIssue != null) {
+          classified.parent = parentIssue;
+        }
+      } else {
+        classified.parent = fields.parent;
       }
     }
 
     if (fields.subtasks != null) {
-      let subtasks = fields.subtasks.filter((issue) =>
+      const subtasks = fields.subtasks.filter((issue: Issue) =>
         selectedTableFieldIds
           .get("issueTypes")
           .includes(issue.fields.issuetype.id)
       );
-      const fullSubtasks: Issue[] = [];
-      subtasks.forEach((subtask) => {
-        const fullSubtask = getIssue(subtask.id, allRelatedIssues);
-        if (fullSubtask != null) {
-          fullSubtasks.push(fullSubtask);
-        }
-      });
-      classified.subtasks = fullSubtasks;
+      if (allRelatedIssues) {
+        const fullSubtasks: Issue[] = [];
+        subtasks.forEach((subtask: Issue) => {
+          const fullSubtask = getIssue(subtask.id, allRelatedIssues);
+          if (fullSubtask != null) {
+            fullSubtasks.push(fullSubtask);
+          }
+        });
+        classified.subtasks = fullSubtasks;
+      } else {
+        classified.subtasks = subtasks;
+      }
     }
 
     if (fields.issuelinks) {
@@ -132,7 +147,7 @@ export const processIssues = (
   };
 };
 
-export const exportReport = (selectedTableFieldIds, filteredIssues) => {
+export const exportReport = (selectedTableFieldIds, filteredIssues): void => {
   const { classifieds, links } = processIssues(
     selectedTableFieldIds,
     filteredIssues
