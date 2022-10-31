@@ -8,8 +8,6 @@ export const ReportRow = ({
   issueFieldIds,
   issueCardOptionsMap,
 }): JSX.Element[] => {
-  console.log("links!!!");
-  console.log(links);
   const issueCell = (
     <td>
       <IssueCard

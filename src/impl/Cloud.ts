@@ -262,7 +262,6 @@ export default class CloudImpl implements LXPAPI {
     max?: number,
     fields?: string[]
   ): Promise<{ issues: Issue[]; totalNumberOfIssues: number }> {
-    console.log("search issues called");
     try {
       const data = {
         fields: fields ?? this.defaultFields,
@@ -278,13 +277,10 @@ export default class CloudImpl implements LXPAPI {
         data: JSON.stringify(data),
       });
       const issuesData: JiraIssueSearchResult = JSON.parse(response.body);
-      console.log("issues", issuesData);
       let result: Issue[] = [];
       const totalNumberOfIssues = issuesData.total;
       const jiraIssues = issuesData && issuesData.issues;
       for (let issue of jiraIssues) {
-        console.log("from api");
-        console.log(issue);
         result.push(this._convertIssue(issue));
       }
       return { issues: result, totalNumberOfIssues };
@@ -308,7 +304,7 @@ export default class CloudImpl implements LXPAPI {
       let filtersResponseData: JiraFiltersResponse =
         response.body && JSON.parse(response.body);
 
-      filtersResponseData; 
+      filtersResponseData;
 
       return filtersResponseData.values.map((item) =>
         this._convertFilter(item)

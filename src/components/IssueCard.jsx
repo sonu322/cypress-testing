@@ -51,8 +51,6 @@ export const IssueCard = ({
     field.value = issueData.fields[field.key];
   }
   cardOptionsDataMap = copy;
-  console.log("cardOptionsDataMap");
-  console.log(cardOptionsDataMap);
   let storyPointsInfo;
   if (
     cardOptionsDataMap.get("storypoints") &&
@@ -62,7 +60,6 @@ export const IssueCard = ({
   } else {
     storyPointsInfo = cardOptionsDataMap.get("storypointestimate");
   }
-  console.log(storyPointsInfo);
   const priorityInfo = cardOptionsDataMap.get("priority");
   const issueTypeInfo = cardOptionsDataMap.get("issuetype");
   const assigneeInfo = cardOptionsDataMap.get("assignee");
