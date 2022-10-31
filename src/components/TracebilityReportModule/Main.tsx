@@ -5,7 +5,7 @@ import { APIContext } from "../../context/api";
 import { getFieldIds } from "../../util";
 import styled from "styled-components";
 import { Report } from "./Report";
-import { getAllRelatedIssues } from "../../util/tracebilityReportsUtils";
+import { getAllRelatedIssuesJQLString } from "../../util/tracebilityReportsUtils";
 
 const Container = styled.div`
   padding: 4px;
@@ -49,12 +49,17 @@ export const Main = ({
           );
           const issues = searchResult.issues;
           const totalNumberOfIssues = searchResult.totalNumberOfIssues;
-          const allRelatedIssues = await getAllRelatedIssues(issues);
-          console.log("all realted isseus");
-          console.log(allRelatedIssues);
-          //impolement
+          const relatedIssuesjqlString = getAllRelatedIssuesJQLString(issues);
           setFilteredIssues(issues);
-          setAllRelatedIssues(allRelatedIssues);
+          const allRelatedIssuesSearchResult = await api.searchIssues(
+            relatedIssuesjqlString,
+            START_INDEX,
+            relatedIssuesjqlString.length,
+            fieldIds
+          );
+          console.log("ALL RELATED ISSUES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+          console.log(allRelatedIssuesSearchResult);
+          setAllRelatedIssues(allRelatedIssuesSearchResult.issues);
           if (issues != null) {
             setAreIssuesLoading(false);
           }
@@ -102,6 +107,7 @@ export const Main = ({
       <Container>
         <GrowContainer>
           <Report
+            allRelatedIssues={allRelatedIssues}
             issueCardOptionsMap={issueCardOptionsMap}
             issues={filteredIssues}
             issueFieldIds={selectedIssueFieldIds}

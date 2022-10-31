@@ -6,7 +6,7 @@ const getIssue = (id: string, issues: Issue[]): Issue | null => {
   return issues.find((issue) => issue.id === id) ?? null;
 };
 
-export const getAllRelatedIssues = (issues: Issue[]) => {
+export const getAllRelatedIssuesJQLString = (issues: Issue[]): string => {
   const ids = [];
   issues.forEach((issue) => {
     ids.push(issue.id);
@@ -18,9 +18,18 @@ export const getAllRelatedIssues = (issues: Issue[]) => {
         ids.push(subtask.id);
       });
     }
+    if (issue.fields.issuelinks !== undefined) {
+      issue.fields.issuelinks.forEach((currentLink) => {
+        const linkedIssue = currentLink.inwardIssue ?? currentLink.outwardIssue;
+        ids.push(linkedIssue.id);
+      });
+    }
   });
+  const jqlComponents = ids.map((id) => `id=${id}`);
+  const jqlString = jqlComponents.join(" OR ");
+  console.log(jqlString);
 
-  return ids;
+  return jqlString;
 };
 export const upsurt = (
   issuesHolder,
@@ -29,9 +38,6 @@ export const upsurt = (
   selectedTableFieldIds,
   allIssues
 ) => {
-  console.log("all issues!!!");
-  console.log(allIssues);
-
   const issue = currentLink.inwardIssue ?? currentLink.outwardIssue;
   const fullIssue = getIssue(issue.id, allIssues);
   if (
@@ -52,8 +58,6 @@ export const upsurt = (
 };
 
 export const processIssues = (selectedTableFieldIds, filteredIssues) => {
-  console.log("table field ids!!");
-  console.log(selectedTableFieldIds);
   const links = [];
   const classifieds = [];
   filteredIssues.forEach((issue) => {
@@ -93,9 +97,6 @@ export const processIssues = (selectedTableFieldIds, filteredIssues) => {
 
     if (fields.issuelinks) {
       fields.issuelinks.forEach((link) => {
-        console.log("checking links!!!!!!!");
-        console.log(selectedTableFieldIds.get("linkTypes"));
-        console.log(link);
         if (selectedTableFieldIds.get("linkTypes").includes(link.type.id)) {
           upsurt(
             classified,
