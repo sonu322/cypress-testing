@@ -30,7 +30,6 @@ export const ReportRow = ({
       )}
     </td>
   );
-
   const linkCells = links.map((link: string) => (
     <td key={classified.issue.key + link}>
       {classified[link] != null && classified[link].length > 0 ? (

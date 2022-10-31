@@ -39,7 +39,7 @@ export const Report = ({
         </thead>
         <tbody>
           {classifieds.map((classified, i) => (
-            <BorderTr key={i}>
+            <BorderTr key={classified.issue.id}>
               <ReportRow
                 classified={classified}
                 issueCardOptionsMap={issueCardOptionsMap}
