@@ -6,8 +6,10 @@ const getIssue = (id: string, issues: Issue[]): Issue | null => {
   return issues.find((issue) => issue.id === id) ?? null;
 };
 
-export const getAllRelatedIssuesJQLString = (issues: Issue[]): string => {
-  const ids = [];
+
+
+export const getAllRelatedIssueIds = (issues: Issue[]): string[] => {
+  const ids: string[] = [];
   issues.forEach((issue) => {
     ids.push(issue.id);
     if (issue.fields.parent !== undefined) {
@@ -25,12 +27,21 @@ export const getAllRelatedIssuesJQLString = (issues: Issue[]): string => {
       });
     }
   });
+  const uniqueIds = [...new Set(ids)];
+  return uniqueIds;
+};
+export const getJQLStringFromIds = (ids: string[]): string => {
   const jqlComponents = ids.map((id) => `id=${id}`);
   const jqlString = jqlComponents.join(" OR ");
   console.log(jqlString);
-
   return jqlString;
 };
+export const getAllRelatedIssuesJQLString = (issues: Issue[]): string => {
+  const ids = getAllRelatedIssueIds(issues);
+  return getJQLStringFromIds(ids);
+};
+
+
 export const upsurt = (
   issuesHolder,
   currentLink,

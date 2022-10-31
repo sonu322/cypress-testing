@@ -5,7 +5,10 @@ import { APIContext } from "../../context/api";
 import { getFieldIds } from "../../util";
 import styled from "styled-components";
 import { Report } from "./Report";
-import { getAllRelatedIssuesJQLString } from "../../util/tracebilityReportsUtils";
+import {
+  getAllRelatedIssueIds,
+  getJQLStringFromIds,
+} from "../../util/tracebilityReportsUtils";
 
 const Container = styled.div`
   padding: 4px;
@@ -50,17 +53,18 @@ export const Main = ({
           );
           const issues = searchResult.issues;
           const totalNumberOfIssues = searchResult.totalNumberOfIssues;
-          const relatedIssuesjqlString = getAllRelatedIssuesJQLString(issues);
+          const relatedIssueIds = getAllRelatedIssueIds(issues);
+          const relatedIssuesjqlString = getJQLStringFromIds(relatedIssueIds);
           setFilteredIssues(issues);
-          const allRelatedIssuesSearchResult = await api.searchIssues(
+          const searchAllRelatedIssuesResult = await api.searchIssues(
             relatedIssuesjqlString,
             START_INDEX,
-            relatedIssuesjqlString.length,
+            relatedIssueIds.length,
             fieldIds
           );
-          const allRelatedIssues = allRelatedIssuesSearchResult.issues;
+          const allRelatedIssues = searchAllRelatedIssuesResult.issues;
           console.log("ALL RELATED ISSUES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-          console.log(allRelatedIssuesSearchResult);
+          console.log(searchAllRelatedIssuesResult);
           setAllRelatedIssues(allRelatedIssues);
           if (
             issues != null &&
@@ -90,7 +94,30 @@ export const Main = ({
           fieldIds
         );
         const issues = searchResult.issues;
-        setFilteredIssues(filteredIssues.concat(issues));
+
+        // const relatedIssuesjqlString = getAllRelatedIssuesJQLString(
+        //   issues,
+        //   filteredIssues
+        // );
+        const oldIssueIds = getAllRelatedIssueIds(filteredIssues);
+        let newIssueIds = getAllRelatedIssueIds(issues);
+        newIssueIds = newIssueIds.filter((id) => {
+          return !oldIssueIds.includes(id);
+        });
+        const relatedIssuesjqlString = getJQLStringFromIds(newIssueIds);
+        const searchAllRelatedIssuesResult = await api.searchIssues(
+          relatedIssuesjqlString,
+          START_INDEX,
+          newIssueIds.length,
+          fieldIds
+        );
+        const allRelatedIssues = searchAllRelatedIssuesResult.issues;
+        console.log("ALL RELATED ISSUES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        console.log(searchAllRelatedIssuesResult);
+        setFilteredIssues((prevIssues) => prevIssues.concat(issues));
+        setAllRelatedIssues((prevIssues) =>
+          prevIssues.concat(allRelatedIssues)
+        );
         if (issues != null) {
           setAreMoreIssuesLoading(false);
         }
