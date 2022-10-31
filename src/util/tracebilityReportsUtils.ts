@@ -10,9 +10,14 @@ export const upsurt = (
   issuesHolder,
   currentLink,
   links,
-  selectedTableFieldIds
+  selectedTableFieldIds,
+  allIssues
 ) => {
+  console.log("all issues!!!");
+  console.log(allIssues);
+
   const issue = currentLink.inwardIssue ?? currentLink.outwardIssue;
+  const fullIssue = getIssue(issue.id, allIssues);
   if (
     selectedTableFieldIds.get("issueTypes").includes(issue.fields.issuetype.id)
   ) {
@@ -23,7 +28,9 @@ export const upsurt = (
       links.push(name);
     }
     if (!issuesHolder[name]) issuesHolder[name] = [];
-    issuesHolder[name].push(issue);
+    if (fullIssue) {
+      issuesHolder[name].push(fullIssue);
+    }
   }
 };
 
@@ -65,7 +72,13 @@ export const processIssues = (selectedTableFieldIds, filteredIssues) => {
         console.log(selectedTableFieldIds.get("linkTypes"));
         console.log(link);
         if (selectedTableFieldIds.get("linkTypes").includes(link.type.id)) {
-          upsurt(classified, link, links, selectedTableFieldIds);
+          upsurt(
+            classified,
+            link,
+            links,
+            selectedTableFieldIds,
+            filteredIssues
+          );
         }
       });
     }
