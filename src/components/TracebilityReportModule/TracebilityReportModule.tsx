@@ -31,9 +31,9 @@ const fixedFieldNames = [
 
 export const TracebilityReportModule = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState(true);
-  const [allRelatedIssues, setAllRelatedIssues] = useState<Issue[] | null>(
-    null
-  );
+  // const [allRelatedIssues, setAllRelatedIssues] = useState<Issue[] | null>(
+  //   null
+  // );
   const [filteredIssues, setFilteredIssues] = useState<Issue[] | null>(null);
   const [selectedJQLString, setSelectedJQLString] = useState<string | null>(
     null
@@ -73,7 +73,7 @@ export const TracebilityReportModule = (): JSX.Element => {
         setSelectedIssueFieldIds(selectedFieldIds);
 
         // setting state - table field options
-        const fieldsMap = new Map<string, { name: string; values: any[] }>();
+        const fieldsMap = new Map<string, {name: string; values: any[]}>();
         fieldsMap.set("issueTypes", {
           name: "Issue Types",
           values: issueTypes,
@@ -141,8 +141,8 @@ export const TracebilityReportModule = (): JSX.Element => {
           selectedTableFieldIds={selectedTableFieldIds}
           filteredIssues={filteredIssues}
           setFilteredIssues={setFilteredIssues}
-          allRelatedIssues={allRelatedIssues}
-          setAllRelatedIssues={setAllRelatedIssues}
+          // allRelatedIssues={allRelatedIssues}
+          // setAllRelatedIssues={setAllRelatedIssues}
           areIssuesLoading={areIssuesLoading}
           setAreIssuesLoading={setAreIssuesLoading}
         />

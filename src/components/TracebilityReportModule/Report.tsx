@@ -18,13 +18,8 @@ export const Report = ({
   tableFieldIds,
   issueFieldIds,
   issueCardOptionsMap,
-  allRelatedIssues,
 }): JSX.Element => {
-  const { classifieds, links } = processIssues(
-    tableFieldIds,
-    filteredIssues,
-    allRelatedIssues
-  );
+  // const {classifieds, links} = processIssues(tableFieldIds, filteredIssues);
   return (
     <Container>
       <table>
@@ -38,12 +33,13 @@ export const Report = ({
           </tr>
         </thead>
         <tbody>
-          {classifieds.map((classified, i) => (
-            <BorderTr key={classified.issue.id}>
+          {filteredIssues.map((issue, i) => (
+            <BorderTr key={issue.id}>
               <ReportRow
-                classified={classified}
-                issueCardOptionsMap={issueCardOptionsMap}
+                // classified={classified}
+                // issueCardOptionsMap={issueCardOptionsMap}
                 issueFieldIds={issueFieldIds}
+                issue={issue}
                 links={links}
               />
             </BorderTr>

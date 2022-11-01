@@ -8,7 +8,7 @@ import { StoryPointsInfo } from "./StoryPointsInfo";
 import { IssueKey } from "./IssueKey";
 import { AssigneeInfo } from "./AssigneeInfo";
 import { IssueSummary } from "./IssueSummary";
-import { Issue } from "../../../types/api";
+import {Issue, IssueWithPopulatedLinks} from "../../../types/api";
 
 const Container = styled.div`
   color: ${colors.N800};
@@ -45,12 +45,9 @@ export interface Props {
 }
 
 // main function
-export const IssueCard = ({
-  issueData,
-  selectedIssueFieldIds
-}: Props) => {
+export const IssueCard = ({issueData, selectedIssueFieldIds}: Props): JSX.Element => {
   let selectedMap = {};
-  for(let issueFieldId of selectedIssueFieldIds){
+  for (let issueFieldId of selectedIssueFieldIds) {
     selectedMap[issueFieldId] = true;
   }
   const storyPointsInfo = issueData.storyPoints;
@@ -82,7 +79,9 @@ export const IssueCard = ({
             isResolved={issueData.isResolved}
             issueKey={issueData.issueKey}
           />
-          {selectedMap["assignee"] && assigneeInfo && <AssigneeInfo content={assigneeInfo} />}
+          {selectedMap["assignee"] && assigneeInfo && (
+            <AssigneeInfo content={assigneeInfo} />
+          )}
         </FooterSideContainer>
       </CardFooter>
     </Container>

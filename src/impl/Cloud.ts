@@ -11,7 +11,8 @@ import LXPAPI, {
   IssueUser,
   IssueVersion,
   IssueWithLinkedIssues,
-  Project
+  IssueWithPopulatedLinks,
+  Project,
 } from "../types/api";
 
 import {
@@ -29,15 +30,13 @@ import {
   JiraProject,
   JiraIssueField,
   JiraAssignee,
-  JiraVersion
+  JiraVersion,
 } from "../types/jira";
 
-import {
-  getQueryParam
-} from "../util/index";
+import {getQueryParam} from "../util/index";
 import {
   getJQLStringFromIds,
-  getRelatedIssueIds,
+  getLinkedIssueIds,
 } from "../util/tracebilityReportsUtils";
 
 function throwError(msg: string) {
@@ -472,35 +471,72 @@ export default class CloudImpl implements LXPAPI {
     }
   }
 
+  private readonly _getLinkedIssueJQL = (
+    issues: Issue[]
+  ): {jqlString: string; total: number} => {
+    const ids: string[] = [];
+    issues.forEach((issue) => {
+      issue.links.forEach((link) => {
+        const {issueId} = link;
+        if (!ids.includes(issueId)) {
+          ids.push(issueId);
+        }
+      });
+    });
+    const jqlComponents = ids.map((id) => `id=${id}`);
+    const jqlString = jqlComponents.join(" OR ");
+    const total = ids.length;
+    return {jqlString, total};
+  };
+
+  private readonly _populateIssueLinks = (
+    issues: IssueWithPopulatedLinks[],
+    linkedIssues: Issue[]
+  ): IssueWithPopulatedLinks[] => {
+    const populatedIssues: IssueWithPopulatedLinks[] = [];
+    issues.forEach((issue) => {
+      issue.links.forEach((link) => {
+        const linkedIssue = linkedIssues.find(
+          (linkedIssue) => linkedIssue.id === link.issueId
+        );
+        link.issue = linkedIssue;
+      });
+      populatedIssues.push(issue);
+    });
+    return populatedIssues;
+  };
+
   async searchLinkedIssues(
     jql: string,
     fields: IssueField[],
     start?: number,
     max?: number
-  ): Promise<{data: Issue[]; total: number}> {
+  ): Promise<{data: IssueWithPopulatedLinks[]; total: number}> {
     const searchResult = await this.searchIssues(jql, fields, start, max);
     console.log("searchLinkedIssues");
-    const issues = searchResult.data;
-    const relatedIssueIds = getRelatedIssueIds(issues);
-    const relatedIssuesJQL = getJQLStringFromIds(relatedIssueIds);
+    const issues: IssueWithPopulatedLinks[] = searchResult.data;
+    const {jqlString: linkedIssuesJQL, total} = this._getLinkedIssueJQL(issues);
     console.log("realatedIsuesJql");
-    console.log(relatedIssuesJQL);
+    console.log(linkedIssuesJQL);
     console.log([...issues]);
-    const relatedIssuesResult = await this.searchIssues(
-      relatedIssuesJQL,
+    const linkedIssuesResult = await this.searchIssues(
+      linkedIssuesJQL,
       fields,
       0,
-      relatedIssueIds.length
+      total
     );
     console.log("realted issues result");
-    const relatedIssues = relatedIssuesResult.data;
-    console.log([...relatedIssues]);
+    const linkedIssues = linkedIssuesResult.data;
+    console.log([...linkedIssues]);
+    const populatedIssues = this._populateIssueLinks(issues, linkedIssues);
+    console.log("populatedIssues!!!!!!!!!!!!!!!!!!!!");
+    console.log(populatedIssues);
     // const oldIssueIds = getAllRelatedIssueIds(data);
     // let newIssueIds = getAllRelatedIssueIds(issues);
     // newIssueIds = newIssueIds.filter((id) => {
     //   return !oldIssueIds.includes(id);
     // });
-    return searchResult;
+    return {data: populatedIssues, total};
   }
 
   private _convertFilter(filter: JiraFilter): Filter {

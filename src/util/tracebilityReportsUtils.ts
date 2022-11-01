@@ -1,147 +1,95 @@
-import { Issue } from "../types/api";
-import { download, toTitleCase } from "./index";
-
+import {Issue, IssueWithPopulatedLinks, PopulatedIssueLink} from "../types/api";
+import {download, toTitleCase} from "./index";
 
 const getIssue = (id: string, issues: Issue[]): Issue | null => {
   return issues.find((issue) => issue.id === id) ?? null;
 };
 
-
-
-export const getRelatedIssueIds = (issues: Issue[]): string[] => {
-  // const ids: string[] = [];
-  // issues.forEach((issue) => {
-  //   ids.push(issue.id);
-  //   if (issue.parent !== undefined) {
-  //     ids.push(issue.parent.id);
-  //   }
-  //   if (issue.subtasks !== undefined) {
-  //     issue.subtasks.forEach((subtask: Issue) => {
-  //       ids.push(subtask.id);
-  //     });
-  //   }
-  //   if (issue.issuelinks !== undefined) {
-  //     issue.issuelinks.forEach((currentLink) => {
-  //       const linkedIssue = currentLink.inwardIssue ?? currentLink.outwardIssue;
-  //       ids.push(linkedIssue.id);
-  //     });
-  //   }
-  // });
-  // const uniqueIds = [...new Set(ids)];
-  // return uniqueIds;
-  const ids: string[] = [];
-  issues.forEach((issue) => {
-    issue.links.forEach((link) => {
-      const {issueId} = link;
-      if (!ids.includes(issueId)) {
-        ids.push(issueId);
-      }
-    });
-  });
-  return ids;
-};
-export const getJQLStringFromIds = (ids: string[]): string => {
-  const jqlComponents = ids.map((id) => `id=${id}`);
-  const jqlString = jqlComponents.join(" OR ");
-  return jqlString;
-};
 export const getIssuesJQLString = (issues: Issue[]): string => {
-  const ids = getRelatedIssueIds(issues);
+  const ids = getLinkedIssueIds(issues);
   return getJQLStringFromIds(ids);
 };
 
-export const upsurt = (
+export const populateClassifiedAndLinks = (
   issuesHolder,
-  currentLink,
-  links,
-  selectedTableFieldIds,
-  allRelatedIssues
+  currentLink: PopulatedIssueLink,
+  links: string[],
+  selectedTableFieldIds
 ): void => {
-  const issue = currentLink.inwardIssue ?? currentLink.outwardIssue;
-
-  if (selectedTableFieldIds.get("issueTypes").includes(issue.issuetype.id)) {
-    const name = currentLink.inwardIssue
-      ? currentLink.type.inward
-      : currentLink.type.outward;
+  const {issue} = currentLink;
+  const selectedIssueTypeIds: string[] =
+    selectedTableFieldIds.get("issueTypes");
+  if (selectedIssueTypeIds.includes(issue.type.id)) {
+    const {name} = currentLink;
     if (!links.includes(name)) {
       links.push(name);
     }
-    if (allRelatedIssues !== null) {
-      const fullIssue = getIssue(issue.id, allRelatedIssues);
-      if (fullIssue != null) {
-        if (!issuesHolder[name]) issuesHolder[name] = [];
-        issuesHolder[name].push(fullIssue);
-      }
-    } else {
-      if (issue != null) {
-        if (!issuesHolder[name]) issuesHolder[name] = [];
-        issuesHolder[name].push(issue);
-      }
-    }
+    // if (allRelatedIssues !== null) {
+    //   const fullIssue = getIssue(issue.id, allRelatedIssues);
+    //   if (fullIssue != null) {
+    //     if (!issuesHolder[name]) issuesHolder[name] = [];
+    //     issuesHolder[name].push(fullIssue);
+    //   }
+    // } else {
+    //   if (issue != null) {
+    //     if (!issuesHolder[name]) issuesHolder[name] = [];
+    //     issuesHolder[name].push(issue);
+    //   }
+    // }
   }
 };
 
-export const processIssues = (
-  selectedTableFieldIds,
-  filteredIssues,
-  allRelatedIssues
-) => {
+export const processIssues = (selectedTableFieldIds, filteredIssues) => {
   const links: string[] = [];
   const classifieds = [];
-  filteredIssues.forEach((issue: Issue) => {
-    const fields = issue;
-    const classified = {
-      issue,
-    };
-    if (
-      Boolean(fields.parent) &&
-      Boolean(
-        selectedTableFieldIds
-          .get("issueTypes")
-          .includes(fields.parent.fields.issuetype.id)
-      )
-    ) {
-      if (allRelatedIssues !== null) {
-        const parentIssue = getIssue(fields.parent.id, allRelatedIssues);
-        if (parentIssue != null) {
-          classified.parent = parentIssue;
-        }
-      } else {
-        classified.parent = fields.parent;
-      }
-    }
+  filteredIssues.forEach((issue: IssueWithPopulatedLinks) => {
+    const classified = {};
+    // if (
+    //   Boolean(fields.parent) &&
+    //   Boolean(
+    //     selectedTableFieldIds
+    //       .get("issueTypes")
+    //       .includes(fields.parent.fields.issuetype.id)
+    //   )
+    // ) {
+    //   if (allRelatedIssues !== null) {
+    //     const parentIssue = getIssue(fields.parent.id, allRelatedIssues);
+    //     if (parentIssue != null) {
+    //       classified.parent = parentIssue;
+    //     }
+    //   } else {
+    //     classified.parent = fields.parent;
+    //   }
+    // }
 
-    if (fields.subtasks != null) {
-      const subtasks = fields.subtasks.filter((issue: Issue) =>
-        selectedTableFieldIds.get("issueTypes").includes(issue.issuetype.id)
-      );
-      if (allRelatedIssues !== null) {
-        const fullSubtasks: Issue[] = [];
-        subtasks.forEach((subtask: Issue) => {
-          const fullSubtask = getIssue(subtask.id, allRelatedIssues);
-          if (fullSubtask != null) {
-            fullSubtasks.push(fullSubtask);
-          }
-        });
-        classified.subtasks = fullSubtasks;
-      } else {
-        classified.subtasks = subtasks;
+    // if (fields.subtasks != null) {
+    //   const subtasks = fields.subtasks.filter((issue: Issue) =>
+    //     selectedTableFieldIds.get("issueTypes").includes(issue.issuetype.id)
+    //   );
+    //   if (allRelatedIssues !== null) {
+    //     const fullSubtasks: Issue[] = [];
+    //     subtasks.forEach((subtask: Issue) => {
+    //       const fullSubtask = getIssue(subtask.id, allRelatedIssues);
+    //       if (fullSubtask != null) {
+    //         fullSubtasks.push(fullSubtask);
+    //       }
+    //     });
+    //     classified.subtasks = fullSubtasks;
+    //   } else {
+    //     classified.subtasks = subtasks;
+    //   }
+    // }
+    issue.links.forEach((link) => {
+      const selectedLinkIds: string[] = selectedTableFieldIds.get("linkTypes");
+      if (selectedLinkIds.includes(link.linkTypeId)) {
+        populateClassifiedAndLinks(
+          classified,
+          link,
+          links,
+          selectedTableFieldIds
+        );
       }
-    }
-
-    if (fields.issuelinks) {
-      fields.issuelinks.forEach((link) => {
-        if (selectedTableFieldIds.get("linkTypes").includes(link.type.id)) {
-          upsurt(
-            classified,
-            link,
-            links,
-            selectedTableFieldIds,
-            allRelatedIssues
-          );
-        }
-      });
-    }
+    });
     classifieds.push(classified);
   });
 
@@ -154,7 +102,7 @@ export const processIssues = (
 };
 
 export const exportReport = (selectedTableFieldIds, filteredIssues): void => {
-  const { classifieds, links } = processIssues(
+  const {classifieds, links} = processIssues(
     selectedTableFieldIds,
     filteredIssues,
     null

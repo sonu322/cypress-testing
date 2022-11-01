@@ -1,20 +1,17 @@
 import React from "react";
-import { Issue } from "../../types/api";
-import { IssueCard } from "../common/issueCard/IssueCard";
+import {Issue, IssueWithPopulatedLinks} from "../../types/api";
+import {IssueCard} from "../common/issueCard/IssueCard";
 
-export const ReportRow = ({
-  links,
-  classified,
-  issueFieldIds,
-  issueCardOptionsMap,
-}): JSX.Element[] => {
+export interface Props {
+  links: string[];
+  issueFieldIds: string[];
+  issue: IssueWithPopulatedLinks;
+}
+
+export const ReportRow = ({links, issueFieldIds, issue}: Props): JSX.Element[] => {
   const issueCell = (
     <td key="issue">
-      <IssueCard
-        issueData={classified.issue}
-        selectedIssueFieldIds={issueFieldIds}
-        issueCardOptionsMap={issueCardOptionsMap}
-      />
+      <IssueCard issueData={issue} selectedIssueFieldIds={issueFieldIds} />
     </td>
   );
   const parentCell = (
@@ -23,7 +20,6 @@ export const ReportRow = ({
         <IssueCard
           issueData={classified.parent}
           selectedIssueFieldIds={issueFieldIds}
-          issueCardOptionsMap={issueCardOptionsMap}
         />
       ) : (
         <span>--</span>
@@ -38,7 +34,6 @@ export const ReportRow = ({
             key={issue.id}
             issueData={issue}
             selectedIssueFieldIds={issueFieldIds}
-            issueCardOptionsMap={issueCardOptionsMap}
           />
         ))
       ) : (

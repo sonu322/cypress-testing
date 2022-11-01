@@ -50,16 +50,27 @@ export interface IssueUser {
   avatarUrl: string;
 }
 
-export interface IssueWithLinkedIssues extends Issue {
-  linkedIssues: Issue[];
-}
-
 export interface IssueLink {
   linkTypeId: ID;
   name: string;
   isInward: boolean;
   issueId: ID;
 }
+
+export interface PopulatedIssueLink extends IssueLink {
+  issue?: Issue;
+  // TODO: remove issueId from PopulatedIssueLink
+}
+
+export interface IssueWithLinkedIssues extends Issue {
+  linkedIssues: Issue[];
+}
+
+export interface IssueWithPopulatedLinks extends Issue {
+  links: PopulatedIssueLink[];
+}
+
+
 
 export interface IssueVersion {
   id: ID;
