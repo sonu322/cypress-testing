@@ -146,25 +146,29 @@ export default class CloudImpl implements LXPAPI {
       items || throwError("Issue link types not found.");
 
       const result = [];
+      result.push({
+        id: CustomLinkType.PARENT,
+        name: "Parent",
+      });
+      result.push({
+        id: CustomLinkType.SUBTASK,
+        name: "Subtasks",
+      });
+
       items.forEach((item) => {
         result.push({
           id: `${item.id}-${item.inward}`,
           name: item.inward,
         });
-        result.push({
-          id: `${item.id}-${item.outward}`,
-          name: item.outward,
-        });
+        if (item.inward !== item.outward) {
+          result.push({
+            id: `${item.id}-${item.outward}`,
+            name: item.outward,
+          });
+        }
       });
       
-      result.push({
-        id: CustomLinkType.SUBTASK,
-        name: "Subtasks",
-      });
-      result.push({
-        id: CustomLinkType.PARENT,
-        name: "Parent",
-      });
+      
       return result;
     } catch (error) {
       console.error(error);

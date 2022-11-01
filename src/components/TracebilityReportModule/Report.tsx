@@ -2,8 +2,9 @@ import React from "react";
 import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import { processIssues } from "../../util/tracebilityReportsUtils";
-import { toTitleCase } from "../../util";
-import { ReportRow } from "./ReportRow";
+
+import {ReportRow} from "./ReportRow";
+import {ReportHeader} from "./ReportHeader";
 const Container = styled.div`
   width: 100%;
   height: 100%;
@@ -15,7 +16,8 @@ const BorderTr = styled.tr`
 
 export const Report = ({
   filteredIssues,
-  tableFieldIds,
+  tableFields,
+  selectedTableFieldIds,
   issueFieldIds,
   issueCardOptionsMap,
 }): JSX.Element => {
@@ -23,16 +25,11 @@ export const Report = ({
   return (
     <Container>
       <table>
-        <thead>
-          <tr>
-            <th>Issue</th>
-            <th>Parent</th>
-            {links.map((link, i) => (
-              <th key={i}>{toTitleCase(link)}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
+        <ReportHeader
+          fieldIds={selectedTableFieldIds.get("linkTypes")}
+          fields={tableFields.get("linkTypes").values}
+        />
+        {/* <tbody>
           {filteredIssues.map((issue, i) => (
             <BorderTr key={issue.id}>
               <ReportRow
@@ -44,7 +41,7 @@ export const Report = ({
               />
             </BorderTr>
           ))}
-        </tbody>
+        </tbody> */}
       </table>
     </Container>
   );

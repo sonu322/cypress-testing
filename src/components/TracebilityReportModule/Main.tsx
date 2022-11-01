@@ -30,6 +30,7 @@ export const Main = ({
   issueFields,
   selectedIssueFieldIds,
   selectedTableFieldIds,
+  tableFields,
   filteredIssues,
   // setAllRelatedIssues,
   areIssuesLoading,
@@ -123,7 +124,8 @@ export const Main = ({
             issueCardOptionsMap={issueCardOptionsMap}
             filteredIssues={filteredIssues}
             issueFieldIds={selectedIssueFieldIds}
-            tableFieldIds={selectedTableFieldIds}
+            tableFields={tableFields}
+            selectedTableFieldIds={selectedTableFieldIds}
           />
         </GrowContainer>
         <div>
