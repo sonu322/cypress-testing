@@ -33,8 +33,9 @@ export const Toolbar = ({
   exportReport,
   handleNewError,
   isExportDisabled,
+  issueCardOptions,
 }): JSX.Element => {
-  const issueCardOptions = Array.from(issueCardOptionsMap.values());
+  // const issueCardOptions = Array.from(issueCardOptionsMap.values());
   return (
     <MainBar>
       <FlexContainer>

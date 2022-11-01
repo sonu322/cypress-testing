@@ -7,6 +7,7 @@ import { Issue, IssueField } from "../../types/api";
 import { Main } from "./Main";
 import { ErrorsList } from "../common/ErrorsList";
 import { exportReport } from "../../util/tracebilityReportsUtils";
+import { getKeyValues } from "../../util/common";
 const FullWidthContainer = styled.div`
   width: 100%;
   height: 100%;
@@ -27,6 +28,7 @@ const fixedFieldNames = [
 ];
 
 export const TracebilityReportModule = (): JSX.Element => {
+  const [isLoading, setIsLoading] = useState(true);
   const [allRelatedIssues, setAllRelatedIssues] = useState<Issue[] | null>(
     null
   );
@@ -34,9 +36,7 @@ export const TracebilityReportModule = (): JSX.Element => {
   const [selectedJQLString, setSelectedJQLString] = useState<string | null>(
     null
   );
-  const [issueFields, setIssueFields] = useState<Map<string, IssueField>>(
-    new Map()
-  );
+  const [issueFields, setIssueFields] = useState<IssueField[]>([]);
   const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState<string[]>(
     []
   );
@@ -51,92 +51,43 @@ export const TracebilityReportModule = (): JSX.Element => {
   };
 
   useEffect(() => {
-    const fetchFieldsData = async (): Promise<void> => {
+    const loadData = async (): Promise<void> => {
       try {
-        const results = await api.getIssueFields();
-        const newResults = results.map((result) => {
-          if (result.key.includes("customfield_")) {
-            result.customKey = result.name
-              .replace(/[\s, -]/g, "")
-              .toLowerCase();
-          } else {
-            result.customKey = result.key;
-          }
-          return result;
-        });
-        const fieldNames = [
-          ...fixedFieldNames,
-          "issuetype",
-          "priority",
-          "status",
-          "assignee",
-          "storypoints",
-          "storypointestimate",
-        ];
-        const selectedFieldIds: string[] = [];
-        const fieldsMap = new Map();
-        fieldNames.forEach((name) => {
-          const field = newResults.find((result) => result.customKey == name);
-          if (field) {
-            fieldsMap.set(field.customKey, field);
-            if (!fixedFieldNames.includes(name)) {
-              selectedFieldIds.push(field.id);
-            }
-          }
-        });
-        setIssueFields(fieldsMap);
-        setSelectedIssueFieldIds(selectedFieldIds);
-      } catch (error) {
-        handleNewError(error);
-      }
-    };
-    const fetchIssueTypes = async (): Promise<void> => {
-      try {
-        const issueTypes = await api.getIssueTypes();
+        const result = await Promise.all([
+          api.getIssueTypes(),
+          api.getIssueLinkTypes(),
+          api.getIssueFields(),
+        ]);
 
-        setTableFields((prevState) => {
-          const newMap = new Map(prevState);
-          newMap.set("issueTypes", { name: "Issue Types", values: issueTypes });
-          return newMap;
+        const issueTypes = result[0];
+        const linkTypes = result[1];
+        const fields = result[2];
+
+        // setting state
+        const fieldsMap = new Map();
+        fieldsMap.set("issueTypes", {
+          name: "Issue Types",
+          values: issueTypes,
         });
-        setSelectedTableFieldIds((prevState) => {
-          const newMap = new Map(prevState);
-          newMap.set(
-            "issueTypes",
-            issueTypes.map((type) => type.id)
-          );
-          return newMap;
+        fieldsMap.set("linkTypes", {
+          name: "Issue Link Types",
+          values: linkTypes,
         });
+        setTableFields(fieldsMap);
+
+        const fieldIdsMap = new Map();
+        fieldIdsMap.set("issueTypes", getKeyValues(issueTypes, "id"));
+        fieldIdsMap.set("linkTypes", getKeyValues(linkTypes, "id"));
+        setSelectedTableFieldIds(fieldIdsMap);
+
+        setIssueFields(fields);
+        setIsLoading(false);
       } catch (error) {
         handleNewError(error);
       }
     };
-    const fetchLinkTypes = async (): Promise<void> => {
-      try {
-        const issueLinkTypes = await api.getIssueLinkTypes();
-        setTableFields((prevState) => {
-          const newMap = new Map(prevState);
-          newMap.set("linkTypes", {
-            name: "Issue Link Types",
-            values: issueLinkTypes,
-          });
-          return newMap;
-        });
-        setSelectedTableFieldIds((prevState) => {
-          const newMap = new Map(prevState);
-          newMap.set(
-            "linkTypes",
-            issueLinkTypes.map((type) => type.id)
-          );
-          return newMap;
-        });
-      } catch (error) {
-        handleNewError(error);
-      }
-    };
-    void fetchFieldsData();
-    void fetchIssueTypes();
-    void fetchLinkTypes();
+    void loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const isExportDisabled =
     filteredIssues == null || filteredIssues.length === 0;
@@ -154,6 +105,7 @@ export const TracebilityReportModule = (): JSX.Element => {
           <Toolbar
             selectedJQLString={selectedJQLString}
             setSelectedJQLString={setSelectedJQLString}
+            issueCardOptions={issueFields}
             issueCardOptionsMap={issueCardOptionsMap}
             selectedIssueFieldIds={selectedIssueFieldIds}
             setSelectedIssueFieldIds={setSelectedIssueFieldIds}
@@ -189,4 +141,4 @@ export const TracebilityReportModule = (): JSX.Element => {
       </GrowContainer>
     </FullWidthContainer>
   );
-};
+};;;;;;
