@@ -1,6 +1,6 @@
 import React from "react";
 import { Issue } from "../../types/api";
-import { IssueCard } from "../IssueCard";
+import { IssueCard } from "../common/issueCard/IssueCard";
 
 export const ReportRow = ({
   links,

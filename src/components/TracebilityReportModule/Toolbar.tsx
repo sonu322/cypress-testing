@@ -3,10 +3,10 @@ import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import { JQLSelectDropdown } from "../JQLSelectDropdown";
 import { ButtonGroup } from "@atlaskit/button";
-import { Dropdown } from "../Dropdown";
+import { Dropdown } from "../common/Dropdown";
 import { helpLink } from "../../constants";
-import { HelpLink } from "../HelpLink";
-import { ExportContent } from "../ExportContent";
+import { HelpLink } from "../common/HelpLink";
+import { ExportContent } from "../common/ExportContent";
 import { JQLEditor } from "../JQLEditor";
 import { TableFieldsDropdown } from "./TableFieldsDropdown";
 const MainBar = styled.div`

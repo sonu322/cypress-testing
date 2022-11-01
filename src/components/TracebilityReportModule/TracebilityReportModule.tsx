@@ -5,7 +5,7 @@ import PageHeader from "@atlaskit/page-header";
 import { Toolbar } from "./Toolbar";
 import { Issue, IssueField } from "../../types/api";
 import { Main } from "./Main";
-import { ErrorsList } from "../ErrorsList";
+import { ErrorsList } from "../common/ErrorsList";
 import { exportReport } from "../../util/tracebilityReportsUtils";
 const FullWidthContainer = styled.div`
   width: 100%;
