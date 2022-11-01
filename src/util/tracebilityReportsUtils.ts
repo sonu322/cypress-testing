@@ -8,35 +8,45 @@ const getIssue = (id: string, issues: Issue[]): Issue | null => {
 
 
 
-export const getAllRelatedIssueIds = (issues: Issue[]): string[] => {
+export const getRelatedIssueIds = (issues: Issue[]): string[] => {
+  // const ids: string[] = [];
+  // issues.forEach((issue) => {
+  //   ids.push(issue.id);
+  //   if (issue.parent !== undefined) {
+  //     ids.push(issue.parent.id);
+  //   }
+  //   if (issue.subtasks !== undefined) {
+  //     issue.subtasks.forEach((subtask: Issue) => {
+  //       ids.push(subtask.id);
+  //     });
+  //   }
+  //   if (issue.issuelinks !== undefined) {
+  //     issue.issuelinks.forEach((currentLink) => {
+  //       const linkedIssue = currentLink.inwardIssue ?? currentLink.outwardIssue;
+  //       ids.push(linkedIssue.id);
+  //     });
+  //   }
+  // });
+  // const uniqueIds = [...new Set(ids)];
+  // return uniqueIds;
   const ids: string[] = [];
   issues.forEach((issue) => {
-    ids.push(issue.id);
-    if (issue.fields.parent !== undefined) {
-      ids.push(issue.fields.parent.id);
-    }
-    if (issue.fields.subtasks !== undefined) {
-      issue.fields.subtasks.forEach((subtask: Issue) => {
-        ids.push(subtask.id);
-      });
-    }
-    if (issue.fields.issuelinks !== undefined) {
-      issue.fields.issuelinks.forEach((currentLink) => {
-        const linkedIssue = currentLink.inwardIssue ?? currentLink.outwardIssue;
-        ids.push(linkedIssue.id);
-      });
-    }
+    issue.links.forEach((link) => {
+      const {issueId} = link;
+      if (!ids.includes(issueId)) {
+        ids.push(issueId);
+      }
+    });
   });
-  const uniqueIds = [...new Set(ids)];
-  return uniqueIds;
+  return ids;
 };
 export const getJQLStringFromIds = (ids: string[]): string => {
   const jqlComponents = ids.map((id) => `id=${id}`);
   const jqlString = jqlComponents.join(" OR ");
   return jqlString;
 };
-export const getAllRelatedIssuesJQLString = (issues: Issue[]): string => {
-  const ids = getAllRelatedIssueIds(issues);
+export const getIssuesJQLString = (issues: Issue[]): string => {
+  const ids = getRelatedIssueIds(issues);
   return getJQLStringFromIds(ids);
 };
 
@@ -49,9 +59,7 @@ export const upsurt = (
 ): void => {
   const issue = currentLink.inwardIssue ?? currentLink.outwardIssue;
 
-  if (
-    selectedTableFieldIds.get("issueTypes").includes(issue.fields.issuetype.id)
-  ) {
+  if (selectedTableFieldIds.get("issueTypes").includes(issue.issuetype.id)) {
     const name = currentLink.inwardIssue
       ? currentLink.type.inward
       : currentLink.type.outward;
@@ -81,7 +89,7 @@ export const processIssues = (
   const links: string[] = [];
   const classifieds = [];
   filteredIssues.forEach((issue: Issue) => {
-    const fields = issue.fields;
+    const fields = issue;
     const classified = {
       issue,
     };
@@ -105,9 +113,7 @@ export const processIssues = (
 
     if (fields.subtasks != null) {
       const subtasks = fields.subtasks.filter((issue: Issue) =>
-        selectedTableFieldIds
-          .get("issueTypes")
-          .includes(issue.fields.issuetype.id)
+        selectedTableFieldIds.get("issueTypes").includes(issue.issuetype.id)
       );
       if (allRelatedIssues !== null) {
         const fullSubtasks: Issue[] = [];

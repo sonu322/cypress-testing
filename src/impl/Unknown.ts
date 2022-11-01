@@ -10,7 +10,6 @@ import LXPAPI, {
   } from "../types/api";
   
   export default class UnknownImpl implements LXPAPI {
-    
     hasValidLicense(): boolean {
       throw new Error("Method not implemented.");
     }
@@ -30,15 +29,15 @@ import LXPAPI, {
       throw new Error("Method not implemented.");
     }
     getIssueWithLinks(
-      fields: IssueField[], 
-      issueId ? : string | undefined
-    ): Promise < IssueWithLinkedIssues > {
+      fields: IssueField[],
+      issueId?: string | undefined
+    ): Promise<IssueWithLinkedIssues> {
       throw new Error("Method not implemented.");
     }
     getCurrentIssueId(): Promise<string> {
       throw new Error("Method not implemented.");
     }
-    getIssueById(fields: IssueField[], issueId: string): Promise < Issue > {
+    getIssueById(fields: IssueField[], issueId: string): Promise<Issue> {
       throw new Error("Method not implemented.");
     }
     getFilters(): Promise<Filter[]> {
@@ -48,6 +47,14 @@ import LXPAPI, {
       throw new Error("Method not implemented.");
     }
     searchIssues(
+      jql: string,
+      fields?: IssueField[],
+      start?: number,
+      max?: number
+    ): Promise<{ data: Issue[]; total: number }> {
+      throw new Error("Method not implemented.");
+    }
+    searchLinkedIssues(
       jql: string,
       fields?: IssueField[],
       start?: number,

@@ -6,10 +6,10 @@ import { getFieldIds } from "../../util";
 import styled from "styled-components";
 import { Report } from "./Report";
 import {
-  getAllRelatedIssueIds,
+  getRelatedIssueIds,
   getJQLStringFromIds,
 } from "../../util/tracebilityReportsUtils";
-import { Issue } from "../../types/api";
+import {Issue} from "../../types/api";
 
 const Container = styled.div`
   padding: 4px;
@@ -42,37 +42,36 @@ export const Main = ({
   const api = useContext(APIContext);
   useEffect(() => {
     if (jqlString) {
-      const fieldIds = getFieldIds(issueFields);
       const fetchFilteredIssues = async (): Promise<void> => {
         setAreIssuesLoading(true);
         try {
-          const searchResult = await api.searchIssues(
+          const searchResult = await api.searchLinkedIssues(
             jqlString,
+            issueFields,
             START_INDEX,
-            DEFAULT_ROWS_PER_PAGE,
-            fieldIds
+            DEFAULT_ROWS_PER_PAGE
           );
-          const issues = searchResult.issues;
-          const totalNumberOfIssues = searchResult.totalNumberOfIssues;
-          const relatedIssueIds = getAllRelatedIssueIds(issues);
+          const {data, total} = searchResult;
+
+          const relatedIssueIds = getRelatedIssueIds(data);
           const relatedIssuesjqlString = getJQLStringFromIds(relatedIssueIds);
-          setFilteredIssues(issues);
+          setFilteredIssues(data);
           const searchAllRelatedIssuesResult = await api.searchIssues(
             relatedIssuesjqlString,
+            issueFields,
             START_INDEX,
-            relatedIssueIds.length,
-            fieldIds
+            relatedIssueIds.length
           );
-          const allRelatedIssues = searchAllRelatedIssuesResult.issues;
+          const allRelatedIssues = searchAllRelatedIssuesResult.data;
           setAllRelatedIssues(allRelatedIssues);
           if (
-            issues != null &&
+            data != null &&
             allRelatedIssues !== undefined &&
             allRelatedIssues !== null
           ) {
             setAreIssuesLoading(false);
           }
-          setTotalNumberOfIssues(totalNumberOfIssues);
+          setTotalNumberOfIssues(total);
         } catch (error) {
           setAreIssuesLoading(false);
           handleNewError(error);
@@ -80,32 +79,33 @@ export const Main = ({
       };
       void fetchFilteredIssues();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jqlString]);
   const fetchMoreIssues = (): void => {
     const fieldIds = getFieldIds(issueFields);
     const fetchFilteredIssues = async (): Promise<void> => {
       setAreMoreIssuesLoading(true);
       try {
-        const searchResult = await api.searchIssues(
+        const searchResult = await api.searchLinkedIssues(
           jqlString,
           filteredIssues.length,
           totalNumberOfIssues,
           fieldIds
         );
         const issues = searchResult.issues;
-        const oldIssueIds = getAllRelatedIssueIds(filteredIssues);
-        let newIssueIds = getAllRelatedIssueIds(issues);
+        const oldIssueIds = getRelatedIssueIds(filteredIssues);
+        let newIssueIds = getRelatedIssueIds(issues);
         newIssueIds = newIssueIds.filter((id) => {
           return !oldIssueIds.includes(id);
         });
         const relatedIssuesjqlString = getJQLStringFromIds(newIssueIds);
         const searchAllRelatedIssuesResult = await api.searchIssues(
           relatedIssuesjqlString,
+          fieldIds,
           START_INDEX,
-          newIssueIds.length,
-          fieldIds
+          newIssueIds.length
         );
-        const allRelatedIssues = searchAllRelatedIssuesResult.issues;
+        const allRelatedIssues = searchAllRelatedIssuesResult.data;
         setFilteredIssues((prevIssues: Issue[]) => prevIssues.concat(issues));
         setAllRelatedIssues((prevIssues: Issue[]) =>
           prevIssues.concat(allRelatedIssues)

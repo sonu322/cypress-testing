@@ -22,7 +22,6 @@ const FlexContainer = styled.div`
 `;
 
 export const Toolbar = ({
-  issueCardOptionsMap,
   selectedIssueFieldIds,
   setSelectedIssueFieldIds,
   selectedJQLString,

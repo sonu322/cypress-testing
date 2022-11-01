@@ -27,6 +27,8 @@ const fixedFieldNames = [
   "resolution",
 ];
 
+
+
 export const TracebilityReportModule = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState(true);
   const [allRelatedIssues, setAllRelatedIssues] = useState<Issue[] | null>(
@@ -97,6 +99,7 @@ export const TracebilityReportModule = (): JSX.Element => {
   }, []);
   const isExportDisabled =
     filteredIssues == null || filteredIssues.length === 0;
+
   const issueCardOptionsMap = new Map(issueFields);
   for (const fieldId of issueCardOptionsMap.keys()) {
     if (fixedFieldNames.includes(fieldId)) {
@@ -112,7 +115,6 @@ export const TracebilityReportModule = (): JSX.Element => {
             selectedJQLString={selectedJQLString}
             setSelectedJQLString={setSelectedJQLString}
             issueCardOptions={issueFields}
-            issueCardOptionsMap={issueCardOptionsMap}
             selectedIssueFieldIds={selectedIssueFieldIds}
             setSelectedIssueFieldIds={setSelectedIssueFieldIds}
             selectedTableFieldIds={selectedTableFieldIds}
@@ -128,7 +130,7 @@ export const TracebilityReportModule = (): JSX.Element => {
       >
         Links Explorer Traceability and Reports
       </PageHeader>
-      {errors && <ErrorsList errors={errors} />}
+      {errors.length > 0 && <ErrorsList errors={errors} />}
       <GrowContainer>
         <Main
           issueCardOptionsMap={issueCardOptionsMap}
@@ -147,4 +149,4 @@ export const TracebilityReportModule = (): JSX.Element => {
       </GrowContainer>
     </FullWidthContainer>
   );
-};;;;;;
+};
