@@ -13,6 +13,7 @@ export const ReportHeader = ({fields, fieldIds}: Props): JSX.Element => {
     name = toTitleCase(name);
     return <th key={id}>{name}</th>;
   });
+  columnHeads.unshift("Issue");
   return (
     <thead>
       <tr>{columnHeads}</tr>

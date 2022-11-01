@@ -22,26 +22,27 @@ export const Report = ({
   issueCardOptionsMap,
 }): JSX.Element => {
   // const {classifieds, links} = processIssues(tableFieldIds, filteredIssues);
+  const selectedLinkIds = selectedTableFieldIds.get("linkTypes");
+  const selectedIssueTypeIds = selectedTableFieldIds.get("issueTypes");
+  const allLinks = tableFields.get("linkTypes").values;
+
   return (
     <Container>
       <table>
-        <ReportHeader
-          fieldIds={selectedTableFieldIds.get("linkTypes")}
-          fields={tableFields.get("linkTypes").values}
-        />
-        {/* <tbody>
-          {filteredIssues.map((issue, i) => (
+        <ReportHeader fieldIds={selectedLinkIds} fields={allLinks} />
+        <tbody>
+          {filteredIssues.map((issue) => (
             <BorderTr key={issue.id}>
               <ReportRow
                 // classified={classified}
                 // issueCardOptionsMap={issueCardOptionsMap}
+                linkIds={selectedLinkIds}
                 issueFieldIds={issueFieldIds}
                 issue={issue}
-                links={links}
               />
             </BorderTr>
           ))}
-        </tbody> */}
+        </tbody>
       </table>
     </Container>
   );

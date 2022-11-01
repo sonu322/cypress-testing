@@ -34,10 +34,6 @@ import {
 } from "../types/jira";
 
 import {getQueryParam} from "../util/index";
-import {
-  getJQLStringFromIds,
-  getLinkedIssueIds,
-} from "../util/tracebilityReportsUtils";
 
 function throwError(msg: string) {
   throw new Error(msg);
@@ -167,8 +163,7 @@ export default class CloudImpl implements LXPAPI {
           });
         }
       });
-      
-      
+
       return result;
     } catch (error) {
       console.error(error);
@@ -501,9 +496,26 @@ export default class CloudImpl implements LXPAPI {
 
   private readonly _populateIssueLinks = (
     issues: IssueWithPopulatedLinks[],
-    linkedIssues: Issue[]
+    linkedIssues: Issue[],
+    fields: IssueField[]
   ): IssueWithPopulatedLinks[] => {
     const populatedIssues: IssueWithPopulatedLinks[] = [];
+    // fields.forEach((field) => {
+    //   issues.forEach((issue) => {
+    //     issue.links.forEach((link) => {
+    //       if (link.linkTypeId === field.id) {
+    //         const linkedIssue = linkedIssues.find(
+    //           (linkedIssue) => linkedIssue.id === link.issueId
+    //         );
+    //         if (issue.fields[field.id] === undefined) {
+    //           issue.fields[field.id] = null;
+    //         }
+    //         issue.fields[field.id].push(linkedIssue);
+    //       }
+    //     });
+    //   });
+    // });
+
     issues.forEach((issue) => {
       issue.links.forEach((link) => {
         const linkedIssue = linkedIssues.find(
