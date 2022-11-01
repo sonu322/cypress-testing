@@ -3,11 +3,11 @@ import styled from "styled-components";
 import { APIContext } from "../../context/api";
 import PageHeader from "@atlaskit/page-header";
 import { Toolbar } from "./Toolbar";
-import { Issue, IssueField } from "../../types/api";
+import { Issue, IssueField, IssueLinkType, IssueType } from "../../types/api";
 import { Main } from "./Main";
 import { ErrorsList } from "../common/ErrorsList";
 import { exportReport } from "../../util/tracebilityReportsUtils";
-import { getKeyValues } from "../../util/common";
+import { getKeyMap, getKeyValues } from "../../util/common";
 const FullWidthContainer = styled.div`
   width: 100%;
   height: 100%;
@@ -63,8 +63,15 @@ export const TracebilityReportModule = (): JSX.Element => {
         const linkTypes = result[1];
         const fields = result[2];
 
-        // setting state
-        const fieldsMap = new Map();
+        // setting state - fields for issue card
+        setIssueFields(fields);
+
+        // setting state - selected field ids
+        const selectedFieldIds = getKeyValues(fields, "id");
+        setSelectedIssueFieldIds(selectedFieldIds);
+
+        // setting state - table field options
+        const fieldsMap = new Map<string, { name: string; values: any[] }>();
         fieldsMap.set("issueTypes", {
           name: "Issue Types",
           values: issueTypes,
@@ -75,12 +82,11 @@ export const TracebilityReportModule = (): JSX.Element => {
         });
         setTableFields(fieldsMap);
 
-        const fieldIdsMap = new Map();
-        fieldIdsMap.set("issueTypes", getKeyValues(issueTypes, "id"));
-        fieldIdsMap.set("linkTypes", getKeyValues(linkTypes, "id"));
+        // setting state - table field selected options
+        const fieldIdsMap = getKeyMap(fieldsMap, "id");
         setSelectedTableFieldIds(fieldIdsMap);
 
-        setIssueFields(fields);
+        // loading state
         setIsLoading(false);
       } catch (error) {
         handleNewError(error);
