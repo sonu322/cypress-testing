@@ -7,7 +7,7 @@ export interface Props {
   content: IssueType;
 }
 
-export const IssueTypeInfo = ({ content }: Props ) => {
+export const IssueTypeInfo = ({ content }: Props) => {
   const { name, iconUrl, description } = content;
   const tooltipMesssage = `${name}: ${description}`;
   return (

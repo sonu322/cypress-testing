@@ -32,23 +32,35 @@ export const IssueTree = ({
   let fieldMap = {};
   issueFields.forEach((field) => {
     fieldMap[field.id] = field;
-  })
+  });
 
   const findJiraFields = (selectedFieldIds): IssueField[] => {
     let result = [];
-    for(let fieldId of selectedFieldIds){
-      result.push((fieldMap[fieldId] as IssueField));
+    for (let fieldId of selectedFieldIds) {
+      result.push(fieldMap[fieldId] as IssueField);
     }
     return result;
   };
 
   useEffect(() => {
-    treeUtils.initTree(filter, findJiraFields(selectedIssueFieldIds), setTree, handleError);
+    treeUtils.initTree(
+      filter,
+      findJiraFields(selectedIssueFieldIds),
+      setTree,
+      handleError
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
 
   const onExpand = (itemId) => {
-    treeUtils.handleExpand(tree, itemId, findJiraFields(selectedIssueFieldIds), filter, setTree, handleError);
+    treeUtils.handleExpand(
+      tree,
+      itemId,
+      findJiraFields(selectedIssueFieldIds),
+      filter,
+      setTree,
+      handleError
+    );
   };
 
   const onCollapse = (itemId) => {
@@ -58,13 +70,10 @@ export const IssueTree = ({
   const renderItem = ({ ...props }) => {
     return (
       //@ts-ignore
-      <IssueItem
-        {...props}
-        selectedIssueFieldIds={selectedIssueFieldIds}
-      />
+      <IssueItem {...props} selectedIssueFieldIds={selectedIssueFieldIds} />
     );
   };
-  
+
   return (
     <Container>
       <Tree

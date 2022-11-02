@@ -9,7 +9,7 @@ export const HelpLink = ({ href, description }) => {
         appearance="default"
         target="_blank"
         href={href}
-        iconBefore={<QuestionIcon label=""/>}
+        iconBefore={<QuestionIcon label="" />}
       />
     </TooltipContainer>
   );

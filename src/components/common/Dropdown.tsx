@@ -20,26 +20,22 @@ export const Dropdown = ({
     updateSelectedOptions(updatedList);
   };
   return (
-  <DropdownMenu
-    trigger={dropdownName}
-    shouldFlip={false}
-    placement="bottom"
-  >
-    <DropdownItemCheckboxGroup id={dropdownName + "-options"}>
-      {options &&
-        options.map((option) => (
-          <DropdownItemCheckbox
-            key={option.id}
-            id={option.id}
-            isSelected={
-              selectedOptions ? selectedOptions.includes(option.id) : false
-            }
-            onClick={() => handleOptionClick(option.id)}
-          >
-            {option.name}
-          </DropdownItemCheckbox>
-        ))}
-    </DropdownItemCheckboxGroup>
-  </DropdownMenu>
+    <DropdownMenu trigger={dropdownName} shouldFlip={false} placement="bottom">
+      <DropdownItemCheckboxGroup id={dropdownName + "-options"}>
+        {options &&
+          options.map((option) => (
+            <DropdownItemCheckbox
+              key={option.id}
+              id={option.id}
+              isSelected={
+                selectedOptions ? selectedOptions.includes(option.id) : false
+              }
+              onClick={() => handleOptionClick(option.id)}
+            >
+              {option.name}
+            </DropdownItemCheckbox>
+          ))}
+      </DropdownItemCheckboxGroup>
+    </DropdownMenu>
   );
 };

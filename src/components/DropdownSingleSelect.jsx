@@ -25,9 +25,7 @@ export const DropdownSingleSelect = ({
               <DropdownItem
                 key={option.id}
                 id={option.id}
-                isSelected={
-                  selectedOptionId == option.id
-                }
+                isSelected={selectedOptionId == option.id}
                 onClick={() => updateSelectedOptionId(option.id)}
               >
                 {option.name}

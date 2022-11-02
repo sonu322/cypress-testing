@@ -88,7 +88,6 @@ export const reportCsv = function (classifieds, links) {
   return content;
 };
 
-
 export const download = (type, content) => {
   let source = null;
   let file = null;

@@ -1,4 +1,4 @@
-import TracebilityReport from './TracebilityReport'
+import TracebilityReport from "./TracebilityReport";
 import CloudImpl from "./impl/Cloud";
 import { APIContext } from "./context/api";
 import React from "react";
@@ -11,5 +11,7 @@ const App = document.getElementById("app");
 
 ReactDOM.render(
   <APIContext.Provider value={api}>
-    <TracebilityReport/>
-  </APIContext.Provider>, App);
+    <TracebilityReport />
+  </APIContext.Provider>,
+  App
+);
