@@ -7,7 +7,7 @@ export const ExportContent = ({ exportContent, description, isDisabled }) => {
     <TooltipContainer content={description ?? "export"}>
       <Button
         appearance="default"
-        iconBefore={<ExportIcon label=""/>}
+        iconBefore={<ExportIcon label="" />}
         onClick={exportContent}
         isDisabled={isDisabled}
       />

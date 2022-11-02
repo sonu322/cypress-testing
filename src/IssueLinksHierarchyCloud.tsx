@@ -11,5 +11,7 @@ const App = document.getElementById("app");
 
 ReactDOM.render(
   <APIContext.Provider value={api}>
-    <IssueLinksHierarchy/>
-  </APIContext.Provider>, App);
+    <IssueLinksHierarchy />
+  </APIContext.Provider>,
+  App
+);
