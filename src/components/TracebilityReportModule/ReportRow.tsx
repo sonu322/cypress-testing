@@ -1,11 +1,11 @@
 import React from "react";
-import {Issue, IssueWithPopulatedLinks} from "../../types/api";
+import {Issue, IssueWithSortedLinks} from "../../types/api";
 import {IssueCard} from "../common/issueCard/IssueCard";
 
 export interface Props {
   linkIds: string[];
   issueFieldIds: string[];
-  issue: IssueWithPopulatedLinks;
+  issue: IssueWithSortedLinks;
 }
 
 export const ReportRow = ({
@@ -18,38 +18,27 @@ export const ReportRow = ({
       <IssueCard issueData={issue} selectedIssueFieldIds={issueFieldIds} />
     </td>
   );
-  // const parentCell = (
-  //   <td key="parent">
-  //     {classified.parent ? (
+
+  // const row = {};
+
+  // linkIds.forEach((fieldId) => {
+  //   row[fieldId] = <td key={fieldId}>--</td>;
+  //   const fieldIssues = [];
+  //   const matchingIssues = issue.links.filter(
+  //     (link) => link.linkTypeId === fieldId
+  //   );
+  //   matchingIssues.forEach((matchingIssue) => {
+  //     fieldIssues.push(
   //       <IssueCard
-  //         issueData={classified.parent}
+  //         issueData={matchingIssue.issue}
   //         selectedIssueFieldIds={issueFieldIds}
   //       />
-  //     ) : (
-  //       <span>--</span>
-  //     )}
-  //   </td>
-  // );
-  const row = {};
-
-  linkIds.forEach((fieldId) => {
-    row[fieldId] = <td key={fieldId}>--</td>;
-    const fieldIssues = [];
-    const matchingIssues = issue.links.filter(
-      (link) => link.linkTypeId === fieldId
-    );
-    matchingIssues.forEach((matchingIssue) => {
-      fieldIssues.push(
-        <IssueCard
-          issueData={matchingIssue.issue}
-          selectedIssueFieldIds={issueFieldIds}
-        />
-      );
-    });
-    if (fieldIssues.length !== 0) {
-      row[fieldId] = <td key={fieldId}> {fieldIssues}</td>;
-    }
-  });
+  //     );
+  //   });
+  //   if (fieldIssues.length !== 0) {
+  //     row[fieldId] = <td key={fieldId}> {fieldIssues}</td>;
+  //   }
+  // });
 
   // const linkCells = links.map((link: string) => (
   //   <td key={classified.issue.key + link}>
@@ -70,7 +59,7 @@ export const ReportRow = ({
   const cells = [];
 
   cells.push(issueCell);
-  cells.push(Object.values(row));
+  // cells.push(Object.values(row));
 
   return cells;
-};;;;;;;;;
+};

@@ -133,37 +133,68 @@ export default class CloudImpl implements LXPAPI {
     }
   }
 
+  // async getIssueLinkTypes(): Promise<IssueLinkType[]> {
+  //   try {
+  //     const response = await this._AP.request("/rest/api/3/issueLinkType");
+  //     const items: JiraLinkType[] =
+  //       response.body && JSON.parse(response.body)?.issueLinkTypes;
+
+  //     items || throwError("Issue link types not found.");
+
+  //     const result = [];
+  //     result.push({
+  //       id: CustomLinkType.PARENT,
+  //       name: "Parent",
+  //     });
+  //     result.push({
+  //       id: CustomLinkType.SUBTASK,
+  //       name: "Subtasks",
+  //     });
+
+  //     items.forEach((item) => {
+  //       result.push({
+  //         id: `${item.id}-${item.inward}`,
+  //         name: item.inward,
+  //       });
+  //       if (item.inward !== item.outward) {
+  //         result.push({
+  //           id: `${item.id}-${item.outward}`,
+  //           name: item.outward,
+  //         });
+  //       }
+  //     });
+
+  //     return result;
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw new Error(
+  //       "Error in fetching the issue link types - " + error.message
+  //     );
+  //   }
+  // }
+
   async getIssueLinkTypes(): Promise<IssueLinkType[]> {
     try {
-      const response = await this._AP.request("/rest/api/3/issueLinkType");
-      const items: JiraLinkType[] =
+      let response = await this._AP.request("/rest/api/3/issueLinkType");
+      let items: JiraLinkType[] =
         response.body && JSON.parse(response.body)?.issueLinkTypes;
 
       items || throwError("Issue link types not found.");
 
-      const result = [];
-      result.push({
-        id: CustomLinkType.PARENT,
-        name: "Parent",
+      let result = items.map((item) => {
+        return {
+          id: item.id,
+          name: item.name,
+        };
       });
       result.push({
         id: CustomLinkType.SUBTASK,
         name: "Subtasks",
       });
-
-      items.forEach((item) => {
-        result.push({
-          id: `${item.id}-${item.inward}`,
-          name: item.inward,
-        });
-        if (item.inward !== item.outward) {
-          result.push({
-            id: `${item.id}-${item.outward}`,
-            name: item.outward,
-          });
-        }
+      result.push({
+        id: CustomLinkType.PARENT,
+        name: "Parent",
       });
-
       return result;
     } catch (error) {
       console.error(error);
