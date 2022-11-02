@@ -1,4 +1,4 @@
-import {Issue, IssueWithPopulatedLinks, PopulatedIssueLink} from "../types/api";
+import {Issue, IssueWithSortedLinks, PopulatedIssueLink} from "../types/api";
 import {download, toTitleCase} from "./index";
 
 const getIssue = (id: string, issues: Issue[]): Issue | null => {
@@ -42,7 +42,7 @@ export const populateClassifiedAndLinks = (
 export const processIssues = (selectedTableFieldIds, filteredIssues) => {
   const links: string[] = [];
   const classifieds = [];
-  filteredIssues.forEach((issue: IssueWithPopulatedLinks) => {
+  filteredIssues.forEach((issue: IssueWithSortedLinks) => {
     const classified = {};
     // if (
     //   Boolean(fields.parent) &&

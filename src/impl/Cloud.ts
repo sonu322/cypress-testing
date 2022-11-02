@@ -11,7 +11,7 @@ import LXPAPI, {
   IssueUser,
   IssueVersion,
   IssueWithLinkedIssues,
-  IssueWithPopulatedLinks,
+  IssueWithSortedLinks,
   Project,
 } from "../types/api";
 
@@ -495,11 +495,10 @@ export default class CloudImpl implements LXPAPI {
   };
 
   private readonly _populateIssueLinks = (
-    issues: IssueWithPopulatedLinks[],
-    linkedIssues: Issue[],
-    fields: IssueField[]
-  ): IssueWithPopulatedLinks[] => {
-    const populatedIssues: IssueWithPopulatedLinks[] = [];
+    issues: IssueWithSortedLinks[],
+    linkedIssues: Issue[]
+  ): IssueWithSortedLinks[] => {
+    const populatedIssues: IssueWithSortedLinks[] = [...issues];
     // fields.forEach((field) => {
     //   issues.forEach((issue) => {
     //     issue.links.forEach((link) => {
@@ -516,15 +515,31 @@ export default class CloudImpl implements LXPAPI {
     //   });
     // });
 
-    issues.forEach((issue) => {
+    populatedIssues.forEach((issue) => {
+      const sortedLinks = {};
       issue.links.forEach((link) => {
+        if (sortedLinks[link.linkTypeId] === undefined) {
+          sortedLinks[link.linkTypeId] = [];
+        }
         const linkedIssue = linkedIssues.find(
           (linkedIssue) => linkedIssue.id === link.issueId
         );
-        link.issue = linkedIssue;
+        sortedLinks[link.linkTypeId].push(linkedIssue);
       });
-      populatedIssues.push(issue);
+      console.log("pop link!!!!");
+      console.log(sortedLinks);
+      issue.sortedLinks = sortedLinks;
     });
+
+    // issues.forEach((issue) => {
+    //   issue.links.forEach((link) => {
+    //     const linkedIssue = linkedIssues.find(
+    //       (linkedIssue) => linkedIssue.id === link.issueId
+    //     );
+    //     link.issue = linkedIssue;
+    //   });
+    //   populatedIssues.push(issue);
+    // })
     return populatedIssues;
   };
 
@@ -533,10 +548,10 @@ export default class CloudImpl implements LXPAPI {
     fields: IssueField[],
     start?: number,
     max?: number
-  ): Promise<{data: IssueWithPopulatedLinks[]; total: number}> {
+  ): Promise<{data: IssueWithSortedLinks[]; total: number}> {
     const searchResult = await this.searchIssues(jql, fields, start, max);
     console.log("searchLinkedIssues");
-    const issues: IssueWithPopulatedLinks[] = searchResult.data;
+    const issues: IssueWithSortedLinks[] = searchResult.data;
     const {jqlString: linkedIssuesJQL, total} = this._getLinkedIssueJQL(issues);
     console.log("realatedIsuesJql");
     console.log(linkedIssuesJQL);

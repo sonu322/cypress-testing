@@ -57,17 +57,15 @@ export interface IssueLink {
   issueId: ID;
 }
 
-export interface PopulatedIssueLink extends IssueLink {
-  issue?: Issue;
-  // TODO: remove issueId from PopulatedIssueLink
-}
 
 export interface IssueWithLinkedIssues extends Issue {
   linkedIssues: Issue[];
 }
 
-export interface IssueWithPopulatedLinks extends Issue {
-  links: PopulatedIssueLink[];
+export interface IssueWithSortedLinks extends Issue {
+  sortedLinks: {
+    [key: string]: Issue[];
+  };
 }
 
 
