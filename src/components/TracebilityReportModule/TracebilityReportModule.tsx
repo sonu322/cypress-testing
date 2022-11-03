@@ -3,11 +3,11 @@ import styled from "styled-components";
 import { APIContext } from "../../context/api";
 import PageHeader from "@atlaskit/page-header";
 import { Toolbar } from "./Toolbar";
-import { Issue, IssueField, IssueLinkType, IssueType } from "../../types/api";
-import { Main } from "./Main";
-import { ErrorsList } from "../common/ErrorsList";
-import { exportReport } from "../../util/tracebilityReportsUtils";
-import { getKeyMap, getKeyValues } from "../../util/common";
+import {Issue, IssueField, IssueWithSortedLinks} from "../../types/api";
+import {Main} from "./Main";
+import {ErrorsList} from "../common/ErrorsList";
+import {exportReport} from "../../util/tracebilityReportsUtils";
+import {getKeyMap, getKeyValues} from "../../util/common";
 const FullWidthContainer = styled.div`
   width: 100%;
   height: 100%;
@@ -27,14 +27,14 @@ const fixedFieldNames = [
   "resolution",
 ];
 
-
-
 export const TracebilityReportModule = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState(true);
   // const [allRelatedIssues, setAllRelatedIssues] = useState<Issue[] | null>(
   //   null
   // );
-  const [filteredIssues, setFilteredIssues] = useState<Issue[] | null>(null);
+  const [filteredIssues, setFilteredIssues] = useState<
+    IssueWithSortedLinks[] | null
+  >(null);
   const [selectedJQLString, setSelectedJQLString] = useState<string | null>(
     null
   );
@@ -42,9 +42,13 @@ export const TracebilityReportModule = (): JSX.Element => {
   const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState<string[]>(
     []
   );
-  const [selectedTableFieldIds, setSelectedTableFieldIds] = useState(new Map());
+  const [selectedTableFieldIds, setSelectedTableFieldIds] = useState<
+    Map<string, string[]>
+  >(new Map());
   const [errors, setErrors] = useState<unknown[]>([]);
-  const [tableFields, setTableFields] = useState(new Map());
+  const [tableFields, setTableFields] = useState<
+    Map<string, {name: string; values: any[]}>
+  >(new Map());
   const [areIssuesLoading, setAreIssuesLoading] = useState(false);
   const api = useContext(APIContext);
   const handleNewError = (err: unknown): void => {
@@ -121,7 +125,7 @@ export const TracebilityReportModule = (): JSX.Element => {
             updateSelectedTableFieldIds={setSelectedTableFieldIds}
             tableFields={tableFields}
             exportReport={() =>
-              exportReport(selectedTableFieldIds, filteredIssues)
+              exportReport(tableFields, selectedTableFieldIds, filteredIssues)
             }
             isExportDisabled={isExportDisabled}
             handleNewError={handleNewError}
