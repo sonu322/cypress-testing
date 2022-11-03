@@ -51,7 +51,7 @@
         "url": "/tracebilityReportModuleEntry.html",
         "location": "system.top.navigation.bar",
         "name": {
-          "value": "Links Explorerr",
+          "value": "Links Explorer",
           "i18n": "general.page.name"
         },
         "conditions": [

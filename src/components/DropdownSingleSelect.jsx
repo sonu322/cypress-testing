@@ -11,30 +11,26 @@ export const DropdownSingleSelect = ({
   options,
 }) => {
   return (
-    <>
-      <DropdownMenu
-        triggerType="button"
-        trigger={dropdownName}
-        shouldFlip={false}
-        position="bottom right"
-        isCompact={true}
-      >
-        <DropdownItemGroup>
-          {options &&
-            options.map((option) => (
-              <DropdownItem
-                key={option.id}
-                id={option.id}
-                isSelected={
-                  selectedOptionId == option.id
-                }
-                onClick={() => updateSelectedOptionId(option.id)}
-              >
-                {option.name}
-              </DropdownItem>
-            ))}
-        </DropdownItemGroup>
-      </DropdownMenu>
-    </>
+    <DropdownMenu
+      triggerType="button"
+      trigger={dropdownName}
+      shouldFlip={false}
+      position="bottom right"
+      isCompact={true}
+    >
+      <DropdownItemGroup>
+        {options &&
+          options.map((option) => (
+            <DropdownItem
+              key={option.id}
+              id={option.id}
+              isSelected={selectedOptionId == option.id}
+              onClick={() => updateSelectedOptionId(option.id)}
+            >
+              {option.name}
+            </DropdownItem>
+          ))}
+      </DropdownItemGroup>
+    </DropdownMenu>
   );
 };
