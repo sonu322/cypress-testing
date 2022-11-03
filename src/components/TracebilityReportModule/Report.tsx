@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import {colors} from "@atlaskit/theme";
-import {ReportRow} from "./ReportRow";
-import {ReportHeader} from "./ReportHeader";
-import {IssueWithSortedLinks} from "../../types/api";
+import { colors } from "@atlaskit/theme";
+import { ReportRow } from "./ReportRow";
+import { ReportHeader } from "./ReportHeader";
+import { IssueWithSortedLinks } from "../../types/api";
 const Container = styled.div`
   width: 100%;
   height: 100%;

@@ -207,7 +207,6 @@ export interface JiraFilter {
 }
 
 export interface JiraAPI {
-
   hasValidLicense(): boolean;
 
   getJiraBaseURL(): string;
@@ -222,7 +221,12 @@ export interface JiraAPI {
 
   getIssueById(issueId: string, query: string): Promise<JiraIssueFull>;
 
-  searchIssues(jql: string, fields: string[], start?: number, max?: number): Promise<JiraIssueSearchResult>;
+  searchIssues(
+    jql: string,
+    fields: string[],
+    start?: number,
+    max?: number
+  ): Promise<JiraIssueSearchResult>;
 
   getCurrentIssueId(): Promise<string>;
 

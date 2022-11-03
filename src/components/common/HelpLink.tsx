@@ -6,7 +6,7 @@ interface Props {
   href: string;
   description: string;
 }
-export const HelpLink = ({href, description}: Props): JSX.Element => {
+export const HelpLink = ({ href, description }: Props): JSX.Element => {
   return (
     <TooltipContainer content={description ?? "get help"}>
       <Button

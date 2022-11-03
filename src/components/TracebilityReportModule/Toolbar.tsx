@@ -9,7 +9,7 @@ import { HelpLink } from "../common/HelpLink";
 import { ExportContent } from "../common/ExportContent";
 import { JQLEditor } from "../JQLEditor";
 import { TableFieldsDropdown } from "./TableFieldsDropdown";
-import {IssueField} from "../../types/api";
+import { IssueField } from "../../types/api";
 const MainBar = styled.div`
   background-color: ${colors.N20}
   padding: 10px;

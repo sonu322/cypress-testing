@@ -1,5 +1,5 @@
 import React from "react";
-import {DropdownMultipleSectionsSelect} from "../common/DropdownMultipleSectionsSelect";
+import { DropdownMultipleSectionsSelect } from "../common/DropdownMultipleSectionsSelect";
 
 interface Props {
   options: Map<

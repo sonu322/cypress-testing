@@ -3,7 +3,7 @@ import DropdownMenu, {
   DropdownItemGroup,
   DropdownItem,
 } from "@atlaskit/dropdown-menu";
-import {Filter} from "../../types/api";
+import { Filter } from "../../types/api";
 
 interface Props {
   selectedOptionId: string;

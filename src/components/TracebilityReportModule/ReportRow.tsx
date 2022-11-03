@@ -1,6 +1,6 @@
 import React from "react";
-import {IssueWithSortedLinks} from "../../types/api";
-import {IssueCard} from "../common/issueCard/IssueCard";
+import { IssueWithSortedLinks } from "../../types/api";
+import { IssueCard } from "../common/issueCard/IssueCard";
 
 export interface Props {
   linkIds: string[];

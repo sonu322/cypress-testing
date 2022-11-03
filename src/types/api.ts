@@ -144,4 +144,4 @@ export default interface LXPAPI {
   getFilters: () => Promise<Filter[]>;
 
   getCurrentProject: (projectKey?: string) => Promise<Project>;
-};
+}

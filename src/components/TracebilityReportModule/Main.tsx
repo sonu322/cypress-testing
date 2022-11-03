@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { LoadingButton } from "@atlaskit/button";
 import Spinner from "@atlaskit/spinner";
-import {APIContext} from "../../context/api";
+import { APIContext } from "../../context/api";
 import styled from "styled-components";
-import {Report} from "./Report";
+import { Report } from "./Report";
 import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
-import {IssueField, IssueWithSortedLinks} from "../../types/api";
+import { IssueField, IssueWithSortedLinks } from "../../types/api";
 const Container = styled.div`
   padding: 4px;
   width: 100%;

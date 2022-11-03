@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
-import {DropdownSingleSelect} from "./common/DropdownSingleSelect";
-import {APIContext} from "../context/api";
-import {Filter} from "../types/api";
+import { DropdownSingleSelect } from "./common/DropdownSingleSelect";
+import { APIContext } from "../context/api";
+import { Filter } from "../types/api";
 
 interface Props {
   selectedFilterId: string;

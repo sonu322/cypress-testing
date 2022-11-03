@@ -3,11 +3,11 @@ import styled from "styled-components";
 import { APIContext } from "../../context/api";
 import PageHeader from "@atlaskit/page-header";
 import { Toolbar } from "./Toolbar";
-import {IssueField, IssueWithSortedLinks} from "../../types/api";
-import {Main} from "./Main";
-import {ErrorsList} from "../common/ErrorsList";
-import {exportReport} from "../../util/tracebilityReportsUtils";
-import {getKeyMap, getKeyValues} from "../../util/common";
+import { IssueField, IssueWithSortedLinks } from "../../types/api";
+import { Main } from "./Main";
+import { ErrorsList } from "../common/ErrorsList";
+import { exportReport } from "../../util/tracebilityReportsUtils";
+import { getKeyMap, getKeyValues } from "../../util/common";
 
 const FullWidthContainer = styled.div`
   width: 100%;
@@ -37,7 +37,7 @@ export const TracebilityReportModule = (): JSX.Element => {
   >(new Map());
   const [errors, setErrors] = useState<unknown[]>([]);
   const [tableFields, setTableFields] = useState<
-    Map<string, {name: string; values: any[]}>
+    Map<string, { name: string; values: any[] }>
   >(new Map());
   const [areIssuesLoading, setAreIssuesLoading] = useState(false);
   const api = useContext(APIContext);
@@ -67,7 +67,7 @@ export const TracebilityReportModule = (): JSX.Element => {
         setSelectedIssueFieldIds(selectedFieldIds);
 
         // setting state - table field options
-        const fieldsMap = new Map<string, {name: string; values: any[]}>();
+        const fieldsMap = new Map<string, { name: string; values: any[] }>();
         fieldsMap.set("issueTypes", {
           name: "Issue Types",
           values: issueTypes,
