@@ -1,5 +1,5 @@
 import React from "react";
-import {Issue, IssueWithSortedLinks} from "../../types/api";
+import {IssueWithSortedLinks} from "../../types/api";
 import {IssueCard} from "../common/issueCard/IssueCard";
 
 export interface Props {
@@ -15,10 +15,9 @@ export const ReportRow = ({
   issueFieldIds,
   issue,
 }: Props): JSX.Element[] => {
-  console.log("isssue!!!!!!");
-  console.log(issue);
   const cells = [];
 
+  // push issue cell into row
   const issueCell = (
     <td key="issue">
       <IssueCard issueData={issue} selectedIssueFieldIds={issueFieldIds} />
@@ -26,10 +25,9 @@ export const ReportRow = ({
   );
   cells.push(issueCell);
 
+  // push links cells into row
   linkIds.forEach((linkId) => {
-    console.log("links!!!!!!!!");
-    console.log(linkId);
-    console.log(issue.sortedLinks[linkId]);
+    // render -- by default
     let issueCell = <td key={linkId}>--</td>;
 
     if (issue.sortedLinks[linkId] !== undefined) {
@@ -51,47 +49,9 @@ export const ReportRow = ({
         issueCell = <td key={linkId}>{allIssues}</td>;
       }
     }
+
+    // push cells into row
     cells.push(issueCell);
   });
-
-  // const row = {};
-
-  // linkIds.forEach((fieldId) => {
-  //   row[fieldId] = <td key={fieldId}>--</td>;
-  //   const fieldIssues = [];
-  //   const matchingIssues = issue.links.filter(
-  //     (link) => link.linkTypeId === fieldId
-  //   );
-  //   matchingIssues.forEach((matchingIssue) => {
-  //     fieldIssues.push(
-  //       <IssueCard
-  //         issueData={matchingIssue.issue}
-  //         selectedIssueFieldIds={issueFieldIds}
-  //       />
-  //     );
-  //   });
-  //   if (fieldIssues.length !== 0) {
-  //     row[fieldId] = <td key={fieldId}> {fieldIssues}</td>;
-  //   }
-  // });
-
-  // const linkCells = links.map((link: string) => (
-  //   <td key={classified.issue.key + link}>
-  //     {classified[link] != null && classified[link].length > 0 ? (
-  //       classified[link].map((issue: Issue) => (
-  //         <IssueCard
-  //           key={issue.id}
-  //           issueData={issue}
-  //           selectedIssueFieldIds={issueFieldIds}
-  //         />
-  //       ))
-  //     ) : (
-  //       <span>--</span>
-  //     )}
-  //   </td>
-  // ));
-
-  // cells.push(Object.values(row));
-
   return cells;
-};;;
+};
