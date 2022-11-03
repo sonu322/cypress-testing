@@ -1,13 +1,19 @@
 import React, { useEffect, useState, useContext } from "react";
-import { DropdownSingleSelect } from "./DropdownSingleSelect";
-import { APIContext } from "../context/api";
-import { Filter } from "../types/api";
+import {DropdownSingleSelect} from "./common/DropdownSingleSelect";
+import {APIContext} from "../context/api";
+import {Filter} from "../types/api";
+
+interface Props {
+  selectedFilterId: string;
+  setSelectedFilterId: React.Dispatch<React.SetStateAction<string>>;
+  handleNewError: (err: unknown) => void;
+}
 
 export const JQLSelectDropdown = ({
   selectedFilterId,
   setSelectedFilterId,
   handleNewError,
-}): JSX.Element => {
+}: Props): JSX.Element => {
   const api = useContext(APIContext);
   const [filters, setFilters] = useState<Filter[]>([]);
   useEffect(() => {
@@ -32,7 +38,7 @@ export const JQLSelectDropdown = ({
       dropdownName={selectedOption?.name ?? "Select filter"}
       options={filters}
       selectedOptionId={selectedFilterId}
-      updateSelectedOptionId={setSelectedFilterId}
+      setSelectedOptionId={setSelectedFilterId}
     ></DropdownSingleSelect>
   );
 };
