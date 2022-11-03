@@ -35,7 +35,7 @@ export interface JiraIssueType {
   name: string;
   subtask: boolean;
   avatarId: number;
-  hierarchyLevel: number;
+  hierarchyLevel?: number; // only available in Jira Cloud
 }
 
 export interface JiraLinkType {
@@ -65,9 +65,9 @@ export interface JiraSprint {
 }
 
 export interface JiraIssueFieldsFull extends JiraIssueFields {
-  issuelinks: JiraIssueLink[],
-  subtasks: JiraIssue[],
-  parent: JiraIssue
+  issuelinks: JiraIssueLink[];
+  subtasks: JiraIssue[];
+  parent: JiraIssue;
 }
 
 export interface JiraIssue {
@@ -88,8 +88,8 @@ export interface JiraIssueLink {
   id: string;
   self: string;
   type: JiraLinkType;
-  inwardIssue ? : JiraIssue;
-  outwardIssue ? : JiraIssue;
+  inwardIssue?: JiraIssue;
+  outwardIssue?: JiraIssue;
 }
 
 export interface JiraIssueSearchResult {
@@ -118,10 +118,10 @@ export interface JiraAssignee {
 }
 
 export interface JiraAvatarUrls {
-  '48x48': string;
-  '24x24': string;
-  '16x16': string;
-  '32x32': string;
+  "48x48": string;
+  "24x24": string;
+  "16x16": string;
+  "32x32": string;
 }
 
 export interface JiraProject {
@@ -145,8 +145,7 @@ export interface JiraProject {
   properties: JiraProjectProperties;
 }
 
-export interface JiraProjectProperties {
-}
+export interface JiraProjectProperties {}
 
 export interface JiraRoles {
   [roleName: string]: string;
@@ -168,7 +167,7 @@ export interface JiraProjectLead {
 
 export interface JiraIssueField {
   id: string;
-  key: string;
+  key?: string; //only available in Jira Cloud
   name: string;
   custom: boolean;
   orderable: boolean;
@@ -205,4 +204,31 @@ export interface JiraFilter {
   self: string;
   id: string;
   name: string;
+}
+
+export interface JiraAPI {
+
+  hasValidLicense(): boolean;
+
+  getJiraBaseURL(): string;
+
+  getPriorities(): Promise<JiraIssuePriorityFull[]>;
+
+  getIssueTypes(): Promise<JiraIssueType[]>;
+
+  getIssueLinkTypes(): Promise<JiraLinkType[]>;
+
+  getIssueFields(): Promise<JiraIssueField[]>;
+
+  getIssueById(issueId: string, query: string): Promise<JiraIssueFull>;
+
+  searchIssues(jql: string, fields: string[], start?: number, max?: number): Promise<JiraIssueSearchResult>;
+
+  getCurrentIssueId(): Promise<string>;
+
+  getFilters(): Promise<JiraFiltersResponse>;
+
+  getCurrentProject(projectKey: string): Promise<JiraProject>;
+
+  getCurrentProjectKey(): Promise<string>;
 }

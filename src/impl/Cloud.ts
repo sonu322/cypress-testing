@@ -33,7 +33,7 @@ import {
   JiraVersion,
 } from "../types/jira";
 
-import {getQueryParam} from "../util/index";
+import { getQueryParam } from "../util/index";
 
 function throwError(msg: string) {
   throw new Error(msg);
@@ -173,7 +173,6 @@ export default class CloudImpl implements LXPAPI {
     }
   }
 
-
   async addCustomFields(
     issueFields: IssueField[],
     fields?: JiraIssueField[]
@@ -286,7 +285,7 @@ export default class CloudImpl implements LXPAPI {
       linkedIssues = result.data;
     }
 
-    return {...issue, linkedIssues};
+    return { ...issue, linkedIssues };
   }
 
   getCurrentIssueId(): Promise<string> {
@@ -454,7 +453,7 @@ export default class CloudImpl implements LXPAPI {
     fields: IssueField[],
     start?: number,
     max?: number
-  ): Promise<{data: Issue[]; total: number}> {
+  ): Promise<{ data: Issue[]; total: number }> {
     try {
       const fieldIds = this._getFieldIds(fields);
       const data = {
@@ -479,7 +478,7 @@ export default class CloudImpl implements LXPAPI {
       for (const issue of jiraIssues) {
         result.push(this._convertIssue(issue, fields));
       }
-      return {data: result, total};
+      return { data: result, total };
     } catch (error) {
       console.error(error);
       throw new Error("Error in searching issues: " + error.message);
@@ -488,11 +487,11 @@ export default class CloudImpl implements LXPAPI {
 
   private readonly _getLinkedIssueJQL = (
     issues: Issue[]
-  ): {jqlString: string; total: number} => {
+  ): { jqlString: string; total: number } => {
     const ids: string[] = [];
     issues.forEach((issue) => {
       issue.links.forEach((link) => {
-        const {issueId} = link;
+        const { issueId } = link;
         if (!ids.includes(issueId)) {
           ids.push(issueId);
         }
@@ -501,7 +500,7 @@ export default class CloudImpl implements LXPAPI {
     const jqlComponents = ids.map((id) => `id=${id}`);
     const jqlString = jqlComponents.join(" OR ");
     const total = ids.length;
-    return {jqlString, total};
+    return { jqlString, total };
   };
 
   private readonly _populateIssueLinks = (
@@ -509,22 +508,6 @@ export default class CloudImpl implements LXPAPI {
     linkedIssues: Issue[]
   ): IssueWithSortedLinks[] => {
     const populatedIssues: IssueWithSortedLinks[] = [...issues];
-    // fields.forEach((field) => {
-    //   issues.forEach((issue) => {
-    //     issue.links.forEach((link) => {
-    //       if (link.linkTypeId === field.id) {
-    //         const linkedIssue = linkedIssues.find(
-    //           (linkedIssue) => linkedIssue.id === link.issueId
-    //         );
-    //         if (issue.fields[field.id] === undefined) {
-    //           issue.fields[field.id] = null;
-    //         }
-    //         issue.fields[field.id].push(linkedIssue);
-    //       }
-    //     });
-    //   });
-    // });
-
     populatedIssues.forEach((issue) => {
       const sortedLinks = {};
       issue.links.forEach((link) => {
@@ -540,16 +523,6 @@ export default class CloudImpl implements LXPAPI {
       console.log(sortedLinks);
       issue.sortedLinks = sortedLinks;
     });
-
-    // issues.forEach((issue) => {
-    //   issue.links.forEach((link) => {
-    //     const linkedIssue = linkedIssues.find(
-    //       (linkedIssue) => linkedIssue.id === link.issueId
-    //     );
-    //     link.issue = linkedIssue;
-    //   });
-    //   populatedIssues.push(issue);
-    // })
     return populatedIssues;
   };
 
@@ -558,11 +531,12 @@ export default class CloudImpl implements LXPAPI {
     fields: IssueField[],
     start?: number,
     max?: number
-  ): Promise<{data: IssueWithSortedLinks[]; total: number}> {
+  ): Promise<{ data: IssueWithSortedLinks[]; total: number }> {
     const searchResult = await this.searchIssues(jql, fields, start, max);
     console.log("searchLinkedIssues");
     const issues: IssueWithSortedLinks[] = searchResult.data;
-    const {jqlString: linkedIssuesJQL, total} = this._getLinkedIssueJQL(issues);
+    const { jqlString: linkedIssuesJQL, total } =
+      this._getLinkedIssueJQL(issues);
     console.log("realatedIsuesJql");
     console.log(linkedIssuesJQL);
     console.log([...issues]);
@@ -583,7 +557,7 @@ export default class CloudImpl implements LXPAPI {
     // newIssueIds = newIssueIds.filter((id) => {
     //   return !oldIssueIds.includes(id);
     // });
-    return {data: populatedIssues, total: searchResult.total};
+    return { data: populatedIssues, total: searchResult.total };
   }
 
   private _convertFilter(filter: JiraFilter): Filter {

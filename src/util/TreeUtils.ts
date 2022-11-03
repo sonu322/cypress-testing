@@ -1,5 +1,12 @@
 import { mutateTree } from "@atlaskit/tree";
-import LXPAPI, { ID, Issue, IssueField, IssueLink, IssueTreeFilter, IssueWithLinkedIssues } from "../types/api";
+import LXPAPI, {
+  ID,
+  Issue,
+  IssueField,
+  IssueLink,
+  IssueTreeFilter,
+  IssueWithLinkedIssues,
+} from "../types/api";
 import { csv, download, UUID } from "./index";
 import { AtlasTree, AtlasTreeNode, LinkTypeTreeNode } from "../types/app";
 
@@ -30,20 +37,35 @@ export default class TreeUtils {
   private ROOT_ID = "0";
   private api: LXPAPI;
 
-  constructor(api: LXPAPI){
+  constructor(api: LXPAPI) {
     this.api = api;
   }
 
   getRootTree(): AtlasTree {
     return root;
   }
-  
-  addTypeNode(issueType: string, tree: AtlasTree){
-    return this.addTreeNode({ isType: true, title: issueType}, null, tree, true);
+
+  addTypeNode(issueType: string, tree: AtlasTree) {
+    return this.addTreeNode(
+      { isType: true, title: issueType },
+      null,
+      tree,
+      true
+    );
   }
 
+<<<<<<< HEAD
   addTreeNode(data: IssueWithLinkedIssues | LinkTypeTreeNode, parentIssueId: ID, tree: AtlasTree, isExpanded = false){
     const node: AtlasTreeNode = {
+=======
+  addTreeNode(
+    data: IssueWithLinkedIssues | LinkTypeTreeNode,
+    parentIssueId: ID,
+    tree: AtlasTree,
+    isExpanded = false
+  ) {
+    let node: AtlasTreeNode = {
+>>>>>>> develop
       id: UUID(),
       children: [],
       hasChildren: true,
@@ -56,28 +78,52 @@ export default class TreeUtils {
     return node;
   }
 
-  async initTree(filter: IssueTreeFilter, fields: IssueField[], setTree, handleError){
-    this.handleExpand({ ...root }, this.ROOT_ID, fields, filter, setTree, handleError);
+  async initTree(
+    filter: IssueTreeFilter,
+    fields: IssueField[],
+    setTree,
+    handleError
+  ) {
+    this.handleExpand(
+      { ...root },
+      this.ROOT_ID,
+      fields,
+      filter,
+      setTree,
+      handleError
+    );
   }
 
   //Tree filter
-  _shouldIncludeNode(mainIssue: Issue, linkedIssue: Issue, 
-    issueLink: IssueLink, filter: IssueTreeFilter, parentIssueId: ID): boolean {
-    if(!filter.issueTypes.includes(linkedIssue.type.id)){
+  _shouldIncludeNode(
+    mainIssue: Issue,
+    linkedIssue: Issue,
+    issueLink: IssueLink,
+    filter: IssueTreeFilter,
+    parentIssueId: ID
+  ): boolean {
+    if (!filter.issueTypes.includes(linkedIssue.type.id)) {
       return false;
-    } else if(!filter.linkTypes.includes(issueLink.linkTypeId)){
+    } else if (!filter.linkTypes.includes(issueLink.linkTypeId)) {
       return false;
-    } else if(!filter.priorities.includes(linkedIssue.priority.id)){
+    } else if (!filter.priorities.includes(linkedIssue.priority.id)) {
       return false;
-    } else if(parentIssueId && parentIssueId === linkedIssue.id){
+    } else if (parentIssueId && parentIssueId === linkedIssue.id) {
       return false;
     }
     return true;
   }
 
-  async handleExpand(tree: AtlasTree, nodeId: string, fields: IssueField[], filter: IssueTreeFilter, setTree, handleError){
+  async handleExpand(
+    tree: AtlasTree,
+    nodeId: string,
+    fields: IssueField[],
+    filter: IssueTreeFilter,
+    setTree,
+    handleError
+  ) {
     const item = tree.items[nodeId];
-    if(nodeId !== this.ROOT_ID){
+    if (nodeId !== this.ROOT_ID) {
       setTree(mutateTree(tree, nodeId, { isChildrenLoading: true }));
       if (item.hasChildren && item.children.length > 0) {
         setTree(
@@ -90,27 +136,40 @@ export default class TreeUtils {
       }
     }
     try {
-      const issue = await this.api.getIssueWithLinks(fields,
-        nodeId === this.ROOT_ID ? undefined : (item.data as IssueWithLinkedIssues).id);
+      const issue = await this.api.getIssueWithLinks(
+        fields,
+        nodeId === this.ROOT_ID
+          ? undefined
+          : (item.data as IssueWithLinkedIssues).id
+      );
 
       const newTree = { ...tree };
       let mainNode;
-      if(nodeId === this.ROOT_ID){
+      if (nodeId === this.ROOT_ID) {
         mainNode = this.addTreeNode(issue, null, newTree, true);
         // make actual root a child of fake(hidden) root node
-        newTree.items[this.ROOT_ID].children = [ mainNode.id ];
+        newTree.items[this.ROOT_ID].children = [mainNode.id];
       } else {
         mainNode = newTree.items[nodeId];
       }
 
+<<<<<<< HEAD
       const typeMap = {},
+=======
+      let typeMap = {},
+>>>>>>> develop
         issueMap = {};
       issue.linkedIssues.forEach((linkedIssue: Issue) => {
         issueMap[linkedIssue.id] = linkedIssue;
       });
 
+<<<<<<< HEAD
       for (const link of issue.links) {
         const linkedIssue = issueMap[link.issueId];
+=======
+      for (let link of issue.links) {
+        let linkedIssue = issueMap[link.issueId];
+>>>>>>> develop
         if (
           this._shouldIncludeNode(
             issue,
@@ -120,8 +179,12 @@ export default class TreeUtils {
             mainNode.parentIssueId
           )
         ) {
+<<<<<<< HEAD
           const node = this.addTreeNode(linkedIssue, issue.id, newTree);
 
+=======
+          let node = this.addTreeNode(linkedIssue, issue.id, newTree);
+>>>>>>> develop
           if (typeMap[link.name] === undefined) {
             typeMap[link.name] = [];
           }
@@ -129,35 +192,47 @@ export default class TreeUtils {
         }
       }
 
+<<<<<<< HEAD
       let types = Object.keys(typeMap), hasChildren = true;
       if(types.length){
         for (const type of types) {
           const typeNode = this.addTypeNode(type, newTree);
+=======
+      let types = Object.keys(typeMap),
+        hasChildren = true;
+      if (types.length) {
+        for (let type of types) {
+          let typeNode = this.addTypeNode(type, newTree);
+>>>>>>> develop
           typeNode.children = typeMap[type];
           mainNode.children.push(typeNode.id);
         }
       } else {
         hasChildren = false;
       }
-      
-      const changes = { isExpanded: true, isChildrenLoading: false, hasChildren };
+
+      const changes = {
+        isExpanded: true,
+        isChildrenLoading: false,
+        hasChildren,
+      };
       setTree(mutateTree(newTree, nodeId, changes));
-      if(nodeId !== mainNode.id){
+      if (nodeId !== mainNode.id) {
         setTree(mutateTree(newTree, mainNode.id, changes));
       }
-    } catch(error){
+    } catch (error) {
       setTree(mutateTree(tree, nodeId, { isChildrenLoading: false }));
       handleError(error);
     }
   }
 
-  exportTree (tree: AtlasTree) {
+  exportTree(tree: AtlasTree) {
     // TODO: make fields dynamic
     const root = tree.items[tree.rootId];
     const mainNodeId = root.children[0];
-  
+
     const contents: any[] = [];
-  
+
     const process = (item: AtlasTreeNode, indent) => {
       if (!item) return;
       const content = {
@@ -169,7 +244,7 @@ export default class TreeUtils {
         status: "",
         priority: "",
       };
-  
+
       if (item.data) {
         const dataObj = item.data;
         if ((dataObj as LinkTypeTreeNode).isType) {
@@ -178,12 +253,12 @@ export default class TreeUtils {
           const data = dataObj as IssueWithLinkedIssues;
           content.key = data.issueKey;
           content.summary = data.summary;
-          content.type = data.type.name
+          content.type = data.type.name;
           content.status = data.status.name;
           content.priority = data.priority.name;
         }
       }
-  
+
       contents.push(content);
       if (item.hasChildren) {
         const nextIndent = indent + 1;
@@ -191,13 +266,13 @@ export default class TreeUtils {
           process(tree.items[key], nextIndent);
         });
       }
-    }
+    };
 
     process(tree.items[mainNodeId], 1);
     download("csv", csv(contents, true));
   }
 
-  handleCollapse(itemId, tree, setTree){
+  handleCollapse(itemId, tree, setTree) {
     setTree(
       mutateTree(tree, itemId, {
         isExpanded: false,

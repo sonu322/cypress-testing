@@ -23,4 +23,3 @@ export interface AtlasTreeNode {
   parentIssueId: ID;
   data: IssueWithLinkedIssues | LinkTypeTreeNode;
 }
-  

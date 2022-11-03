@@ -39,10 +39,10 @@ export const IssueItem = ({
   onCollapse,
   provided,
   depth,
-  selectedIssueFieldIds
+  selectedIssueFieldIds,
 }) => {
   const marginLeft = getItemMargin(depth);
-  
+
   return (
     <Container
       marginLeft={marginLeft}

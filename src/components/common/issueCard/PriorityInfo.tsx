@@ -4,7 +4,7 @@ import { Icon } from "../Icon";
 import { IssuePriority } from "../../../types/api";
 
 interface Props {
-  content: IssuePriority
+  content: IssuePriority;
 }
 
 export const PriorityInfo = ({ content }: Props) => {

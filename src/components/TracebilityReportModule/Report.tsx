@@ -40,7 +40,7 @@ export const Report = ({
         <ReportHeader fieldIds={selectedLinkIds} fields={allLinks} />
         <tbody>
           {filteredIssues.map((issue) => (
-            <BorderTr key={issue.id}>
+            <BorderTr key={`${issue.issueKey}`}>
               <ReportRow
                 issueTypeIds={selectedIssueTypeIds}
                 linkIds={selectedLinkIds}

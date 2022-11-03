@@ -5,13 +5,11 @@ export interface IssueOption {
   name: string;
 }
 
-export interface IssuePriority extends IssueOption { 
-  description: string;
+export interface IssuePriority extends IssueOption {
+  description?: string;
   iconUrl: string;
-  statusColor: string;
+  statusColor?: string;
 }
-
-
 
 export interface IssueField {
   id: ID;
@@ -27,7 +25,7 @@ export interface Issue {
   status: IssueStatus;
   summary: string;
   isResolved: boolean;
-  storyPoints: number;
+  storyPoints?: number;
   issueKey: string;
   assignee: IssueUser;
   sprints: IssueSprint[];
@@ -84,12 +82,12 @@ export interface IssueStatus extends IssueOption {
   description: string;
 }
 
-export interface IssueType extends IssueOption { 
+export interface IssueType extends IssueOption {
   description: string;
   iconUrl: string;
 }
 
-export interface IssueLinkType extends IssueOption { }
+export interface IssueLinkType extends IssueOption {}
 
 export interface Filter {
   expand: string;
@@ -103,18 +101,22 @@ export interface Project {
 }
 
 export interface IssueTreeFilter {
-  priorities: ID[],
-  issueTypes: ID[],
-  linkTypes: ID[]
+  priorities: ID[];
+  issueTypes: ID[];
+  linkTypes: ID[];
 }
 
 export enum CustomLinkType {
   SUBTASK = "SUBTASK",
-  PARENT = "PARENT"
+  PARENT = "PARENT",
 }
 
 export default interface LXPAPI {
+<<<<<<< HEAD
   hasValidLicense: () => boolean;
+=======
+  hasValidLicense(): boolean;
+>>>>>>> develop
 
   getJiraBaseURL: () => string;
 
@@ -126,20 +128,34 @@ export default interface LXPAPI {
 
   getIssueFields: () => Promise<IssueField[]>;
 
+<<<<<<< HEAD
   getIssueWithLinks: (
     fields: IssueField[],
     issueId?: string
   ) => Promise<IssueWithLinkedIssues>;
+=======
+  getIssueWithLinks(
+    fields: IssueField[],
+    issueId?: string
+  ): Promise<IssueWithLinkedIssues>;
+>>>>>>> develop
 
   getCurrentIssueId: () => Promise<string>;
 
+<<<<<<< HEAD
   getIssueById: (fields: IssueField[], issueId?: string) => Promise<Issue>;
 
   searchIssues: (
+=======
+  getIssueById(fields: IssueField[], issueId?: string): Promise<Issue>;
+
+  searchIssues(
+>>>>>>> develop
     jql: string,
     fields: IssueField[],
     start?: number,
     max?: number
+<<<<<<< HEAD
   ) => Promise<{data: Issue[]; total: number}>;
   searchLinkedIssues: (
     jql: string,
@@ -147,8 +163,16 @@ export default interface LXPAPI {
     start?: number,
     max?: number
   ) => Promise<{data: IssueWithSortedLinks[]; total: number}>;
+=======
+  ): Promise<{ data: Issue[]; total: number }>;
+>>>>>>> develop
 
   getFilters: () => Promise<Filter[]>;
 
+<<<<<<< HEAD
   getCurrentProject: (projectKey?: string) => Promise<Project>;
 }
+=======
+  getCurrentProject(projectKey?: string): Promise<Project>;
+}
+>>>>>>> develop

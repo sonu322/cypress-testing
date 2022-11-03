@@ -3,7 +3,7 @@ import DropdownMenu, {
   DropdownItemCheckboxGroup,
   DropdownItemCheckbox,
 } from "@atlaskit/dropdown-menu";
-import {IssueField} from "../../types/api";
+import { IssueField } from "../../types/api";
 
 interface Props {
   selectedOptions: string[];

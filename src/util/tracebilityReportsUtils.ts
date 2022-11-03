@@ -1,5 +1,5 @@
-import LXPAPI, {IssueField, IssueWithSortedLinks} from "../types/api";
-import {download, toTitleCase} from "./index";
+import LXPAPI, { IssueField, IssueWithSortedLinks } from "../types/api";
+import { download, toTitleCase } from "./index";
 
 export default class TracebilityReportUtils {
   private readonly api: LXPAPI;
@@ -25,7 +25,7 @@ export default class TracebilityReportUtils {
         startIndex,
         maxResults
       );
-      const {data, total} = searchResult;
+      const { data, total } = searchResult;
       console.log("total issues!!!!!");
       console.log(total);
       updateIssues(data);

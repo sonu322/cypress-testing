@@ -45,7 +45,11 @@ export interface Props {
 }
 
 // main function
+<<<<<<< HEAD
 export const IssueCard = ({issueData, selectedIssueFieldIds}: Props): JSX.Element => {
+=======
+export const IssueCard = ({ issueData, selectedIssueFieldIds }: Props) => {
+>>>>>>> develop
   let selectedMap = {};
   for (let issueFieldId of selectedIssueFieldIds) {
     selectedMap[issueFieldId] = true;

@@ -28,7 +28,7 @@ export const ReportRow = ({
   // push links cells into row
   linkIds.forEach((linkId) => {
     // render -- by default
-    let issueCell = <td key={linkId}>--</td>;
+    let issueCell = <td key={`${issue.id}-${linkId}`}>--</td>;
 
     if (issue.sortedLinks[linkId] !== undefined) {
       const allIssues = [];

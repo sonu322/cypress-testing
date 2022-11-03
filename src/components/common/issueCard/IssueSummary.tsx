@@ -5,7 +5,7 @@ export interface Props {
   content: string;
 }
 
-export const IssueSummary = ({content}: Props ) => {
+export const IssueSummary = ({ content }: Props) => {
   return (
     <TooltipContainer content={content} position="bottom">
       <div>{content}</div>
