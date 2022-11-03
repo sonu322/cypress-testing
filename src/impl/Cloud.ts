@@ -173,36 +173,6 @@ export default class CloudImpl implements LXPAPI {
     }
   }
 
-  // async getIssueLinkTypes(): Promise<IssueLinkType[]> {
-  //   try {
-  //     let response = await this._AP.request("/rest/api/3/issueLinkType");
-  //     let items: JiraLinkType[] =
-  //       response.body && JSON.parse(response.body)?.issueLinkTypes;
-
-  //     items || throwError("Issue link types not found.");
-
-  //     let result = items.map((item) => {
-  //       return {
-  //         id: item.id,
-  //         name: item.name,
-  //       };
-  //     });
-  //     result.push({
-  //       id: CustomLinkType.SUBTASK,
-  //       name: "Subtasks",
-  //     });
-  //     result.push({
-  //       id: CustomLinkType.PARENT,
-  //       name: "Parent",
-  //     });
-  //     return result;
-  //   } catch (error) {
-  //     console.error(error);
-  //     throw new Error(
-  //       "Error in fetching the issue link types - " + error.message
-  //     );
-  //   }
-  // }
 
   async addCustomFields(
     issueFields: IssueField[],
