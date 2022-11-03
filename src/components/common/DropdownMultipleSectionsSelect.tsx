@@ -25,8 +25,6 @@ export const DropdownMultipleSectionsSelect = ({
   updateSelectedOptionIds,
   options,
 }: Props): JSX.Element => {
-  console.log("selectedOptions");
-  console.log(selectedOptions);
   // click handler
   const handleOptionClick = (groupKey: string, id: string): void => {
     const newMap = new Map(selectedOptions);
@@ -43,7 +41,6 @@ export const DropdownMultipleSectionsSelect = ({
   // groups of checkboxes
   const checkboxGroups = [];
   for (const [groupKey, groupData] of options.entries()) {
-    console.log(selectedOptions.get(groupKey));
     checkboxGroups.push(
       <DropdownItemCheckboxGroup
         key={groupKey}

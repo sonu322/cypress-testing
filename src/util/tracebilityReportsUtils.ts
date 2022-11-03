@@ -26,8 +26,6 @@ export default class TracebilityReportUtils {
         maxResults
       );
       const { data, total } = searchResult;
-      console.log("total issues!!!!!");
-      console.log(total);
       updateIssues(data);
       setIsLoading(false);
       if (setTotal !== null) {
@@ -74,8 +72,6 @@ export const exportReport = (
         issue.sortedLinks[linkId].forEach((linkedIssue) => {
           const isSelected = selectedIssueTypeIds.includes(linkedIssue.type.id);
           if (isSelected) {
-            console.log("selected!!!!!!");
-            console.log(linkedIssue, linkId);
             rowItem.push(linkedIssue.issueKey);
           }
           if (rowItem.length > 0) {

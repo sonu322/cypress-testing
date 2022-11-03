@@ -21,8 +21,7 @@ export const JQLEditor = ({
   if (Boolean(selectedFilterId) && selectedFilterId !== null) {
     options.jql = selectedFilterId;
   }
-  const callback = function ({jql}: {jql: string}): void {
-    console.log(jql);
+  const callback = function ({ jql }: { jql: string }): void {
     setSelectedFilterId(jql);
   };
   const openJQLEditor = (): void => {

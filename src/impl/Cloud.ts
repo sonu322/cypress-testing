@@ -345,8 +345,6 @@ export default class CloudImpl implements LXPAPI {
       } else {
         id = `${issueLink.type.id}-${issueLink.type.outward}`;
       }
-      console.log("issuelink!!!!");
-      console.log(issueLink);
       result.push({
         // item.id-item.outward
         linkTypeId: id,
@@ -519,8 +517,6 @@ export default class CloudImpl implements LXPAPI {
         );
         sortedLinks[link.linkTypeId].push(linkedIssue);
       });
-      console.log("pop link!!!!");
-      console.log(sortedLinks);
       issue.sortedLinks = sortedLinks;
     });
     return populatedIssues;
@@ -533,30 +529,17 @@ export default class CloudImpl implements LXPAPI {
     max?: number
   ): Promise<{ data: IssueWithSortedLinks[]; total: number }> {
     const searchResult = await this.searchIssues(jql, fields, start, max);
-    console.log("searchLinkedIssues");
     const issues: IssueWithSortedLinks[] = searchResult.data;
     const { jqlString: linkedIssuesJQL, total } =
       this._getLinkedIssueJQL(issues);
-    console.log("realatedIsuesJql");
-    console.log(linkedIssuesJQL);
-    console.log([...issues]);
     const linkedIssuesResult = await this.searchIssues(
       linkedIssuesJQL,
       fields,
       0,
       total
     );
-    console.log("realted issues result");
     const linkedIssues = linkedIssuesResult.data;
-    console.log([...linkedIssues]);
     const populatedIssues = this._populateIssueLinks(issues, linkedIssues);
-    console.log("populatedIssues!!!!!!!!!!!!!!!!!!!!");
-    console.log(populatedIssues);
-    // const oldIssueIds = getAllRelatedIssueIds(data);
-    // let newIssueIds = getAllRelatedIssueIds(issues);
-    // newIssueIds = newIssueIds.filter((id) => {
-    //   return !oldIssueIds.includes(id);
-    // });
     return { data: populatedIssues, total: searchResult.total };
   }
 
