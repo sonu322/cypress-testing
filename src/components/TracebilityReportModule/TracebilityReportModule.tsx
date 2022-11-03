@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { APIContext } from "../../context/api";
 import PageHeader from "@atlaskit/page-header";
 import { Toolbar } from "./Toolbar";
-import {Issue, IssueField, IssueWithSortedLinks} from "../../types/api";
+import {IssueField, IssueWithSortedLinks} from "../../types/api";
 import {Main} from "./Main";
 import {ErrorsList} from "../common/ErrorsList";
 import {exportReport} from "../../util/tracebilityReportsUtils";
@@ -28,7 +28,7 @@ const fixedFieldNames = [
 ];
 
 export const TracebilityReportModule = (): JSX.Element => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [areOptionsLoading, setAreOptionsLoading] = useState(true);
   // const [allRelatedIssues, setAllRelatedIssues] = useState<Issue[] | null>(
   //   null
   // );
@@ -93,7 +93,7 @@ export const TracebilityReportModule = (): JSX.Element => {
         setSelectedTableFieldIds(fieldIdsMap);
 
         // loading state
-        setIsLoading(false);
+        setAreOptionsLoading(false);
       } catch (error) {
         handleNewError(error);
       }
@@ -110,7 +110,9 @@ export const TracebilityReportModule = (): JSX.Element => {
       issueCardOptionsMap.delete(fieldId);
     }
   }
-
+  if (areOptionsLoading) {
+    return <div>Loading data ...</div>;
+  }
   return (
     <FullWidthContainer>
       <PageHeader
