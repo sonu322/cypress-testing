@@ -1,5 +1,5 @@
 import React from "react";
-import { DropdownMultipleSectionsSelect } from "../DropdownMultipleSectionsSelect";
+import {DropdownMultipleSectionsSelect} from "../common/DropdownMultipleSectionsSelect";
 export const TableFieldsDropdown = ({
   options,
   selectedOptions,
