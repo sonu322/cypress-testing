@@ -613,7 +613,7 @@ export default class CloudImpl implements LXPAPI {
     // newIssueIds = newIssueIds.filter((id) => {
     //   return !oldIssueIds.includes(id);
     // });
-    return {data: populatedIssues, total};
+    return {data: populatedIssues, total: searchResult.total};
   }
 
   private _convertFilter(filter: JiraFilter): Filter {

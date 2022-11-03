@@ -114,28 +114,41 @@ export enum CustomLinkType {
 }
 
 export default interface LXPAPI {
-  
-  hasValidLicense(): boolean;
+  hasValidLicense: () => boolean;
 
-  getJiraBaseURL(): string;
+  getJiraBaseURL: () => string;
 
-  getPriorities(): Promise<IssuePriority[]>;
+  getPriorities: () => Promise<IssuePriority[]>;
 
-  getIssueTypes(): Promise<IssueType[]>;
+  getIssueTypes: () => Promise<IssueType[]>;
 
-  getIssueLinkTypes(): Promise<IssueLinkType[]>;
+  getIssueLinkTypes: () => Promise<IssueLinkType[]>;
 
-  getIssueFields(): Promise<IssueField[]>;
+  getIssueFields: () => Promise<IssueField[]>;
 
-  getIssueWithLinks(fields: IssueField[], issueId?: string): Promise<IssueWithLinkedIssues>;
+  getIssueWithLinks: (
+    fields: IssueField[],
+    issueId?: string
+  ) => Promise<IssueWithLinkedIssues>;
 
-  getCurrentIssueId(): Promise<string>;
+  getCurrentIssueId: () => Promise<string>;
 
-  getIssueById(fields: IssueField[], issueId ?: string): Promise<Issue>;
+  getIssueById: (fields: IssueField[], issueId?: string) => Promise<Issue>;
 
-  searchIssues(jql: string, fields: IssueField[], start?: number, max?: number): Promise<{ data: Issue[]; total: number }>;
+  searchIssues: (
+    jql: string,
+    fields: IssueField[],
+    start?: number,
+    max?: number
+  ) => Promise<{data: Issue[]; total: number}>;
+  searchLinkedIssues: (
+    jql: string,
+    fields: IssueField[],
+    start?: number,
+    max?: number
+  ) => Promise<{data: IssueWithSortedLinks[]; total: number}>;
 
-  getFilters(): Promise<Filter[]>;
+  getFilters: () => Promise<Filter[]>;
 
-  getCurrentProject(projectKey?: string): Promise<Project>;
+  getCurrentProject: (projectKey?: string) => Promise<Project>;
 }

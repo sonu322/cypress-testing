@@ -1,16 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { LoadingButton } from "@atlaskit/button";
 import Spinner from "@atlaskit/spinner";
-import { APIContext } from "../../context/api";
-// import { getFieldIds } from "../../util";
+import {APIContext} from "../../context/api";
 import styled from "styled-components";
-import { Report } from "./Report";
-// import {
-//   getLinkedIssueIds,
-//   getJQLStringFromIds,
-// } from "../../util/tracebilityReportsUtils";
-// import {Issue} from "../../types/api";
-
+import {Report} from "./Report";
+import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
+import TreeUtils from "../../util/TreeUtils";
 const Container = styled.div`
   padding: 4px;
   width: 100%;
@@ -32,7 +27,6 @@ export const Main = ({
   selectedTableFieldIds,
   tableFields,
   filteredIssues,
-  // setAllRelatedIssues,
   areIssuesLoading,
   setAreIssuesLoading,
   setFilteredIssues,
@@ -40,69 +34,84 @@ export const Main = ({
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
   const api = useContext(APIContext);
+  const tracebilityREportUtils = new TracebilityReportUtils(api);
   useEffect(() => {
     if (jqlString) {
-      const fetchFilteredIssues = async (): Promise<void> => {
-        setAreIssuesLoading(true);
-        try {
-          const searchResult = await api.searchLinkedIssues(
-            jqlString,
-            issueFields,
-            START_INDEX,
-            DEFAULT_ROWS_PER_PAGE
-          );
-          const {data, total} = searchResult;
-          setFilteredIssues(data);
-          setAreIssuesLoading(false);
-          setTotalNumberOfIssues(total);
-        } catch (error) {
-          setAreIssuesLoading(false);
-          handleNewError(error);
-        }
-      };
-      void fetchFilteredIssues();
+      void tracebilityREportUtils.populateIssues(
+        jqlString,
+        issueFields,
+        START_INDEX,
+        DEFAULT_ROWS_PER_PAGE,
+        setFilteredIssues,
+        setAreIssuesLoading,
+        setTotalNumberOfIssues,
+        handleNewError
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jqlString]);
+
   const fetchMoreIssues = (): void => {
-    // const fieldIds = getFieldIds(issueFields);
-    // const fetchFilteredIssues = async (): Promise<void> => {
-    //   setAreMoreIssuesLoading(true);
-    //   try {
-    //     const searchResult = await api.searchLinkedIssues(
-    //       jqlString,
-    //       filteredIssues.length,
-    //       totalNumberOfIssues,
-    //       fieldIds
-    //     );
-    //     const issues = searchResult.issues;
-    //     const oldIssueIds = getLinkedIssueIds(filteredIssues);
-    //     let newIssueIds = getLinkedIssueIds(issues);
-    //     newIssueIds = newIssueIds.filter((id) => {
-    //       return !oldIssueIds.includes(id);
-    //     });
-    //     const relatedIssuesjqlString = getJQLStringFromIds(newIssueIds);
-    //     const searchAllRelatedIssuesResult = await api.searchIssues(
-    //       relatedIssuesjqlString,
-    //       fieldIds,
-    //       START_INDEX,
-    //       newIssueIds.length
-    //     );
-    //     const allRelatedIssues = searchAllRelatedIssuesResult.data;
-    //     setFilteredIssues((prevIssues: Issue[]) => prevIssues.concat(issues));
-    //     setAllRelatedIssues((prevIssues: Issue[]) =>
-    //       prevIssues.concat(allRelatedIssues)
-    //     );
-    //     if (issues != null) {
-    //       setAreMoreIssuesLoading(false);
-    //     }
-    //   } catch (error) {
-    //     setAreMoreIssuesLoading(false);
-    //     handleNewError(error);
-    //   }
-    // };
-    // void fetchFilteredIssues();
+    const fetchFilteredIssues = async (): Promise<void> => {
+      setAreMoreIssuesLoading(true);
+      try {
+        const searchResult = await api.searchLinkedIssues(
+          jqlString,
+          issueFields,
+          filteredIssues.length,
+          totalNumberOfIssues
+        );
+        const {data, total} = searchResult;
+        console.log("total issues!!!!!");
+        console.log(total);
+        const fullIssues = filteredIssues.concat(data);
+        setFilteredIssues(fullIssues);
+        setAreMoreIssuesLoading(false);
+      } catch (error) {
+        setAreMoreIssuesLoading(false);
+        handleNewError(error);
+      }
+    };
+    void fetchFilteredIssues();
   };
+
+  // const fieldIds = getFieldIds(issueFields);
+  // const fetchFilteredIssues = async (): Promise<void> => {
+  //   setAreMoreIssuesLoading(true);
+  //   try {
+  //     const searchResult = await api.searchLinkedIssues(
+  //       jqlString,
+  //       filteredIssues.length,
+  //       totalNumberOfIssues,
+  //       fieldIds
+  //     );
+  //     const issues = searchResult.issues;
+  //     const oldIssueIds = getLinkedIssueIds(filteredIssues);
+  //     let newIssueIds = getLinkedIssueIds(issues);
+  //     newIssueIds = newIssueIds.filter((id) => {
+  //       return !oldIssueIds.includes(id);
+  //     });
+  //     const relatedIssuesjqlString = getJQLStringFromIds(newIssueIds);
+  //     const searchAllRelatedIssuesResult = await api.searchIssues(
+  //       relatedIssuesjqlString,
+  //       fieldIds,
+  //       START_INDEX,
+  //       newIssueIds.length
+  //     );
+  //     const allRelatedIssues = searchAllRelatedIssuesResult.data;
+  //     setFilteredIssues((prevIssues: Issue[]) => prevIssues.concat(issues));
+  //     setAllRelatedIssues((prevIssues: Issue[]) =>
+  //       prevIssues.concat(allRelatedIssues)
+  //     );
+  //     if (issues != null) {
+  //       setAreMoreIssuesLoading(false);
+  //     }
+  //   } catch (error) {
+  //     setAreMoreIssuesLoading(false);
+  //     handleNewError(error);
+  //   }
+  // };
+  // void fetchFilteredIssues();
   if (areIssuesLoading) {
     return (
       <Container>
@@ -146,4 +155,4 @@ export const Main = ({
       </Container>
     );
   }
-};
+};;;;;;

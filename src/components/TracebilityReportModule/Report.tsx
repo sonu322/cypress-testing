@@ -1,8 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { colors } from "@atlaskit/theme";
-import { processIssues } from "../../util/tracebilityReportsUtils";
-
+import {colors} from "@atlaskit/theme";
 import {ReportRow} from "./ReportRow";
 import {ReportHeader} from "./ReportHeader";
 const Container = styled.div`
@@ -19,9 +17,7 @@ export const Report = ({
   tableFields,
   selectedTableFieldIds,
   issueFieldIds,
-  issueCardOptionsMap,
 }): JSX.Element => {
-  // const {classifieds, links} = processIssues(tableFieldIds, filteredIssues);
   const selectedLinkIds = selectedTableFieldIds.get("linkTypes");
   const selectedIssueTypeIds = selectedTableFieldIds.get("issueTypes");
   const allLinks = tableFields.get("linkTypes").values;
@@ -34,8 +30,6 @@ export const Report = ({
           {filteredIssues.map((issue) => (
             <BorderTr key={issue.id}>
               <ReportRow
-                // classified={classified}
-                // issueCardOptionsMap={issueCardOptionsMap}
                 issueTypeIds={selectedIssueTypeIds}
                 linkIds={selectedLinkIds}
                 issueFieldIds={issueFieldIds}
