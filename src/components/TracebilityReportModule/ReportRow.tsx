@@ -13,11 +13,20 @@ export const ReportRow = ({
   issueFieldIds,
   issue,
 }: Props): JSX.Element[] => {
+  console.log("isssue!!!!!!");
+  console.log(issue);
+  
   const issueCell = (
     <td key="issue">
       <IssueCard issueData={issue} selectedIssueFieldIds={issueFieldIds} />
     </td>
   );
+  
+  linkIds.forEach((linkId) => {
+    console.log("links!!!!!!!!");
+    console.log(linkId);
+    console.log(issue.sortedLinks[linkId]);
+  });
 
   // const row = {};
 

@@ -133,68 +133,37 @@ export default class CloudImpl implements LXPAPI {
     }
   }
 
-  // async getIssueLinkTypes(): Promise<IssueLinkType[]> {
-  //   try {
-  //     const response = await this._AP.request("/rest/api/3/issueLinkType");
-  //     const items: JiraLinkType[] =
-  //       response.body && JSON.parse(response.body)?.issueLinkTypes;
-
-  //     items || throwError("Issue link types not found.");
-
-  //     const result = [];
-  //     result.push({
-  //       id: CustomLinkType.PARENT,
-  //       name: "Parent",
-  //     });
-  //     result.push({
-  //       id: CustomLinkType.SUBTASK,
-  //       name: "Subtasks",
-  //     });
-
-  //     items.forEach((item) => {
-  //       result.push({
-  //         id: `${item.id}-${item.inward}`,
-  //         name: item.inward,
-  //       });
-  //       if (item.inward !== item.outward) {
-  //         result.push({
-  //           id: `${item.id}-${item.outward}`,
-  //           name: item.outward,
-  //         });
-  //       }
-  //     });
-
-  //     return result;
-  //   } catch (error) {
-  //     console.error(error);
-  //     throw new Error(
-  //       "Error in fetching the issue link types - " + error.message
-  //     );
-  //   }
-  // }
-
   async getIssueLinkTypes(): Promise<IssueLinkType[]> {
     try {
-      let response = await this._AP.request("/rest/api/3/issueLinkType");
-      let items: JiraLinkType[] =
+      const response = await this._AP.request("/rest/api/3/issueLinkType");
+      const items: JiraLinkType[] =
         response.body && JSON.parse(response.body)?.issueLinkTypes;
 
       items || throwError("Issue link types not found.");
 
-      let result = items.map((item) => {
-        return {
-          id: item.id,
-          name: item.name,
-        };
+      const result = [];
+      result.push({
+        id: CustomLinkType.PARENT,
+        name: "Parent",
       });
       result.push({
         id: CustomLinkType.SUBTASK,
         name: "Subtasks",
       });
-      result.push({
-        id: CustomLinkType.PARENT,
-        name: "Parent",
+
+      items.forEach((item) => {
+        result.push({
+          id: `${item.id}-${item.inward}`,
+          name: item.inward,
+        });
+        if (item.inward !== item.outward) {
+          result.push({
+            id: `${item.id}-${item.outward}`,
+            name: item.outward,
+          });
+        }
       });
+
       return result;
     } catch (error) {
       console.error(error);
@@ -203,6 +172,37 @@ export default class CloudImpl implements LXPAPI {
       );
     }
   }
+
+  // async getIssueLinkTypes(): Promise<IssueLinkType[]> {
+  //   try {
+  //     let response = await this._AP.request("/rest/api/3/issueLinkType");
+  //     let items: JiraLinkType[] =
+  //       response.body && JSON.parse(response.body)?.issueLinkTypes;
+
+  //     items || throwError("Issue link types not found.");
+
+  //     let result = items.map((item) => {
+  //       return {
+  //         id: item.id,
+  //         name: item.name,
+  //       };
+  //     });
+  //     result.push({
+  //       id: CustomLinkType.SUBTASK,
+  //       name: "Subtasks",
+  //     });
+  //     result.push({
+  //       id: CustomLinkType.PARENT,
+  //       name: "Parent",
+  //     });
+  //     return result;
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw new Error(
+  //       "Error in fetching the issue link types - " + error.message
+  //     );
+  //   }
+  // }
 
   async addCustomFields(
     issueFields: IssueField[],
@@ -350,14 +350,6 @@ export default class CloudImpl implements LXPAPI {
     parent: JiraIssue
   ): IssueLink[] {
     const result: IssueLink[] = [];
-    for (const subTask of subTasks) {
-      result.push({
-        linkTypeId: CustomLinkType.SUBTASK,
-        name: "Subtasks",
-        isInward: false,
-        issueId: subTask.id,
-      });
-    }
 
     if (parent) {
       result.push({
@@ -367,11 +359,28 @@ export default class CloudImpl implements LXPAPI {
         issueId: parent.id,
       });
     }
+    for (const subTask of subTasks) {
+      result.push({
+        linkTypeId: CustomLinkType.SUBTASK,
+        name: "Subtasks",
+        isInward: false,
+        issueId: subTask.id,
+      });
+    }
 
     for (const issueLink of issueLinks) {
       const isInward = issueLink.inwardIssue ? true : false;
+      let id;
+      if (isInward) {
+        id = `${issueLink.type.id}-${issueLink.type.inward}`;
+      } else {
+        id = `${issueLink.type.id}-${issueLink.type.outward}`;
+      }
+      console.log("issuelink!!!!");
+      console.log(issueLink);
       result.push({
-        linkTypeId: issueLink.type.id,
+        // item.id-item.outward
+        linkTypeId: id,
         name: isInward ? issueLink.type.inward : issueLink.type.outward,
         isInward,
         issueId: (issueLink.inwardIssue || issueLink.outwardIssue)?.id || "",

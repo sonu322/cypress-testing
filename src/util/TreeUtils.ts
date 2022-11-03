@@ -121,6 +121,7 @@ export default class TreeUtils {
           )
         ) {
           const node = this.addTreeNode(linkedIssue, issue.id, newTree);
+
           if (typeMap[link.name] === undefined) {
             typeMap[link.name] = [];
           }
