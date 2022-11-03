@@ -54,18 +54,13 @@ export default class TreeUtils {
     );
   }
 
-<<<<<<< HEAD
-  addTreeNode(data: IssueWithLinkedIssues | LinkTypeTreeNode, parentIssueId: ID, tree: AtlasTree, isExpanded = false){
-    const node: AtlasTreeNode = {
-=======
   addTreeNode(
     data: IssueWithLinkedIssues | LinkTypeTreeNode,
     parentIssueId: ID,
     tree: AtlasTree,
     isExpanded = false
   ) {
-    let node: AtlasTreeNode = {
->>>>>>> develop
+    const node: AtlasTreeNode = {
       id: UUID(),
       children: [],
       hasChildren: true,
@@ -153,23 +148,14 @@ export default class TreeUtils {
         mainNode = newTree.items[nodeId];
       }
 
-<<<<<<< HEAD
       const typeMap = {},
-=======
-      let typeMap = {},
->>>>>>> develop
         issueMap = {};
       issue.linkedIssues.forEach((linkedIssue: Issue) => {
         issueMap[linkedIssue.id] = linkedIssue;
       });
 
-<<<<<<< HEAD
       for (const link of issue.links) {
         const linkedIssue = issueMap[link.issueId];
-=======
-      for (let link of issue.links) {
-        let linkedIssue = issueMap[link.issueId];
->>>>>>> develop
         if (
           this._shouldIncludeNode(
             issue,
@@ -179,12 +165,8 @@ export default class TreeUtils {
             mainNode.parentIssueId
           )
         ) {
-<<<<<<< HEAD
           const node = this.addTreeNode(linkedIssue, issue.id, newTree);
 
-=======
-          let node = this.addTreeNode(linkedIssue, issue.id, newTree);
->>>>>>> develop
           if (typeMap[link.name] === undefined) {
             typeMap[link.name] = [];
           }
@@ -192,18 +174,11 @@ export default class TreeUtils {
         }
       }
 
-<<<<<<< HEAD
-      let types = Object.keys(typeMap), hasChildren = true;
-      if(types.length){
-        for (const type of types) {
-          const typeNode = this.addTypeNode(type, newTree);
-=======
       let types = Object.keys(typeMap),
         hasChildren = true;
       if (types.length) {
-        for (let type of types) {
-          let typeNode = this.addTypeNode(type, newTree);
->>>>>>> develop
+        for (const type of types) {
+          const typeNode = this.addTypeNode(type, newTree);
           typeNode.children = typeMap[type];
           mainNode.children.push(typeNode.id);
         }

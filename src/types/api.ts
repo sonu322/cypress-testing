@@ -30,8 +30,6 @@ export interface Issue {
   assignee: IssueUser;
   sprints: IssueSprint[];
   links: IssueLink[];
-  // TODO: fix type
-  // fields: any; //TODO: need discussion
 }
 
 export interface IssueSprint {
@@ -55,7 +53,6 @@ export interface IssueLink {
   issueId: ID;
 }
 
-
 export interface IssueWithLinkedIssues extends Issue {
   linkedIssues: Issue[];
 }
@@ -65,8 +62,6 @@ export interface IssueWithSortedLinks extends Issue {
     [key: string]: Issue[];
   };
 }
-
-
 
 export interface IssueVersion {
   id: ID;
@@ -112,11 +107,7 @@ export enum CustomLinkType {
 }
 
 export default interface LXPAPI {
-<<<<<<< HEAD
   hasValidLicense: () => boolean;
-=======
-  hasValidLicense(): boolean;
->>>>>>> develop
 
   getJiraBaseURL: () => string;
 
@@ -128,51 +119,29 @@ export default interface LXPAPI {
 
   getIssueFields: () => Promise<IssueField[]>;
 
-<<<<<<< HEAD
   getIssueWithLinks: (
     fields: IssueField[],
     issueId?: string
   ) => Promise<IssueWithLinkedIssues>;
-=======
-  getIssueWithLinks(
-    fields: IssueField[],
-    issueId?: string
-  ): Promise<IssueWithLinkedIssues>;
->>>>>>> develop
 
   getCurrentIssueId: () => Promise<string>;
 
-<<<<<<< HEAD
   getIssueById: (fields: IssueField[], issueId?: string) => Promise<Issue>;
 
   searchIssues: (
-=======
-  getIssueById(fields: IssueField[], issueId?: string): Promise<Issue>;
-
-  searchIssues(
->>>>>>> develop
     jql: string,
     fields: IssueField[],
     start?: number,
     max?: number
-<<<<<<< HEAD
-  ) => Promise<{data: Issue[]; total: number}>;
+  ) => Promise<{ data: Issue[]; total: number }>;
   searchLinkedIssues: (
     jql: string,
     fields: IssueField[],
     start?: number,
     max?: number
-  ) => Promise<{data: IssueWithSortedLinks[]; total: number}>;
-=======
-  ): Promise<{ data: Issue[]; total: number }>;
->>>>>>> develop
+  ) => Promise<{ data: IssueWithSortedLinks[]; total: number }>;
 
   getFilters: () => Promise<Filter[]>;
 
-<<<<<<< HEAD
   getCurrentProject: (projectKey?: string) => Promise<Project>;
-}
-=======
-  getCurrentProject(projectKey?: string): Promise<Project>;
-}
->>>>>>> develop
+};
