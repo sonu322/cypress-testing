@@ -131,8 +131,6 @@ export const TracebilityReportModule = (): JSX.Element => {
           selectedTableFieldIds={selectedTableFieldIds}
           filteredIssues={filteredIssues}
           setFilteredIssues={setFilteredIssues}
-          // allRelatedIssues={allRelatedIssues}
-          // setAllRelatedIssues={setAllRelatedIssues}
           areIssuesLoading={areIssuesLoading}
           setAreIssuesLoading={setAreIssuesLoading}
         />
