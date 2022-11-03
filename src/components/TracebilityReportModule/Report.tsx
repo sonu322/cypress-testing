@@ -36,6 +36,7 @@ export const Report = ({
               <ReportRow
                 // classified={classified}
                 // issueCardOptionsMap={issueCardOptionsMap}
+                issueTypeIds={selectedIssueTypeIds}
                 linkIds={selectedLinkIds}
                 issueFieldIds={issueFieldIds}
                 issue={issue}
