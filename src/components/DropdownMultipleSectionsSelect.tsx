@@ -4,7 +4,6 @@ import DropdownMenu, {
   DropdownItemCheckbox,
 } from "@atlaskit/dropdown-menu";
 
-
 export const DropdownMultipleSectionsSelect = ({
   selectedOptions,
   dropdownName,

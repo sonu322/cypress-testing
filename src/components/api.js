@@ -176,7 +176,6 @@ export const IssueLinkAPI = async (key, fields) => {
   return { rootIssueData, relatedIssuesData };
 };
 
-
 export const FilterAPI = async () => {
   const response = await AP.request("/rest/api/3/filter/search");
 
@@ -212,6 +211,3 @@ export const ProjectAPI = async (key) => {
       throw newError;
     });
 };
-
-
-

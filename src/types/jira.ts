@@ -65,9 +65,9 @@ export interface JiraSprint {
 }
 
 export interface JiraIssueFieldsFull extends JiraIssueFields {
-  issuelinks: JiraIssueLink[],
-  subtasks: JiraIssue[],
-  parent: JiraIssue
+  issuelinks: JiraIssueLink[];
+  subtasks: JiraIssue[];
+  parent: JiraIssue;
 }
 
 export interface JiraIssue {
@@ -88,8 +88,8 @@ export interface JiraIssueLink {
   id: string;
   self: string;
   type: JiraLinkType;
-  inwardIssue ? : JiraIssue;
-  outwardIssue ? : JiraIssue;
+  inwardIssue?: JiraIssue;
+  outwardIssue?: JiraIssue;
 }
 
 export interface JiraIssueSearchResult {
@@ -118,10 +118,10 @@ export interface JiraAssignee {
 }
 
 export interface JiraAvatarUrls {
-  '48x48': string;
-  '24x24': string;
-  '16x16': string;
-  '32x32': string;
+  "48x48": string;
+  "24x24": string;
+  "16x16": string;
+  "32x32": string;
 }
 
 export interface JiraProject {
@@ -145,8 +145,7 @@ export interface JiraProject {
   properties: JiraProjectProperties;
 }
 
-export interface JiraProjectProperties {
-}
+export interface JiraProjectProperties {}
 
 export interface JiraRoles {
   [roleName: string]: string;

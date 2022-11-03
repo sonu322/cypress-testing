@@ -21,9 +21,7 @@
   "authentication": {
     "type": "none"
   },
-  "scopes": [
-    "read"
-  ],
+  "scopes": ["read"],
   "apiVersion": 1,
   "modules": {
     "jiraIssueTabPanels": [

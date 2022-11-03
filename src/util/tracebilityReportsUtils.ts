@@ -1,12 +1,9 @@
 import { Issue } from "../types/api";
 import { download, toTitleCase } from "./index";
 
-
 const getIssue = (id: string, issues: Issue[]): Issue | null => {
   return issues.find((issue) => issue.id === id) ?? null;
 };
-
-
 
 export const getAllRelatedIssueIds = (issues: Issue[]): string[] => {
   const ids: string[] = [];

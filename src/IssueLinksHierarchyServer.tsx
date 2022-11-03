@@ -15,6 +15,8 @@ JIRA.ViewIssueTabs.onTabReady(function (event, eee) {
 
   ReactDOM.render(
     <APIContext.Provider value={api}>
-      <IssueLinksHierarchy/>
-    </APIContext.Provider>, App);
+      <IssueLinksHierarchy />
+    </APIContext.Provider>,
+    App
+  );
 });

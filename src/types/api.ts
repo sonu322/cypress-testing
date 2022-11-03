@@ -5,13 +5,11 @@ export interface IssueOption {
   name: string;
 }
 
-export interface IssuePriority extends IssueOption { 
+export interface IssuePriority extends IssueOption {
   description?: string;
   iconUrl: string;
   statusColor?: string;
 }
-
-
 
 export interface IssueField {
   id: ID;
@@ -75,12 +73,12 @@ export interface IssueStatus extends IssueOption {
   description: string;
 }
 
-export interface IssueType extends IssueOption { 
+export interface IssueType extends IssueOption {
   description: string;
   iconUrl: string;
 }
 
-export interface IssueLinkType extends IssueOption { }
+export interface IssueLinkType extends IssueOption {}
 
 export interface Filter {
   expand: string;
@@ -94,18 +92,17 @@ export interface Project {
 }
 
 export interface IssueTreeFilter {
-  priorities: ID[],
-  issueTypes: ID[],
-  linkTypes: ID[]
+  priorities: ID[];
+  issueTypes: ID[];
+  linkTypes: ID[];
 }
 
 export enum CustomLinkType {
   SUBTASK = "SUBTASK",
-  PARENT = "PARENT"
+  PARENT = "PARENT",
 }
 
 export default interface LXPAPI {
-  
   hasValidLicense(): boolean;
 
   getJiraBaseURL(): string;
@@ -118,13 +115,21 @@ export default interface LXPAPI {
 
   getIssueFields(): Promise<IssueField[]>;
 
-  getIssueWithLinks(fields: IssueField[], issueId?: string): Promise<IssueWithLinkedIssues>;
+  getIssueWithLinks(
+    fields: IssueField[],
+    issueId?: string
+  ): Promise<IssueWithLinkedIssues>;
 
   getCurrentIssueId(): Promise<string>;
 
-  getIssueById(fields: IssueField[], issueId ?: string): Promise<Issue>;
+  getIssueById(fields: IssueField[], issueId?: string): Promise<Issue>;
 
-  searchIssues(jql: string, fields: IssueField[], start?: number, max?: number): Promise<{ data: Issue[]; total: number }>;
+  searchIssues(
+    jql: string,
+    fields: IssueField[],
+    start?: number,
+    max?: number
+  ): Promise<{ data: Issue[]; total: number }>;
 
   getFilters(): Promise<Filter[]>;
 

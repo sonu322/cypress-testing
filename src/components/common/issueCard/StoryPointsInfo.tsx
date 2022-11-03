@@ -1,6 +1,6 @@
 import React from "react";
 import { TooltipContainer } from "../TooltipContainer";
-import  Badge from "@atlaskit/badge";
+import Badge from "@atlaskit/badge";
 
 export interface Props {
   content: number;
