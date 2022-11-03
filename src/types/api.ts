@@ -6,9 +6,9 @@ export interface IssueOption {
 }
 
 export interface IssuePriority extends IssueOption { 
-  description: string;
+  description?: string;
   iconUrl: string;
-  statusColor: string;
+  statusColor?: string;
 }
 
 
@@ -27,7 +27,7 @@ export interface Issue {
   status: IssueStatus;
   summary: string;
   isResolved: boolean;
-  storyPoints: number;
+  storyPoints?: number;
   issueKey: string;
   assignee: IssueUser;
   sprints: IssueSprint[];
