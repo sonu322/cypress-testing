@@ -34,15 +34,20 @@ export const Main = ({
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
   const api = useContext(APIContext);
-  const tracebilityREportUtils = new TracebilityReportUtils(api);
+  const updateIssues = (issues): void => {
+    const newIssues = filteredIssues ?? [];
+    const updatedIssues = newIssues.concat(issues);
+    setFilteredIssues(updatedIssues);
+  };
+  const tracebilityReportUtils = new TracebilityReportUtils(api);
   useEffect(() => {
     if (jqlString) {
-      void tracebilityREportUtils.populateIssues(
+      void tracebilityReportUtils.populateIssues(
         jqlString,
         issueFields,
         START_INDEX,
         DEFAULT_ROWS_PER_PAGE,
-        setFilteredIssues,
+        updateIssues,
         setAreIssuesLoading,
         setTotalNumberOfIssues,
         handleNewError
@@ -52,27 +57,16 @@ export const Main = ({
   }, [jqlString]);
 
   const fetchMoreIssues = (): void => {
-    const fetchFilteredIssues = async (): Promise<void> => {
-      setAreMoreIssuesLoading(true);
-      try {
-        const searchResult = await api.searchLinkedIssues(
-          jqlString,
-          issueFields,
-          filteredIssues.length,
-          totalNumberOfIssues
-        );
-        const {data, total} = searchResult;
-        console.log("total issues!!!!!");
-        console.log(total);
-        const fullIssues = filteredIssues.concat(data);
-        setFilteredIssues(fullIssues);
-        setAreMoreIssuesLoading(false);
-      } catch (error) {
-        setAreMoreIssuesLoading(false);
-        handleNewError(error);
-      }
-    };
-    void fetchFilteredIssues();
+    void tracebilityReportUtils.populateIssues(
+      jqlString,
+      issueFields,
+      filteredIssues.length,
+      totalNumberOfIssues,
+      updateIssues,
+      setAreMoreIssuesLoading,
+      null,
+      handleNewError
+    );
   };
 
   // const fieldIds = getFieldIds(issueFields);

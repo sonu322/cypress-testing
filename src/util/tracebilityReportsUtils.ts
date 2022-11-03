@@ -34,7 +34,9 @@ export default class TracebilityReportUtils {
       console.log(total);
       updateIssues(data);
       setIsLoading(false);
-      updateTotal(total);
+      if (updateTotal !== null) {
+        updateTotal(total);
+      }
     } catch (error) {
       setIsLoading(false);
       handleError(error);
