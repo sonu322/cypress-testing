@@ -9,6 +9,7 @@ import { HelpLink } from "../common/HelpLink";
 import { ExportContent } from "../common/ExportContent";
 import { JQLEditor } from "../JQLEditor";
 import { TableFieldsDropdown } from "./TableFieldsDropdown";
+import {IssueField} from "../../types/api";
 const MainBar = styled.div`
   background-color: ${colors.N20}
   padding: 10px;
@@ -20,6 +21,28 @@ const FlexContainer = styled.div`
   display: flex;
   gap: 8px;
 `;
+
+interface Props {
+  selectedIssueFieldIds: string[];
+  setSelectedIssueFieldIds: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedJQLString: string;
+  setSelectedJQLString: React.Dispatch<React.SetStateAction<string>>;
+  selectedTableFieldIds: Map<string, string[]>;
+  updateSelectedTableFieldIds: React.Dispatch<
+    React.SetStateAction<Map<string, string[]>>
+  >;
+  tableFields: Map<
+    string,
+    {
+      name: string;
+      values: any[];
+    }
+  >;
+  exportReport: () => void;
+  handleNewError: (err: unknown) => void;
+  isExportDisabled: boolean;
+  issueCardOptions: IssueField[];
+}
 
 export const Toolbar = ({
   selectedIssueFieldIds,
@@ -33,7 +56,7 @@ export const Toolbar = ({
   handleNewError,
   isExportDisabled,
   issueCardOptions,
-}): JSX.Element => {
+}: Props): JSX.Element => {
   // const issueCardOptions = Array.from(issueCardOptionsMap.values());
   return (
     <MainBar>

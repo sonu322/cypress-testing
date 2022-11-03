@@ -37,7 +37,7 @@ export const ReportRow = ({
         if (isSelected) {
           const singleIssue = (
             <IssueCard
-              key={issue.id}
+              key={`${issue.id}-${issue.type.id}`}
               issueData={issue}
               selectedIssueFieldIds={issueFieldIds}
             />

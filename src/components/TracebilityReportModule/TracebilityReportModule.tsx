@@ -8,6 +8,7 @@ import {Main} from "./Main";
 import {ErrorsList} from "../common/ErrorsList";
 import {exportReport} from "../../util/tracebilityReportsUtils";
 import {getKeyMap, getKeyValues} from "../../util/common";
+
 const FullWidthContainer = styled.div`
   width: 100%;
   height: 100%;
@@ -18,20 +19,9 @@ const GrowContainer = styled.div`
   flex-grow: 1;
   display: flex;
 `;
-const fixedFieldNames = [
-  "summary",
-  "subtasks",
-  "parent",
-  "issuelinks",
-  "status",
-  "resolution",
-];
 
 export const TracebilityReportModule = (): JSX.Element => {
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
-  // const [allRelatedIssues, setAllRelatedIssues] = useState<Issue[] | null>(
-  //   null
-  // );
   const [filteredIssues, setFilteredIssues] = useState<
     IssueWithSortedLinks[] | null
   >(null);
@@ -104,12 +94,6 @@ export const TracebilityReportModule = (): JSX.Element => {
   const isExportDisabled =
     filteredIssues == null || filteredIssues.length === 0;
 
-  const issueCardOptionsMap = new Map(issueFields);
-  for (const fieldId of issueCardOptionsMap.keys()) {
-    if (fixedFieldNames.includes(fieldId)) {
-      issueCardOptionsMap.delete(fieldId);
-    }
-  }
   if (areOptionsLoading) {
     return <div>Loading data ...</div>;
   }
@@ -139,7 +123,6 @@ export const TracebilityReportModule = (): JSX.Element => {
       {errors.length > 0 && <ErrorsList errors={errors} />}
       <GrowContainer>
         <Main
-          issueCardOptionsMap={issueCardOptionsMap}
           jqlString={selectedJQLString}
           handleNewError={handleNewError}
           issueFields={issueFields}

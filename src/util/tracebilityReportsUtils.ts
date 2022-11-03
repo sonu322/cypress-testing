@@ -1,4 +1,4 @@
-import LXPAPI, {IssueWithSortedLinks} from "../types/api";
+import LXPAPI, {IssueField, IssueWithSortedLinks} from "../types/api";
 import {download, toTitleCase} from "./index";
 
 export default class TracebilityReportUtils {
@@ -8,14 +8,14 @@ export default class TracebilityReportUtils {
   }
 
   async populateIssues(
-    jqlString,
-    issueFields,
-    startIndex,
-    maxResults,
-    updateIssues,
-    setIsLoading,
-    updateTotal,
-    handleError
+    jqlString: string,
+    issueFields: IssueField[],
+    startIndex: number,
+    maxResults: number,
+    updateIssues: (issues: any) => void,
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
+    setTotal: React.Dispatch<React.SetStateAction<number>>,
+    handleError: (err: unknown) => void
   ): Promise<void> {
     setIsLoading(true);
     try {
@@ -30,8 +30,8 @@ export default class TracebilityReportUtils {
       console.log(total);
       updateIssues(data);
       setIsLoading(false);
-      if (updateTotal !== null) {
-        updateTotal(total);
+      if (setTotal !== null) {
+        setTotal(total);
       }
     } catch (error) {
       setIsLoading(false);
@@ -41,7 +41,13 @@ export default class TracebilityReportUtils {
 }
 
 export const exportReport = (
-  tableFields,
+  tableFields: Map<
+    string,
+    {
+      name: string;
+      values: any[];
+    }
+  >,
   selectedTableFieldIds: Map<string, string[]>,
   filteredIssues: IssueWithSortedLinks[]
 ): void => {

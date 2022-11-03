@@ -5,7 +5,7 @@ import {APIContext} from "../../context/api";
 import styled from "styled-components";
 import {Report} from "./Report";
 import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
-import TreeUtils from "../../util/TreeUtils";
+import {IssueField, IssueWithSortedLinks} from "../../types/api";
 const Container = styled.div`
   padding: 4px;
   width: 100%;
@@ -18,8 +18,29 @@ const GrowContainer = styled.div`
 `;
 const DEFAULT_ROWS_PER_PAGE = 20;
 const START_INDEX = 0;
+
+interface Props {
+  jqlString: string;
+  handleNewError: (err: unknown) => void;
+  issueFields: IssueField[];
+  selectedIssueFieldIds: string[];
+  selectedTableFieldIds: Map<string, string[]>;
+  tableFields: Map<
+    string,
+    {
+      name: string;
+      values: any[];
+    }
+  >;
+  filteredIssues: IssueWithSortedLinks[];
+  areIssuesLoading: boolean;
+  setAreIssuesLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setFilteredIssues: React.Dispatch<
+    React.SetStateAction<IssueWithSortedLinks[]>
+  >;
+}
+
 export const Main = ({
-  issueCardOptionsMap,
   jqlString,
   handleNewError,
   issueFields,
@@ -30,7 +51,7 @@ export const Main = ({
   areIssuesLoading,
   setAreIssuesLoading,
   setFilteredIssues,
-}): JSX.Element => {
+}: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
   const api = useContext(APIContext);
@@ -41,7 +62,7 @@ export const Main = ({
   };
   const tracebilityReportUtils = new TracebilityReportUtils(api);
   useEffect(() => {
-    if (jqlString) {
+    if (jqlString !== null) {
       void tracebilityReportUtils.populateIssues(
         jqlString,
         issueFields,
@@ -69,43 +90,6 @@ export const Main = ({
     );
   };
 
-  // const fieldIds = getFieldIds(issueFields);
-  // const fetchFilteredIssues = async (): Promise<void> => {
-  //   setAreMoreIssuesLoading(true);
-  //   try {
-  //     const searchResult = await api.searchLinkedIssues(
-  //       jqlString,
-  //       filteredIssues.length,
-  //       totalNumberOfIssues,
-  //       fieldIds
-  //     );
-  //     const issues = searchResult.issues;
-  //     const oldIssueIds = getLinkedIssueIds(filteredIssues);
-  //     let newIssueIds = getLinkedIssueIds(issues);
-  //     newIssueIds = newIssueIds.filter((id) => {
-  //       return !oldIssueIds.includes(id);
-  //     });
-  //     const relatedIssuesjqlString = getJQLStringFromIds(newIssueIds);
-  //     const searchAllRelatedIssuesResult = await api.searchIssues(
-  //       relatedIssuesjqlString,
-  //       fieldIds,
-  //       START_INDEX,
-  //       newIssueIds.length
-  //     );
-  //     const allRelatedIssues = searchAllRelatedIssuesResult.data;
-  //     setFilteredIssues((prevIssues: Issue[]) => prevIssues.concat(issues));
-  //     setAllRelatedIssues((prevIssues: Issue[]) =>
-  //       prevIssues.concat(allRelatedIssues)
-  //     );
-  //     if (issues != null) {
-  //       setAreMoreIssuesLoading(false);
-  //     }
-  //   } catch (error) {
-  //     setAreMoreIssuesLoading(false);
-  //     handleNewError(error);
-  //   }
-  // };
-  // void fetchFilteredIssues();
   if (areIssuesLoading) {
     return (
       <Container>
@@ -124,7 +108,6 @@ export const Main = ({
       <Container>
         <GrowContainer>
           <Report
-            issueCardOptionsMap={issueCardOptionsMap}
             filteredIssues={filteredIssues}
             issueFieldIds={selectedIssueFieldIds}
             tableFields={tableFields}
@@ -149,4 +132,4 @@ export const Main = ({
       </Container>
     );
   }
-};;;;;;
+};
