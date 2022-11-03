@@ -21,7 +21,7 @@ export const Dropdown = ({
   const handleOptionClick = (id: string): void => {
     let updatedList: any[] = [];
     if (selectedOptions.includes(id)) {
-      updatedList = selectedOptions.filter((fieldId) => fieldId != id);
+      updatedList = selectedOptions.filter((fieldId) => fieldId !== id);
     } else {
       updatedList = [...selectedOptions, id];
     }
