@@ -85,6 +85,7 @@ export const TracebilityReportModule = (): JSX.Element => {
         // loading state
         setAreOptionsLoading(false);
       } catch (error) {
+        console.error(error);
         handleNewError(error);
       }
     };

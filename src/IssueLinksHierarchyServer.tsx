@@ -1,9 +1,11 @@
 import IssueLinksHierarchy from "./IssueLinksHierarchy";
 import ReactDOM from "react-dom";
-import ServerImpl from "./impl/Server";
+import APIImpl from "./impl/Cloud";
+import JiraServerImpl from "./impl/jira/Server";
 import { APIContext } from "./context/api";
 import React from "react";
-let api = new ServerImpl();
+let jiraServer = new JiraServerImpl();
+let api = new APIImpl(jiraServer);
 
 /**
  * JIRA function to initialize LXP - Links Explorer tab content

@@ -1,10 +1,12 @@
 import TracebilityReport from "./TracebilityReport";
-import CloudImpl from "./impl/Cloud";
+import APIImpl from "./impl/Cloud";
+import JiraCloudImpl from "./impl/jira/Cloud";
 import { APIContext } from "./context/api";
 import React from "react";
 window.React = React;
 import ReactDOM from "react-dom";
-const api = new CloudImpl();
+const jiraCloud = new JiraCloudImpl();
+const api = new APIImpl(jiraCloud);
 
 // eslint-disable-next-line no-undef
 const App = document.getElementById("app");
