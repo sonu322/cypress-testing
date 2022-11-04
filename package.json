@@ -52,7 +52,6 @@
   "scripts": {
     "start": "parcel serve --no-source-maps public/issueTreeModuleEntry.html public/tracebilityReportModuleEntry.html",
     "prettify": "npx prettier --write .",
-    "dev": "parcel serve --no-source-maps public/tracebilityReportModuleEntry.html",
     "prebuild-dev": "/bin/bash prebuild_dev.sh",
     "prebuild": "/bin/bash prebuild.sh",
     "build": "parcel build --no-source-maps --no-minify public/*.html",
