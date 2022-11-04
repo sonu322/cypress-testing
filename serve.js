@@ -5,6 +5,7 @@ const fs = require("fs");
   try {
     let jsonData;
     let jsonString;
+    // change later
     const url = await ngrok.connect(1234);
     console.log("App Descriptor URL: ");
     console.info(`${url}/atlassian-connect.json`);

@@ -9,16 +9,19 @@ const options = {
   cancelText: "Cancel",
   jql: "order by status ASC",
 };
+interface Props {
+  selectedFilterId: string;
+  setSelectedFilterId: React.Dispatch<React.SetStateAction<string>>;
+}
 
 export const JQLEditor = ({
   selectedFilterId,
   setSelectedFilterId,
-}): JSX.Element => {
+}: Props): JSX.Element => {
   if (Boolean(selectedFilterId) && selectedFilterId !== null) {
     options.jql = selectedFilterId;
   }
   const callback = function ({ jql }: { jql: string }): void {
-    console.log(jql);
     setSelectedFilterId(jql);
   };
   const openJQLEditor = (): void => {

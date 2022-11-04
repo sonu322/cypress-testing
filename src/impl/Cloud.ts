@@ -11,6 +11,7 @@ import LXPAPI, {
   IssueUser,
   IssueVersion,
   IssueWithLinkedIssues,
+  IssueWithSortedLinks,
   Project,
 } from "../types/api";
 
@@ -40,8 +41,8 @@ function throwError(msg: string) {
 
 export default class CloudImpl implements LXPAPI {
   // @ts-ignore
-  private _AP: any = AP;
-  private defaultFields: string[] = [
+  private readonly _AP: any = AP;
+  private readonly defaultFields: string[] = [
     "summary",
     "subtasks",
     "parent",
@@ -55,7 +56,7 @@ export default class CloudImpl implements LXPAPI {
     "issuekey",
   ];
 
-  private requiredFields: string[] = [
+  private readonly requiredFields: string[] = [
     "subtasks",
     "parent",
     "issuelinks",
@@ -91,8 +92,8 @@ export default class CloudImpl implements LXPAPI {
 
   async getPriorities(): Promise<IssuePriority[]> {
     try {
-      let response = await this._AP.request("/rest/api/3/priority");
-      let items: JiraIssuePriorityFull[] =
+      const response = await this._AP.request("/rest/api/3/priority");
+      const items: JiraIssuePriorityFull[] =
         response.body && JSON.parse(response.body);
 
       items || throwError("Issue priorities not found.");
@@ -120,8 +121,8 @@ export default class CloudImpl implements LXPAPI {
 
   async getIssueTypes(): Promise<IssueType[]> {
     try {
-      let response = await this._AP.request("/rest/api/3/issuetype");
-      let items: JiraIssueType[] = response.body && JSON.parse(response.body);
+      const response = await this._AP.request("/rest/api/3/issuetype");
+      const items: JiraIssueType[] = response.body && JSON.parse(response.body);
 
       items || throwError("Issue types not found.");
 
@@ -134,26 +135,35 @@ export default class CloudImpl implements LXPAPI {
 
   async getIssueLinkTypes(): Promise<IssueLinkType[]> {
     try {
-      let response = await this._AP.request("/rest/api/3/issueLinkType");
-      let items: JiraLinkType[] =
+      const response = await this._AP.request("/rest/api/3/issueLinkType");
+      const items: JiraLinkType[] =
         response.body && JSON.parse(response.body)?.issueLinkTypes;
 
       items || throwError("Issue link types not found.");
 
-      let result = items.map((item) => {
-        return {
-          id: item.id,
-          name: item.name,
-        };
+      const result = [];
+      result.push({
+        id: CustomLinkType.PARENT,
+        name: "Parent",
       });
       result.push({
         id: CustomLinkType.SUBTASK,
         name: "Subtasks",
       });
-      result.push({
-        id: CustomLinkType.PARENT,
-        name: "Parent",
+
+      items.forEach((item) => {
+        result.push({
+          id: `${item.id}-${item.inward}`,
+          name: item.inward,
+        });
+        if (item.inward !== item.outward) {
+          result.push({
+            id: `${item.id}-${item.outward}`,
+            name: item.outward,
+          });
+        }
       });
+
       return result;
     } catch (error) {
       console.error(error);
@@ -167,15 +177,15 @@ export default class CloudImpl implements LXPAPI {
     issueFields: IssueField[],
     fields?: JiraIssueField[]
   ): Promise<string> {
-    let project = await this.getCurrentProject();
+    const project = await this.getCurrentProject();
     fields = fields || (await this.getAllIssueFields());
     let storyPointFieldName = "storypointestimate";
     if (project.style === "classic") {
       storyPointFieldName = "storypoints";
     }
     let storyPointsFieldId: string, sprintFieldId: string;
-    for (let field of fields) {
-      let name = field.name.toLowerCase().replace(/ /g, "");
+    for (const field of fields) {
+      const name = field.name.toLowerCase().replace(/ /g, "");
       if (name === storyPointFieldName) {
         storyPointsFieldId = field.id;
       } else if (name === "sprints") {
@@ -201,8 +211,8 @@ export default class CloudImpl implements LXPAPI {
 
   async getIssueFields(): Promise<IssueField[]> {
     try {
-      let result: IssueField[] = [];
-      let issueFields: IssueField[] = [
+      const result: IssueField[] = [];
+      const issueFields: IssueField[] = [
         {
           id: "summary",
           name: "Summary",
@@ -230,14 +240,14 @@ export default class CloudImpl implements LXPAPI {
         },
       ];
 
-      let fields = await this.getAllIssueFields();
+      const fields = await this.getAllIssueFields();
       await this.addCustomFields(issueFields, fields);
-      let fieldMap = {};
+      const fieldMap = {};
       issueFields.forEach((issueField) => {
         fieldMap[issueField.jiraId] = issueField;
       });
 
-      for (let field of fields) {
+      for (const field of fields) {
         if (fieldMap[field.key]) {
           result.push(fieldMap[field.key]);
         }
@@ -251,7 +261,7 @@ export default class CloudImpl implements LXPAPI {
 
   async getAllIssueFields(): Promise<JiraIssueField[]> {
     try {
-      let response = await this._AP.request("/rest/api/3/field");
+      const response = await this._AP.request("/rest/api/3/field");
       return (
         (response.body && JSON.parse(response.body)) ||
         throwError("Issue fields not found.")
@@ -268,10 +278,10 @@ export default class CloudImpl implements LXPAPI {
   ): Promise<IssueWithLinkedIssues> {
     issueId = issueId || (await this.getCurrentIssueId());
     const issue: Issue = await this.getIssueById(fields, issueId);
-    let linkedIds = issue.links.map((link) => link.issueId);
+    const linkedIds = issue.links.map((link) => link.issueId);
     let linkedIssues: Issue[] = [];
     if (linkedIds && linkedIds.length) {
-      let result = await this.searchIssues(`id in (${linkedIds})`, fields);
+      const result = await this.searchIssues(`id in (${linkedIds})`, fields);
       linkedIssues = result.data;
     }
 
@@ -281,7 +291,7 @@ export default class CloudImpl implements LXPAPI {
   getCurrentIssueId(): Promise<string> {
     return new Promise((resolve, reject) => {
       this._AP.context.getContext((res) => {
-        let issueId = res?.jira?.issue?.id;
+        const issueId = res?.jira?.issue?.id;
         if (issueId) {
           return resolve(issueId);
         }
@@ -308,15 +318,7 @@ export default class CloudImpl implements LXPAPI {
     subTasks: JiraIssue[],
     parent: JiraIssue
   ): IssueLink[] {
-    let result: IssueLink[] = [];
-    for (let subTask of subTasks) {
-      result.push({
-        linkTypeId: CustomLinkType.SUBTASK,
-        name: "Subtasks",
-        isInward: false,
-        issueId: subTask.id,
-      });
-    }
+    const result: IssueLink[] = [];
 
     if (parent) {
       result.push({
@@ -326,11 +328,26 @@ export default class CloudImpl implements LXPAPI {
         issueId: parent.id,
       });
     }
-
-    for (let issueLink of issueLinks) {
-      const isInward = issueLink.inwardIssue ? true : false;
+    for (const subTask of subTasks) {
       result.push({
-        linkTypeId: issueLink.type.id,
+        linkTypeId: CustomLinkType.SUBTASK,
+        name: "Subtasks",
+        isInward: false,
+        issueId: subTask.id,
+      });
+    }
+
+    for (const issueLink of issueLinks) {
+      const isInward = issueLink.inwardIssue ? true : false;
+      let id;
+      if (isInward) {
+        id = `${issueLink.type.id}-${issueLink.type.inward}`;
+      } else {
+        id = `${issueLink.type.id}-${issueLink.type.outward}`;
+      }
+      result.push({
+        // item.id-item.outward
+        linkTypeId: id,
         name: isInward ? issueLink.type.inward : issueLink.type.outward,
         isInward,
         issueId: (issueLink.inwardIssue || issueLink.outwardIssue)?.id || "",
@@ -351,8 +368,8 @@ export default class CloudImpl implements LXPAPI {
   }
 
   private _convertVersions(versions: JiraVersion[]): IssueVersion[] {
-    let result = [];
-    for (let version of versions) {
+    const result = [];
+    for (const version of versions) {
       result.push({
         id: version.id,
         name: version.name,
@@ -368,7 +385,7 @@ export default class CloudImpl implements LXPAPI {
   private _convertIssue(issue: JiraIssueFull, fields: IssueField[]): Issue {
     let sprintFieldId, storyPointsFieldId;
     if (fields && fields.length) {
-      for (let field of fields) {
+      for (const field of fields) {
         if (field.id === "storyPoints") {
           storyPointsFieldId = field.jiraId;
         } else if (field.id === "sprints") {
@@ -450,13 +467,13 @@ export default class CloudImpl implements LXPAPI {
         url: "/rest/api/3/search",
         data: JSON.stringify(data),
       });
-      let issues: JiraIssueSearchResult =
+      const issues: JiraIssueSearchResult =
         response.body && JSON.parse(response.body);
 
-      let result: Issue[] = [];
+      const result: Issue[] = [];
       const total = issues.total;
       const jiraIssues = issues?.issues || [];
-      for (let issue of jiraIssues) {
+      for (const issue of jiraIssues) {
         result.push(this._convertIssue(issue, fields));
       }
       return { data: result, total };
@@ -465,19 +482,78 @@ export default class CloudImpl implements LXPAPI {
       throw new Error("Error in searching issues: " + error.message);
     }
   }
+
+  private readonly _getLinkedIssueJQL = (
+    issues: Issue[]
+  ): { jqlString: string; total: number } => {
+    const ids: string[] = [];
+    issues.forEach((issue) => {
+      issue.links.forEach((link) => {
+        const { issueId } = link;
+        if (!ids.includes(issueId)) {
+          ids.push(issueId);
+        }
+      });
+    });
+    const jqlComponents = ids.map((id) => `id=${id}`);
+    const jqlString = jqlComponents.join(" OR ");
+    const total = ids.length;
+    return { jqlString, total };
+  };
+
+  private readonly _populateIssueLinks = (
+    issues: IssueWithSortedLinks[],
+    linkedIssues: Issue[]
+  ): IssueWithSortedLinks[] => {
+    const populatedIssues: IssueWithSortedLinks[] = [...issues];
+    populatedIssues.forEach((issue) => {
+      const sortedLinks = {};
+      issue.links.forEach((link) => {
+        if (sortedLinks[link.linkTypeId] === undefined) {
+          sortedLinks[link.linkTypeId] = [];
+        }
+        const linkedIssue = linkedIssues.find(
+          (linkedIssue) => linkedIssue.id === link.issueId
+        );
+        sortedLinks[link.linkTypeId].push(linkedIssue);
+      });
+      issue.sortedLinks = sortedLinks;
+    });
+    return populatedIssues;
+  };
+
+  async searchLinkedIssues(
+    jql: string,
+    fields: IssueField[],
+    start?: number,
+    max?: number
+  ): Promise<{ data: IssueWithSortedLinks[]; total: number }> {
+    const searchResult = await this.searchIssues(jql, fields, start, max);
+    const issues: IssueWithSortedLinks[] = searchResult.data;
+    const { jqlString: linkedIssuesJQL, total } =
+      this._getLinkedIssueJQL(issues);
+    const linkedIssuesResult = await this.searchIssues(
+      linkedIssuesJQL,
+      fields,
+      0,
+      total
+    );
+    const linkedIssues = linkedIssuesResult.data;
+    const populatedIssues = this._populateIssueLinks(issues, linkedIssues);
+    return { data: populatedIssues, total: searchResult.total };
+  }
+
   private _convertFilter(filter: JiraFilter): Filter {
     return {
       ...filter,
       id: `filter=${filter.id}`,
     };
   }
-  // getFilters(): Promise < Filter[] > {
-  //   throw new Error("Method not implemented.");
-  // }
+
   async getFilters(): Promise<Filter[]> {
     try {
-      let response = await this._AP.request("/rest/api/3/filter/search");
-      let filtersResponseData: JiraFiltersResponse =
+      const response = await this._AP.request("/rest/api/3/filter/search");
+      const filtersResponseData: JiraFiltersResponse =
         response.body && JSON.parse(response.body);
 
       filtersResponseData;
@@ -515,10 +591,10 @@ export default class CloudImpl implements LXPAPI {
         });
       };
       projectKey = projectKey || (await getProjectKey());
-      let response = await this._AP.request(
+      const response = await this._AP.request(
         `/rest/api/3/project/${projectKey}`
       );
-      let project: JiraProject =
+      const project: JiraProject =
         (response.body && JSON.parse(response.body)) ||
         throwError("Project not found.");
       return this._convertProject(project);

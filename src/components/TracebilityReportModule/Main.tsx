@@ -2,15 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import { LoadingButton } from "@atlaskit/button";
 import Spinner from "@atlaskit/spinner";
 import { APIContext } from "../../context/api";
-import { getFieldIds } from "../../util";
 import styled from "styled-components";
 import { Report } from "./Report";
-import {
-  getAllRelatedIssueIds,
-  getJQLStringFromIds,
-} from "../../util/tracebilityReportsUtils";
-import { Issue } from "../../types/api";
-
+import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
+import { IssueField, IssueWithSortedLinks } from "../../types/api";
 const Container = styled.div`
   padding: 4px;
   width: 100%;
@@ -23,114 +18,85 @@ const GrowContainer = styled.div`
 `;
 const DEFAULT_ROWS_PER_PAGE = 20;
 const START_INDEX = 0;
+
+interface Props {
+  jqlString: string;
+  handleNewError: (err: unknown) => void;
+  issueFields: IssueField[];
+  selectedIssueFieldIds: string[];
+  selectedTableFieldIds: Map<string, string[]>;
+  tableFields: Map<
+    string,
+    {
+      name: string;
+      values: any[];
+    }
+  >;
+  filteredIssues: IssueWithSortedLinks[];
+  areIssuesLoading: boolean;
+  setAreIssuesLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setFilteredIssues: React.Dispatch<
+    React.SetStateAction<IssueWithSortedLinks[]>
+  >;
+}
+
 export const Main = ({
-  issueCardOptionsMap,
   jqlString,
   handleNewError,
   issueFields,
   selectedIssueFieldIds,
   selectedTableFieldIds,
+  tableFields,
   filteredIssues,
-  setFilteredIssues,
-  allRelatedIssues,
-  setAllRelatedIssues,
   areIssuesLoading,
   setAreIssuesLoading,
-}): JSX.Element => {
+  setFilteredIssues,
+}: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
   const api = useContext(APIContext);
-  useEffect(() => {
-    if (jqlString) {
-      const fieldIds = getFieldIds(issueFields);
-      const fetchFilteredIssues = async (): Promise<void> => {
-        setAreIssuesLoading(true);
-        try {
-          const searchResult = await api.searchIssues(
-            jqlString,
-            START_INDEX,
-            DEFAULT_ROWS_PER_PAGE,
-            fieldIds
-          );
-          const issues = searchResult.issues;
-          const totalNumberOfIssues = searchResult.totalNumberOfIssues;
-          const relatedIssueIds = getAllRelatedIssueIds(issues);
-          const relatedIssuesjqlString = getJQLStringFromIds(relatedIssueIds);
-          setFilteredIssues(issues);
-          const searchAllRelatedIssuesResult = await api.searchIssues(
-            relatedIssuesjqlString,
-            START_INDEX,
-            relatedIssueIds.length,
-            fieldIds
-          );
-          const allRelatedIssues = searchAllRelatedIssuesResult.issues;
-          setAllRelatedIssues(allRelatedIssues);
-          if (
-            issues != null &&
-            allRelatedIssues !== undefined &&
-            allRelatedIssues !== null
-          ) {
-            setAreIssuesLoading(false);
-          }
-          setTotalNumberOfIssues(totalNumberOfIssues);
-        } catch (error) {
-          setAreIssuesLoading(false);
-          handleNewError(error);
-        }
-      };
-      void fetchFilteredIssues();
-    }
-  }, [jqlString]);
-  const fetchMoreIssues = (): void => {
-    const fieldIds = getFieldIds(issueFields);
-    const fetchFilteredIssues = async (): Promise<void> => {
-      setAreMoreIssuesLoading(true);
-      try {
-        const searchResult = await api.searchIssues(
-          jqlString,
-          filteredIssues.length,
-          totalNumberOfIssues,
-          fieldIds
-        );
-        const issues = searchResult.issues;
-        const oldIssueIds = getAllRelatedIssueIds(filteredIssues);
-        let newIssueIds = getAllRelatedIssueIds(issues);
-        newIssueIds = newIssueIds.filter((id) => {
-          return !oldIssueIds.includes(id);
-        });
-        const relatedIssuesjqlString = getJQLStringFromIds(newIssueIds);
-        const searchAllRelatedIssuesResult = await api.searchIssues(
-          relatedIssuesjqlString,
-          START_INDEX,
-          newIssueIds.length,
-          fieldIds
-        );
-        const allRelatedIssues = searchAllRelatedIssuesResult.issues;
-        setFilteredIssues((prevIssues: Issue[]) => prevIssues.concat(issues));
-        setAllRelatedIssues((prevIssues: Issue[]) =>
-          prevIssues.concat(allRelatedIssues)
-        );
-        if (issues != null) {
-          setAreMoreIssuesLoading(false);
-        }
-      } catch (error) {
-        setAreMoreIssuesLoading(false);
-        handleNewError(error);
-      }
-    };
-    void fetchFilteredIssues();
+  const updateIssues = (issues): void => {
+    const newIssues = filteredIssues ?? [];
+    const updatedIssues = newIssues.concat(issues);
+    setFilteredIssues(updatedIssues);
   };
+  const tracebilityReportUtils = new TracebilityReportUtils(api);
+  useEffect(() => {
+    if (jqlString !== null) {
+      void tracebilityReportUtils.populateIssues(
+        jqlString,
+        issueFields,
+        START_INDEX,
+        DEFAULT_ROWS_PER_PAGE,
+        updateIssues,
+        setAreIssuesLoading,
+        setTotalNumberOfIssues,
+        handleNewError
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jqlString]);
+
+  const fetchMoreIssues = (): void => {
+    void tracebilityReportUtils.populateIssues(
+      jqlString,
+      issueFields,
+      filteredIssues.length,
+      totalNumberOfIssues,
+      updateIssues,
+      setAreMoreIssuesLoading,
+      null,
+      handleNewError
+    );
+  };
+
   if (areIssuesLoading) {
     return (
       <Container>
         <Spinner size="medium" />
       </Container>
     );
-  } else if (
-    Boolean(jqlString) &&
-    filteredIssues != null &&
-    allRelatedIssues != null
-  ) {
+  } else if (Boolean(jqlString) && filteredIssues != null) {
     if (filteredIssues.length === 0) {
       return (
         <Container>
@@ -142,11 +108,10 @@ export const Main = ({
       <Container>
         <GrowContainer>
           <Report
-            allRelatedIssues={allRelatedIssues}
-            issueCardOptionsMap={issueCardOptionsMap}
             filteredIssues={filteredIssues}
             issueFieldIds={selectedIssueFieldIds}
-            tableFieldIds={selectedTableFieldIds}
+            tableFields={tableFields}
+            selectedTableFieldIds={selectedTableFieldIds}
           />
         </GrowContainer>
         <div>
