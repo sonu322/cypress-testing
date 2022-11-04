@@ -474,12 +474,13 @@ export default class APIImpl implements LXPAPI {
   };
 
   private readonly _populateIssueLinks = (
-    issues: IssueWithSortedLinks[],
+    issues: Issue[],
     linkedIssues: Issue[]
   ): IssueWithSortedLinks[] => {
-    const populatedIssues: IssueWithSortedLinks[] = [...issues];
-    populatedIssues.forEach((issue) => {
+    const populatedIssues: IssueWithSortedLinks[] = [];
+    issues.forEach((issue) => {
       const sortedLinks = {};
+      const item = { ...issue, sortedLinks }
       issue.links.forEach((link) => {
         if (sortedLinks[link.linkTypeId] === undefined) {
           sortedLinks[link.linkTypeId] = [];
@@ -489,7 +490,7 @@ export default class APIImpl implements LXPAPI {
         );
         sortedLinks[link.linkTypeId].push(linkedIssue);
       });
-      issue.sortedLinks = sortedLinks;
+      populatedIssues.push(item);
     });
     return populatedIssues;
   };
@@ -501,7 +502,7 @@ export default class APIImpl implements LXPAPI {
     max?: number
   ): Promise<{ data: IssueWithSortedLinks[]; total: number }> {
     const searchResult = await this.searchIssues(jql, fields, start, max);
-    const issues: IssueWithSortedLinks[] = searchResult.data;
+    const issues: Issue[] = searchResult.data;
     const { jqlString: linkedIssuesJQL, total } =
       this._getLinkedIssueJQL(issues);
     const linkedIssuesResult = await this.searchIssues(
