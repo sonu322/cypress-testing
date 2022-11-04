@@ -228,7 +228,7 @@ export interface JiraAPI {
 
   getFilters(): Promise<JiraFiltersResponse>;
 
-  getCurrentProject(projectKey: string): Promise<JiraProject>;
+  getProject(projectKey: string): Promise<JiraProject>;
 
   getCurrentProjectKey(): Promise<string>;
 }
