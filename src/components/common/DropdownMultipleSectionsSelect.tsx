@@ -4,23 +4,38 @@ import DropdownMenu, {
   DropdownItemCheckbox,
 } from "@atlaskit/dropdown-menu";
 
+interface Props {
+  options: Map<
+    string,
+    {
+      name: string;
+      values: any[];
+    }
+  >;
+  selectedOptions: Map<string, string[]>;
+  updateSelectedOptionIds: React.Dispatch<
+    React.SetStateAction<Map<string, string[]>>
+  >;
+  dropdownName: string;
+}
+
 export const DropdownMultipleSectionsSelect = ({
   selectedOptions,
   dropdownName,
-  updateSelectedOptions,
+  updateSelectedOptionIds,
   options,
-}): JSX.Element => {
+}: Props): JSX.Element => {
   // click handler
-  const handleOptionClick = (groupKey, id) => {
+  const handleOptionClick = (groupKey: string, id: string): void => {
     const newMap = new Map(selectedOptions);
     let updatedList = [];
     if (newMap.get(groupKey).includes(id)) {
-      updatedList = newMap.get(groupKey).filter((fieldId) => fieldId != id);
+      updatedList = newMap.get(groupKey).filter((fieldId) => fieldId !== id);
     } else {
       updatedList = [...newMap.get(groupKey), id];
     }
     newMap.set(groupKey, updatedList);
-    updateSelectedOptions(newMap);
+    updateSelectedOptionIds(newMap);
   };
 
   // groups of checkboxes

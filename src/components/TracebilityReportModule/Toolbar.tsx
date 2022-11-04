@@ -3,12 +3,13 @@ import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import { JQLSelectDropdown } from "../JQLSelectDropdown";
 import { ButtonGroup } from "@atlaskit/button";
-import { Dropdown } from "../Dropdown";
+import { Dropdown } from "../common/Dropdown";
 import { helpLink } from "../../constants";
-import { HelpLink } from "../HelpLink";
-import { ExportContent } from "../ExportContent";
+import { HelpLink } from "../common/HelpLink";
+import { ExportContent } from "../common/ExportContent";
 import { JQLEditor } from "../JQLEditor";
 import { TableFieldsDropdown } from "./TableFieldsDropdown";
+import { IssueField } from "../../types/api";
 const MainBar = styled.div`
   background-color: ${colors.N20}
   padding: 10px;
@@ -21,8 +22,29 @@ const FlexContainer = styled.div`
   gap: 8px;
 `;
 
+interface Props {
+  selectedIssueFieldIds: string[];
+  setSelectedIssueFieldIds: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedJQLString: string;
+  setSelectedJQLString: React.Dispatch<React.SetStateAction<string>>;
+  selectedTableFieldIds: Map<string, string[]>;
+  updateSelectedTableFieldIds: React.Dispatch<
+    React.SetStateAction<Map<string, string[]>>
+  >;
+  tableFields: Map<
+    string,
+    {
+      name: string;
+      values: any[];
+    }
+  >;
+  exportReport: () => void;
+  handleNewError: (err: unknown) => void;
+  isExportDisabled: boolean;
+  issueCardOptions: IssueField[];
+}
+
 export const Toolbar = ({
-  issueCardOptionsMap,
   selectedIssueFieldIds,
   setSelectedIssueFieldIds,
   selectedJQLString,
@@ -33,8 +55,9 @@ export const Toolbar = ({
   exportReport,
   handleNewError,
   isExportDisabled,
-}): JSX.Element => {
-  const issueCardOptions = Array.from(issueCardOptionsMap.values());
+  issueCardOptions,
+}: Props): JSX.Element => {
+  // const issueCardOptions = Array.from(issueCardOptionsMap.values());
   return (
     <MainBar>
       <FlexContainer>

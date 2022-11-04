@@ -13,40 +13,60 @@ export default class UnknownImpl implements LXPAPI {
   hasValidLicense(): boolean {
     throw new Error("Method not implemented.");
   }
+
   getJiraBaseURL(): string {
     throw new Error("Method not implemented.");
   }
-  getPriorities(): Promise<IssuePriority[]> {
+
+  async getPriorities(): Promise<IssuePriority[]> {
     throw new Error("Method not implemented.");
   }
-  getIssueTypes(): Promise<IssueType[]> {
+
+  async getIssueTypes(): Promise<IssueType[]> {
     throw new Error("Method not implemented.");
   }
-  getIssueLinkTypes(): Promise<IssueLinkType[]> {
+
+  async getIssueLinkTypes(): Promise<IssueLinkType[]> {
     throw new Error("Method not implemented.");
   }
-  getIssueFields(): Promise<IssueField[]> {
+
+  async getIssueFields(): Promise<IssueField[]> {
     throw new Error("Method not implemented.");
   }
-  getIssueWithLinks(
+
+  async getIssueWithLinks(
     fields: IssueField[],
     issueId?: string | undefined
   ): Promise<IssueWithLinkedIssues> {
     throw new Error("Method not implemented.");
   }
-  getCurrentIssueId(): Promise<string> {
+
+  async getCurrentIssueId(): Promise<string> {
     throw new Error("Method not implemented.");
   }
-  getIssueById(fields: IssueField[], issueId: string): Promise<Issue> {
+
+  async getIssueById(fields: IssueField[], issueId: string): Promise<Issue> {
     throw new Error("Method not implemented.");
   }
-  getFilters(): Promise<Filter[]> {
+
+  async getFilters(): Promise<Filter[]> {
     throw new Error("Method not implemented.");
   }
-  getCurrentProject(projectKey?: string): Promise<Project> {
+
+  async getCurrentProject(projectKey?: string): Promise<Project> {
     throw new Error("Method not implemented.");
   }
-  searchIssues(
+
+  async searchIssues(
+    jql: string,
+    fields?: IssueField[],
+    start?: number,
+    max?: number
+  ): Promise<{ data: Issue[]; total: number }> {
+    throw new Error("Method not implemented.");
+  }
+
+  async searchLinkedIssues(
     jql: string,
     fields?: IssueField[],
     start?: number,

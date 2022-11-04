@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import LicenseContainer from "./components/LicenseContainer";
+import LicenseContainer from "./components/common/LicenseContainer";
 import { TracebilityReportModule } from "./components/TracebilityReportModule/TracebilityReportModule";
 import { APIContext } from "./context/api";
 

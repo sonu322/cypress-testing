@@ -60,7 +60,7 @@ export default class TreeUtils {
     tree: AtlasTree,
     isExpanded = false
   ) {
-    let node: AtlasTreeNode = {
+    const node: AtlasTreeNode = {
       id: UUID(),
       children: [],
       hasChildren: true,
@@ -148,14 +148,14 @@ export default class TreeUtils {
         mainNode = newTree.items[nodeId];
       }
 
-      let typeMap = {},
+      const typeMap = {},
         issueMap = {};
       issue.linkedIssues.forEach((linkedIssue: Issue) => {
         issueMap[linkedIssue.id] = linkedIssue;
       });
 
-      for (let link of issue.links) {
-        let linkedIssue = issueMap[link.issueId];
+      for (const link of issue.links) {
+        const linkedIssue = issueMap[link.issueId];
         if (
           this._shouldIncludeNode(
             issue,
@@ -165,7 +165,8 @@ export default class TreeUtils {
             mainNode.parentIssueId
           )
         ) {
-          let node = this.addTreeNode(linkedIssue, issue.id, newTree);
+          const node = this.addTreeNode(linkedIssue, issue.id, newTree);
+
           if (typeMap[link.name] === undefined) {
             typeMap[link.name] = [];
           }
@@ -176,8 +177,8 @@ export default class TreeUtils {
       let types = Object.keys(typeMap),
         hasChildren = true;
       if (types.length) {
-        for (let type of types) {
-          let typeNode = this.addTypeNode(type, newTree);
+        for (const type of types) {
+          const typeNode = this.addTypeNode(type, newTree);
           typeNode.children = typeMap[type];
           mainNode.children.push(typeNode.id);
         }

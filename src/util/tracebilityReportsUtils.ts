@@ -1,189 +1,86 @@
-import { Issue } from "../types/api";
+import LXPAPI, { IssueField, IssueWithSortedLinks } from "../types/api";
 import { download, toTitleCase } from "./index";
 
-const getIssue = (id: string, issues: Issue[]): Issue | null => {
-  return issues.find((issue) => issue.id === id) ?? null;
-};
+export default class TracebilityReportUtils {
+  private readonly api: LXPAPI;
+  constructor(api: LXPAPI) {
+    this.api = api;
+  }
 
-export const getAllRelatedIssueIds = (issues: Issue[]): string[] => {
-  const ids: string[] = [];
-  issues.forEach((issue) => {
-    ids.push(issue.id);
-    if (issue.fields.parent !== undefined) {
-      ids.push(issue.fields.parent.id);
-    }
-    if (issue.fields.subtasks !== undefined) {
-      issue.fields.subtasks.forEach((subtask: Issue) => {
-        ids.push(subtask.id);
-      });
-    }
-    if (issue.fields.issuelinks !== undefined) {
-      issue.fields.issuelinks.forEach((currentLink) => {
-        const linkedIssue = currentLink.inwardIssue ?? currentLink.outwardIssue;
-        ids.push(linkedIssue.id);
-      });
-    }
-  });
-  const uniqueIds = [...new Set(ids)];
-  return uniqueIds;
-};
-export const getJQLStringFromIds = (ids: string[]): string => {
-  const jqlComponents = ids.map((id) => `id=${id}`);
-  const jqlString = jqlComponents.join(" OR ");
-  return jqlString;
-};
-export const getAllRelatedIssuesJQLString = (issues: Issue[]): string => {
-  const ids = getAllRelatedIssueIds(issues);
-  return getJQLStringFromIds(ids);
-};
-
-export const upsurt = (
-  issuesHolder,
-  currentLink,
-  links,
-  selectedTableFieldIds,
-  allRelatedIssues
-): void => {
-  const issue = currentLink.inwardIssue ?? currentLink.outwardIssue;
-
-  if (
-    selectedTableFieldIds.get("issueTypes").includes(issue.fields.issuetype.id)
-  ) {
-    const name = currentLink.inwardIssue
-      ? currentLink.type.inward
-      : currentLink.type.outward;
-    if (!links.includes(name)) {
-      links.push(name);
-    }
-    if (allRelatedIssues !== null) {
-      const fullIssue = getIssue(issue.id, allRelatedIssues);
-      if (fullIssue != null) {
-        if (!issuesHolder[name]) issuesHolder[name] = [];
-        issuesHolder[name].push(fullIssue);
+  async populateIssues(
+    jqlString: string,
+    issueFields: IssueField[],
+    startIndex: number,
+    maxResults: number,
+    updateIssues: (issues: any) => void,
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
+    setTotal: React.Dispatch<React.SetStateAction<number>>,
+    handleError: (err: unknown) => void
+  ): Promise<void> {
+    setIsLoading(true);
+    try {
+      const searchResult = await this.api.searchLinkedIssues(
+        jqlString,
+        issueFields,
+        startIndex,
+        maxResults
+      );
+      const { data, total } = searchResult;
+      updateIssues(data);
+      setIsLoading(false);
+      if (setTotal !== null) {
+        setTotal(total);
       }
-    } else {
-      if (issue != null) {
-        if (!issuesHolder[name]) issuesHolder[name] = [];
-        issuesHolder[name].push(issue);
-      }
+    } catch (error) {
+      setIsLoading(false);
+      handleError(error);
     }
   }
-};
+}
 
-export const processIssues = (
-  selectedTableFieldIds,
-  filteredIssues,
-  allRelatedIssues
-) => {
-  const links: string[] = [];
-  const classifieds = [];
-  filteredIssues.forEach((issue: Issue) => {
-    const fields = issue.fields;
-    const classified = {
-      issue,
-    };
-    if (
-      Boolean(fields.parent) &&
-      Boolean(
-        selectedTableFieldIds
-          .get("issueTypes")
-          .includes(fields.parent.fields.issuetype.id)
-      )
-    ) {
-      if (allRelatedIssues !== null) {
-        const parentIssue = getIssue(fields.parent.id, allRelatedIssues);
-        if (parentIssue != null) {
-          classified.parent = parentIssue;
-        }
-      } else {
-        classified.parent = fields.parent;
-      }
+export const exportReport = (
+  tableFields: Map<
+    string,
+    {
+      name: string;
+      values: any[];
     }
-
-    if (fields.subtasks != null) {
-      const subtasks = fields.subtasks.filter((issue: Issue) =>
-        selectedTableFieldIds
-          .get("issueTypes")
-          .includes(issue.fields.issuetype.id)
-      );
-      if (allRelatedIssues !== null) {
-        const fullSubtasks: Issue[] = [];
-        subtasks.forEach((subtask: Issue) => {
-          const fullSubtask = getIssue(subtask.id, allRelatedIssues);
-          if (fullSubtask != null) {
-            fullSubtasks.push(fullSubtask);
-          }
-        });
-        classified.subtasks = fullSubtasks;
-      } else {
-        classified.subtasks = subtasks;
-      }
-    }
-
-    if (fields.issuelinks) {
-      fields.issuelinks.forEach((link) => {
-        if (selectedTableFieldIds.get("linkTypes").includes(link.type.id)) {
-          upsurt(
-            classified,
-            link,
-            links,
-            selectedTableFieldIds,
-            allRelatedIssues
-          );
-        }
-      });
-    }
-    classifieds.push(classified);
-  });
-
-  links.sort();
-  links.unshift("subtasks");
-  return {
-    classifieds,
-    links,
-  };
-};
-
-export const exportReport = (selectedTableFieldIds, filteredIssues): void => {
-  const { classifieds, links } = processIssues(
-    selectedTableFieldIds,
-    filteredIssues,
-    null
-  );
-
+  >,
+  selectedTableFieldIds: Map<string, string[]>,
+  filteredIssues: IssueWithSortedLinks[]
+): void => {
+  const selectedLinkIds = selectedTableFieldIds.get("linkTypes");
+  const selectedIssueTypeIds = selectedTableFieldIds.get("issueTypes");
+  let links = tableFields.get("linkTypes").values;
+  links = links.filter((link) => selectedLinkIds.includes(link.id));
   let content = "";
-  const headerLinks = ["Issue", "Parent"];
+  const headerLinks = ["Issue"];
   links.forEach((link) => {
-    headerLinks.push(`"${toTitleCase(link)}"`);
+    headerLinks.push(`"${toTitleCase(link.name)}"`);
   });
   let header = headerLinks.toString();
   header = header += "\n";
   content += header;
 
-  classifieds.forEach((classified) => {
+  filteredIssues.forEach((issue) => {
     const rowItems = [];
-    links.forEach((link) => {
-      let item = [];
-      if (classified[link] && classified[link].length > 0) {
-        classified[link].forEach((issue) => {
-          if (issue && issue.key) {
-            item.push(issue.key);
-          } else {
-            item.push("err");
+    rowItems.push(`"${issue.issueKey}"`);
+    selectedLinkIds.forEach((linkId) => {
+      let rowItemString = "--";
+      if (issue.sortedLinks[linkId] !== undefined) {
+        const rowItem = [];
+        issue.sortedLinks[linkId].forEach((linkedIssue) => {
+          const isSelected = selectedIssueTypeIds.includes(linkedIssue.type.id);
+          if (isSelected) {
+            rowItem.push(linkedIssue.issueKey);
+          }
+          if (rowItem.length > 0) {
+            rowItemString = `"${rowItem.toString()}"`;
           }
         });
-        item = item.toString();
-      } else {
-        item = "--";
       }
-      rowItems.push(`"${item}"`);
+      rowItems.push(rowItemString);
     });
-    if (classified.parent) {
-      rowItems.unshift(`"${classified.parent.key}"`);
-    } else {
-      rowItems.unshift("--");
-    }
-    rowItems.unshift(`"${classified.issue.key}"`);
 
     let rowContent = rowItems.toString();
     rowContent = rowContent += "\n";

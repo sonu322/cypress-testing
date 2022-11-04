@@ -1,53 +1,57 @@
 import React from "react";
-import { Issue } from "../../types/api";
-import { IssueCard } from "../IssueCard";
+import { IssueWithSortedLinks } from "../../types/api";
+import { IssueCard } from "../common/issueCard/IssueCard";
+
+export interface Props {
+  linkIds: string[];
+  issueTypeIds: string[];
+  issueFieldIds: string[];
+  issue: IssueWithSortedLinks;
+}
 
 export const ReportRow = ({
-  links,
-  classified,
+  linkIds,
+  issueTypeIds,
   issueFieldIds,
-  issueCardOptionsMap,
-}): JSX.Element[] => {
+  issue,
+}: Props): JSX.Element[] => {
+  const cells = [];
+
+  // push issue cell into row
   const issueCell = (
     <td key="issue">
-      <IssueCard
-        issueData={classified.issue}
-        selectedIssueFieldIds={issueFieldIds}
-        issueCardOptionsMap={issueCardOptionsMap}
-      />
+      <IssueCard issueData={issue} selectedIssueFieldIds={issueFieldIds} />
     </td>
   );
-  const parentCell = (
-    <td key="parent">
-      {classified.parent ? (
-        <IssueCard
-          issueData={classified.parent}
-          selectedIssueFieldIds={issueFieldIds}
-          issueCardOptionsMap={issueCardOptionsMap}
-        />
-      ) : (
-        <span>--</span>
-      )}
-    </td>
-  );
-  const linkCells = links.map((link: string) => (
-    <td key={classified.issue.key + link}>
-      {classified[link] != null && classified[link].length > 0 ? (
-        classified[link].map((issue: Issue) => (
-          <IssueCard
-            key={issue.id}
-            issueData={issue}
-            selectedIssueFieldIds={issueFieldIds}
-            issueCardOptionsMap={issueCardOptionsMap}
-          />
-        ))
-      ) : (
-        <span>--</span>
-      )}
-    </td>
-  ));
-  const cells = [];
-  cells.push(issueCell, parentCell, linkCells);
+  cells.push(issueCell);
 
+  // push links cells into row
+  linkIds.forEach((linkId) => {
+    // render -- by default
+    let issueCell = <td key={`${issue.id}-${linkId}`}>--</td>;
+
+    if (issue.sortedLinks[linkId] !== undefined) {
+      const allIssues = [];
+      issue.sortedLinks[linkId].forEach((issue) => {
+        const isSelected = issueTypeIds.includes(issue.type.id);
+        if (isSelected) {
+          const singleIssue = (
+            <IssueCard
+              key={`${issue.id}-${issue.type.id}`}
+              issueData={issue}
+              selectedIssueFieldIds={issueFieldIds}
+            />
+          );
+          allIssues.push(singleIssue);
+        }
+      });
+      if (allIssues.length > 0) {
+        issueCell = <td key={linkId}>{allIssues}</td>;
+      }
+    }
+
+    // push cells into row
+    cells.push(issueCell);
+  });
   return cells;
 };

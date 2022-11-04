@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
-import { processIssues } from "../../util/tracebilityReportsUtils";
-import { toTitleCase } from "../../util";
 import { ReportRow } from "./ReportRow";
+import { ReportHeader } from "./ReportHeader";
+import { IssueWithSortedLinks } from "../../types/api";
 const Container = styled.div`
   width: 100%;
   height: 100%;
@@ -12,39 +12,40 @@ const Container = styled.div`
 const BorderTr = styled.tr`
   border-bottom: 1px solid ${colors.N40};
 `;
-
+interface Props {
+  filteredIssues: IssueWithSortedLinks[];
+  tableFields: Map<
+    string,
+    {
+      name: string;
+      values: any[];
+    }
+  >;
+  selectedTableFieldIds: Map<string, string[]>;
+  issueFieldIds: string[];
+}
 export const Report = ({
   filteredIssues,
-  tableFieldIds,
+  tableFields,
+  selectedTableFieldIds,
   issueFieldIds,
-  issueCardOptionsMap,
-  allRelatedIssues,
-}): JSX.Element => {
-  const { classifieds, links } = processIssues(
-    tableFieldIds,
-    filteredIssues,
-    allRelatedIssues
-  );
+}: Props): JSX.Element => {
+  const selectedLinkIds = selectedTableFieldIds.get("linkTypes");
+  const selectedIssueTypeIds = selectedTableFieldIds.get("issueTypes");
+  const allLinks = tableFields.get("linkTypes").values;
+
   return (
     <Container>
       <table>
-        <thead>
-          <tr>
-            <th>Issue</th>
-            <th>Parent</th>
-            {links.map((link, i) => (
-              <th key={i}>{toTitleCase(link)}</th>
-            ))}
-          </tr>
-        </thead>
+        <ReportHeader fieldIds={selectedLinkIds} fields={allLinks} />
         <tbody>
-          {classifieds.map((classified, i) => (
-            <BorderTr key={classified.issue.id}>
+          {filteredIssues.map((issue) => (
+            <BorderTr key={`${issue.issueKey}`}>
               <ReportRow
-                classified={classified}
-                issueCardOptionsMap={issueCardOptionsMap}
+                issueTypeIds={selectedIssueTypeIds}
+                linkIds={selectedLinkIds}
                 issueFieldIds={issueFieldIds}
-                links={links}
+                issue={issue}
               />
             </BorderTr>
           ))}
