@@ -16,7 +16,7 @@ const Container = styled.span`
 
 interface Props {
   header: string;
-  isSmall: boolean;
+  isSmall?: boolean;
 }
 
 export const HeaderCell = ({ header, isSmall }: Props): JSX.Element => {

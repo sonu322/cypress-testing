@@ -19,6 +19,7 @@ const BorderTr = styled.tr`
 `;
 const Table = styled.table`
   padding: 32px;
+  border: 1px solid ${colors.N40};
 `;
 const PaddedContainer = styled.div`
   padding: 24px;

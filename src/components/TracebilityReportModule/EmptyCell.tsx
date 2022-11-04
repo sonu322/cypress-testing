@@ -8,6 +8,6 @@ const Container = styled.span`
   align-items: center;
 `;
 
-export const EmptyReportCell = (): JSX.Element => {
+export const EmptyCell = (): JSX.Element => {
   return <Container>--</Container>;
 };

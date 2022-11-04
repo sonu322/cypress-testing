@@ -1,7 +1,11 @@
 import React from "react";
 import { IssueWithSortedLinks } from "../../types/api";
 import { IssueCard } from "../common/issueCard/IssueCard";
-import { EmptyReportCell } from "./EmptyReportCell";
+import { EmptyCell } from "./EmptyCell";
+
+const Td = styled.td`
+  border: 1px solid ${colors.N40};
+`;
 
 export interface Props {
   linkIds: string[];
@@ -22,12 +26,11 @@ export const ReportRow = ({
 
   // push issue cell into row
   const issueCell = (
-    <td key="issue">
+    <Td key="issue">
       <IssueCard issueData={issue} selectedIssueFieldIds={issueFieldIds} />
-    </td>
+    </Td>
   );
-  const snoCell = <td key="sno">{rowSno}.</td>;
-
+  const snoCell = <Td key="sno">{rowSno}.</Td>;
 
   cells.push(snoCell);
   cells.push(issueCell);
@@ -36,9 +39,9 @@ export const ReportRow = ({
   linkIds.forEach((linkId) => {
     // render -- by default
     let issueCell = (
-      <td key={`${issue.id}-${linkId}`}>
-        <EmptyReportCell></EmptyReportCell>
-      </td>
+      <Td key={`${issue.id}-${linkId}`}>
+        <EmptyCell></EmptyCell>
+      </Td>
     );
 
     if (issue.sortedLinks[linkId] !== undefined) {
@@ -57,7 +60,7 @@ export const ReportRow = ({
         }
       });
       if (allIssues.length > 0) {
-        issueCell = <td key={linkId}>{allIssues}</td>;
+        issueCell = <Td key={linkId}>{allIssues}</Td>;
       }
     }
 
