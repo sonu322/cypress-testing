@@ -9,6 +9,14 @@ const Td = styled.td`
   border: 1px solid ${colors.N40};
   padding: 8px !important;
 `;
+const MaxWidthContainer = styled.div`
+  max-width: 540px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
 
 export interface Props {
   linkIds: string[];
@@ -30,7 +38,9 @@ export const ReportRow = ({
   // push issue cell into row
   const issueCell = (
     <Td key="issue">
-      <IssueCard issueData={issue} selectedIssueFieldIds={issueFieldIds} />
+      <MaxWidthContainer>
+        <IssueCard issueData={issue} selectedIssueFieldIds={issueFieldIds} />
+      </MaxWidthContainer>
     </Td>
   );
   const snoCell = <Td key="sno">{rowSno}.</Td>;
@@ -63,7 +73,11 @@ export const ReportRow = ({
         }
       });
       if (allIssues.length > 0) {
-        issueCell = <Td key={linkId}>{allIssues}</Td>;
+        issueCell = (
+          <Td key={linkId}>
+            <MaxWidthContainer>{allIssues}</MaxWidthContainer>
+          </Td>
+        );
       }
     }
 

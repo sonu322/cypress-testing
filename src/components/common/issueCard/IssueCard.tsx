@@ -22,6 +22,7 @@ const Container = styled.div`
   font-weight: 400px;
   line-height: 20px;
   min-width: 162px;
+  width: 100%;
   max-width: 500px;
 
   border-spacing: 10px 0px;
