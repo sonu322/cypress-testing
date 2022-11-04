@@ -8,7 +8,7 @@ import { StoryPointsInfo } from "./StoryPointsInfo";
 import { IssueKey } from "./IssueKey";
 import { AssigneeInfo } from "./AssigneeInfo";
 import { IssueSummary } from "./IssueSummary";
-import {Issue, IssueWithPopulatedLinks} from "../../../types/api";
+import { Issue, IssueWithPopulatedLinks } from "../../../types/api";
 
 const Container = styled.div`
   color: ${colors.N800};

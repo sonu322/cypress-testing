@@ -7,11 +7,10 @@ import {
   JiraIssueSearchResult,
   JiraIssueType,
   JiraLinkType,
-  JiraProject
+  JiraProject,
 } from "../../types/jira";
 
 export default class JiraServerImpl implements JiraAPI {
-
   // @ts-ignore
   private _AJS: any = AJS;
   // @ts-ignore
@@ -28,40 +27,46 @@ export default class JiraServerImpl implements JiraAPI {
     return "http://localhost:8082";
   }
 
-  async getPriorities(): Promise < JiraIssuePriorityFull[] > {
-    return await this._AJS.$.getJSON(
-      this.contextPath + "/rest/api/2/priority");
+  async getPriorities(): Promise<JiraIssuePriorityFull[]> {
+    return await this._AJS.$.getJSON(this.contextPath + "/rest/api/2/priority");
   }
 
-  async getIssueTypes(): Promise < JiraIssueType[] > {
+  async getIssueTypes(): Promise<JiraIssueType[]> {
     return await this._AJS.$.getJSON(
-      this.contextPath + "/rest/api/2/issuetype");
+      this.contextPath + "/rest/api/2/issuetype"
+    );
   }
 
-  async getIssueLinkTypes(): Promise < JiraLinkType[] > {
-    let result =  await this._AJS.$.getJSON(
-      this.contextPath + "/rest/api/2/issueLinkType");
+  async getIssueLinkTypes(): Promise<JiraLinkType[]> {
+    let result = await this._AJS.$.getJSON(
+      this.contextPath + "/rest/api/2/issueLinkType"
+    );
     return result?.issueLinkTypes;
   }
 
-  async getIssueFields(): Promise < JiraIssueField[] > {
-    return await this._AJS.$.getJSON(
-      this.contextPath + "/rest/api/2/field");
+  async getIssueFields(): Promise<JiraIssueField[]> {
+    return await this._AJS.$.getJSON(this.contextPath + "/rest/api/2/field");
   }
 
-  async getIssueById(issueId: string, query: string): Promise < JiraIssueFull > {
+  async getIssueById(issueId: string, query: string): Promise<JiraIssueFull> {
     return await this._AJS.$.getJSON(
-      this.contextPath + `/rest/api/2/issue/${issueId}${query}`);
+      this.contextPath + `/rest/api/2/issue/${issueId}${query}`
+    );
   }
 
-  async searchIssues(jql: string, fields: string[], start ? : number, max ? : number): Promise < JiraIssueSearchResult > {
+  async searchIssues(
+    jql: string,
+    fields: string[],
+    start?: number,
+    max?: number
+  ): Promise<JiraIssueSearchResult> {
     const data = {
       fields,
       startAt: start ?? 0,
       maxResults: max ?? 500,
       jql,
     };
-    
+
     return await this._AJS.$.ajax({
       type: "POST",
       contentType: "application/json; charset=utf-8",
@@ -70,15 +75,15 @@ export default class JiraServerImpl implements JiraAPI {
     });
   }
 
-  getCurrentIssueId(): Promise < string > {
+  getCurrentIssueId(): Promise<string> {
     let issueID = this._JIRA.Issue.getIssueId();
-    if(!issueID){
+    if (!issueID) {
       issueID = this._AJS.$("meta[name='ajs-issue-key']").text();
     }
     return Promise.resolve(issueID);
   }
 
-  async getFilters(): Promise < JiraFiltersResponse > {
+  async getFilters(): Promise<JiraFiltersResponse> {
     let response = await this._AJS.getJSON("/rest/api/2/filter/search");
     return response.body && JSON.parse(response.body);
   }
@@ -86,16 +91,16 @@ export default class JiraServerImpl implements JiraAPI {
   getCurrentProjectKey(): Promise<string> {
     let projectField = document.getElementById("project-field");
     let projectId = projectField?.textContent;
-    if(!projectId){
+    if (!projectId) {
       projectId = this._JIRA.API.Projects.getCurrentProjectId();
     }
     return Promise.resolve(projectId);
   }
 
   //TODO: format is not similar
-  async getProject(projectKey ? : string): Promise < JiraProject > {
+  async getProject(projectKey?: string): Promise<JiraProject> {
     return await this._AJS.$.getJSON(
-      this.contextPath + `/rest/api/2/project/${projectKey}`);
+      this.contextPath + `/rest/api/2/project/${projectKey}`
+    );
   }
-
 }

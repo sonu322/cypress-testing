@@ -64,7 +64,7 @@ export default class APIImpl implements LXPAPI {
     "issuetype",
   ];
 
-  constructor(api: JiraAPI){
+  constructor(api: JiraAPI) {
     this.api = api;
   }
 
@@ -249,7 +249,7 @@ export default class APIImpl implements LXPAPI {
           result.push(fieldMap[fieldId]);
         }
       }
-      
+
       return result;
     } catch (error) {
       console.error(error);
@@ -439,8 +439,12 @@ export default class APIImpl implements LXPAPI {
   ): Promise<{ data: Issue[]; total: number }> {
     try {
       const fieldIds = this._getFieldIds(fields);
-      const issues: JiraIssueSearchResult =
-        await this.api.searchIssues(jql, fieldIds, start, max);
+      const issues: JiraIssueSearchResult = await this.api.searchIssues(
+        jql,
+        fieldIds,
+        start,
+        max
+      );
 
       const result: Issue[] = [];
       const total = issues.total;
@@ -480,7 +484,7 @@ export default class APIImpl implements LXPAPI {
     const populatedIssues: IssueWithSortedLinks[] = [];
     issues.forEach((issue) => {
       const sortedLinks = {};
-      const item = { ...issue, sortedLinks }
+      const item = { ...issue, sortedLinks };
       issue.links.forEach((link) => {
         if (sortedLinks[link.linkTypeId] === undefined) {
           sortedLinks[link.linkTypeId] = [];
@@ -525,7 +529,8 @@ export default class APIImpl implements LXPAPI {
 
   async getFilters(): Promise<Filter[]> {
     try {
-      const filtersResponseData: JiraFiltersResponse = await this.api.getFilters();
+      const filtersResponseData: JiraFiltersResponse =
+        await this.api.getFilters();
 
       return filtersResponseData.values.map((item) =>
         this._convertFilter(item)

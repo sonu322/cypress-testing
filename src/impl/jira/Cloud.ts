@@ -7,16 +7,12 @@ import {
   JiraIssueSearchResult,
   JiraIssueType,
   JiraLinkType,
-  JiraProject
+  JiraProject,
 } from "../../types/jira";
 
-import {
-  getQueryParam
-} from "../../util/index";
-
+import { getQueryParam } from "../../util/index";
 
 export default class JiraCloudImpl implements JiraAPI {
-
   // @ts-ignore
   private _AP: any = AP;
 
@@ -29,39 +25,46 @@ export default class JiraCloudImpl implements JiraAPI {
     return getQueryParam("xdm_e") as string;
   }
 
-  async getPriorities(): Promise < JiraIssuePriorityFull[] > {
+  async getPriorities(): Promise<JiraIssuePriorityFull[]> {
     let response = await this._AP.request("/rest/api/3/priority");
     return response.body && JSON.parse(response.body);
   }
 
-  async getIssueTypes(): Promise < JiraIssueType[] > {
+  async getIssueTypes(): Promise<JiraIssueType[]> {
     let response = await this._AP.request("/rest/api/3/issuetype");
     return response.body && JSON.parse(response.body);
   }
 
-  async getIssueLinkTypes(): Promise < JiraLinkType[] > {
+  async getIssueLinkTypes(): Promise<JiraLinkType[]> {
     let response = await this._AP.request("/rest/api/3/issueLinkType");
     return response.body && JSON.parse(response.body)?.issueLinkTypes;
   }
 
-  async getIssueFields(): Promise < JiraIssueField[] > {
+  async getIssueFields(): Promise<JiraIssueField[]> {
     let response = await this._AP.request("/rest/api/3/field");
-    return (response.body && JSON.parse(response.body));
-  }
-
-  async getIssueById(issueId: string, query: string): Promise < JiraIssueFull > {
-    const response = await this._AP.request(`/rest/api/3/issue/${issueId}${query}`);
     return response.body && JSON.parse(response.body);
   }
 
-  async searchIssues(jql: string, fields: string[], start ? : number, max ? : number): Promise < JiraIssueSearchResult > {
+  async getIssueById(issueId: string, query: string): Promise<JiraIssueFull> {
+    const response = await this._AP.request(
+      `/rest/api/3/issue/${issueId}${query}`
+    );
+    return response.body && JSON.parse(response.body);
+  }
+
+  async searchIssues(
+    jql: string,
+    fields: string[],
+    start?: number,
+    max?: number
+  ): Promise<JiraIssueSearchResult> {
     const data = {
       fields,
       startAt: start ?? 0,
       maxResults: max ?? 500,
       jql,
     };
-    
+
     const response = await this._AP.request({
       type: "POST",
       contentType: "application/json",
@@ -71,7 +74,7 @@ export default class JiraCloudImpl implements JiraAPI {
     return response.body && JSON.parse(response.body);
   }
 
-  getCurrentIssueId(): Promise < string > {
+  getCurrentIssueId(): Promise<string> {
     return new Promise((resolve, reject) => {
       this._AP.context.getContext((res) => {
         let issueId = res?.jira?.issue?.id;
@@ -83,7 +86,7 @@ export default class JiraCloudImpl implements JiraAPI {
     });
   }
 
-  async getFilters(): Promise < JiraFiltersResponse > {
+  async getFilters(): Promise<JiraFiltersResponse> {
     let response = await this._AP.request("/rest/api/3/filter/search");
     return response.body && JSON.parse(response.body);
   }
@@ -100,11 +103,8 @@ export default class JiraCloudImpl implements JiraAPI {
     });
   }
 
-  async getProject(projectKey ? : string): Promise < JiraProject > {
-    let response = await this._AP.request(
-      `/rest/api/3/project/${projectKey}`
-    );
+  async getProject(projectKey?: string): Promise<JiraProject> {
+    let response = await this._AP.request(`/rest/api/3/project/${projectKey}`);
     return response.body && JSON.parse(response.body);
   }
-
 }
