@@ -14,6 +14,7 @@ export const ReportHeader = ({ fields, fieldIds }: Props): JSX.Element => {
     return <th key={id}>{name}</th>;
   });
   columnHeads.unshift(<th key={"issue"}>Issue</th>);
+  columnHeads.unshift(<th key={"sno"}>Sno</th>);
   return (
     <thead>
       <tr>{columnHeads}</tr>

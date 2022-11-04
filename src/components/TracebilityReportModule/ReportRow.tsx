@@ -7,6 +7,7 @@ export interface Props {
   issueTypeIds: string[];
   issueFieldIds: string[];
   issue: IssueWithSortedLinks;
+  rowSno: number;
 }
 
 export const ReportRow = ({
@@ -14,6 +15,7 @@ export const ReportRow = ({
   issueTypeIds,
   issueFieldIds,
   issue,
+  rowSno,
 }: Props): JSX.Element[] => {
   const cells = [];
 
@@ -23,6 +25,8 @@ export const ReportRow = ({
       <IssueCard issueData={issue} selectedIssueFieldIds={issueFieldIds} />
     </td>
   );
+  const snoCell = <td key="sno">{rowSno}.</td>;
+  cells.push(snoCell);
   cells.push(issueCell);
 
   // push links cells into row

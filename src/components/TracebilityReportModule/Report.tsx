@@ -8,9 +8,20 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   overflow: scroll;
+  max-height: 400px;
+  padding-top: 32px;
+  padding-bottom: 32px;
+  border: 1px solid ${colors.N40};
+  border-radius: 10px;
 `;
 const BorderTr = styled.tr`
   border-bottom: 1px solid ${colors.N40};
+`;
+const Table = styled.table`
+  padding: 32px;
+`;
+const PaddedContainer = styled.div`
+  padding: 24px;
 `;
 interface Props {
   filteredIssues: IssueWithSortedLinks[];
@@ -36,21 +47,24 @@ export const Report = ({
 
   return (
     <Container>
-      <table>
-        <ReportHeader fieldIds={selectedLinkIds} fields={allLinks} />
-        <tbody>
-          {filteredIssues.map((issue) => (
-            <BorderTr key={`${issue.issueKey}`}>
-              <ReportRow
-                issueTypeIds={selectedIssueTypeIds}
-                linkIds={selectedLinkIds}
-                issueFieldIds={issueFieldIds}
-                issue={issue}
-              />
-            </BorderTr>
-          ))}
-        </tbody>
-      </table>
+      <PaddedContainer>
+        <Table>
+          <ReportHeader fieldIds={selectedLinkIds} fields={allLinks} />
+          <tbody>
+            {filteredIssues.map((issue, index) => (
+              <BorderTr key={`${issue.issueKey}`}>
+                <ReportRow
+                  issueTypeIds={selectedIssueTypeIds}
+                  linkIds={selectedLinkIds}
+                  issueFieldIds={issueFieldIds}
+                  issue={issue}
+                  rowSno={index + 1}
+                />
+              </BorderTr>
+            ))}
+          </tbody>
+        </Table>
+      </PaddedContainer>
     </Container>
   );
 };
