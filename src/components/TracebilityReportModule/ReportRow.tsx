@@ -1,4 +1,6 @@
+import { colors } from "@atlaskit/theme";
 import React from "react";
+import styled from "styled-components";
 import { IssueWithSortedLinks } from "../../types/api";
 import { IssueCard } from "../common/issueCard/IssueCard";
 import { EmptyCell } from "./EmptyCell";
