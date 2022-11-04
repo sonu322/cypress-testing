@@ -7,16 +7,14 @@ import { Report } from "./Report";
 import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
 import { IssueField, IssueWithSortedLinks } from "../../types/api";
 const Container = styled.div`
-  padding: 4px;
   width: 100%;
   display: flex;
   flex-direction: column;
 `;
 const GrowContainer = styled.div`
-  flex-grow: 1;
   display: flex;
 `;
-const DEFAULT_ROWS_PER_PAGE = 20;
+const DEFAULT_ROWS_PER_PAGE = 4;
 const START_INDEX = 0;
 
 interface Props {
