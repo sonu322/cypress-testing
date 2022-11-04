@@ -7,6 +7,7 @@ import { EmptyCell } from "./EmptyCell";
 
 const Td = styled.td`
   border: 1px solid ${colors.N40};
+  padding: 8px !important;
 `;
 
 export interface Props {

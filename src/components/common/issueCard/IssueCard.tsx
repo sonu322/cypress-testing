@@ -22,7 +22,6 @@ const Container = styled.div`
   font-weight: 400px;
   line-height: 20px;
   min-width: 162px;
-  width: 100%;
   max-width: 500px;
 
   border-spacing: 10px 0px;
@@ -49,43 +48,42 @@ export const IssueCard = ({
   issueData,
   selectedIssueFieldIds,
 }: Props): JSX.Element => {
-  const selectedMap: { [key: string]: boolean } = {};
-
-  for (const issueFieldId of selectedIssueFieldIds) {
+  let selectedMap = {};
+  for (let issueFieldId of selectedIssueFieldIds) {
     selectedMap[issueFieldId] = true;
   }
   const storyPointsInfo = issueData.storyPoints;
   const priorityInfo = issueData.priority;
   const issueTypeInfo = issueData.type;
   const assigneeInfo = issueData.assignee;
-  console.log("issueFields!!!!!!!!!");
-  console.log(selectedIssueFieldIds);
-  console.log(issueData);
+
   // component to render
   return (
     <Container>
       {/* header */}
+      <IssueSummary content={issueData.summary} />
 
-      {selectedMap.summary && <IssueSummary content={issueData.summary} />}
       {/* footer */}
       <CardFooter>
         <FooterSideContainer>
-          {selectedMap.issueType && issueTypeInfo && (
+          {selectedMap["issueType"] && issueTypeInfo && (
             <IssueTypeInfo content={issueTypeInfo} />
           )}
-          {selectedMap.priority && priorityInfo && (
+          {selectedMap["priority"] && priorityInfo && (
             <PriorityInfo content={priorityInfo} />
           )}
-          {selectedMap.storyPoints && storyPointsInfo && (
+          {selectedMap["storyPoints"] && storyPointsInfo && (
             <StoryPointsInfo content={storyPointsInfo} />
           )}
         </FooterSideContainer>
         <FooterSideContainer>
           <IssueKey
-            isResolved={selectedMap.status && issueData.isResolved}
+            isResolved={issueData.isResolved}
             issueKey={issueData.issueKey}
           />
-          {selectedMap.assignee && <AssigneeInfo content={assigneeInfo} />}
+          {selectedMap["assignee"] && assigneeInfo && (
+            <AssigneeInfo content={assigneeInfo} />
+          )}
         </FooterSideContainer>
       </CardFooter>
     </Container>

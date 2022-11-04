@@ -7,7 +7,6 @@ import { Report } from "./Report";
 import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
 import { IssueField, IssueWithSortedLinks } from "../../types/api";
 const Container = styled.div`
-  padding: 4px;
   width: 100%;
   display: flex;
   flex-direction: column;

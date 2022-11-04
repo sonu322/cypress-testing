@@ -9,8 +9,6 @@ const Container = styled.div`
   height: 100%;
   overflow: scroll;
   max-height: 400px;
-  padding-top: 32px;
-  padding-bottom: 32px;
   border: 1px solid ${colors.N40};
   border-radius: 10px;
 `;
@@ -21,9 +19,7 @@ const Table = styled.table`
   padding: 32px;
   border: 1px solid ${colors.N40};
 `;
-const PaddedContainer = styled.div`
-  padding: 24px;
-`;
+const PaddedContainer = styled.div``;
 interface Props {
   filteredIssues: IssueWithSortedLinks[];
   tableFields: Map<
