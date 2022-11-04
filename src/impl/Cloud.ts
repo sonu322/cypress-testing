@@ -174,8 +174,6 @@ export default class APIImpl implements LXPAPI {
     fields?: JiraIssueField[]
   ): Promise<string> {
     const project = await this.getCurrentProject();
-    console.log("project!!!!");
-    console.log(project);
     fields = fields || (await this.getAllIssueFields());
     let storyPointFieldName = "storypointestimate";
     if (project.style === "classic") {
@@ -184,8 +182,6 @@ export default class APIImpl implements LXPAPI {
     let storyPointsFieldId: string, sprintFieldId: string;
     for (const field of fields) {
       const name = field.name.toLowerCase().replace(/ /g, "");
-      console.log("fields!!!!!!!");
-      console.log(name, storyPointFieldName);
       if (name === storyPointFieldName) {
         storyPointsFieldId = field.id;
       } else if (name === "sprints") {
