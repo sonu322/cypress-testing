@@ -1,6 +1,7 @@
 import React from "react";
 import { IssueWithSortedLinks } from "../../types/api";
 import { IssueCard } from "../common/issueCard/IssueCard";
+import { EmptyReportCell } from "./EmptyReportCell";
 
 export interface Props {
   linkIds: string[];
@@ -26,13 +27,19 @@ export const ReportRow = ({
     </td>
   );
   const snoCell = <td key="sno">{rowSno}.</td>;
+
+
   cells.push(snoCell);
   cells.push(issueCell);
 
   // push links cells into row
   linkIds.forEach((linkId) => {
     // render -- by default
-    let issueCell = <td key={`${issue.id}-${linkId}`}>--</td>;
+    let issueCell = (
+      <td key={`${issue.id}-${linkId}`}>
+        <EmptyReportCell></EmptyReportCell>
+      </td>
+    );
 
     if (issue.sortedLinks[linkId] !== undefined) {
       const allIssues = [];
