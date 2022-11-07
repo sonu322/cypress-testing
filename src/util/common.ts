@@ -25,3 +25,12 @@ export const getKeyMap = (
   }
   return newMap;
 };
+
+
+export const isPromise = (p): boolean => {
+  if (typeof p === 'object' && typeof p.then === 'function') {
+    return true;
+  }
+
+  return false;
+};

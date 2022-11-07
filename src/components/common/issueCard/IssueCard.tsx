@@ -8,7 +8,7 @@ import { StoryPointsInfo } from "./StoryPointsInfo";
 import { IssueKey } from "./IssueKey";
 import { AssigneeInfo } from "./AssigneeInfo";
 import { IssueSummary } from "./IssueSummary";
-import { Issue, IssueWithPopulatedLinks } from "../../../types/api";
+import { Issue } from "../../../types/api";
 
 const Container = styled.div`
   color: ${colors.N800};
@@ -62,7 +62,9 @@ export const IssueCard = ({
   return (
     <Container>
       {/* header */}
-      <IssueSummary content={issueData.summary} />
+      {selectedMap["summary"] && issueData.summary && (
+        <IssueSummary content={issueData.summary} />
+      )}
 
       {/* footer */}
       <CardFooter>
@@ -82,7 +84,7 @@ export const IssueCard = ({
             isResolved={issueData.isResolved}
             issueKey={issueData.issueKey}
           />
-          {selectedMap["assignee"] && assigneeInfo && (
+          {selectedMap["assignee"] && (
             <AssigneeInfo content={assigneeInfo} />
           )}
         </FooterSideContainer>
