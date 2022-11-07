@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { APIContext } from "../../context/api";
 import PageHeader from "@atlaskit/page-header";
+import { SelectedType } from "@atlaskit/tabs/types";
 import { Toolbar } from "./Toolbar";
 import { IssueField, IssueWithSortedLinks } from "../../types/api";
 import { Main } from "./Main";
@@ -40,6 +41,11 @@ export const TracebilityReportModule = (): JSX.Element => {
     Map<string, { name: string; values: any[] }>
   >(new Map());
   const [areIssuesLoading, setAreIssuesLoading] = useState(false);
+  const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>(0);
+  const viewTabs = ["Issue Type View", "Link Type View"];
+  const handleTabOptionSelect = (tabIndex: SelectedType): void => {
+    setSelectedTabIndex(tabIndex);
+  };
   const api = useContext(APIContext);
   const handleNewError = (err: unknown): void => {
     console.log(err);
@@ -116,6 +122,10 @@ export const TracebilityReportModule = (): JSX.Element => {
             }
             isExportDisabled={isExportDisabled}
             handleNewError={handleNewError}
+            viewTabs={viewTabs}
+            viewTabsId={"view-tabs"}
+            handleTabOptionSelect={handleTabOptionSelect}
+            selectedTabIndex={selectedTabIndex}
           />
         }
       >

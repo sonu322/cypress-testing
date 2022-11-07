@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import { JQLSelectDropdown } from "../JQLSelectDropdown";
@@ -10,6 +10,10 @@ import { ExportContent } from "../common/ExportContent";
 import { JQLEditor } from "../JQLEditor";
 import { TableFieldsDropdown } from "./TableFieldsDropdown";
 import { IssueField } from "../../types/api";
+import Tabs, { TabList, TabPanel, useTab, Tab } from "@atlaskit/tabs";
+
+import { TabGroup } from "./TabGroup";
+import { SelectedType } from "@atlaskit/tabs/types";
 const MainBar = styled.div`
   background-color: ${colors.N20}
   padding: 10px;
@@ -42,6 +46,10 @@ interface Props {
   handleNewError: (err: unknown) => void;
   isExportDisabled: boolean;
   issueCardOptions: IssueField[];
+  viewTabs: string[];
+  viewTabsId: string;
+  handleTabOptionSelect: (tabIndex: SelectedType) => void;
+  selectedTabIndex: SelectedType;
 }
 
 export const Toolbar = ({
@@ -56,47 +64,61 @@ export const Toolbar = ({
   handleNewError,
   isExportDisabled,
   issueCardOptions,
+  viewTabs,
+  viewTabsId,
+  handleTabOptionSelect,
+  selectedTabIndex,
 }: Props): JSX.Element => {
   // const issueCardOptions = Array.from(issueCardOptionsMap.values());
-  return (
-    <MainBar>
-      <FlexContainer>
-        <JQLSelectDropdown
-          selectedFilterId={selectedJQLString}
-          setSelectedFilterId={setSelectedJQLString}
-          handleNewError={handleNewError}
-        />
-        <JQLEditor
-          selectedFilterId={selectedJQLString}
-          setSelectedFilterId={setSelectedJQLString}
-        />
-        {Boolean(tableFields) && (
-          <TableFieldsDropdown
-            selectedOptions={selectedTableFieldIds}
-            updateSelectedOptionIds={updateSelectedTableFieldIds}
-            options={tableFields}
-          />
-        )}
-      </FlexContainer>
 
-      <div>
-        <ButtonGroup>
-          <Dropdown
-            dropdownName={"Issue Card Fields"}
-            options={issueCardOptions}
-            selectedOptions={selectedIssueFieldIds}
-            updateSelectedOptions={setSelectedIssueFieldIds}
+  return (
+    <div>
+      <TabGroup
+        handleOptionSelect={handleTabOptionSelect}
+        id={viewTabsId}
+        options={viewTabs}
+        selectedTabIndex={selectedTabIndex}
+      />
+      <MainBar>
+        <FlexContainer>
+          <JQLSelectDropdown
+            selectedFilterId={selectedJQLString}
+            setSelectedFilterId={setSelectedJQLString}
+            handleNewError={handleNewError}
           />
-          <ExportContent
-            description={"Export report to csv"}
-            exportContent={() => {
-              exportReport();
-            }}
-            isDisabled={isExportDisabled}
+          <JQLEditor
+            selectedFilterId={selectedJQLString}
+            setSelectedFilterId={setSelectedJQLString}
           />
-          <HelpLink description={"Get help"} href={helpLink} />
-        </ButtonGroup>
-      </div>
-    </MainBar>
+
+          {Boolean(tableFields) && (
+            <TableFieldsDropdown
+              selectedOptions={selectedTableFieldIds}
+              updateSelectedOptionIds={updateSelectedTableFieldIds}
+              options={tableFields}
+            />
+          )}
+        </FlexContainer>
+
+        <div>
+          <ButtonGroup>
+            <Dropdown
+              dropdownName={"Issue Card Fields"}
+              options={issueCardOptions}
+              selectedOptions={selectedIssueFieldIds}
+              updateSelectedOptions={setSelectedIssueFieldIds}
+            />
+            <ExportContent
+              description={"Export report to csv"}
+              exportContent={() => {
+                exportReport();
+              }}
+              isDisabled={isExportDisabled}
+            />
+            <HelpLink description={"Get help"} href={helpLink} />
+          </ButtonGroup>
+        </div>
+      </MainBar>
+    </div>
   );
 };

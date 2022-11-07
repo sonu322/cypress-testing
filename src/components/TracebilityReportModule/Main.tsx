@@ -6,15 +6,14 @@ import styled from "styled-components";
 import { Report } from "./Report";
 import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
 import { IssueField, IssueWithSortedLinks } from "../../types/api";
-import { TableViewTabs } from "./TableViewTabs";
-import Tabs, { TabList, TabPanel, useTab, Tab } from "@atlaskit/tabs";
 const Container = styled.div`
   width: 100%;
-  display: flex;
-  flex-direction: column;
 `;
 const TableContainer = styled.div`
   display: flex;
+  margin-top: 16px;
+`;
+const MarginAddedContainer = styled.div`
   margin-top: 16px;
 `;
 const DEFAULT_ROWS_PER_PAGE = 4;
@@ -111,34 +110,27 @@ export const Main = ({
 
     // TODO: make another component where, api is called, and between views, no api call is made twice for same filter,
     // just issues are re-arranged into columns.
+    // ui got changed, remove growth of column, rendering more at bottom.
     return (
       <Container>
-        <Tabs>
-          <TabList>
-            <Tab>Issue Type View</Tab>
-            <Tab>Link Type View</Tab>
-          </TabList>
-          <TabPanel>
-            <TableContainer>
-              <Report
-                filteredIssues={filteredIssues}
-                issueFieldIds={selectedIssueFieldIds}
-                tableFields={tableFields}
-                selectedTableFieldIds={selectedTableFieldIds}
-              />
-            </TableContainer>
+        {/* <Tabs> */}
+        {/* <TabPanel>
+            <Report
+              filteredIssues={filteredIssues}
+              issueFieldIds={selectedIssueFieldIds}
+              tableFields={tableFields}
+              selectedTableFieldIds={selectedTableFieldIds}
+            />
           </TabPanel>
           <TabPanel>
-            <TableContainer>
-              <Report
-                filteredIssues={filteredIssues}
-                issueFieldIds={selectedIssueFieldIds}
-                tableFields={tableFields}
-                selectedTableFieldIds={selectedTableFieldIds}
-              />
-            </TableContainer>
-          </TabPanel>
-        </Tabs>
+            <Report
+              filteredIssues={filteredIssues}
+              issueFieldIds={selectedIssueFieldIds}
+              tableFields={tableFields}
+              selectedTableFieldIds={selectedTableFieldIds}
+            />
+          </TabPanel> */}
+        {/* </Tabs> */}
         <TableContainer>
           <Report
             filteredIssues={filteredIssues}
@@ -147,7 +139,7 @@ export const Main = ({
             selectedTableFieldIds={selectedTableFieldIds}
           />
         </TableContainer>
-        <div>
+        <MarginAddedContainer>
           <LoadingButton
             isLoading={areMoreIssuesLoading}
             isDisabled={filteredIssues.length >= totalNumberOfIssues}
@@ -155,7 +147,7 @@ export const Main = ({
           >
             More
           </LoadingButton>
-        </div>
+        </MarginAddedContainer>
       </Container>
     );
   } else {
