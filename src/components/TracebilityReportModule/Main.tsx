@@ -6,6 +6,7 @@ import styled from "styled-components";
 import { Report } from "./Report";
 import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
 import { IssueField, IssueWithSortedLinks } from "../../types/api";
+import { ViewTabs } from "./ViewTabs";
 const Container = styled.div`
   width: 100%;
   display: flex;
@@ -107,6 +108,7 @@ export const Main = ({
     }
     return (
       <Container>
+        <ViewTabs />
         <GrowContainer>
           <Report
             filteredIssues={filteredIssues}
