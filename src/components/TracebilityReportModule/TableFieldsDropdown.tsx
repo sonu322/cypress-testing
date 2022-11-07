@@ -1,17 +1,12 @@
 import React from "react";
+import { IssueLinkType, IssueType } from "../../types/api";
 import { Dropdown } from "../common/Dropdown";
 import { DropdownMultipleSectionsSelect } from "../common/DropdownMultipleSectionsSelect";
 
 interface Props {
-  options: Map<
-    string,
-    {
-      name: string;
-      values: any[];
-    }
-  >;
+  options: IssueType[] | IssueLinkType[];
   selectedTab: string;
-  selectedOptions: Map<string, string[]>;
+  selectedOptions: string[];
   updateSelectedOptionIds: React.Dispatch<
     React.SetStateAction<Map<string, string[]>>
   >;
@@ -29,8 +24,11 @@ export const TableFieldsDropdown = ({
     //   updateSelectedOptionIds={updateSelectedOptionIds}
     //   options={options}
     // />
-    <>
-      <span>{selectedTab}</span>
-    </>
+    <Dropdown
+      dropdownName="Table Fields"
+      options={options}
+      selectedOptions={selectedOptions}
+      updateSelectedOptions={updateSelectedOptionIds}
+    />
   );
 };

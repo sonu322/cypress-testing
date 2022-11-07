@@ -4,7 +4,12 @@ import { APIContext } from "../../context/api";
 import PageHeader from "@atlaskit/page-header";
 import { SelectedType } from "@atlaskit/tabs/types";
 import { Toolbar } from "./Toolbar";
-import { IssueField, IssueWithSortedLinks } from "../../types/api";
+import {
+  IssueField,
+  IssueLinkType,
+  IssueType,
+  IssueWithSortedLinks,
+} from "../../types/api";
 import { Main } from "./Main";
 import { ErrorsList } from "../common/ErrorsList";
 import { exportReport } from "../../util/tracebilityReportsUtils";
@@ -22,13 +27,13 @@ const GrowContainer = styled.div`
 `;
 
 export const TracebilityReportModule = (): JSX.Element => {
-  const [selectedTableFieldIds, setSelectedTableFieldIds] = useState<
-    Map<string, string[]>
-  >(new Map());
+  // const [selectedTableFieldIds, setSelectedTableFieldIds] = useState<
+  //   Map<string, string[]>
+  // >(new Map());
 
-  const [tableFields, setTableFields] = useState<
-    Map<string, { name: string; values: any[] }>
-  >(new Map());
+  // const [tableFields, setTableFields] = useState<
+  //   Map<string, { name: string; values: any[] }>
+  // >(new Map());
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
   const [filteredIssues, setFilteredIssues] = useState<
     IssueWithSortedLinks[] | null
@@ -40,14 +45,12 @@ export const TracebilityReportModule = (): JSX.Element => {
   const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState<string[]>(
     []
   );
-  // const [issueFields, setIssueFields] = useState<IssueField[]>([]);
-  // const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState<string[]>(
-  //   []
-  // );
-  // const [issueFields, setIssueFields] = useState<IssueField[]>([]);
-  // const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState<string[]>(
-  //   []
-  // );
+  const [issueTypes, setIssueTypes] = useState<IssueType[]>([]);
+  const [selectedIssueTypeIds, setSelectedIssueTypeIds] = useState<string[]>(
+    []
+  );
+  const [linkTypes, setLinkTypes] = useState<IssueLinkType[]>([]);
+  const [selectedLinkTypeIds, setSelectedLinkTypeIds] = useState<string[]>([]);
 
   const [areIssuesLoading, setAreIssuesLoading] = useState(false);
   const [errors, setErrors] = useState<unknown[]>([]);
@@ -93,11 +96,14 @@ export const TracebilityReportModule = (): JSX.Element => {
           name: "Issue Link Types",
           values: linkTypes,
         });
-        setTableFields(fieldsMap);
-
+        // setTableFields(fieldsMap);
+        setIssueTypes(issueTypes);
+        setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
+        setLinkTypes(linkTypes);
+        setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
         // setting state - table field selected options
-        const fieldIdsMap = getKeyMap(fieldsMap, "id");
-        setSelectedTableFieldIds(fieldIdsMap);
+        // const fieldIdsMap = getKeyMap(fieldsMap, "id");
+        // setSelectedTableFieldIds(fieldIdsMap);
 
         // loading state
         setAreOptionsLoading(false);
@@ -115,6 +121,17 @@ export const TracebilityReportModule = (): JSX.Element => {
   if (areOptionsLoading) {
     return <div>Loading data ...</div>;
   }
+  let selectedTableFieldIds: string[];
+  let setSelectedTableFieldIds = setSelectedLinkTypeIds;
+  let tableFields: IssueType[] | IssueLinkType[];
+  if (selectedTabIndex === 0) {
+    selectedTableFieldIds = selectedIssueTypeIds;
+    tableFields = issueTypes;
+    setSelectedTableFieldIds = setSelectedIssueTypeIds;
+  } else {
+    selectedTableFieldIds = selectedLinkTypeIds;
+    tableFields = linkTypes;
+  }
   return (
     <FullWidthContainer>
       <PageHeader
@@ -128,8 +145,9 @@ export const TracebilityReportModule = (): JSX.Element => {
             selectedTableFieldIds={selectedTableFieldIds}
             updateSelectedTableFieldIds={setSelectedTableFieldIds}
             tableFields={tableFields}
-            exportReport={() =>
-              exportReport(tableFields, selectedTableFieldIds, filteredIssues)
+            exportReport={
+              () => {}
+              // exportReport(tableFields, selectedTableFieldIds, filteredIssues)
             }
             isExportDisabled={isExportDisabled}
             handleNewError={handleNewError}

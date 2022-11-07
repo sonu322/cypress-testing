@@ -9,8 +9,7 @@ import { HelpLink } from "../common/HelpLink";
 import { ExportContent } from "../common/ExportContent";
 import { JQLEditor } from "../JQLEditor";
 import { TableFieldsDropdown } from "./TableFieldsDropdown";
-import { IssueField } from "../../types/api";
-import Tabs, { TabList, TabPanel, useTab, Tab } from "@atlaskit/tabs";
+import { IssueField, IssueLinkType, IssueType } from "../../types/api";
 
 import { TabGroup } from "./TabGroup";
 import { SelectedType } from "@atlaskit/tabs/types";
@@ -31,17 +30,9 @@ interface Props {
   setSelectedIssueFieldIds: React.Dispatch<React.SetStateAction<string[]>>;
   selectedJQLString: string;
   setSelectedJQLString: React.Dispatch<React.SetStateAction<string>>;
-  selectedTableFieldIds: Map<string, string[]>;
-  updateSelectedTableFieldIds: React.Dispatch<
-    React.SetStateAction<Map<string, string[]>>
-  >;
-  tableFields: Map<
-    string,
-    {
-      name: string;
-      values: any[];
-    }
-  >;
+  selectedTableFieldIds: string[];
+  updateSelectedTableFieldIds: React.Dispatch<React.SetStateAction<string[]>>;
+  tableFields: IssueType[] | IssueLinkType[];
   exportReport: () => void;
   handleNewError: (err: unknown) => void;
   isExportDisabled: boolean;
