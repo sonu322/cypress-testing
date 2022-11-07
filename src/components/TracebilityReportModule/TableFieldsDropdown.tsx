@@ -31,7 +31,6 @@ export const TableFieldsDropdown = ({
     // />
     <>
       <span>{selectedTab}</span>
-      <Dropdown dropdownName="Choose " />
     </>
   );
 };
