@@ -22,6 +22,13 @@ const GrowContainer = styled.div`
 `;
 
 export const TracebilityReportModule = (): JSX.Element => {
+  const [selectedTableFieldIds, setSelectedTableFieldIds] = useState<
+    Map<string, string[]>
+  >(new Map());
+
+  const [tableFields, setTableFields] = useState<
+    Map<string, { name: string; values: any[] }>
+  >(new Map());
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
   const [filteredIssues, setFilteredIssues] = useState<
     IssueWithSortedLinks[] | null
@@ -33,14 +40,17 @@ export const TracebilityReportModule = (): JSX.Element => {
   const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState<string[]>(
     []
   );
-  const [selectedTableFieldIds, setSelectedTableFieldIds] = useState<
-    Map<string, string[]>
-  >(new Map());
-  const [errors, setErrors] = useState<unknown[]>([]);
-  const [tableFields, setTableFields] = useState<
-    Map<string, { name: string; values: any[] }>
-  >(new Map());
+  // const [issueFields, setIssueFields] = useState<IssueField[]>([]);
+  // const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState<string[]>(
+  //   []
+  // );
+  // const [issueFields, setIssueFields] = useState<IssueField[]>([]);
+  // const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState<string[]>(
+  //   []
+  // );
+
   const [areIssuesLoading, setAreIssuesLoading] = useState(false);
+  const [errors, setErrors] = useState<unknown[]>([]);
   const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>(0);
   const viewTabs = ["Issue Type View", "Link Type View"];
   const handleTabOptionSelect = (tabIndex: SelectedType): void => {
@@ -150,4 +160,4 @@ export const TracebilityReportModule = (): JSX.Element => {
       </GrowContainer>
     </FullWidthContainer>
   );
-};
+};;
