@@ -2,9 +2,10 @@ import TracebilityReport from "./TracebilityReport";
 import APIImpl from "./impl/Cloud";
 import JiraCloudImpl from "./impl/jira/Cloud";
 import { APIContext } from "./context/api";
+import ReactDOM from "react-dom";
 import React from "react";
 window.React = React;
-import ReactDOM from "react-dom";
+
 const jiraCloud = new JiraCloudImpl();
 const api = new APIImpl(jiraCloud);
 
@@ -17,3 +18,6 @@ ReactDOM.render(
   </APIContext.Provider>,
   App
 );
+
+
+
