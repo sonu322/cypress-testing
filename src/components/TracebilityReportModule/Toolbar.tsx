@@ -96,6 +96,7 @@ export const Toolbar = ({
               selectedOptions={selectedTableFieldIds}
               updateSelectedOptionIds={updateSelectedTableFieldIds}
               options={tableFields}
+              selectedTab={selectedTabIndex == 0 ? "issueType" : "linkType"}
             />
           )}
         </FlexContainer>

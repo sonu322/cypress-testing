@@ -51,7 +51,8 @@ export const TracebilityReportModule = (): JSX.Element => {
     console.log(err);
     setErrors((prevErrors) => [...prevErrors, err]);
   };
-
+  console.log("selectedtab");
+  console.log(selectedTabIndex);
   useEffect(() => {
     const loadData = async (): Promise<void> => {
       try {
@@ -144,6 +145,7 @@ export const TracebilityReportModule = (): JSX.Element => {
           setFilteredIssues={setFilteredIssues}
           areIssuesLoading={areIssuesLoading}
           setAreIssuesLoading={setAreIssuesLoading}
+          selectedTab={selectedTabIndex === 0 ? "issueType" : "linkType"}
         />
       </GrowContainer>
     </FullWidthContainer>

@@ -29,12 +29,14 @@ interface Props {
   >;
   selectedTableFieldIds: Map<string, string[]>;
   issueFieldIds: string[];
+  selectedTab: string;
 }
 export const Report = ({
   filteredIssues,
   tableFields,
   selectedTableFieldIds,
   issueFieldIds,
+  selectedTab,
 }: Props): JSX.Element => {
   const selectedLinkIds = selectedTableFieldIds.get("linkTypes");
   const selectedIssueTypeIds = selectedTableFieldIds.get("issueTypes");
@@ -42,7 +44,7 @@ export const Report = ({
 
   return (
     <Container>
-      <Table>
+      {/* <Table>
         <ReportHeader fieldIds={selectedLinkIds} fields={allLinks} />
         <tbody>
           {filteredIssues.map((issue, index) => (
@@ -57,7 +59,8 @@ export const Report = ({
             </BorderTr>
           ))}
         </tbody>
-      </Table>
+      </Table> */}
+      {selectedTab}
     </Container>
   );
 };

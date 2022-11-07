@@ -38,6 +38,7 @@ interface Props {
   setFilteredIssues: React.Dispatch<
     React.SetStateAction<IssueWithSortedLinks[]>
   >;
+  selectedTab: string;
 }
 
 export const Main = ({
@@ -51,6 +52,7 @@ export const Main = ({
   areIssuesLoading,
   setAreIssuesLoading,
   setFilteredIssues,
+  selectedTab,
 }: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
@@ -113,30 +115,13 @@ export const Main = ({
     // ui got changed, remove growth of column, rendering more at bottom.
     return (
       <Container>
-        {/* <Tabs> */}
-        {/* <TabPanel>
-            <Report
-              filteredIssues={filteredIssues}
-              issueFieldIds={selectedIssueFieldIds}
-              tableFields={tableFields}
-              selectedTableFieldIds={selectedTableFieldIds}
-            />
-          </TabPanel>
-          <TabPanel>
-            <Report
-              filteredIssues={filteredIssues}
-              issueFieldIds={selectedIssueFieldIds}
-              tableFields={tableFields}
-              selectedTableFieldIds={selectedTableFieldIds}
-            />
-          </TabPanel> */}
-        {/* </Tabs> */}
         <TableContainer>
           <Report
             filteredIssues={filteredIssues}
             issueFieldIds={selectedIssueFieldIds}
             tableFields={tableFields}
             selectedTableFieldIds={selectedTableFieldIds}
+            selectedTab={selectedTab}
           />
         </TableContainer>
         <MarginAddedContainer>
