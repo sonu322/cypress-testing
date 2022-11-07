@@ -6,14 +6,16 @@ import styled from "styled-components";
 import { Report } from "./Report";
 import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
 import { IssueField, IssueWithSortedLinks } from "../../types/api";
-import { ViewTabs } from "./ViewTabs";
+import { TableViewTabs } from "./TableViewTabs";
+import Tabs, { TabList, TabPanel, useTab, Tab } from "@atlaskit/tabs";
 const Container = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
 `;
-const GrowContainer = styled.div`
+const TableContainer = styled.div`
   display: flex;
+  margin-top: 16px;
 `;
 const DEFAULT_ROWS_PER_PAGE = 4;
 const START_INDEX = 0;
@@ -106,17 +108,45 @@ export const Main = ({
         </Container>
       );
     }
+
+    // TODO: make another component where, api is called, and between views, no api call is made twice for same filter,
+    // just issues are re-arranged into columns.
     return (
       <Container>
-        <ViewTabs />
-        <GrowContainer>
+        <Tabs>
+          <TabList>
+            <Tab>Issue Type View</Tab>
+            <Tab>Link Type View</Tab>
+          </TabList>
+          <TabPanel>
+            <TableContainer>
+              <Report
+                filteredIssues={filteredIssues}
+                issueFieldIds={selectedIssueFieldIds}
+                tableFields={tableFields}
+                selectedTableFieldIds={selectedTableFieldIds}
+              />
+            </TableContainer>
+          </TabPanel>
+          <TabPanel>
+            <TableContainer>
+              <Report
+                filteredIssues={filteredIssues}
+                issueFieldIds={selectedIssueFieldIds}
+                tableFields={tableFields}
+                selectedTableFieldIds={selectedTableFieldIds}
+              />
+            </TableContainer>
+          </TabPanel>
+        </Tabs>
+        <TableContainer>
           <Report
             filteredIssues={filteredIssues}
             issueFieldIds={selectedIssueFieldIds}
             tableFields={tableFields}
             selectedTableFieldIds={selectedTableFieldIds}
           />
-        </GrowContainer>
+        </TableContainer>
         <div>
           <LoadingButton
             isLoading={areMoreIssuesLoading}

@@ -16,7 +16,6 @@ const BorderTr = styled.tr`
   border-bottom: 1px solid ${colors.N40};
 `;
 const Table = styled.table`
-  padding: 32px;
   border: 1px solid ${colors.N40};
 `;
 interface Props {
