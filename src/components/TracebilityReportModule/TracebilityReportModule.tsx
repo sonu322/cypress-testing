@@ -98,6 +98,7 @@ export const TracebilityReportModule = (): JSX.Element => {
         });
         // setTableFields(fieldsMap);
         setIssueTypes(issueTypes);
+        console.log(issueTypes);
         setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
         setLinkTypes(linkTypes);
         setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
@@ -108,6 +109,7 @@ export const TracebilityReportModule = (): JSX.Element => {
         // loading state
         setAreOptionsLoading(false);
       } catch (error) {
+        setAreOptionsLoading(false);
         console.error(error);
         handleNewError(error);
       }

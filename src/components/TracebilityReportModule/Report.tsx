@@ -3,7 +3,11 @@ import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import { ReportRow } from "./ReportRow";
 import { ReportHeader } from "./ReportHeader";
-import { IssueWithSortedLinks } from "../../types/api";
+import {
+  IssueLinkType,
+  IssueType,
+  IssueWithSortedLinks,
+} from "../../types/api";
 const Container = styled.div`
   width: 100%;
   height: 100%;
@@ -20,14 +24,8 @@ const Table = styled.table`
 `;
 interface Props {
   filteredIssues: IssueWithSortedLinks[];
-  tableFields: Map<
-    string,
-    {
-      name: string;
-      values: any[];
-    }
-  >;
-  selectedTableFieldIds: Map<string, string[]>;
+  tableFields: IssueType[] | IssueLinkType[];
+  selectedTableFieldIds: string[];
   issueFieldIds: string[];
   selectedTab: string;
 }
@@ -44,9 +42,12 @@ export const Report = ({
 
   return (
     <Container>
-      {/* <Table>
-        <ReportHeader fieldIds={selectedLinkIds} fields={allLinks} />
-        <tbody>
+      <Table>
+        <ReportHeader
+          selectedFieldIds={selectedTableFieldIds}
+          fields={tableFields}
+        />
+        {/* <tbody>
           {filteredIssues.map((issue, index) => (
             <BorderTr key={`${issue.issueKey}`}>
               <ReportRow
@@ -58,8 +59,8 @@ export const Report = ({
               />
             </BorderTr>
           ))}
-        </tbody>
-      </Table> */}
+        </tbody> */}
+      </Table>
       {selectedTab}
     </Container>
   );

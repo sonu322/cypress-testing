@@ -108,9 +108,10 @@ export default class APIImpl implements LXPAPI {
 
   private _convertIssueType(issueType: JiraIssueType): IssueType {
     if (issueType) {
+      const name = issueType.name.toLowerCase().replace(/-/g, "");
       return {
-        id: issueType.id,
-        name: issueType.name,
+        id: name,
+        name,
         description: issueType.description,
         iconUrl: issueType.iconUrl,
       };
@@ -123,8 +124,19 @@ export default class APIImpl implements LXPAPI {
       const items: JiraIssueType[] = await this.api.getIssueTypes();
 
       items || throwError("Issue types not found.");
-
-      return items.map((item) => this._convertIssueType(item));
+      const removedDuplicates: IssueType[] = [];
+      items.forEach((issueType) => {
+        const name = issueType.name.toLowerCase().replace(/-/g, "");
+        console.log(removedDuplicates);
+        const foundType = removedDuplicates.find(
+          (newType) => newType.name === name
+        );
+        if (foundType === undefined) {
+          console.log(foundType);
+          removedDuplicates.push(this._convertIssueType(issueType));
+        }
+      });
+      return removedDuplicates;
     } catch (error) {
       console.error(error);
       throw new Error("Error in fetching the issue types - " + error.message);
