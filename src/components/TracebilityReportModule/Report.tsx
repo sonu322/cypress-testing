@@ -1,13 +1,14 @@
 import React from "react";
 import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
-import { ReportRow } from "./ReportRow";
+import { LinkTypeRow } from "./LinkTypeRow";
 import { ReportHeader } from "./ReportHeader";
 import {
   IssueLinkType,
   IssueType,
   IssueWithSortedLinks,
 } from "../../types/api";
+import { IssueTypeRow } from "./IssueTypeRow";
 const Container = styled.div`
   width: 100%;
   height: 100%;
@@ -39,7 +40,7 @@ export const Report = ({
   // const selectedLinkIds = selectedTableFieldIds.get("linkTypes");
   // const selectedIssueTypeIds = selectedTableFieldIds.get("issueTypes");
   // const allLinks = tableFields.get("linkTypes").values;
-
+  const isIssueTypeReport = selectedTab === "issueType";
   return (
     <Container>
       <Table>
@@ -47,19 +48,31 @@ export const Report = ({
           selectedFieldIds={selectedTableFieldIds}
           fields={tableFields}
         />
-        {/* <tbody>
+        <tbody>
           {filteredIssues.map((issue, index) => (
             <BorderTr key={`${issue.issueKey}`}>
-              <ReportRow
-                issueTypeIds={selectedIssueTypeIds}
-                linkIds={selectedLinkIds}
-                issueFieldIds={issueFieldIds}
-                issue={issue}
-                rowSno={index + 1}
-              />
+              {isIssueTypeReport ? (
+                <IssueTypeRow
+                  tableFields={tableFields}
+                  selectedTableFieldIds={selectedTableFieldIds}
+                  issueFieldIds={issueFieldIds}
+                  issue={issue}
+                  rowSno={index + 1}
+                />
+              ) : (
+                <LinkTypeRow
+                  // issueTypeIds={selectedIssueTypeIds}
+                  // linkIds={selectedLinkIds}
+                  tableFields={tableFields}
+                  selectedTableFieldIds={selectedTableFieldIds}
+                  issueFieldIds={issueFieldIds}
+                  issue={issue}
+                  rowSno={index + 1}
+                />
+              )}
             </BorderTr>
           ))}
-        </tbody> */}
+        </tbody>
       </Table>
       {selectedTab}
     </Container>
