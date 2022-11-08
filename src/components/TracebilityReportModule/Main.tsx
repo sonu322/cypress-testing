@@ -5,7 +5,12 @@ import { APIContext } from "../../context/api";
 import styled from "styled-components";
 import { Report } from "./Report";
 import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
-import { IssueField, IssueWithSortedLinks } from "../../types/api";
+import {
+  IssueField,
+  IssueLinkType,
+  IssueType,
+  IssueWithSortedLinks,
+} from "../../types/api";
 const Container = styled.div`
   width: 100%;
 `;
@@ -24,14 +29,8 @@ interface Props {
   handleNewError: (err: unknown) => void;
   issueFields: IssueField[];
   selectedIssueFieldIds: string[];
-  selectedTableFieldIds: Map<string, string[]>;
-  tableFields: Map<
-    string,
-    {
-      name: string;
-      values: any[];
-    }
-  >;
+  selectedTableFieldIds: string[];
+  tableFields: IssueType[] | IssueLinkType[];
   filteredIssues: IssueWithSortedLinks[];
   areIssuesLoading: boolean;
   setAreIssuesLoading: React.Dispatch<React.SetStateAction<boolean>>;
