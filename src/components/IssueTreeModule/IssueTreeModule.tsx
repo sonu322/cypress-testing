@@ -56,6 +56,7 @@ export const IssueTreeModule = () => {
         setIssueFields(fields);
         setIsLoading(false);
       } catch (error) {
+        setIsLoading(false);
         handleNewError(error);
       }
     };
@@ -81,7 +82,7 @@ export const IssueTreeModule = () => {
     <div>Loading data ...</div>
   ) : (
     <div>
-      {errors && <ErrorsList errors={errors} />}
+      {errors && errors.length > 0 && <ErrorsList errors={errors} />}
 
       <Toolbar
         exportTree={() => treeUtils.exportTree(tree)}

@@ -6,6 +6,7 @@ import LXPAPI, {
   IssuePriority,
   IssueType,
   IssueWithLinkedIssues,
+  IssueWithSortedLinks,
   Project,
 } from "../types/api";
 
@@ -71,7 +72,7 @@ export default class UnknownImpl implements LXPAPI {
     fields?: IssueField[],
     start?: number,
     max?: number
-  ): Promise<{ data: Issue[]; total: number }> {
+  ): Promise<{ data: IssueWithSortedLinks[]; total: number }> {
     throw new Error("Method not implemented.");
   }
 }

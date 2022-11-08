@@ -100,9 +100,9 @@ export default class APIImpl implements LXPAPI {
       return items.map((item) => this._convertPriority(item));
     } catch (error) {
       console.error(error);
-      throw new Error(
-        "Error in fetching the issue priorities - " + error.message
-      );
+      let msg = "Error in fetching the issue priorities";
+      msg += error.message ? " - " + error.message : ".";
+      throw new Error(msg);
     }
   }
 

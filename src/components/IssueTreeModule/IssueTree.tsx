@@ -43,28 +43,35 @@ export const IssueTree = ({
   };
 
   useEffect(() => {
-    treeUtils.initTree(
+    treeUtils.initTreeHook(
       filter,
       findJiraFields(selectedIssueFieldIds),
       setTree,
       handleError
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter]);
+  }, []);
+
+  useEffect(() => {
+    treeUtils.applyFilterHook(
+      setTree, 
+      filter,
+      findJiraFields(selectedIssueFieldIds)
+    )
+  }, [filter, selectedIssueFieldIds]);
 
   const onExpand = (itemId) => {
-    treeUtils.handleExpand(
-      tree,
+    treeUtils.expandTreeHook(
       itemId,
-      findJiraFields(selectedIssueFieldIds),
       filter,
+      findJiraFields(selectedIssueFieldIds),
       setTree,
       handleError
     );
   };
 
   const onCollapse = (itemId) => {
-    treeUtils.handleCollapse(itemId, tree, setTree);
+    treeUtils.collapseTreeHook(itemId, setTree);
   };
 
   const renderItem = ({ ...props }) => {

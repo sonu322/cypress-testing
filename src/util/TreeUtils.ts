@@ -7,12 +7,9 @@ import LXPAPI, {
   IssueTreeFilter,
   IssueWithLinkedIssues,
 } from "../types/api";
-import { csv, download, UUID } from "./index";
+import { csv, download } from "./index";
 import { AtlasTree, AtlasTreeNode, LinkTypeTreeNode } from "../types/app";
-
-// constants
-const SUB_TASKS = "Subtasks";
-const PARENT = "Parent";
+import { isPromise } from "./common";
 
 // root node
 const root: AtlasTree = {
@@ -22,10 +19,12 @@ const root: AtlasTree = {
       id: "0",
       children: [],
       hasChildren: true,
+      hasChildrenLoaded: false,
       isExpanded: true,
       isChildrenLoading: false,
       parentIssueId: null,
       data: {
+        id: "0",
         isType: true,
         title: "Fake Root Node",
       },
@@ -45,25 +44,30 @@ export default class TreeUtils {
     return root;
   }
 
-  addTypeNode(issueType: string, tree: AtlasTree) {
-    return this.addTreeNode(
-      { isType: true, title: issueType },
-      null,
+  createTypeNode(tree, prefix: string, issueType: string) {
+    return this.createTreeNode(
       tree,
+      prefix, 
+      { isType: true, id: issueType, title: issueType },
+      null,
+      true,
       true
     );
   }
 
-  addTreeNode(
-    data: IssueWithLinkedIssues | LinkTypeTreeNode,
-    parentIssueId: ID,
+  createTreeNode(
     tree: AtlasTree,
-    isExpanded = false
+    prefix: string,
+    data: IssueWithLinkedIssues | Issue | LinkTypeTreeNode,
+    parentIssueId: ID,
+    isExpanded = false,
+    hasChildrenLoaded = false
   ) {
     const node: AtlasTreeNode = {
-      id: UUID(),
+      id: prefix + '/' + data.id,
       children: [],
       hasChildren: true,
+      hasChildrenLoaded,
       isExpanded,
       isChildrenLoading: false,
       parentIssueId,
@@ -73,20 +77,44 @@ export default class TreeUtils {
     return node;
   }
 
+  initTreeHook(
+    filter: IssueTreeFilter,
+    fields: IssueField[],
+    setTree,
+    handleError
+  ){
+    setTree( (tree) => {
+      this.initTree(tree, filter, fields, setTree, handleError);
+      return tree;
+    });
+  }
+
+  cloneTree(tree){
+    return JSON.parse(JSON.stringify(tree));
+  }
+
   async initTree(
+    prevTree,
     filter: IssueTreeFilter,
     fields: IssueField[],
     setTree,
     handleError
   ) {
-    this.handleExpand(
-      { ...root },
-      this.ROOT_ID,
-      fields,
-      filter,
-      setTree,
-      handleError
-    );
+    try {
+      let tree = this.cloneTree(prevTree);
+      const issue = await this.api.getIssueWithLinks(fields);
+      let mainNode = this.createTreeNode(tree, "", issue, null, true);
+      let nodeId = mainNode.id;
+      // make actual root a child of fake(hidden) root node
+      tree.items[this.ROOT_ID].children = [nodeId];
+      await this.addChildren(nodeId, tree, fields, issue, filter);
+      setTree(() => {
+        return tree;
+      });
+    } catch(err){
+      console.error(err);
+      handleError(err);
+    }
   }
 
   //Tree filter
@@ -109,94 +137,158 @@ export default class TreeUtils {
     return true;
   }
 
-  async handleExpand(
-    tree: AtlasTree,
-    nodeId: string,
-    fields: IssueField[],
+  filterLinks(
+    issue: IssueWithLinkedIssues,
     filter: IssueTreeFilter,
+    mainNode: AtlasTreeNode,
+    issueMap: any
+  ): IssueLink[] {
+    let result = [];
+    for (const link of issue.links) {
+      const linkedIssue = issueMap[link.issueId];
+      if (
+        this._shouldIncludeNode(
+          issue,
+          linkedIssue,
+          link,
+          filter,
+          mainNode.parentIssueId
+        )
+      ) {
+        result.push(link);
+      }
+    }
+    return result;
+  }
+
+  async getChildren(
+    tree: AtlasTree,
+    filter: IssueTreeFilter,
+    mainNode: AtlasTreeNode,
+    fields: IssueField[],
+    issue?: IssueWithLinkedIssues
+  ): Promise<AtlasTreeNode[]> {
+    let prefix = mainNode.id;
+    issue = issue || await this.api.getIssueWithLinks(
+      fields,
+      (mainNode.data as IssueWithLinkedIssues).id
+    );
+
+    const typeMap = {};
+    const issueMap = {};
+    issue.linkedIssues.forEach((linkedIssue: Issue) => {
+      issueMap[linkedIssue.id] = linkedIssue;
+    });
+    const filteredLinks = this.filterLinks(issue, filter, mainNode, issueMap);
+
+    for (const link of filteredLinks) {
+      let linkedIssue = issueMap[link.issueId];
+      const node = this.createTreeNode(tree, prefix + '/' + link.name, linkedIssue, issue.id);
+      if (typeMap[link.name] === undefined) {
+        typeMap[link.name] = [];
+      }
+      typeMap[link.name].push(node.id);
+    }
+    let result = [];
+    let types = Object.keys(typeMap);
+    if (types.length) {
+      for (const type of types) {
+        const typeNode = this.createTypeNode(tree, prefix, type);
+        typeNode.children = typeMap[type];
+        result.push(typeNode);
+      }
+    }
+    return result;
+  }
+
+  applyFilterHook(setTree, filter, fields){
+    setTree((tree) => {
+      const firstNodeId = tree.items[this.ROOT_ID].children[0];
+      if(firstNodeId){
+        const newTree = this.cloneTree(tree);
+        let result = this.applyFilter(setTree, newTree, filter, fields, firstNodeId, true);
+        return isPromise(result) ? tree : result;
+      }
+      return tree;
+    });
+  }
+
+  async applyFilter(setTree, tree, filter, fields, nodeId, isFirstCall){
+    let node = tree.items[nodeId];
+    tree = await this.addChildren(nodeId, tree, fields, node.data, filter);
+    node = tree.items[nodeId];
+    for(let typeNodeId of node.children){ //type nodes
+      const typeNode = tree.items[typeNodeId];
+      for(let childNodeId of typeNode.children){
+        const child = tree.items[childNodeId];
+        if(child.hasChildrenLoaded){
+          await this.applyFilter(setTree, tree, filter, fields, child.id, false);
+        }
+      }
+    }
+    if(isFirstCall){
+      setTree(() => tree);
+    }
+    return tree;
+  }
+
+  updateTreeNode(setTree, nodeId, data){
+    setTree((prevTree) => {
+      const tree = mutateTree(prevTree, nodeId, data);
+      return tree;
+    });
+  }
+
+  async addChildren(nodeId, tree, fields, issue, filter){
+    let mainNode = tree.items[nodeId];
+    let children = await this.getChildren(tree, filter, mainNode, fields, issue);
+    let childIds = children.map((item) => item.id);
+    mainNode.children = childIds;
+    mainNode.isExpanded = true;
+    mainNode.isChildrenLoading = false;
+    mainNode.hasChildrenLoaded = true;
+    mainNode.hasChildren = childIds.length > 0;
+    return tree;
+  }
+
+  expandTreeHook(
+    nodeId: string,
+    filter: IssueTreeFilter,
+    fields: IssueField[],
+    setTree,
+    handleError
+  ){
+    setTree( (tree) => {
+      const item = tree.items[nodeId];
+      if (item.hasChildrenLoaded) {
+        return mutateTree(tree, nodeId, { isExpanded: true });
+      }
+      let result = this.expandTree(tree, nodeId, filter, fields, setTree, handleError);
+      return isPromise(result) ? tree : result;
+    });
+  }
+
+  async expandTree(
+    prevTree: AtlasTree,
+    nodeId: string,
+    filter: IssueTreeFilter,
+    fields: IssueField[],
     setTree,
     handleError
   ) {
+    const tree = this.cloneTree(prevTree);
     const item = tree.items[nodeId];
-    if (nodeId !== this.ROOT_ID) {
-      setTree(mutateTree(tree, nodeId, { isChildrenLoading: true }));
-      if (item.hasChildren && item.children.length > 0) {
-        setTree(
-          mutateTree(tree, nodeId, {
-            isExpanded: true,
-            isChildrenLoading: false,
-          })
-        );
-        return;
-      }
-    }
+    this.updateTreeNode(setTree, nodeId, { isChildrenLoading: true });
     try {
       const issue = await this.api.getIssueWithLinks(
         fields,
-        nodeId === this.ROOT_ID
-          ? undefined
-          : (item.data as IssueWithLinkedIssues).id
+        (item.data as IssueWithLinkedIssues).id
       );
-
-      const newTree = { ...tree };
-      let mainNode;
-      if (nodeId === this.ROOT_ID) {
-        mainNode = this.addTreeNode(issue, null, newTree, true);
-        // make actual root a child of fake(hidden) root node
-        newTree.items[this.ROOT_ID].children = [mainNode.id];
-      } else {
-        mainNode = newTree.items[nodeId];
-      }
-
-      const typeMap = {},
-        issueMap = {};
-      issue.linkedIssues.forEach((linkedIssue: Issue) => {
-        issueMap[linkedIssue.id] = linkedIssue;
-      });
-
-      for (const link of issue.links) {
-        const linkedIssue = issueMap[link.issueId];
-        if (
-          this._shouldIncludeNode(
-            issue,
-            linkedIssue,
-            link,
-            filter,
-            mainNode.parentIssueId
-          )
-        ) {
-          const node = this.addTreeNode(linkedIssue, issue.id, newTree);
-
-          if (typeMap[link.name] === undefined) {
-            typeMap[link.name] = [];
-          }
-          typeMap[link.name].push(node.id);
-        }
-      }
-
-      let types = Object.keys(typeMap),
-        hasChildren = true;
-      if (types.length) {
-        for (const type of types) {
-          const typeNode = this.addTypeNode(type, newTree);
-          typeNode.children = typeMap[type];
-          mainNode.children.push(typeNode.id);
-        }
-      } else {
-        hasChildren = false;
-      }
-
-      const changes = {
-        isExpanded: true,
-        isChildrenLoading: false,
-        hasChildren,
-      };
-      setTree(mutateTree(newTree, nodeId, changes));
-      if (nodeId !== mainNode.id) {
-        setTree(mutateTree(newTree, mainNode.id, changes));
-      }
+      await this.addChildren(nodeId, tree, fields, issue, filter);
+      setTree(() => tree);
     } catch (error) {
-      setTree(mutateTree(tree, nodeId, { isChildrenLoading: false }));
+      console.error(error);
+      this.updateTreeNode(setTree, nodeId, { isChildrenLoading: false });
       handleError(error);
     }
   }
@@ -247,12 +339,16 @@ export default class TreeUtils {
     download("csv", csv(contents, true));
   }
 
-  handleCollapse(itemId, tree, setTree) {
-    setTree(
-      mutateTree(tree, itemId, {
-        isExpanded: false,
-        isChildrenLoading: false,
-      })
-    );
+  collapseTreeHook(nodeId, setTree){
+    setTree( (tree) => {
+      return this.collapseTree(tree, nodeId, setTree);
+    });
+  }
+
+  collapseTree(tree, nodeId, setTree) {
+    return mutateTree(tree, nodeId, {
+      isExpanded: false,
+      isChildrenLoading: false
+    });
   }
 }

@@ -8,7 +8,7 @@ import { StoryPointsInfo } from "./StoryPointsInfo";
 import { IssueKey } from "./IssueKey";
 import { AssigneeInfo } from "./AssigneeInfo";
 import { IssueSummary } from "./IssueSummary";
-import { Issue, IssueWithPopulatedLinks } from "../../../types/api";
+import { Issue } from "../../../types/api";
 
 const Container = styled.div`
   color: ${colors.N800};
@@ -24,7 +24,7 @@ const Container = styled.div`
   min-width: 162px;
   width: 100%;
   max-width: 500px;
-
+  border: 1px solid #dfe1e6;
   border-spacing: 10px 0px;
 `;
 const CardFooter = styled.div`
@@ -61,7 +61,9 @@ export const IssueCard = ({
   return (
     <Container>
       {/* header */}
-      <IssueSummary content={issueData.summary} />
+      {selectedMap["summary"] && issueData.summary && (
+        <IssueSummary content={issueData.summary} />
+      )}
 
       {/* footer */}
       <CardFooter>

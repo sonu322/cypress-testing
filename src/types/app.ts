@@ -1,4 +1,4 @@
-import { ID, IssueWithLinkedIssues } from "./api";
+import { ID, Issue, IssueWithLinkedIssues } from "./api";
 
 export interface AtlasTree {
   rootId: string;
@@ -10,6 +10,7 @@ export interface AtlasTreeItems {
 }
 
 export interface LinkTypeTreeNode {
+  id: string;
   isType: boolean;
   title: string;
 }
@@ -18,8 +19,9 @@ export interface AtlasTreeNode {
   id: string;
   children: string[];
   hasChildren: boolean;
+  hasChildrenLoaded: boolean;
   isExpanded: boolean;
   isChildrenLoading: boolean;
   parentIssueId: ID;
-  data: IssueWithLinkedIssues | LinkTypeTreeNode;
+  data: IssueWithLinkedIssues | Issue | LinkTypeTreeNode;
 }
