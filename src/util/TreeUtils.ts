@@ -7,7 +7,7 @@ import LXPAPI, {
   IssueTreeFilter,
   IssueWithLinkedIssues,
 } from "../types/api";
-import { csv, download, UUID } from "./index";
+import { csv, download } from "./index";
 import { AtlasTree, AtlasTreeNode, LinkTypeTreeNode } from "../types/app";
 import { isPromise } from "./common";
 
