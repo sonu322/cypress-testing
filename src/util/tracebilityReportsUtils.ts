@@ -97,7 +97,9 @@ export const exportReport = (
   let content = "";
   const headerItems = ["Issue"];
   tableFields.forEach((tableField) => {
-    headerItems.push(`"${toTitleCase(tableField.name)}"`);
+    if (selectedTableFieldIds.includes(tableField.id)) {
+      headerItems.push(`"${toTitleCase(tableField.name)}"`);
+    }
   });
   let header = headerItems.toString();
   header = header += "\n";
