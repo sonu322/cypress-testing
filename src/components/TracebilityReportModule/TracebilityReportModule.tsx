@@ -124,16 +124,19 @@ export const TracebilityReportModule = (): JSX.Element => {
     return <div>Loading data ...</div>;
   }
   let selectedTableFieldIds: string[];
+  let isIssueTypeReport: boolean;
   let setSelectedTableFieldIds: React.Dispatch<React.SetStateAction<string[]>>;
   let tableFields: IssueType[] | IssueLinkType[];
   if (selectedTabIndex === 0) {
     selectedTableFieldIds = selectedIssueTypeIds;
     tableFields = issueTypes;
     setSelectedTableFieldIds = setSelectedIssueTypeIds;
+    isIssueTypeReport = true;
   } else {
     selectedTableFieldIds = selectedLinkTypeIds;
     tableFields = linkTypes;
     setSelectedTableFieldIds = setSelectedLinkTypeIds;
+    isIssueTypeReport = false;
   }
   return (
     <FullWidthContainer>
@@ -148,9 +151,13 @@ export const TracebilityReportModule = (): JSX.Element => {
             selectedTableFieldIds={selectedTableFieldIds}
             updateSelectedTableFieldIds={setSelectedTableFieldIds}
             tableFields={tableFields}
-            exportReport={
-              () => {}
-              // exportReport(tableFields, selectedTableFieldIds, filteredIssues)
+            exportReport={() =>
+              exportReport(
+                tableFields,
+                selectedTableFieldIds,
+                filteredIssues,
+                isIssueTypeReport
+              )
             }
             isExportDisabled={isExportDisabled}
             handleNewError={handleNewError}
