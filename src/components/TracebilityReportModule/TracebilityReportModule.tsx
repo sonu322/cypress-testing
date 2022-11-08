@@ -48,7 +48,16 @@ export const TracebilityReportModule = (): JSX.Element => {
   const [areIssuesLoading, setAreIssuesLoading] = useState(false);
   const [errors, setErrors] = useState<unknown[]>([]);
   const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>(0);
-  const viewTabs = ["Issue Type View", "Link Type View"];
+  const viewTabs = [
+    {
+      name: "Issue Type View",
+      description: "View related issues by their types",
+    },
+    {
+      name: "Link Type View",
+      description: "View related issues by their link types",
+    },
+  ];
   const handleTabOptionSelect = (tabIndex: SelectedType): void => {
     setSelectedTabIndex(tabIndex);
   };
@@ -57,8 +66,6 @@ export const TracebilityReportModule = (): JSX.Element => {
     console.log(err);
     setErrors((prevErrors) => [...prevErrors, err]);
   };
-  console.log("selectedtab");
-  console.log(selectedTabIndex);
   useEffect(() => {
     const loadData = async (): Promise<void> => {
       try {

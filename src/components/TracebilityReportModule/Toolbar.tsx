@@ -37,7 +37,7 @@ interface Props {
   handleNewError: (err: unknown) => void;
   isExportDisabled: boolean;
   issueCardOptions: IssueField[];
-  viewTabs: string[];
+  viewTabs: Array<{ name: string; description: string }>;
   viewTabsId: string;
   handleTabOptionSelect: (tabIndex: SelectedType) => void;
   selectedTabIndex: SelectedType;
