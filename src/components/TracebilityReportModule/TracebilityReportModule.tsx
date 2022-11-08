@@ -96,15 +96,11 @@ export const TracebilityReportModule = (): JSX.Element => {
           name: "Issue Link Types",
           values: linkTypes,
         });
-        // setTableFields(fieldsMap);
         setIssueTypes(issueTypes);
         console.log(issueTypes);
         setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
         setLinkTypes(linkTypes);
         setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
-        // setting state - table field selected options
-        // const fieldIdsMap = getKeyMap(fieldsMap, "id");
-        // setSelectedTableFieldIds(fieldIdsMap);
 
         // loading state
         setAreOptionsLoading(false);
