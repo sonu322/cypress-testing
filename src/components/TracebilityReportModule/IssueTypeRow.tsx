@@ -2,6 +2,7 @@ import { colors } from "@atlaskit/theme";
 import React from "react";
 import styled from "styled-components";
 import {
+  Issue,
   IssueLinkType,
   IssueType,
   IssueWithSortedLinks,
@@ -26,7 +27,7 @@ export interface Props {
   // linkIds: string[];
   // issueTypeIds: string[];
   tableFields: IssueType[] | IssueLinkType[];
-  selectedTableFieldIds;
+  selectedTableFieldIds: string[];
   issueFieldIds: string[];
   issue: IssueWithSortedLinks;
   rowSno: number;
@@ -57,38 +58,42 @@ export const IssueTypeRow = ({
   cells.push(issueCell);
 
   // push links cells into row
-  selectedTableFieldIds.forEach((linkId) => {
+  selectedTableFieldIds.forEach((typeId) => {
     // render -- by default
     let issueCell = (
-      <Td key={`${issue.id}-${linkId}`}>
+      <Td key={`${issue.id}-${typeId}`}>
         <EmptyCell></EmptyCell>
       </Td>
     );
-
-    if (issue.sortedLinks[linkId] !== undefined) {
-      const allIssues = [];
-      issue.sortedLinks[linkId].forEach((issue) => {
-        const isSelected = true;
-        if (isSelected) {
-          const singleIssue = (
-            <IssueCard
-              key={`${issue.id}-${issue.type.id}`}
-              issueData={issue}
-              selectedIssueFieldIds={issueFieldIds}
-            />
-          );
-          allIssues.push(singleIssue);
-        }
+    let issuesOfType: Issue[] = [];
+    Object.values(issue.sortedLinks).forEach((issues) => {
+      const newIssues = issues.filter((issue) => {
+        console.log(issue.type.id, typeId);
+        return issue.type.id === typeId;
       });
-      if (allIssues.length > 0) {
-        issueCell = (
-          <Td key={linkId}>
-            <MaxWidthContainer>{allIssues}</MaxWidthContainer>
-          </Td>
+      console.log(newIssues);
+      issuesOfType = issuesOfType.concat(newIssues);
+      console.log(issuesOfType);
+    });
+    if (issuesOfType.length > 0) {
+      const issueCards = [];
+      issuesOfType.forEach((issue) => {
+        const issueCard = (
+          <IssueCard
+            key={`${issue.id}-${issue.type.id}`}
+            issueData={issue}
+            selectedIssueFieldIds={issueFieldIds}
+          />
         );
-      }
+        issueCards.push(issueCard);
+      });
+      console.log(issueCards);
+      issueCell = (
+        <Td key={typeId}>
+          <MaxWidthContainer>{issueCards}</MaxWidthContainer>
+        </Td>
+      );
     }
-
     // push cells into row
     cells.push(issueCell);
   });
