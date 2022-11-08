@@ -109,9 +109,6 @@ export const Main = ({
       );
     }
 
-    // TODO: make another component where, api is called, and between views, no api call is made twice for same filter,
-    // just issues are re-arranged into columns.
-    // ui got changed, remove growth of column, rendering more at bottom.
     return (
       <Container>
         <TableContainer>
