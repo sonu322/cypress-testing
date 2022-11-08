@@ -97,7 +97,6 @@ export const TracebilityReportModule = (): JSX.Element => {
           values: linkTypes,
         });
         setIssueTypes(issueTypes);
-        console.log(issueTypes);
         setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
         setLinkTypes(linkTypes);
         setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
