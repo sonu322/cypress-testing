@@ -81,9 +81,7 @@ export const IssueCard = ({
             isResolved={issueData.isResolved}
             issueKey={issueData.issueKey}
           />
-          {selectedMap["assignee"] && assigneeInfo && (
-            <AssigneeInfo content={assigneeInfo} />
-          )}
+          {selectedMap["assignee"] && <AssigneeInfo content={assigneeInfo} />}
         </FooterSideContainer>
       </CardFooter>
     </Container>
