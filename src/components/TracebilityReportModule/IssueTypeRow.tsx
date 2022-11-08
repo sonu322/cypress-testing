@@ -32,8 +32,6 @@ export interface Props {
 }
 
 export const IssueTypeRow = ({
-  // linkIds,
-  // issueTypeIds,
   issueFieldIds,
   issue,
   rowSno,
