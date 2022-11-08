@@ -24,14 +24,13 @@ const Container = styled.div`
   min-width: 162px;
   width: 100%;
   max-width: 500px;
-  border: 1px solid #DFE1E6;
+  border: 1px solid #dfe1e6;
   border-spacing: 10px 0px;
 `;
 const CardFooter = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-between;
-  // margin-top: 10px;
 `;
 const FooterSideContainer = styled.div`
   display: flex;
@@ -84,9 +83,7 @@ export const IssueCard = ({
             isResolved={issueData.isResolved}
             issueKey={issueData.issueKey}
           />
-          {selectedMap["assignee"] && (
-            <AssigneeInfo content={assigneeInfo} />
-          )}
+          {selectedMap["assignee"] && <AssigneeInfo content={assigneeInfo} />}
         </FooterSideContainer>
       </CardFooter>
     </Container>

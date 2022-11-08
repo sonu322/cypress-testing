@@ -1,9 +1,14 @@
 import React from "react";
 import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
-import { ReportRow } from "./ReportRow";
+import { LinkTypeRow } from "./LinkTypeRow";
 import { ReportHeader } from "./ReportHeader";
-import { IssueWithSortedLinks } from "../../types/api";
+import {
+  IssueLinkType,
+  IssueType,
+  IssueWithSortedLinks,
+} from "../../types/api";
+import { IssueTypeRow } from "./IssueTypeRow";
 const Container = styled.div`
   width: 100%;
   height: 100%;
@@ -16,45 +21,47 @@ const BorderTr = styled.tr`
   border-bottom: 1px solid ${colors.N40};
 `;
 const Table = styled.table`
-  padding: 32px;
   border: 1px solid ${colors.N40};
 `;
 interface Props {
   filteredIssues: IssueWithSortedLinks[];
-  tableFields: Map<
-    string,
-    {
-      name: string;
-      values: any[];
-    }
-  >;
-  selectedTableFieldIds: Map<string, string[]>;
+  tableFields: IssueType[] | IssueLinkType[];
+  selectedTableFieldIds: string[];
   issueFieldIds: string[];
+  isIssueTypeReport: boolean;
 }
 export const Report = ({
   filteredIssues,
   tableFields,
   selectedTableFieldIds,
   issueFieldIds,
+  isIssueTypeReport,
 }: Props): JSX.Element => {
-  const selectedLinkIds = selectedTableFieldIds.get("linkTypes");
-  const selectedIssueTypeIds = selectedTableFieldIds.get("issueTypes");
-  const allLinks = tableFields.get("linkTypes").values;
-
   return (
     <Container>
       <Table>
-        <ReportHeader fieldIds={selectedLinkIds} fields={allLinks} />
+        <ReportHeader
+          selectedFieldIds={selectedTableFieldIds}
+          fields={tableFields}
+        />
         <tbody>
           {filteredIssues.map((issue, index) => (
             <BorderTr key={`${issue.issueKey}`}>
-              <ReportRow
-                issueTypeIds={selectedIssueTypeIds}
-                linkIds={selectedLinkIds}
-                issueFieldIds={issueFieldIds}
-                issue={issue}
-                rowSno={index + 1}
-              />
+              {isIssueTypeReport ? (
+                <IssueTypeRow
+                  selectedTableFieldIds={selectedTableFieldIds}
+                  issueFieldIds={issueFieldIds}
+                  issue={issue}
+                  rowSno={index + 1}
+                />
+              ) : (
+                <LinkTypeRow
+                  selectedTableFieldIds={selectedTableFieldIds}
+                  issueFieldIds={issueFieldIds}
+                  issue={issue}
+                  rowSno={index + 1}
+                />
+              )}
             </BorderTr>
           ))}
         </tbody>

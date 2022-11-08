@@ -9,7 +9,10 @@ interface Props {
   selectedOptions: string[];
   dropdownName: string;
   updateSelectedOptions: React.Dispatch<React.SetStateAction<string[]>>;
-  options: IssueField[];
+  options: Array<{
+    id: string;
+    name: string;
+  }>;
 }
 
 export const Dropdown = ({

@@ -5,14 +5,21 @@ import { APIContext } from "../../context/api";
 import styled from "styled-components";
 import { Report } from "./Report";
 import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
-import { IssueField, IssueWithSortedLinks } from "../../types/api";
+import {
+  IssueField,
+  IssueLinkType,
+  IssueType,
+  IssueWithSortedLinks,
+} from "../../types/api";
 const Container = styled.div`
   width: 100%;
-  display: flex;
-  flex-direction: column;
 `;
-const GrowContainer = styled.div`
+const TableContainer = styled.div`
   display: flex;
+  margin-top: 16px;
+`;
+const MarginAddedContainer = styled.div`
+  margin-top: 16px;
 `;
 const DEFAULT_ROWS_PER_PAGE = 4;
 const START_INDEX = 0;
@@ -22,20 +29,15 @@ interface Props {
   handleNewError: (err: unknown) => void;
   issueFields: IssueField[];
   selectedIssueFieldIds: string[];
-  selectedTableFieldIds: Map<string, string[]>;
-  tableFields: Map<
-    string,
-    {
-      name: string;
-      values: any[];
-    }
-  >;
+  selectedTableFieldIds: string[];
+  tableFields: IssueType[] | IssueLinkType[];
   filteredIssues: IssueWithSortedLinks[];
   areIssuesLoading: boolean;
   setAreIssuesLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setFilteredIssues: React.Dispatch<
     React.SetStateAction<IssueWithSortedLinks[]>
   >;
+  isIssueTypeReport: boolean;
 }
 
 export const Main = ({
@@ -49,14 +51,18 @@ export const Main = ({
   areIssuesLoading,
   setAreIssuesLoading,
   setFilteredIssues,
+  isIssueTypeReport,
 }: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
   const api = useContext(APIContext);
-  const updateIssues = (issues): void => {
+  const addMoreIssues = (issues): void => {
     const newIssues = filteredIssues ?? [];
     const updatedIssues = newIssues.concat(issues);
     setFilteredIssues(updatedIssues);
+  };
+  const updateIssues = (issues): void => {
+    setFilteredIssues(issues);
   };
   const tracebilityReportUtils = new TracebilityReportUtils(api);
   useEffect(() => {
@@ -81,7 +87,7 @@ export const Main = ({
       issueFields,
       filteredIssues.length,
       totalNumberOfIssues,
-      updateIssues,
+      addMoreIssues,
       setAreMoreIssuesLoading,
       null,
       handleNewError
@@ -102,17 +108,19 @@ export const Main = ({
         </Container>
       );
     }
+
     return (
       <Container>
-        <GrowContainer>
+        <TableContainer>
           <Report
             filteredIssues={filteredIssues}
             issueFieldIds={selectedIssueFieldIds}
             tableFields={tableFields}
             selectedTableFieldIds={selectedTableFieldIds}
+            isIssueTypeReport={isIssueTypeReport}
           />
-        </GrowContainer>
-        <div>
+        </TableContainer>
+        <MarginAddedContainer>
           <LoadingButton
             isLoading={areMoreIssuesLoading}
             isDisabled={filteredIssues.length >= totalNumberOfIssues}
@@ -120,7 +128,7 @@ export const Main = ({
           >
             More
           </LoadingButton>
-        </div>
+        </MarginAddedContainer>
       </Container>
     );
   } else {

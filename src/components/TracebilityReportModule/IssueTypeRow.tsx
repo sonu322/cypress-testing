@@ -1,7 +1,12 @@
 import { colors } from "@atlaskit/theme";
 import React from "react";
 import styled from "styled-components";
-import { IssueWithSortedLinks } from "../../types/api";
+import {
+  Issue,
+  IssueLinkType,
+  IssueType,
+  IssueWithSortedLinks,
+} from "../../types/api";
 import { IssueCard } from "../common/issueCard/IssueCard";
 import { EmptyCell } from "./EmptyCell";
 
@@ -19,19 +24,18 @@ const MaxWidthContainer = styled.div`
 `;
 
 export interface Props {
-  linkIds: string[];
-  issueTypeIds: string[];
+  tableFields: IssueType[] | IssueLinkType[];
+  selectedTableFieldIds: string[];
   issueFieldIds: string[];
   issue: IssueWithSortedLinks;
   rowSno: number;
 }
 
-export const ReportRow = ({
-  linkIds,
-  issueTypeIds,
+export const IssueTypeRow = ({
   issueFieldIds,
   issue,
   rowSno,
+  selectedTableFieldIds,
 }: Props): JSX.Element[] => {
   const cells = [];
 
@@ -49,38 +53,38 @@ export const ReportRow = ({
   cells.push(issueCell);
 
   // push links cells into row
-  linkIds.forEach((linkId) => {
+  selectedTableFieldIds.forEach((typeId) => {
     // render -- by default
     let issueCell = (
-      <Td key={`${issue.id}-${linkId}`}>
+      <Td key={`${issue.id}-${typeId}`}>
         <EmptyCell></EmptyCell>
       </Td>
     );
-
-    if (issue.sortedLinks[linkId] !== undefined) {
-      const allIssues = [];
-      issue.sortedLinks[linkId].forEach((issue) => {
-        const isSelected = issueTypeIds.includes(issue.type.id);
-        if (isSelected) {
-          const singleIssue = (
-            <IssueCard
-              key={`${issue.id}-${issue.type.id}`}
-              issueData={issue}
-              selectedIssueFieldIds={issueFieldIds}
-            />
-          );
-          allIssues.push(singleIssue);
-        }
+    let issuesOfType: Issue[] = [];
+    Object.values(issue.sortedLinks).forEach((issues) => {
+      const newIssues = issues.filter((issue) => {
+        return issue.type.id === typeId;
       });
-      if (allIssues.length > 0) {
-        issueCell = (
-          <Td key={linkId}>
-            <MaxWidthContainer>{allIssues}</MaxWidthContainer>
-          </Td>
+      issuesOfType = issuesOfType.concat(newIssues);
+    });
+    if (issuesOfType.length > 0) {
+      const issueCards = [];
+      issuesOfType.forEach((issue) => {
+        const issueCard = (
+          <IssueCard
+            key={`${issue.id}-${issue.type.id}`}
+            issueData={issue}
+            selectedIssueFieldIds={issueFieldIds}
+          />
         );
-      }
+        issueCards.push(issueCard);
+      });
+      issueCell = (
+        <Td key={typeId}>
+          <MaxWidthContainer>{issueCards}</MaxWidthContainer>
+        </Td>
+      );
     }
-
     // push cells into row
     cells.push(issueCell);
   });

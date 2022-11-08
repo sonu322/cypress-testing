@@ -1,18 +1,11 @@
 import React from "react";
-import { DropdownMultipleSectionsSelect } from "../common/DropdownMultipleSectionsSelect";
+import { IssueLinkType, IssueType } from "../../types/api";
+import { Dropdown } from "../common/Dropdown";
 
 interface Props {
-  options: Map<
-    string,
-    {
-      name: string;
-      values: any[];
-    }
-  >;
-  selectedOptions: Map<string, string[]>;
-  updateSelectedOptionIds: React.Dispatch<
-    React.SetStateAction<Map<string, string[]>>
-  >;
+  options: IssueType[] | IssueLinkType[];
+  selectedOptions: string[];
+  updateSelectedOptionIds: React.Dispatch<React.SetStateAction<string[]>>;
 }
 export const TableFieldsDropdown = ({
   options,
@@ -20,11 +13,11 @@ export const TableFieldsDropdown = ({
   updateSelectedOptionIds,
 }: Props): JSX.Element => {
   return (
-    <DropdownMultipleSectionsSelect
-      selectedOptions={selectedOptions}
-      dropdownName={"Choose table fields"}
-      updateSelectedOptionIds={updateSelectedOptionIds}
+    <Dropdown
+      dropdownName="Table Fields"
       options={options}
+      selectedOptions={selectedOptions}
+      updateSelectedOptions={updateSelectedOptionIds}
     />
   );
 };

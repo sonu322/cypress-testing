@@ -9,7 +9,10 @@ import { HelpLink } from "../common/HelpLink";
 import { ExportContent } from "../common/ExportContent";
 import { JQLEditor } from "../JQLEditor";
 import { TableFieldsDropdown } from "./TableFieldsDropdown";
-import { IssueField } from "../../types/api";
+import { IssueField, IssueLinkType, IssueType } from "../../types/api";
+
+import { TabGroup } from "./TabGroup";
+import { SelectedType } from "@atlaskit/tabs/types";
 const MainBar = styled.div`
   background-color: ${colors.N20}
   padding: 10px;
@@ -27,21 +30,17 @@ interface Props {
   setSelectedIssueFieldIds: React.Dispatch<React.SetStateAction<string[]>>;
   selectedJQLString: string;
   setSelectedJQLString: React.Dispatch<React.SetStateAction<string>>;
-  selectedTableFieldIds: Map<string, string[]>;
-  updateSelectedTableFieldIds: React.Dispatch<
-    React.SetStateAction<Map<string, string[]>>
-  >;
-  tableFields: Map<
-    string,
-    {
-      name: string;
-      values: any[];
-    }
-  >;
+  selectedTableFieldIds: string[];
+  updateSelectedTableFieldIds: React.Dispatch<React.SetStateAction<string[]>>;
+  tableFields: IssueType[] | IssueLinkType[];
   exportReport: () => void;
   handleNewError: (err: unknown) => void;
   isExportDisabled: boolean;
   issueCardOptions: IssueField[];
+  viewTabs: Array<{ name: string; description: string }>;
+  viewTabsId: string;
+  handleTabOptionSelect: (tabIndex: SelectedType) => void;
+  selectedTabIndex: SelectedType;
 }
 
 export const Toolbar = ({
@@ -56,47 +55,59 @@ export const Toolbar = ({
   handleNewError,
   isExportDisabled,
   issueCardOptions,
+  viewTabs,
+  viewTabsId,
+  handleTabOptionSelect,
+  selectedTabIndex,
 }: Props): JSX.Element => {
-  // const issueCardOptions = Array.from(issueCardOptionsMap.values());
   return (
-    <MainBar>
-      <FlexContainer>
-        <JQLSelectDropdown
-          selectedFilterId={selectedJQLString}
-          setSelectedFilterId={setSelectedJQLString}
-          handleNewError={handleNewError}
-        />
-        <JQLEditor
-          selectedFilterId={selectedJQLString}
-          setSelectedFilterId={setSelectedJQLString}
-        />
-        {Boolean(tableFields) && (
-          <TableFieldsDropdown
-            selectedOptions={selectedTableFieldIds}
-            updateSelectedOptionIds={updateSelectedTableFieldIds}
-            options={tableFields}
+    <div>
+      <TabGroup
+        handleOptionSelect={handleTabOptionSelect}
+        id={viewTabsId}
+        options={viewTabs}
+        selectedTabIndex={selectedTabIndex}
+      />
+      <MainBar>
+        <FlexContainer>
+          <JQLSelectDropdown
+            selectedFilterId={selectedJQLString}
+            setSelectedFilterId={setSelectedJQLString}
+            handleNewError={handleNewError}
           />
-        )}
-      </FlexContainer>
+          <JQLEditor
+            selectedFilterId={selectedJQLString}
+            setSelectedFilterId={setSelectedJQLString}
+          />
 
-      <div>
-        <ButtonGroup>
-          <Dropdown
-            dropdownName={"Issue Card Fields"}
-            options={issueCardOptions}
-            selectedOptions={selectedIssueFieldIds}
-            updateSelectedOptions={setSelectedIssueFieldIds}
-          />
-          <ExportContent
-            description={"Export report to csv"}
-            exportContent={() => {
-              exportReport();
-            }}
-            isDisabled={isExportDisabled}
-          />
-          <HelpLink description={"Get help"} href={helpLink} />
-        </ButtonGroup>
-      </div>
-    </MainBar>
+          {Boolean(tableFields) && (
+            <TableFieldsDropdown
+              selectedOptions={selectedTableFieldIds}
+              updateSelectedOptionIds={updateSelectedTableFieldIds}
+              options={tableFields}
+            />
+          )}
+        </FlexContainer>
+
+        <div>
+          <ButtonGroup>
+            <Dropdown
+              dropdownName={"Issue Card Fields"}
+              options={issueCardOptions}
+              selectedOptions={selectedIssueFieldIds}
+              updateSelectedOptions={setSelectedIssueFieldIds}
+            />
+            <ExportContent
+              description={"Export report to csv"}
+              exportContent={() => {
+                exportReport();
+              }}
+              isDisabled={isExportDisabled}
+            />
+            <HelpLink description={"Get help"} href={helpLink} />
+          </ButtonGroup>
+        </div>
+      </MainBar>
+    </div>
   );
 };

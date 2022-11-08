@@ -1,20 +1,23 @@
 import { colors } from "@atlaskit/theme";
 import React from "react";
 import styled from "styled-components";
-import { IssueField } from "../../types/api";
+import { IssueField, IssueLinkType, IssueType } from "../../types/api";
 import { toTitleCase } from "../../util";
 import { HeaderCell } from "./HeaderCell";
 
 interface Props {
-  fields: IssueField[];
-  fieldIds: string[];
+  fields: IssueType[] | IssueLinkType[];
+  selectedFieldIds: string[];
 }
 
 const Th = styled.th`
   border: 1px solid ${colors.N40};
 `;
-export const ReportHeader = ({ fields, fieldIds }: Props): JSX.Element => {
-  const columnHeads: JSX.Element[] = fieldIds.map((fieldId) => {
+export const ReportHeader = ({
+  fields,
+  selectedFieldIds,
+}: Props): JSX.Element => {
+  const columnHeads: JSX.Element[] = selectedFieldIds.map((fieldId) => {
     const field = fields.find((field) => field.id === fieldId);
     let { name, id } = field;
     name = toTitleCase(name);

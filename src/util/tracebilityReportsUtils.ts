@@ -1,4 +1,10 @@
-import LXPAPI, { IssueField, IssueWithSortedLinks } from "../types/api";
+import LXPAPI, {
+  Issue,
+  IssueField,
+  IssueLinkType,
+  IssueType,
+  IssueWithSortedLinks,
+} from "../types/api";
 import { download, toTitleCase } from "./index";
 
 export default class TracebilityReportUtils {
@@ -38,49 +44,75 @@ export default class TracebilityReportUtils {
   }
 }
 
-export const exportReport = (
-  tableFields: Map<
-    string,
-    {
-      name: string;
-      values: any[];
+const processByLinkType = (
+  selectedTableFieldIds: string[],
+  issue: IssueWithSortedLinks
+): string[] => {
+  const rowItems: string[] = [];
+  selectedTableFieldIds.forEach((selectedId) => {
+    let rowItemString = "--";
+
+    if (issue.sortedLinks[selectedId] !== undefined) {
+      const rowItem = [];
+      issue.sortedLinks[selectedId].forEach((issue) => {
+        rowItem.push(issue.issueKey);
+      });
+      rowItemString = `"${rowItem.toString()}"`;
     }
-  >,
-  selectedTableFieldIds: Map<string, string[]>,
-  filteredIssues: IssueWithSortedLinks[]
-): void => {
-  const selectedLinkIds = selectedTableFieldIds.get("linkTypes");
-  const selectedIssueTypeIds = selectedTableFieldIds.get("issueTypes");
-  let links = tableFields.get("linkTypes").values;
-  links = links.filter((link) => selectedLinkIds.includes(link.id));
-  let content = "";
-  const headerLinks = ["Issue"];
-  links.forEach((link) => {
-    headerLinks.push(`"${toTitleCase(link.name)}"`);
+    rowItems.push(rowItemString);
   });
-  let header = headerLinks.toString();
+  return rowItems;
+};
+
+const processByIssueType = (
+  selectedTableFieldIds: string[],
+  issue: IssueWithSortedLinks
+): string[] => {
+  const rowItems: string[] = [];
+  selectedTableFieldIds.forEach((selectedId) => {
+    let rowItemString = "--";
+    let issuesOfType: Issue[] = [];
+
+    Object.values(issue.sortedLinks).forEach((issues) => {
+      const newIssues = issues.filter((issue) => {
+        return issue.type.id === selectedId;
+      });
+      issuesOfType = issuesOfType.concat(newIssues);
+    });
+    if (issuesOfType.length > 0) {
+      const rowItem = issuesOfType.map((issue) => issue.issueKey);
+      rowItemString = `"${rowItem.toString()}"`;
+    }
+    rowItems.push(rowItemString);
+  });
+  return rowItems;
+};
+
+export const exportReport = (
+  tableFields: IssueType[] | IssueLinkType[],
+  selectedTableFieldIds: string[],
+  filteredIssues: IssueWithSortedLinks[],
+  isIssueTypeReport: boolean
+): void => {
+  let content = "";
+  const headerItems = ["Issue"];
+  tableFields.forEach((tableField) => {
+    if (selectedTableFieldIds.includes(tableField.id)) {
+      headerItems.push(`"${toTitleCase(tableField.name)}"`);
+    }
+  });
+  let header = headerItems.toString();
   header = header += "\n";
   content += header;
 
   filteredIssues.forEach((issue) => {
-    const rowItems = [];
-    rowItems.push(`"${issue.issueKey}"`);
-    selectedLinkIds.forEach((linkId) => {
-      let rowItemString = "--";
-      if (issue.sortedLinks[linkId] !== undefined) {
-        const rowItem = [];
-        issue.sortedLinks[linkId].forEach((linkedIssue) => {
-          const isSelected = selectedIssueTypeIds.includes(linkedIssue.type.id);
-          if (isSelected) {
-            rowItem.push(linkedIssue.issueKey);
-          }
-          if (rowItem.length > 0) {
-            rowItemString = `"${rowItem.toString()}"`;
-          }
-        });
-      }
-      rowItems.push(rowItemString);
-    });
+    let rowItems = [];
+    if (isIssueTypeReport) {
+      rowItems = processByIssueType(selectedTableFieldIds, issue);
+    } else {
+      rowItems = processByLinkType(selectedTableFieldIds, issue);
+    }
+    rowItems.unshift(`"${issue.issueKey}"`);
 
     let rowContent = rowItems.toString();
     rowContent = rowContent += "\n";
