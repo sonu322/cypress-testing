@@ -1,11 +1,7 @@
 import { colors } from "@atlaskit/theme";
 import React from "react";
 import styled from "styled-components";
-import {
-  IssueLinkType,
-  IssueType,
-  IssueWithSortedLinks,
-} from "../../types/api";
+import { IssueWithSortedLinks } from "../../types/api";
 import { IssueCard } from "../common/issueCard/IssueCard";
 import { EmptyCell } from "./EmptyCell";
 
@@ -23,9 +19,6 @@ const MaxWidthContainer = styled.div`
 `;
 
 export interface Props {
-  // linkIds: string[];
-  // issueTypeIds: string[];
-  tableFields: IssueType[] | IssueLinkType[];
   selectedTableFieldIds;
   issueFieldIds: string[];
   issue: IssueWithSortedLinks;
@@ -33,12 +26,9 @@ export interface Props {
 }
 
 export const LinkTypeRow = ({
-  // linkIds,
-  // issueTypeIds,
   issueFieldIds,
   issue,
   rowSno,
-  tableFields,
   selectedTableFieldIds,
 }: Props): JSX.Element[] => {
   const cells = [];
@@ -68,17 +58,14 @@ export const LinkTypeRow = ({
     if (issue.sortedLinks[linkId] !== undefined) {
       const allIssues = [];
       issue.sortedLinks[linkId].forEach((issue) => {
-        const isSelected = true;
-        if (isSelected) {
-          const singleIssue = (
-            <IssueCard
-              key={`${issue.id}-${issue.type.id}`}
-              issueData={issue}
-              selectedIssueFieldIds={issueFieldIds}
-            />
-          );
-          allIssues.push(singleIssue);
-        }
+        const singleIssue = (
+          <IssueCard
+            key={`${issue.id}-${issue.type.id}`}
+            issueData={issue}
+            selectedIssueFieldIds={issueFieldIds}
+          />
+        );
+        allIssues.push(singleIssue);
       });
       if (allIssues.length > 0) {
         issueCell = (

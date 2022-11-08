@@ -37,7 +37,7 @@ interface Props {
   setFilteredIssues: React.Dispatch<
     React.SetStateAction<IssueWithSortedLinks[]>
   >;
-  selectedTab: string;
+  isIssueTypeReport: boolean;
 }
 
 export const Main = ({
@@ -51,7 +51,7 @@ export const Main = ({
   areIssuesLoading,
   setAreIssuesLoading,
   setFilteredIssues,
-  selectedTab,
+  isIssueTypeReport,
 }: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
@@ -120,7 +120,7 @@ export const Main = ({
             issueFieldIds={selectedIssueFieldIds}
             tableFields={tableFields}
             selectedTableFieldIds={selectedTableFieldIds}
-            selectedTab={selectedTab}
+            isIssueTypeReport={isIssueTypeReport}
           />
         </TableContainer>
         <MarginAddedContainer>

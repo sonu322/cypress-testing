@@ -28,19 +28,15 @@ interface Props {
   tableFields: IssueType[] | IssueLinkType[];
   selectedTableFieldIds: string[];
   issueFieldIds: string[];
-  selectedTab: string;
+  isIssueTypeReport: boolean;
 }
 export const Report = ({
   filteredIssues,
   tableFields,
   selectedTableFieldIds,
   issueFieldIds,
-  selectedTab,
+  isIssueTypeReport,
 }: Props): JSX.Element => {
-  // const selectedLinkIds = selectedTableFieldIds.get("linkTypes");
-  // const selectedIssueTypeIds = selectedTableFieldIds.get("issueTypes");
-  // const allLinks = tableFields.get("linkTypes").values;
-  const isIssueTypeReport = selectedTab === "issueType";
   return (
     <Container>
       <Table>
@@ -53,7 +49,6 @@ export const Report = ({
             <BorderTr key={`${issue.issueKey}`}>
               {isIssueTypeReport ? (
                 <IssueTypeRow
-                  tableFields={tableFields}
                   selectedTableFieldIds={selectedTableFieldIds}
                   issueFieldIds={issueFieldIds}
                   issue={issue}
@@ -61,9 +56,6 @@ export const Report = ({
                 />
               ) : (
                 <LinkTypeRow
-                  // issueTypeIds={selectedIssueTypeIds}
-                  // linkIds={selectedLinkIds}
-                  tableFields={tableFields}
                   selectedTableFieldIds={selectedTableFieldIds}
                   issueFieldIds={issueFieldIds}
                   issue={issue}
@@ -74,7 +66,6 @@ export const Report = ({
           ))}
         </tbody>
       </Table>
-      {selectedTab}
     </Container>
   );
 };

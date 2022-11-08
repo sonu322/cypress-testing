@@ -24,8 +24,6 @@ const MaxWidthContainer = styled.div`
 `;
 
 export interface Props {
-  // linkIds: string[];
-  // issueTypeIds: string[];
   tableFields: IssueType[] | IssueLinkType[];
   selectedTableFieldIds: string[];
   issueFieldIds: string[];
@@ -39,7 +37,6 @@ export const IssueTypeRow = ({
   issueFieldIds,
   issue,
   rowSno,
-  tableFields,
   selectedTableFieldIds,
 }: Props): JSX.Element[] => {
   const cells = [];
@@ -68,12 +65,9 @@ export const IssueTypeRow = ({
     let issuesOfType: Issue[] = [];
     Object.values(issue.sortedLinks).forEach((issues) => {
       const newIssues = issues.filter((issue) => {
-        console.log(issue.type.id, typeId);
         return issue.type.id === typeId;
       });
-      console.log(newIssues);
       issuesOfType = issuesOfType.concat(newIssues);
-      console.log(issuesOfType);
     });
     if (issuesOfType.length > 0) {
       const issueCards = [];
@@ -87,7 +81,6 @@ export const IssueTypeRow = ({
         );
         issueCards.push(issueCard);
       });
-      console.log(issueCards);
       issueCell = (
         <Td key={typeId}>
           <MaxWidthContainer>{issueCards}</MaxWidthContainer>

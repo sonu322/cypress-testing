@@ -50,10 +50,7 @@ const processByLinkType = (
 ): string[] => {
   const rowItems: string[] = [];
   selectedTableFieldIds.forEach((selectedId) => {
-    // rowItemString = `"${rowItem.toString()}"`
-    // rowItems.push(rowItemString);
     let rowItemString = "--";
-    let issuesOfType: Issue[] = [];
 
     if (issue.sortedLinks[selectedId] !== undefined) {
       const rowItem = [];
@@ -73,8 +70,6 @@ const processByIssueType = (
 ): string[] => {
   const rowItems: string[] = [];
   selectedTableFieldIds.forEach((selectedId) => {
-    // rowItemString = `"${rowItem.toString()}"`
-    // rowItems.push(rowItemString);
     let rowItemString = "--";
     let issuesOfType: Issue[] = [];
 
@@ -82,9 +77,7 @@ const processByIssueType = (
       const newIssues = issues.filter((issue) => {
         return issue.type.id === selectedId;
       });
-      console.log(newIssues);
       issuesOfType = issuesOfType.concat(newIssues);
-      console.log(issuesOfType);
     });
     if (issuesOfType.length > 0) {
       const rowItem = issuesOfType.map((issue) => issue.issueKey);
@@ -101,10 +94,6 @@ export const exportReport = (
   filteredIssues: IssueWithSortedLinks[],
   isIssueTypeReport: boolean
 ): void => {
-  // const selectedLinkIds = selectedTableFieldIds.get("linkTypes");
-  // const selectedIssueTypeIds = selectedTableFieldIds.get("issueTypes");
-  // let links = tableFields.get("linkTypes").values;
-  // links = links.filter((link) => selectedLinkIds.includes(link.id));
   let content = "";
   const headerItems = ["Issue"];
   tableFields.forEach((tableField) => {

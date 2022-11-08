@@ -27,13 +27,6 @@ const GrowContainer = styled.div`
 `;
 
 export const TracebilityReportModule = (): JSX.Element => {
-  // const [selectedTableFieldIds, setSelectedTableFieldIds] = useState<
-  //   Map<string, string[]>
-  // >(new Map());
-
-  // const [tableFields, setTableFields] = useState<
-  //   Map<string, { name: string; values: any[] }>
-  // >(new Map());
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
   const [filteredIssues, setFilteredIssues] = useState<
     IssueWithSortedLinks[] | null
@@ -183,7 +176,7 @@ export const TracebilityReportModule = (): JSX.Element => {
           setFilteredIssues={setFilteredIssues}
           areIssuesLoading={areIssuesLoading}
           setAreIssuesLoading={setAreIssuesLoading}
-          selectedTab={selectedTabIndex === 0 ? "issueType" : "linkType"}
+          isIssueTypeReport={selectedTabIndex === 0}
         />
       </GrowContainer>
     </FullWidthContainer>
