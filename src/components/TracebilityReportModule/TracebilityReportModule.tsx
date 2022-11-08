@@ -13,7 +13,7 @@ import {
 import { Main } from "./Main";
 import { ErrorsList } from "../common/ErrorsList";
 import { exportReport } from "../../util/tracebilityReportsUtils";
-import { getKeyMap, getKeyValues } from "../../util/common";
+import { getKeyValues } from "../../util/common";
 
 const FullWidthContainer = styled.div`
   width: 100%;
@@ -122,7 +122,7 @@ export const TracebilityReportModule = (): JSX.Element => {
     return <div>Loading data ...</div>;
   }
   let selectedTableFieldIds: string[];
-  let setSelectedTableFieldIds = setSelectedLinkTypeIds;
+  let setSelectedTableFieldIds: React.Dispatch<React.SetStateAction<string[]>>;
   let tableFields: IssueType[] | IssueLinkType[];
   if (selectedTabIndex === 0) {
     selectedTableFieldIds = selectedIssueTypeIds;
@@ -131,6 +131,7 @@ export const TracebilityReportModule = (): JSX.Element => {
   } else {
     selectedTableFieldIds = selectedLinkTypeIds;
     tableFields = linkTypes;
+    setSelectedTableFieldIds = setSelectedLinkTypeIds;
   }
   return (
     <FullWidthContainer>

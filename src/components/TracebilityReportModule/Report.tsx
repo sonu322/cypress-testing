@@ -38,9 +38,9 @@ export const Report = ({
   issueFieldIds,
   selectedTab,
 }: Props): JSX.Element => {
-  const selectedLinkIds = selectedTableFieldIds.get("linkTypes");
-  const selectedIssueTypeIds = selectedTableFieldIds.get("issueTypes");
-  const allLinks = tableFields.get("linkTypes").values;
+  // const selectedLinkIds = selectedTableFieldIds.get("linkTypes");
+  // const selectedIssueTypeIds = selectedTableFieldIds.get("issueTypes");
+  // const allLinks = tableFields.get("linkTypes").values;
 
   return (
     <Container>

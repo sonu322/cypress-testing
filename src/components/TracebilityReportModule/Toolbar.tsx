@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import { JQLSelectDropdown } from "../JQLSelectDropdown";
@@ -60,8 +60,6 @@ export const Toolbar = ({
   handleTabOptionSelect,
   selectedTabIndex,
 }: Props): JSX.Element => {
-  // const issueCardOptions = Array.from(issueCardOptionsMap.values());
-
   return (
     <div>
       <TabGroup
@@ -87,7 +85,6 @@ export const Toolbar = ({
               selectedOptions={selectedTableFieldIds}
               updateSelectedOptionIds={updateSelectedTableFieldIds}
               options={tableFields}
-              selectedTab={selectedTabIndex == 0 ? "issueType" : "linkType"}
             />
           )}
         </FlexContainer>
