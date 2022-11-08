@@ -56,6 +56,7 @@ export const IssueTreeModule = () => {
         setIssueFields(fields);
         setIsLoading(false);
       } catch (error) {
+        setIsLoading(false);
         handleNewError(error);
       }
     };

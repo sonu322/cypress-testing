@@ -24,7 +24,7 @@ const Container = styled.div`
   min-width: 162px;
   width: 100%;
   max-width: 500px;
-
+  border: 1px solid #DFE1E6;
   border-spacing: 10px 0px;
 `;
 const CardFooter = styled.div`
