@@ -124,19 +124,19 @@ export default class APIImpl implements LXPAPI {
       const items: JiraIssueType[] = await this.api.getIssueTypes();
 
       items || throwError("Issue types not found.");
-      const removedDuplicates: IssueType[] = [];
+      const uniqueIssueTypes: IssueType[] = [];
       items.forEach((issueType) => {
         const name = issueType.name.toLowerCase().replace(/-/g, "");
-        console.log(removedDuplicates);
-        const foundType = removedDuplicates.find(
-          (newType) => newType.name === name
+        console.log(uniqueIssueTypes);
+        const foundType = uniqueIssueTypes.find(
+          (uniqueIssueType) => uniqueIssueType.name === name
         );
         if (foundType === undefined) {
           console.log(foundType);
-          removedDuplicates.push(this._convertIssueType(issueType));
+          uniqueIssueTypes.push(this._convertIssueType(issueType));
         }
       });
-      return removedDuplicates;
+      return uniqueIssueTypes;
     } catch (error) {
       console.error(error);
       throw new Error("Error in fetching the issue types - " + error.message);
