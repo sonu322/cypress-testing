@@ -37,7 +37,7 @@ import {
 function throwError(msg: string) {
   throw new Error(msg);
 }
-
+// use secondary id field
 export default class APIImpl implements LXPAPI {
   private readonly api: JiraAPI;
   private readonly defaultFields: string[] = [
@@ -183,35 +183,43 @@ export default class APIImpl implements LXPAPI {
     issueFields: IssueField[],
     fields?: JiraIssueField[]
   ): Promise<string> {
-    const project = await this.getCurrentProject();
     fields = fields || (await this.getAllIssueFields());
-    let storyPointFieldName = "storypointestimate";
-    if (project.style === "classic") {
-      storyPointFieldName = "storypoints";
-    }
+    const storyPointFieldName = "storypoints";
+    const storyPointEstimateFieldName = "storypointestimate";
+
     let storyPointsFieldId: string, sprintFieldId: string;
+    let storyPointEstimateFieldId: string;
     for (const field of fields) {
       const name = field.name.toLowerCase().replace(/ /g, "");
       if (name === storyPointFieldName) {
         storyPointsFieldId = field.id;
+      } else if (name === storyPointEstimateFieldName) {
+        storyPointEstimateFieldId = field.id;
       } else if (name === "sprints") {
         sprintFieldId = field.id;
       }
     }
-    if (storyPointsFieldId) {
-      issueFields.push({
+
+    if (storyPointsFieldId !== undefined) {
+      const storyPointsData: IssueField = {
         id: "storyPoints",
         name: "Story Points",
         jiraId: storyPointsFieldId,
-      });
+      };
+      if (storyPointEstimateFieldId !== undefined) {
+        storyPointsData.secondaryJiraId = storyPointEstimateFieldId;
+      }
+      issueFields.push(storyPointsData);
     }
-    if (sprintFieldId) {
+
+    if (sprintFieldId !== undefined) {
       issueFields.push({
         id: "sprints",
         name: "Sprint",
         jiraId: sprintFieldId,
       });
     }
+
     return null;
   }
 
@@ -253,8 +261,8 @@ export default class APIImpl implements LXPAPI {
         fieldMap[issueField.jiraId] = issueField;
       });
 
-      for (let field of fields) {
-        let fieldId = field.key || field.id;
+      for (const field of fields) {
+        const fieldId = field.key || field.id;
         if (fieldMap[fieldId]) {
           result.push(fieldMap[fieldId]);
         }
@@ -381,15 +389,23 @@ export default class APIImpl implements LXPAPI {
   }
 
   private _convertIssue(issue: JiraIssueFull, fields: IssueField[]): Issue {
-    let sprintFieldId, storyPointsFieldId;
+    let sprintFieldId, storyPointsFieldId, storyPointEstimateFieldId;
     if (fields && fields.length) {
       for (const field of fields) {
         if (field.id === "storyPoints") {
           storyPointsFieldId = field.jiraId;
+          storyPointEstimateFieldId = field.secondaryJiraId;
         } else if (field.id === "sprints") {
           sprintFieldId = field.jiraId;
         }
       }
+    }
+
+    let storyPoints: number = null;
+    if (issue.fields[storyPointsFieldId] !== undefined) {
+      storyPoints = issue.fields[storyPointsFieldId];
+    } else if (issue.fields[storyPointEstimateFieldId] !== undefined) {
+      storyPoints = issue.fields[storyPointEstimateFieldId];
     }
     return {
       id: issue.id,
@@ -406,7 +422,7 @@ export default class APIImpl implements LXPAPI {
       assignee: this._convertIssueAssignee(issue.fields.assignee),
       fixVersions: this._convertVersions(issue.fields.fixVersions || []),
       isResolved: issue.fields.resolution ? true : false,
-      storyPoints: storyPointsFieldId ? issue.fields[storyPointsFieldId] : null,
+      storyPoints,
       sprints: sprintFieldId ? issue.fields[sprintFieldId] : null,
     };
   }
@@ -414,7 +430,12 @@ export default class APIImpl implements LXPAPI {
   private _getFieldIds(fields: IssueField[]): string[] {
     let fieldIds = [];
     if (fields) {
-      fieldIds = fields.map((field) => field.jiraId);
+      fields.forEach((field) => {
+        fieldIds.push(field.jiraId);
+        if (field.secondaryJiraId !== undefined) {
+          fieldIds.push(field.secondaryJiraId);
+        }
+      });
       fieldIds = [...fieldIds, ...this.requiredFields];
     } else {
       fieldIds = this.defaultFields;

@@ -15,6 +15,7 @@ export interface IssueField {
   id: ID;
   name: string;
   jiraId: ID;
+  secondaryJiraId?: ID;
 }
 
 export interface Issue {
