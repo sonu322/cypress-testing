@@ -217,8 +217,6 @@ export default class APIImpl implements LXPAPI {
         id: "storyPoints",
         name: "Story Points",
         jiraId: storyPointsFieldId,
-        // TODO: remove later
-        secondaryJiraId: storyPointEstimateFieldId,
       };
       if (storyPointEstimateFieldId !== undefined) {
         // defined only for project-independent
@@ -238,36 +236,7 @@ export default class APIImpl implements LXPAPI {
     return null;
   }
 
-  private orderIssueFields(issueFields: IssueField[]): IssueField[] {
-    // make sure that both storypoint fields appear together
-
-    const storyPointEstimateField = issueFields.find(
-      (field) => field.id === "storyPointEstimate"
-    );
-    const storyPointEstimateIndex = issueFields.findIndex(
-      (field) => field.id === "storyPointEstimate"
-    );
-    const storyPointsField = issueFields.find(
-      (field) => field.id === "storyPoints"
-    );
-    const storyPointsIndex = issueFields.findIndex(
-      (field) => field.id === "storyPoints"
-    );
-    if (storyPointEstimateIndex > -1) {
-      // only splice array when item is found
-      issueFields.splice(storyPointEstimateIndex, 1); // 2nd parameter means remove one item only
-    }
-    if (storyPointsIndex > -1) {
-      // only splice array when item is found
-      issueFields.splice(storyPointsIndex, 1); // 2nd parameter means remove one item only
-    }
-    issueFields.push(storyPointEstimateField);
-    issueFields.push(storyPointsField);
-    return issueFields;
-  }
-
   async getIssueFields(isProjectIndependent?: boolean): Promise<IssueField[]> {
-    console.log("CALLED!!!!!!!!!!!!!!");
     try {
       const result: IssueField[] = [];
       const issueFields: IssueField[] = [
@@ -300,13 +269,7 @@ export default class APIImpl implements LXPAPI {
 
       const fields = await this.getAllIssueFields();
       await this.addCustomFields(issueFields, fields, isProjectIndependent);
-      console.log("ISSUE FIELDS!!1");
-      console.log(issueFields);
       const fieldMap = {};
-      // sort issuefields
-      // if (isProjectIndependent) {
-      //   issueFields = this.orderIssueFields(issueFields);
-      // }
       issueFields.forEach((issueField) => {
         fieldMap[issueField.jiraId] = issueField;
       });
@@ -439,8 +402,6 @@ export default class APIImpl implements LXPAPI {
   }
 
   private _convertIssue(issue: JiraIssueFull, fields: IssueField[]): Issue {
-    console.log("ISSUE TO CONVRE");
-    console.log(issue);
     let sprintFieldId, storyPointsFieldId, storyPointEstimateFieldId;
     if (fields && fields.length) {
       for (const field of fields) {
@@ -452,13 +413,6 @@ export default class APIImpl implements LXPAPI {
         }
       }
     }
-    console.log("storypoints");
-    console.log(storyPointsFieldId, storyPointEstimateFieldId);
-    console.log(
-      issue.fields[storyPointsFieldId],
-      issue.fields[storyPointEstimateFieldId]
-    );
-    console.log(issue.fields);
 
     let storyPoints: number = null;
     if (issue.fields[storyPointsFieldId] !== undefined) {
@@ -489,7 +443,6 @@ export default class APIImpl implements LXPAPI {
   private _getFieldIds(fields: IssueField[]): string[] {
     let fieldIds = [];
     if (fields) {
-      // fieldIds = fields.map((field) => field.jiraId);
       fields.forEach((field) => {
         fieldIds.push(field.jiraId);
         if (field.secondaryJiraId !== undefined) {
