@@ -181,34 +181,22 @@ export default class APIImpl implements LXPAPI {
 
   async addCustomFields(
     issueFields: IssueField[],
-    fields?: JiraIssueField[],
-    isProjectIndependent?: boolean
+    fields?: JiraIssueField[]
   ): Promise<string> {
-    const project = await this.getCurrentProject();
     fields = fields || (await this.getAllIssueFields());
-    let storyPointFieldName: string;
-    let storyPointEstimateFieldName: string; // used only for project-independent
-    if (isProjectIndependent) {
-      storyPointFieldName = "storypoints";
-      storyPointEstimateFieldName = "storypointestimate";
-    } else {
-      if (project.style === "classic") {
-        storyPointFieldName = "storypoints";
-      } else {
-        storyPointFieldName = "storypointestimate";
-      }
-    }
+    const storyPointFieldName = "storypoints";
+    const storyPointEstimateFieldName = "storypointestimate";
 
     let storyPointsFieldId: string, sprintFieldId: string;
-    let storyPointEstimateFieldId: string; // used only for project-independent
+    let storyPointEstimateFieldId: string;
     for (const field of fields) {
       const name = field.name.toLowerCase().replace(/ /g, "");
       if (name === storyPointFieldName) {
         storyPointsFieldId = field.id;
+      } else if (name === storyPointEstimateFieldName) {
+        storyPointEstimateFieldId = field.id;
       } else if (name === "sprints") {
         sprintFieldId = field.id;
-      } else if (isProjectIndependent && name === storyPointEstimateFieldName) {
-        storyPointEstimateFieldId = field.id;
       }
     }
 
@@ -219,7 +207,6 @@ export default class APIImpl implements LXPAPI {
         jiraId: storyPointsFieldId,
       };
       if (storyPointEstimateFieldId !== undefined) {
-        // defined only for project-independent
         storyPointsData.secondaryJiraId = storyPointEstimateFieldId;
       }
       issueFields.push(storyPointsData);
@@ -236,7 +223,7 @@ export default class APIImpl implements LXPAPI {
     return null;
   }
 
-  async getIssueFields(isProjectIndependent?: boolean): Promise<IssueField[]> {
+  async getIssueFields(): Promise<IssueField[]> {
     try {
       const result: IssueField[] = [];
       const issueFields: IssueField[] = [
@@ -268,7 +255,7 @@ export default class APIImpl implements LXPAPI {
       ];
 
       const fields = await this.getAllIssueFields();
-      await this.addCustomFields(issueFields, fields, isProjectIndependent);
+      await this.addCustomFields(issueFields, fields);
       const fieldMap = {};
       issueFields.forEach((issueField) => {
         fieldMap[issueField.jiraId] = issueField;

@@ -72,7 +72,7 @@ export const TracebilityReportModule = (): JSX.Element => {
         const result = await Promise.all([
           api.getIssueTypes(),
           api.getIssueLinkTypes(),
-          api.getIssueFields(true),
+          api.getIssueFields(),
         ]);
 
         const issueTypes = result[0];

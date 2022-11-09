@@ -31,7 +31,7 @@ export default class UnknownImpl implements LXPAPI {
     throw new Error("Method not implemented.");
   }
 
-  async getIssueFields(isProjectIndependent?: boolean): Promise<IssueField[]> {
+  async getIssueFields(): Promise<IssueField[]> {
     throw new Error("Method not implemented.");
   }
 
