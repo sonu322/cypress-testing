@@ -181,44 +181,96 @@ export default class APIImpl implements LXPAPI {
 
   async addCustomFields(
     issueFields: IssueField[],
-    fields?: JiraIssueField[]
+    fields?: JiraIssueField[],
+    isProjectIndependent?: boolean
   ): Promise<string> {
     const project = await this.getCurrentProject();
     fields = fields || (await this.getAllIssueFields());
-    let storyPointFieldName = "storypointestimate";
-    if (project.style === "classic") {
+    let storyPointFieldName: string;
+    let storyPointEstimateFieldName: string; // used only for project-independent
+    if (isProjectIndependent) {
       storyPointFieldName = "storypoints";
+      storyPointEstimateFieldName = "storypointestimate";
+    } else {
+      if (project.style === "classic") {
+        storyPointFieldName = "storypoints";
+      } else {
+        storyPointFieldName = "storypointestimate";
+      }
     }
+
     let storyPointsFieldId: string, sprintFieldId: string;
+    let storyPointEstimateFieldId: string; // used only for project-independent
     for (const field of fields) {
       const name = field.name.toLowerCase().replace(/ /g, "");
       if (name === storyPointFieldName) {
         storyPointsFieldId = field.id;
       } else if (name === "sprints") {
         sprintFieldId = field.id;
+      } else if (isProjectIndependent && name === storyPointEstimateFieldName) {
+        storyPointEstimateFieldId = field.id;
       }
     }
-    if (storyPointsFieldId) {
+
+    if (storyPointsFieldId !== undefined) {
       issueFields.push({
         id: "storyPoints",
         name: "Story Points",
         jiraId: storyPointsFieldId,
       });
     }
-    if (sprintFieldId) {
+
+    if (sprintFieldId !== undefined) {
       issueFields.push({
         id: "sprints",
         name: "Sprint",
         jiraId: sprintFieldId,
       });
     }
+    if (storyPointEstimateFieldId !== undefined) {
+      // defined only for project-independent
+      issueFields.push({
+        id: "storyPointEstimate",
+        name: "Story Point Estimate",
+        jiraId: storyPointEstimateFieldId,
+      });
+    }
     return null;
   }
 
-  async getIssueFields(): Promise<IssueField[]> {
+  private orderIssueFields(issueFields: IssueField[]): IssueField[] {
+    // make sure that both storypoint fields appear together
+
+    const storyPointEstimateField = issueFields.find(
+      (field) => field.id === "storyPointEstimate"
+    );
+    const storyPointEstimateIndex = issueFields.findIndex(
+      (field) => field.id === "storyPointEstimate"
+    );
+    const storyPointsField = issueFields.find(
+      (field) => field.id === "storyPoints"
+    );
+    const storyPointsIndex = issueFields.findIndex(
+      (field) => field.id === "storyPoints"
+    );
+    if (storyPointEstimateIndex > -1) {
+      // only splice array when item is found
+      issueFields.splice(storyPointEstimateIndex, 1); // 2nd parameter means remove one item only
+    }
+    if (storyPointsIndex > -1) {
+      // only splice array when item is found
+      issueFields.splice(storyPointsIndex, 1); // 2nd parameter means remove one item only
+    }
+    issueFields.push(storyPointEstimateField);
+    issueFields.push(storyPointsField);
+    return issueFields;
+  }
+
+  async getIssueFields(isProjectIndependent?: boolean): Promise<IssueField[]> {
+    console.log("CALLED!!!!!!!!!!!!!!");
     try {
       const result: IssueField[] = [];
-      const issueFields: IssueField[] = [
+      let issueFields: IssueField[] = [
         {
           id: "summary",
           name: "Summary",
@@ -247,8 +299,12 @@ export default class APIImpl implements LXPAPI {
       ];
 
       const fields = await this.getAllIssueFields();
-      await this.addCustomFields(issueFields, fields);
+      await this.addCustomFields(issueFields, fields, isProjectIndependent);
       const fieldMap = {};
+      // sort issuefields
+      // if (isProjectIndependent) {
+      //   issueFields = this.orderIssueFields(issueFields);
+      // }
       issueFields.forEach((issueField) => {
         fieldMap[issueField.jiraId] = issueField;
       });
@@ -381,15 +437,29 @@ export default class APIImpl implements LXPAPI {
   }
 
   private _convertIssue(issue: JiraIssueFull, fields: IssueField[]): Issue {
-    let sprintFieldId, storyPointsFieldId;
+    let sprintFieldId, storyPointsFieldId, storyPointEstimateFieldId;
     if (fields && fields.length) {
       for (const field of fields) {
         if (field.id === "storyPoints") {
+          console.log(field);
+          console.log(issue.fields[field.jiraId]);
           storyPointsFieldId = field.jiraId;
         } else if (field.id === "sprints") {
           sprintFieldId = field.jiraId;
+        } else if (field.id === "storyPointEstimate") {
+          storyPointEstimateFieldId = field.jiraId;
         }
       }
+    }
+    console.log("storypoints");
+    console.log(storyPointsFieldId);
+    console.log(issue.fields[storyPointsFieldId]);
+
+    let storyPoints: number = null;
+    if (issue.fields[storyPointsFieldId] !== undefined) {
+      storyPoints = issue.fields[storyPointsFieldId];
+    } else if (issue.fields[storyPointEstimateFieldId] !== undefined) {
+      storyPoints = issue.fields[storyPointEstimateFieldId];
     }
     return {
       id: issue.id,
@@ -406,7 +476,7 @@ export default class APIImpl implements LXPAPI {
       assignee: this._convertIssueAssignee(issue.fields.assignee),
       fixVersions: this._convertVersions(issue.fields.fixVersions || []),
       isResolved: issue.fields.resolution ? true : false,
-      storyPoints: storyPointsFieldId ? issue.fields[storyPointsFieldId] : null,
+      storyPoints,
       sprints: sprintFieldId ? issue.fields[sprintFieldId] : null,
     };
   }
