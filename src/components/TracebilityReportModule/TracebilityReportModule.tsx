@@ -112,25 +112,48 @@ export const TracebilityReportModule = (): JSX.Element => {
     void loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   const isExportDisabled =
     filteredIssues == null || filteredIssues.length === 0;
 
   if (areOptionsLoading) {
     return <div>Loading data ...</div>;
   }
+  const updateSelectedIssueTypeIds = (fieldIds: string[]): void => {
+    const newSelectedIds: string[] = [];
+    if (fieldIds.length > 0) {
+      issueTypes.forEach((issueType) => {
+        if (fieldIds.includes(issueType.id)) {
+          newSelectedIds.push(issueType.id);
+        }
+      });
+    }
+    setSelectedIssueTypeIds(newSelectedIds);
+  };
+  const updateSelectedLinkTypeIds = (fieldIds: string[]): void => {
+    const newSelectedIds: string[] = [];
+    if (fieldIds.length > 0) {
+      linkTypes.forEach((linkType) => {
+        if (fieldIds.includes(linkType.id)) {
+          newSelectedIds.push(linkType.id);
+        }
+      });
+    }
+    setSelectedLinkTypeIds(newSelectedIds);
+  };
   let selectedTableFieldIds: string[];
   let isIssueTypeReport: boolean;
-  let setSelectedTableFieldIds: React.Dispatch<React.SetStateAction<string[]>>;
+  let updateSelectedTableFieldIds: (fieldIds: string[]) => void;
   let tableFields: IssueType[] | IssueLinkType[];
   if (selectedTabIndex === 0) {
     selectedTableFieldIds = selectedIssueTypeIds;
     tableFields = issueTypes;
-    setSelectedTableFieldIds = setSelectedIssueTypeIds;
+    updateSelectedTableFieldIds = updateSelectedIssueTypeIds;
     isIssueTypeReport = true;
   } else {
     selectedTableFieldIds = selectedLinkTypeIds;
     tableFields = linkTypes;
-    setSelectedTableFieldIds = setSelectedLinkTypeIds;
+    updateSelectedTableFieldIds = updateSelectedLinkTypeIds;
     isIssueTypeReport = false;
   }
   const allTableFieldIds = tableFields.map((field) => field.id);
@@ -149,7 +172,7 @@ export const TracebilityReportModule = (): JSX.Element => {
             selectedIssueFieldIds={selectedIssueFieldIds}
             setSelectedIssueFieldIds={setSelectedIssueFieldIds}
             selectedTableFieldIds={emptyEqualsAllTableIds}
-            updateSelectedTableFieldIds={setSelectedTableFieldIds}
+            updateSelectedTableFieldIds={updateSelectedTableFieldIds}
             tableFields={tableFields}
             exportReport={() =>
               exportReport(
