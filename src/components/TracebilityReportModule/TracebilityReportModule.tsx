@@ -12,7 +12,10 @@ import {
 } from "../../types/api";
 import { Main } from "./Main";
 import { ErrorsList } from "../common/ErrorsList";
-import { exportReport } from "../../util/tracebilityReportsUtils";
+import {
+  exportReport,
+  orderSelectedIds,
+} from "../../util/tracebilityReportsUtils";
 import { getKeyValues } from "../../util/common";
 
 const FullWidthContainer = styled.div`
@@ -120,28 +123,12 @@ export const TracebilityReportModule = (): JSX.Element => {
     return <div>Loading data ...</div>;
   }
   const updateSelectedIssueTypeIds = (fieldIds: string[]): void => {
-    console.log("fieldIds!!!!");
-    console.log(fieldIds);
-    const newSelectedIds: string[] = [];
-    if (fieldIds.length > 0) {
-      issueTypes.forEach((issueType) => {
-        if (fieldIds.includes(issueType.id)) {
-          newSelectedIds.push(issueType.id);
-        }
-      });
-    }
+    const newSelectedIds = orderSelectedIds(fieldIds, issueTypes);
     setSelectedIssueTypeIds(newSelectedIds);
   };
   const updateSelectedLinkTypeIds = (fieldIds: string[]): void => {
-    const newSelectedIds: string[] = [];
-    if (fieldIds.length > 0) {
-      linkTypes.forEach((linkType) => {
-        if (fieldIds.includes(linkType.id)) {
-          newSelectedIds.push(linkType.id);
-        }
-      });
-    }
-    setSelectedLinkTypeIds(fieldIds);
+    const newSelectedIds = orderSelectedIds(fieldIds, linkTypes);
+    setSelectedLinkTypeIds(newSelectedIds);
   };
   let selectedTableFieldIds: string[];
   let isIssueTypeReport: boolean;

@@ -34,3 +34,10 @@ export const isPromise = (p): boolean => {
 
   return false;
 };
+
+export const getUniqueValues = <Type>(
+  arrayHavingDuplicates: Type[]
+): Type[] => {
+  const uniqeArray = [...new Set(arrayHavingDuplicates)];
+  return uniqeArray;
+};

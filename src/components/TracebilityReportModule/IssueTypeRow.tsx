@@ -7,6 +7,7 @@ import {
   IssueType,
   IssueWithSortedLinks,
 } from "../../types/api";
+import { getUniqueValues } from "../../util/common";
 import { IssueCard } from "../common/issueCard/IssueCard";
 import { EmptyCell } from "./EmptyCell";
 
@@ -68,6 +69,7 @@ export const IssueTypeRow = ({
       issuesOfType = issuesOfType.concat(newIssues);
     });
     if (issuesOfType.length > 0) {
+      issuesOfType = getUniqueValues(issuesOfType);
       const issueCards = [];
       issuesOfType.forEach((issue) => {
         const issueCard = (
