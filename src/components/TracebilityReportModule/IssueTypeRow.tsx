@@ -11,11 +11,14 @@ import { getUniqueValues } from "../../util/common";
 import { IssueCard } from "../common/issueCard/IssueCard";
 import { EmptyCell } from "./EmptyCell";
 
-const Td = styled.td`
+export const Td = styled.td`
   border: 1px solid ${colors.N40};
   padding: 8px !important;
 `;
-const MaxWidthContainer = styled.div`
+export const IssueTd = styled(Td)`
+  background-color: #091e420a;
+`;
+export const MaxWidthContainer = styled.div`
   max-width: 540px;
   height: 100%;
   display: flex;
@@ -42,11 +45,11 @@ export const IssueTypeRow = ({
 
   // push issue cell into row
   const issueCell = (
-    <Td key="issue">
+    <IssueTd key="issue">
       <MaxWidthContainer>
         <IssueCard issueData={issue} selectedIssueFieldIds={issueFieldIds} />
       </MaxWidthContainer>
-    </Td>
+    </IssueTd>
   );
   const snoCell = <Td key="sno">{rowSno}.</Td>;
 

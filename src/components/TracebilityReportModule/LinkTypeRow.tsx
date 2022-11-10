@@ -1,22 +1,8 @@
-import { colors } from "@atlaskit/theme";
 import React from "react";
-import styled from "styled-components";
 import { IssueWithSortedLinks } from "../../types/api";
 import { IssueCard } from "../common/issueCard/IssueCard";
 import { EmptyCell } from "./EmptyCell";
-
-const Td = styled.td`
-  border: 1px solid ${colors.N40};
-  padding: 8px !important;
-`;
-const MaxWidthContainer = styled.div`
-  max-width: 540px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
+import { IssueTd, MaxWidthContainer, Td } from "./IssueTypeRow";
 
 export interface Props {
   selectedTableFieldIds;
@@ -35,11 +21,11 @@ export const LinkTypeRow = ({
 
   // push issue cell into row
   const issueCell = (
-    <Td key="issue">
+    <IssueTd key="issue">
       <MaxWidthContainer>
         <IssueCard issueData={issue} selectedIssueFieldIds={issueFieldIds} />
       </MaxWidthContainer>
-    </Td>
+    </IssueTd>
   );
   const snoCell = <Td key="sno">{rowSno}.</Td>;
 

@@ -10,8 +10,17 @@ interface Props {
   selectedFieldIds: string[];
 }
 
+//TODO: sticky header will not work in IE11
 const Th = styled.th`
   border: 1px solid ${colors.N40};
+  position: -webkit-sticky; // this is for all Safari (Desktop & iOS), not for Chrome
+  position: sticky;
+  top: 0;
+  z-index: 1; // any positive value, layer order is global
+  background-color: #fff; // any bg-color to overlap
+`;
+const IssueTh = styled(Th)`
+  background-color: #091e420a;
 `;
 export const ReportHeader = ({
   fields,
@@ -28,9 +37,9 @@ export const ReportHeader = ({
     );
   });
   columnHeads.unshift(
-    <Th key={"issue"}>
+    <IssueTh key={"issue"}>
       <HeaderCell header="Issue" />
-    </Th>
+    </IssueTh>
   );
   columnHeads.unshift(
     <Th key={"sno"}>
