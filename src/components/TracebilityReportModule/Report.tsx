@@ -37,26 +37,27 @@ export const Report = ({
   issueFieldIds,
   isIssueTypeReport,
 }: Props): JSX.Element => {
+  let tableFieldIds: string[] = selectedTableFieldIds;
+  if (selectedTableFieldIds.length === 0) {
+    tableFieldIds = tableFields.map((field) => field.id);
+  }
   return (
     <Container>
       <Table>
-        <ReportHeader
-          selectedFieldIds={selectedTableFieldIds}
-          fields={tableFields}
-        />
+        <ReportHeader selectedFieldIds={tableFieldIds} fields={tableFields} />
         <tbody>
           {filteredIssues.map((issue, index) => (
             <BorderTr key={`${issue.issueKey}`}>
               {isIssueTypeReport ? (
                 <IssueTypeRow
-                  selectedTableFieldIds={selectedTableFieldIds}
+                  selectedTableFieldIds={tableFieldIds}
                   issueFieldIds={issueFieldIds}
                   issue={issue}
                   rowSno={index + 1}
                 />
               ) : (
                 <LinkTypeRow
-                  selectedTableFieldIds={selectedTableFieldIds}
+                  selectedTableFieldIds={tableFieldIds}
                   issueFieldIds={issueFieldIds}
                   issue={issue}
                   rowSno={index + 1}
