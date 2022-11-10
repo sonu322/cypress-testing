@@ -120,6 +120,8 @@ export const TracebilityReportModule = (): JSX.Element => {
     return <div>Loading data ...</div>;
   }
   const updateSelectedIssueTypeIds = (fieldIds: string[]): void => {
+    console.log("fieldIds!!!!");
+    console.log(fieldIds);
     const newSelectedIds: string[] = [];
     if (fieldIds.length > 0) {
       issueTypes.forEach((issueType) => {
@@ -139,7 +141,7 @@ export const TracebilityReportModule = (): JSX.Element => {
         }
       });
     }
-    setSelectedLinkTypeIds(newSelectedIds);
+    setSelectedLinkTypeIds(fieldIds);
   };
   let selectedTableFieldIds: string[];
   let isIssueTypeReport: boolean;
@@ -171,7 +173,7 @@ export const TracebilityReportModule = (): JSX.Element => {
             issueCardOptions={issueFields}
             selectedIssueFieldIds={selectedIssueFieldIds}
             setSelectedIssueFieldIds={setSelectedIssueFieldIds}
-            selectedTableFieldIds={emptyEqualsAllTableIds}
+            selectedTableFieldIds={selectedTableFieldIds}
             updateSelectedTableFieldIds={updateSelectedTableFieldIds}
             tableFields={tableFields}
             exportReport={() =>
