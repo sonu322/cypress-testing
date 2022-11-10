@@ -33,7 +33,7 @@ interface Props {
   selectedJQLString: string;
   setSelectedJQLString: React.Dispatch<React.SetStateAction<string>>;
   selectedTableFieldIds: string[];
-  updateSelectedTableFieldIds: React.Dispatch<React.SetStateAction<string[]>>;
+  updateSelectedTableFieldIds: (fieldIds: string[]) => void;
   tableFields: IssueType[] | IssueLinkType[];
   exportReport: () => void;
   handleNewError: (err: unknown) => void;

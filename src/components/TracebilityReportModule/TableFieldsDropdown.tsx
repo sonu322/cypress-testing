@@ -14,6 +14,7 @@ export const TableFieldsDropdown = ({
 }: Props): JSX.Element => {
   return (
     <Dropdown
+      useTitleCaseOptions
       dropdownName="Table Fields"
       options={options}
       selectedOptions={selectedOptions}

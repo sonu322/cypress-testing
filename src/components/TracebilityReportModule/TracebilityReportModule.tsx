@@ -12,7 +12,10 @@ import {
 } from "../../types/api";
 import { Main } from "./Main";
 import { ErrorsList } from "../common/ErrorsList";
-import { exportReport } from "../../util/tracebilityReportsUtils";
+import {
+  exportReport,
+  orderSelectedIds,
+} from "../../util/tracebilityReportsUtils";
 import { getKeyValues } from "../../util/common";
 
 const FullWidthContainer = styled.div`
@@ -120,21 +123,34 @@ export const TracebilityReportModule = (): JSX.Element => {
   if (areOptionsLoading) {
     return <div>Loading data ...</div>;
   }
+  const updateSelectedIssueTypeIds = (fieldIds: string[]): void => {
+    const newSelectedIds = orderSelectedIds(fieldIds, issueTypes);
+    setSelectedIssueTypeIds(newSelectedIds);
+  };
+  const updateSelectedLinkTypeIds = (fieldIds: string[]): void => {
+    const newSelectedIds = orderSelectedIds(fieldIds, linkTypes);
+    setSelectedLinkTypeIds(newSelectedIds);
+  };
   let selectedTableFieldIds: string[];
   let isIssueTypeReport: boolean;
-  let setSelectedTableFieldIds: React.Dispatch<React.SetStateAction<string[]>>;
+  let updateSelectedTableFieldIds: (fieldIds: string[]) => void;
   let tableFields: IssueType[] | IssueLinkType[];
   if (selectedTabIndex === 0) {
     selectedTableFieldIds = selectedIssueTypeIds;
     tableFields = issueTypes;
-    setSelectedTableFieldIds = setSelectedIssueTypeIds;
+    updateSelectedTableFieldIds = updateSelectedIssueTypeIds;
     isIssueTypeReport = true;
   } else {
     selectedTableFieldIds = selectedLinkTypeIds;
     tableFields = linkTypes;
-    setSelectedTableFieldIds = setSelectedLinkTypeIds;
+    updateSelectedTableFieldIds = updateSelectedLinkTypeIds;
     isIssueTypeReport = false;
   }
+  const allTableFieldIds = tableFields.map((field) => field.id);
+
+  const emptyEqualsAllTableIds =
+    selectedTableFieldIds.length > 0 ? selectedTableFieldIds : allTableFieldIds;
+
   return (
     <FullWidthContainer>
       <PageHeader
@@ -146,12 +162,12 @@ export const TracebilityReportModule = (): JSX.Element => {
             selectedIssueFieldIds={selectedIssueFieldIds}
             setSelectedIssueFieldIds={setSelectedIssueFieldIds}
             selectedTableFieldIds={selectedTableFieldIds}
-            updateSelectedTableFieldIds={setSelectedTableFieldIds}
+            updateSelectedTableFieldIds={updateSelectedTableFieldIds}
             tableFields={tableFields}
             exportReport={() =>
               exportReport(
                 tableFields,
-                selectedTableFieldIds,
+                emptyEqualsAllTableIds,
                 filteredIssues,
                 isIssueTypeReport
               )
@@ -175,7 +191,7 @@ export const TracebilityReportModule = (): JSX.Element => {
           issueFields={issueFields}
           selectedIssueFieldIds={selectedIssueFieldIds}
           tableFields={tableFields}
-          selectedTableFieldIds={selectedTableFieldIds}
+          selectedTableFieldIds={emptyEqualsAllTableIds}
           filteredIssues={filteredIssues}
           setFilteredIssues={setFilteredIssues}
           areIssuesLoading={areIssuesLoading}

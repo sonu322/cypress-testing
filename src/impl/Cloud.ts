@@ -111,7 +111,7 @@ export default class APIImpl implements LXPAPI {
       const name = issueType.name.toLowerCase().replace(/-/g, "");
       return {
         id: name,
-        name,
+        name: issueType.name,
         description: issueType.description,
         iconUrl: issueType.iconUrl,
       };
@@ -128,7 +128,7 @@ export default class APIImpl implements LXPAPI {
       items.forEach((issueType) => {
         const name = issueType.name.toLowerCase().replace(/-/g, "");
         const foundType = uniqueIssueTypes.find(
-          (uniqueIssueType) => uniqueIssueType.name === name
+          (uniqueIssueType) => uniqueIssueType.id === name
         );
         if (foundType === undefined) {
           uniqueIssueTypes.push(this._convertIssueType(issueType));

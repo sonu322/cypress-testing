@@ -4,7 +4,7 @@ import DropdownMenu, {
   DropdownItemCheckbox,
 } from "@atlaskit/dropdown-menu";
 import { IssueField } from "../../types/api";
-
+import { toTitleCase } from "../../util";
 interface Props {
   selectedOptions: string[];
   dropdownName: string;
@@ -13,6 +13,7 @@ interface Props {
     id: string;
     name: string;
   }>;
+  useTitleCaseOptions?: boolean;
 }
 
 export const Dropdown = ({
@@ -20,6 +21,7 @@ export const Dropdown = ({
   dropdownName,
   updateSelectedOptions,
   options,
+  useTitleCaseOptions,
 }: Props): JSX.Element => {
   const handleOptionClick = (id: string): void => {
     let updatedList: any[] = [];
@@ -40,7 +42,7 @@ export const Dropdown = ({
             isSelected={selectedOptions.includes(option.id)}
             onClick={() => handleOptionClick(option.id)}
           >
-            {option.name}
+            {useTitleCaseOptions ? toTitleCase(option.name) : option.name}
           </DropdownItemCheckbox>
         ))}
       </DropdownItemCheckboxGroup>

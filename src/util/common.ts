@@ -26,15 +26,23 @@ export const getKeyMap = (
   return newMap;
 };
 
-
 export const isPromise = (p): boolean => {
-  if (typeof p === 'object' && typeof p.then === 'function') {
+  if (typeof p === "object" && typeof p.then === "function") {
     return true;
   }
 
   return false;
 };
 
+export const getUniqueValues = <Type>(
+  arrayHavingDuplicates: Type[]
+): Type[] => {
+  const uniqeArray = [...new Set(arrayHavingDuplicates)];
+  return uniqeArray;
+};
 export const getScreenHeight = (): number => {
-  return Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+  return Math.max(
+    document.documentElement.clientHeight,
+    window.innerHeight || 0
+  );
 };
