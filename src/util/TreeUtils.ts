@@ -125,11 +125,21 @@ export default class TreeUtils {
     filter: IssueTreeFilter,
     parentIssueId: ID
   ): boolean {
-    if (!filter.issueTypes.includes(linkedIssue.type.id)) {
+
+    if (
+      filter.issueTypes.length > 0 &&
+      !filter.issueTypes.includes(linkedIssue.type.id)
+    ) {
       return false;
-    } else if (!filter.linkTypes.includes(issueLink.linkTypeId)) {
+    } else if (
+      filter.linkTypes.length > 0 &&
+      !filter.linkTypes.includes(issueLink.linkTypeId)
+    ) {
       return false;
-    } else if (!filter.priorities.includes(linkedIssue.priority.id)) {
+    } else if (
+      filter.priorities.length > 0 &&
+      !filter.priorities.includes(linkedIssue.priority.id)
+    ) {
       return false;
     } else if (parentIssueId && parentIssueId === linkedIssue.id) {
       return false;
