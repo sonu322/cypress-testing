@@ -133,6 +133,11 @@ export const TracebilityReportModule = (): JSX.Element => {
     setSelectedTableFieldIds = setSelectedLinkTypeIds;
     isIssueTypeReport = false;
   }
+  const allTableFieldIds = tableFields.map((field) => field.id);
+
+  const emptyEqualsAllTableIds =
+    selectedTableFieldIds.length > 0 ? selectedTableFieldIds : allTableFieldIds;
+
   return (
     <FullWidthContainer>
       <PageHeader
@@ -143,13 +148,13 @@ export const TracebilityReportModule = (): JSX.Element => {
             issueCardOptions={issueFields}
             selectedIssueFieldIds={selectedIssueFieldIds}
             setSelectedIssueFieldIds={setSelectedIssueFieldIds}
-            selectedTableFieldIds={selectedTableFieldIds}
+            selectedTableFieldIds={emptyEqualsAllTableIds}
             updateSelectedTableFieldIds={setSelectedTableFieldIds}
             tableFields={tableFields}
             exportReport={() =>
               exportReport(
                 tableFields,
-                selectedTableFieldIds,
+                emptyEqualsAllTableIds,
                 filteredIssues,
                 isIssueTypeReport
               )
@@ -173,7 +178,7 @@ export const TracebilityReportModule = (): JSX.Element => {
           issueFields={issueFields}
           selectedIssueFieldIds={selectedIssueFieldIds}
           tableFields={tableFields}
-          selectedTableFieldIds={selectedTableFieldIds}
+          selectedTableFieldIds={emptyEqualsAllTableIds}
           filteredIssues={filteredIssues}
           setFilteredIssues={setFilteredIssues}
           areIssuesLoading={areIssuesLoading}
