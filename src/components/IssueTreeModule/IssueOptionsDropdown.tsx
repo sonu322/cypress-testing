@@ -12,6 +12,7 @@ export const IssueOptionsDropdown = ({
   };
   return (
     <Dropdown
+      useTitleCaseOptions
       key={keyName}
       dropdownName={dropdownName}
       options={options}
