@@ -14,14 +14,17 @@ import {
 const Container = styled.div`
   width: 100%;
 `;
+const FullHeightContainer = styled.div`
+  height: 20rem;
+`;
 const TableContainer = styled.div`
   display: flex;
-  margin-top: 16px;
 `;
 const MarginAddedContainer = styled.div`
-  margin-top: 16px;
+  margin-top: 8px;
+  margin-bottom: 8px;
 `;
-const DEFAULT_ROWS_PER_PAGE = 4;
+const DEFAULT_ROWS_PER_PAGE = 20;
 const START_INDEX = 0;
 
 interface Props {
@@ -96,16 +99,16 @@ export const Main = ({
 
   if (areIssuesLoading) {
     return (
-      <Container>
+      <FullHeightContainer>
         <Spinner size="medium" />
-      </Container>
+      </FullHeightContainer>
     );
   } else if (Boolean(jqlString) && filteredIssues != null) {
     if (filteredIssues.length === 0) {
       return (
-        <Container>
+        <FullHeightContainer>
           <em>No matching issues</em>
-        </Container>
+        </FullHeightContainer>
       );
     }
 
@@ -133,9 +136,9 @@ export const Main = ({
     );
   } else {
     return (
-      <Container>
+      <FullHeightContainer>
         <em>Please select filter to view report</em>
-      </Container>
+      </FullHeightContainer>
     );
   }
 };

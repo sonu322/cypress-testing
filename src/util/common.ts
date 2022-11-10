@@ -34,3 +34,7 @@ export const isPromise = (p): boolean => {
 
   return false;
 };
+
+export const getScreenHeight = (): number => {
+  return Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+};

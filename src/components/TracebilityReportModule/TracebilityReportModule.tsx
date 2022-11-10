@@ -17,9 +17,10 @@ import { getKeyValues } from "../../util/common";
 
 const FullWidthContainer = styled.div`
   width: 100%;
-  height: 100%;
+  // height: 100%;
   display: flex;
   flex-direction: column;
+  margin-top: -16px;
 `;
 const GrowContainer = styled.div`
   flex-grow: 1;
@@ -112,6 +113,7 @@ export const TracebilityReportModule = (): JSX.Element => {
     void loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   const isExportDisabled =
     filteredIssues == null || filteredIssues.length === 0;
 

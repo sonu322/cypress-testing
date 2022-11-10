@@ -19,10 +19,12 @@ const MainBar = styled.div`
   border-radius: 3px;
   display: flex;
   justify-content: space-between;
+  margin-top: 8px;
 `;
 const FlexContainer = styled.div`
   display: flex;
   gap: 8px;
+  line-height: 32px;
 `;
 
 interface Props {
@@ -61,7 +63,7 @@ export const Toolbar = ({
   selectedTabIndex,
 }: Props): JSX.Element => {
   return (
-    <div>
+    <div style={{marginTop: '-16px', marginBottom: '-8px'}}>
       <TabGroup
         handleOptionSelect={handleTabOptionSelect}
         id={viewTabsId}
@@ -75,22 +77,23 @@ export const Toolbar = ({
             setSelectedFilterId={setSelectedJQLString}
             handleNewError={handleNewError}
           />
+          OR
           <JQLEditor
             selectedFilterId={selectedJQLString}
             setSelectedFilterId={setSelectedJQLString}
           />
 
-          {Boolean(tableFields) && (
-            <TableFieldsDropdown
-              selectedOptions={selectedTableFieldIds}
-              updateSelectedOptionIds={updateSelectedTableFieldIds}
-              options={tableFields}
-            />
-          )}
         </FlexContainer>
 
         <div>
           <ButtonGroup>
+            {Boolean(tableFields) && (
+              <TableFieldsDropdown
+                selectedOptions={selectedTableFieldIds}
+                updateSelectedOptionIds={updateSelectedTableFieldIds}
+                options={tableFields}
+              />
+            )}
             <Dropdown
               dropdownName={"Issue Card Fields"}
               options={issueCardOptions}
