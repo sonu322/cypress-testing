@@ -4,7 +4,7 @@ import Banner from "@atlaskit/banner";
 import styled from "styled-components";
 
 const Container = styled.div`
-  margin-bottom: 24px;
+  margin-bottom: 8px;
   display: flex;
   flex-direction: column;
   gap: 8px;
