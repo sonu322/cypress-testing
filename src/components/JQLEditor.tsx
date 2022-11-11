@@ -4,7 +4,7 @@ import Button from "@atlaskit/button";
 const _AP: any = AP;
 const options = {
   header: "Filter Issues with JQL Query",
-  descriptionText: "Enter query below",
+  descriptionText: "Use a new JQL query to search issues",
   submitText: "Use filter",
   cancelText: "Cancel",
   jql: "order by status ASC",
@@ -28,7 +28,7 @@ export const JQLEditor = ({
     _AP.jira.showJQLEditor(options, callback);
   };
   return (
-    <Button appearance="primary" onClick={openJQLEditor}>
+    <Button appearance="default" onClick={openJQLEditor}>
       Use JQL Editor
     </Button>
   );
