@@ -14,12 +14,10 @@ import { IssueField, IssueLinkType, IssueType } from "../../types/api";
 import { TabGroup } from "./TabGroup";
 import { SelectedType } from "@atlaskit/tabs/types";
 const MainBar = styled.div`
-  // background-color: ${colors.N20}
   padding: 8px;
   border-radius: 3px;
   display: flex;
   justify-content: space-between;
-  // margin-top: 8px;
   border-bottom: 2px solid ${colors.N30};
 `;
 const FlexContainer = styled.div`
