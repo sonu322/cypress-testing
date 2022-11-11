@@ -33,7 +33,7 @@ export const Dropdown = ({
   };
 
   return (
-    <DropdownMenu trigger={dropdownName}>
+    <DropdownMenu trigger={dropdownName} placement="bottom-start">
       <DropdownItemCheckboxGroup id={dropdownName + "-options"}>
         {options?.map((option) => (
           <DropdownItemCheckbox

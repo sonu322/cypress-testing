@@ -22,7 +22,7 @@ export const DropdownSingleSelect = ({
     <DropdownMenu
       triggerType="button"
       trigger={dropdownName}
-      position="bottom right"
+      placement={"bottom-start"}
       isCompact={true}
     >
       <DropdownItemGroup>
