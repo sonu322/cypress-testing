@@ -64,7 +64,6 @@ export const IssueCard = ({
   const issueTypeInfo = issueData.type;
   const assigneeInfo = issueData.assignee;
   const statusInfo = issueData.status;
-  console.log(statusInfo);
   // component to render
   return (
     <Container>

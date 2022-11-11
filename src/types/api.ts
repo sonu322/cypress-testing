@@ -76,7 +76,6 @@ export interface IssueStatus extends IssueOption {
   iconUrl: string;
   statusColor: string;
   description: string;
-  statusCategoryKey: string;
 }
 
 export interface IssueType extends IssueOption {
