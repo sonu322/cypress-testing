@@ -50,24 +50,29 @@ export const getScreenHeight = (): number => {
 
 export const getStatusAppearance = (status: IssueStatus): ThemeAppearance => {
   const known: ThemeAppearance[] = [
-    "default",
-    "inprogress",
-    "moved",
-    "new",
-    "removed",
-    "success",
+    "default", // gray
+    "inprogress", // blue
+    "moved", // yellow
+    "new", // purple
+    "removed", // red
+    "success", // green
   ];
-  // let color = category.colorName;
+
   let type: ThemeAppearance = "default";
   const foundType = known.find((type) => {
-    console.log(type);
-    console.log(status.name.replace(/ /g, ""));
     return type === status.name.toLowerCase().replace(/ /g, "");
   });
+  // a/c api response color, "yellow" has status category name: indeterminate.
+  // status category is "indeterminate" for in progress issues
+  // but, "inprogress" is a known type, the type "inprogress" is returned. When assigned to Lozenge, it will give blue color.
   if (foundType !== undefined) {
     return foundType;
   } else {
     const { statusColor } = status;
+    // a/c api response color, "blue-gray" has status category name: new -> gives purple color
+    // but, it is not included here. the type returned will by default(color gray)
+    // status category is new for "todo" issues.
+
     if (statusColor.includes("gray")) {
       type = "default";
     } else if (statusColor.includes("green")) {
