@@ -15,7 +15,7 @@ const Container = styled.div`
   width: 100%;
 `;
 const FullHeightContainer = styled.div`
-  height: 20rem;
+  
 `;
 const TableContainer = styled.div`
   display: flex;
@@ -41,6 +41,7 @@ interface Props {
     React.SetStateAction<IssueWithSortedLinks[]>
   >;
   isIssueTypeReport: boolean;
+  errors: any[];
 }
 
 export const Main = ({
@@ -55,6 +56,7 @@ export const Main = ({
   setAreIssuesLoading,
   setFilteredIssues,
   isIssueTypeReport,
+  errors
 }: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
@@ -121,6 +123,7 @@ export const Main = ({
             tableFields={tableFields}
             selectedTableFieldIds={selectedTableFieldIds}
             isIssueTypeReport={isIssueTypeReport}
+            errors={errors}
           />
         </TableContainer>
         <MarginAddedContainer>

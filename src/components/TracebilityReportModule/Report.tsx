@@ -32,6 +32,7 @@ interface Props {
   selectedTableFieldIds: string[];
   issueFieldIds: string[];
   isIssueTypeReport: boolean;
+  errors: any[];
 }
 export const Report = ({
   filteredIssues,
@@ -39,25 +40,33 @@ export const Report = ({
   selectedTableFieldIds,
   issueFieldIds,
   isIssueTypeReport,
+  errors
 }: Props): JSX.Element => {
   
   //TODO: probably we may improve this calculation
-  const calculateTableHeight = () => {
+  const calculateTableHeight = (errors) => {
     const headingHeight = 40 + 8, //8: margin top
       toolbarHeight = 94 + 8, //8: table top margin
-      footerHeight = 32 + 8 + 8;//more button 8: margin top and bottom
-    return getScreenHeight() - headingHeight - toolbarHeight - footerHeight - 2;
+      footerHeight = 32 + 8 + 8,//more button 8: margin top and bottom
+      errorsHeight = errors && errors.length ? ((52 + 8) * errors.length) : 0;
+    const finalHeight = getScreenHeight() - headingHeight - toolbarHeight - footerHeight - errorsHeight - 2;
+    return finalHeight < 200 ? 200 : finalHeight;
   };
 
-  const [tableHeight, setTableHeight] = useState(calculateTableHeight());
+  const [tableHeight, setTableHeight] = useState(calculateTableHeight(errors));
   
-  //TODO: on window resize, we need to recalculate the table height, but somehow it is not working
-  // useEffect(() => {
-  //   window.onresize = function(event) {
-  //     const height = calculateTableHeight();
-  //     setTableHeight(height);
-  //   };
-  // }, []);
+  useEffect(() => {
+    const resizeHandler = () => {
+      setTableHeight((prevHeight) => {
+        //@ts-ignore
+        AP.sizeToParent();
+        return calculateTableHeight(errors);
+      });
+    };
+    window.addEventListener("resize", resizeHandler);
+    resizeHandler();
+    return () => window.removeEventListener("resize", resizeHandler);
+  }, [errors]);
 
   return (
     <Container style={{maxHeight: tableHeight}}>

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { APIContext } from "../../context/api";
 import PageHeader from "@atlaskit/page-header";
@@ -197,6 +197,7 @@ export const TracebilityReportModule = (): JSX.Element => {
           areIssuesLoading={areIssuesLoading}
           setAreIssuesLoading={setAreIssuesLoading}
           isIssueTypeReport={selectedTabIndex === 0}
+          errors={errors}
         />
       </GrowContainer>
     </FullWidthContainer>

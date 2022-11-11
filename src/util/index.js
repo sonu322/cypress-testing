@@ -30,9 +30,6 @@ export const csv = function (rows, header) {
 };
 export const reportCsv = function (classifieds, links) {
   links.unshift("subtasks");
-  console.log("from report csv");
-  console.log(classifieds);
-  console.log(links);
   let content = "";
   let headerLinks = ["Issue", "Parent"];
   links.forEach((link) => {
@@ -42,7 +39,6 @@ export const reportCsv = function (classifieds, links) {
   header = header += "\n";
   // if (header) {
   content += header;
-  console.log(header);
   // } else {
   //   content += `"","","","","","",""\n`;
   // }
@@ -53,8 +49,6 @@ export const reportCsv = function (classifieds, links) {
       let item = [];
       if (classified[link] && classified[link].length > 0) {
         classified[link].forEach((issue) => {
-          console.log("issue");
-          console.log(issue);
           if (issue && issue.key) {
             item.push(issue.key);
           } else {
