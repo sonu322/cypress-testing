@@ -314,6 +314,7 @@ export default class APIImpl implements LXPAPI {
         description: status.description,
         iconUrl: status.iconUrl,
         statusColor: status.statusCategory?.colorName,
+        statusCategoryKey: status.statusCategory?.key,
       };
     }
     return null;

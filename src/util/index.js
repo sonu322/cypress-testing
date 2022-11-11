@@ -106,28 +106,28 @@ export const download = (type, content) => {
   }
 };
 
-export const getStatusAppearance = (category) => {
-  const know = ["default", "inprogress", "moved", "new", "removed", "success"];
-  let color = category.colorName;
-  let type = "default";
-  if (know.includes(category.key)) {
-    type = category.key;
-  } else {
-    if (color.includes("gray")) {
-      type = "default";
-    } else if (color.includes("green")) {
-      type = "success";
-    } else if (color.includes("blue")) {
-      type = "inprogress";
-    } else if (color.includes("red")) {
-      type = "removed";
-    } else if (color.includes("yellow")) {
-      type = "moved";
-    }
-  }
+// export const getStatusAppearance = (category) => {
+//   const know = ["default", "inprogress", "moved", "new", "removed", "success"];
+//   let color = category.colorName;
+//   let type = "default";
+//   if (know.includes(category.key)) {
+//     type = category.key;
+//   } else {
+//     if (color.includes("gray")) {
+//       type = "default";
+//     } else if (color.includes("green")) {
+//       type = "success";
+//     } else if (color.includes("blue")) {
+//       type = "inprogress";
+//     } else if (color.includes("red")) {
+//       type = "removed";
+//     } else if (color.includes("yellow")) {
+//       type = "moved";
+//     }
+//   }
 
-  return type;
-};
+//   return type;
+// };
 export const getQueryParam = (paramName) => {
   const searcher = new URLSearchParams(location.search);
   const paramValue = searcher.get(paramName);
