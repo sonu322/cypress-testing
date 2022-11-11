@@ -16,7 +16,7 @@ export const Td = styled.td`
   padding: 8px !important;
 `;
 export const IssueTd = styled(Td)`
-  background-color: #091e420a;
+  background-color: ${colors.N20A};
 `;
 export const MaxWidthContainer = styled.div`
   max-width: 540px;
