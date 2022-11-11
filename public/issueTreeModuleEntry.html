@@ -12,20 +12,29 @@
   <style>
     html,
     body {
-      overflow-y: hidden;
+      height: 100%;
+      background-color: yellow;
     }
 
     #app {
-      height: 100%;
       min-height: 20rem;
-      padding: 2px;
+    }
+    .full {
+      /* min-height: 50rem; */
+      background-color: pink;
+
     }
   </style>
 
-  <body>
-    <section class="ac-content">
+  <body class="ac-content">
+    <div class="ac-content full">
       <div id="app">Please wait...</div>
-    </section>
+    </div>
+    <!-- <script>
+      AP.resize('100%','100%');
+
+AP.sizeToParent();
+    </script> -->
     <script src="../src/IssueLinksHierarchyCloud.tsx"></script>
   </body>
 </html>
