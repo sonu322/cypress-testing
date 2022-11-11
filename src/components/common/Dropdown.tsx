@@ -31,8 +31,9 @@ export const Dropdown = ({
     }
     updateSelectedOptions(updatedList);
   };
+
   return (
-    <DropdownMenu trigger={dropdownName} shouldFlip={false} placement="bottom">
+    <DropdownMenu trigger={dropdownName} placement="bottom-start">
       <DropdownItemCheckboxGroup id={dropdownName + "-options"}>
         {options?.map((option) => (
           <DropdownItemCheckbox
