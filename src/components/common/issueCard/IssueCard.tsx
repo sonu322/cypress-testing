@@ -38,11 +38,12 @@ const CardFooter = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-between;
+  gap: 4px;
 `;
 const FooterSideContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 `;
 
 export interface Props {
@@ -86,12 +87,12 @@ export const IssueCard = ({
           )}
         </FooterSideContainer>
         <FooterSideContainer>
+          {selectedMap["status"] && <StatusText statusInfo={statusInfo} />}
           <IssueKey
             isResolved={issueData.isResolved}
             issueKey={issueData.issueKey}
           />
           {selectedMap["assignee"] && <AssigneeInfo content={assigneeInfo} />}
-          {selectedMap["status"] && <StatusText statusInfo={statusInfo} />}
         </FooterSideContainer>
       </CardFooter>
     </Container>

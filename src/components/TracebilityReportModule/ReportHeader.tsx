@@ -20,7 +20,7 @@ const Th = styled.th`
   background-color: #fff; // any bg-color to overlap
 `;
 const IssueTh = styled(Th)`
-  background-color: #091e420a;
+  background-color: ${colors.N20};
 `;
 export const ReportHeader = ({
   fields,
