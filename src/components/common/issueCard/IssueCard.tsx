@@ -9,6 +9,7 @@ import { IssueKey } from "./IssueKey";
 import { AssigneeInfo } from "./AssigneeInfo";
 import { IssueSummary } from "./IssueSummary";
 import { Issue } from "../../../types/api";
+import { StatusText } from "./StatusInfo";
 
 const Container = styled.div`
   background-color: #fff;
@@ -62,7 +63,7 @@ export const IssueCard = ({
   const priorityInfo = issueData.priority;
   const issueTypeInfo = issueData.type;
   const assigneeInfo = issueData.assignee;
-
+  const statusInfo = issueData.status;
   // component to render
   return (
     <Container>
@@ -90,6 +91,7 @@ export const IssueCard = ({
             issueKey={issueData.issueKey}
           />
           {selectedMap["assignee"] && <AssigneeInfo content={assigneeInfo} />}
+          {selectedMap["status"] && <StatusText statusInfo={statusInfo} />}
         </FooterSideContainer>
       </CardFooter>
     </Container>
