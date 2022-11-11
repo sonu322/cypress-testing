@@ -3,9 +3,7 @@ import DropdownMenu, {
   DropdownItemCheckboxGroup,
   DropdownItemCheckbox,
 } from "@atlaskit/dropdown-menu";
-import { IssueField } from "../../types/api";
 import { toTitleCase } from "../../util";
-import styled from "styled-components";
 interface Props {
   selectedOptions: string[];
   dropdownName: string;
@@ -16,14 +14,6 @@ interface Props {
   }>;
   useTitleCaseOptions?: boolean;
 }
-
-const StyledDropdownItemCheckboxGroup = styled(DropdownItemCheckboxGroup)`
-  // padding-bottom: 16px;
-  // padding-top: 16px;
-`;
-const StyledDropdownMenu = styled(DropdownMenu)`
-  // max-height: 2rem;
-`;
 
 export const Dropdown = ({
   selectedOptions,
@@ -44,7 +34,7 @@ export const Dropdown = ({
 
   return (
     <DropdownMenu trigger={dropdownName}>
-      <StyledDropdownItemCheckboxGroup id={dropdownName + "-options"}>
+      <DropdownItemCheckboxGroup id={dropdownName + "-options"}>
         {options?.map((option) => (
           <DropdownItemCheckbox
             key={option.id}
@@ -55,7 +45,7 @@ export const Dropdown = ({
             {useTitleCaseOptions ? toTitleCase(option.name) : option.name}
           </DropdownItemCheckbox>
         ))}
-      </StyledDropdownItemCheckboxGroup>
+      </DropdownItemCheckboxGroup>
     </DropdownMenu>
   );
 };
