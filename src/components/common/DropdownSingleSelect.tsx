@@ -22,7 +22,6 @@ export const DropdownSingleSelect = ({
     <DropdownMenu
       triggerType="button"
       trigger={dropdownName}
-      shouldFlip={false}
       position="bottom right"
       isCompact={true}
     >
