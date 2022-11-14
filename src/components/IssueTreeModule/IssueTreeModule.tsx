@@ -5,8 +5,9 @@ import { ErrorsList } from "../common/ErrorsList";
 import TreeUtils from "../../util/TreeUtils";
 import { APIContext } from "../../context/api";
 import { IssueField, IssueTreeFilter } from "../../types/api";
-
+import { useTranslation } from "react-i18next";
 export const IssueTreeModule = () => {
+  const { t, i18n } = useTranslation();
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
 
@@ -71,11 +72,13 @@ export const IssueTreeModule = () => {
       return newFilter;
     });
   };
+  // console.log("LOGGED!!!");
+  // console.log(Locale.getDefault().getLanguage());
 
   const filterDropdowns = [
-    { key: "priorities", label: "Priority" },
-    { key: "linkTypes", label: "Link type" },
-    { key: "issueTypes", label: "Issue type" },
+    { key: "priorities", label: t("Priority") },
+    { key: "linkTypes", label: t("Link type") },
+    { key: "issueTypes", label: t("Issue type") },
   ];
 
   return isLoading ? (

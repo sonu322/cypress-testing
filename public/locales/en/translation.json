@@ -1,0 +1,8 @@
+{
+  "title": "Link Explorer",
+  "treeFilters": {
+    "issueType": "Issue Type",
+    "linkType": "Link Type",
+    "priority": "Priority"
+  }
+}
