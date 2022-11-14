@@ -76,9 +76,9 @@ export const IssueTreeModule = () => {
   // console.log(Locale.getDefault().getLanguage());
 
   const filterDropdowns = [
-    { key: "priorities", label: t("treeFilters.priority") },
-    { key: "linkTypes", label: t("treeFilters.linkType") },
-    { key: "issueTypes", label: t("treeFilters.issueType") },
+    { key: "priorities", label: t("lxp.common.issue.priority") },
+    { key: "linkTypes", label: t("lxp.toolbar.link-type.text") },
+    { key: "issueTypes", label: t("lxp.toolbar.issue-type.text") },
   ];
 
   return isLoading ? (
