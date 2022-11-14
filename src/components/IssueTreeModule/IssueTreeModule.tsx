@@ -76,9 +76,9 @@ export const IssueTreeModule = () => {
   // console.log(Locale.getDefault().getLanguage());
 
   const filterDropdowns = [
-    { key: "priorities", label: t("Priority") },
-    { key: "linkTypes", label: t("Link type") },
-    { key: "issueTypes", label: t("Issue type") },
+    { key: "priorities", label: t("treeFilters.priority") },
+    { key: "linkTypes", label: t("treeFilters.linkType") },
+    { key: "issueTypes", label: t("treeFilters.issueType") },
   ];
 
   return isLoading ? (
