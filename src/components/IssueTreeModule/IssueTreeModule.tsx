@@ -82,7 +82,7 @@ export const IssueTreeModule = () => {
   ];
 
   return isLoading ? (
-    <div>Loading data ...</div>
+    <div>{t("lxp.common.loading")}.</div>
   ) : (
     <div>
       {errors && errors.length > 0 && <ErrorsList errors={errors} />}

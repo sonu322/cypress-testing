@@ -4,7 +4,10 @@
   "link-issue-tab-panel.description": "The Link Issue Tab Panel Plugin",
   // new
   "lxp.common.get-help": "Get Help",
-  "lxp.common.loading": "Loading...",
+  // new
+  "lxp.common.loading": "Loading data...",
+  //new
+  "lxp.common.please-wait": "Please wait...",
   "lxp.common.none": "None",
   "lxp.common.loading-error": "Error Loading Issue",
   "lxp.common.issue.unresolved": "Unresolved",
