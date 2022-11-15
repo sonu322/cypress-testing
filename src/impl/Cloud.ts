@@ -493,7 +493,11 @@ export default class APIImpl implements LXPAPI {
       return { data: result, total };
     } catch (error) {
       console.error(error);
-      throw new Error("Error in searching issues: " + error.message);
+      let finalMessage = i18n.t("lxp.api.search-issues-error");
+      if (error.message) {
+        finalMessage = finalMessage.concat(`: + ${error.message}`);
+      }
+      throw new Error(finalMessage);
     }
   }
 
@@ -575,7 +579,7 @@ export default class APIImpl implements LXPAPI {
       );
     } catch (error) {
       console.error(error);
-      let message = "Error in fetching the issue filters ";
+      let message = i18n.t("lxp.api.filters-error");
       if (error.message) {
         message += " - " + error.message;
       }

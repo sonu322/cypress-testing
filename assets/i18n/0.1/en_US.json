@@ -160,5 +160,11 @@
 
   // new
   "lxp.api.issue-by-id-error-main": "Error Loading Issue",
-  "lxp.api.issue-by-id-error-prefix": "Error in fetching the issue"
+  "lxp.api.issue-by-id-error-prefix": "Error in fetching the issue",
+
+  // new
+  "lxp.api.search-issues-error": "Error in searching issues",
+
+  // new
+  "lxp.api.filters-error": "Error in fetching the issue filters"
 }
