@@ -169,5 +169,8 @@
   "lxp.api.filters-error": "Error in fetching the issue filters",
 
   // new
-  "lxp.api.project-error": "Project not found."
+  "lxp.api.project-error": "Project not found.",
+
+  // new
+  "lxp.jira.current-issuekey-error": "Error in fetching the current issue key."
 }
