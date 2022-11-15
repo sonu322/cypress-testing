@@ -157,7 +157,12 @@
   "traceability-report.toolbar.jqlDialogOptions.cancelText": "Cancel",
   "traceability-report.toolbar.jqlDialogOptions.jql": "order by status ASC",
   // new
-  "tracebility-report.toolbar.tableFields.name": "Table Fields",
+  "traceability-report.toolbar.tableFields.name": "Table Fields",
+
+  // new
+  "traceability-report.load-more-issues-button.name": "Load more issues",
+  // new
+  "traceability-report.select-filter.text": "Please select filter to view report",
 
   "lxp.common.issue.key": "Issue Key",
   "lxp.common.issue.links": "Issue Links",

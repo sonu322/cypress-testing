@@ -445,7 +445,6 @@ export default class APIImpl implements LXPAPI {
   }
 
   async getIssueById(fields: IssueField[], issueId?: string): Promise<Issue> {
-    console.log("CALLED");
     try {
       issueId = issueId || (await this.getCurrentIssueId());
       const fieldIds = this._getFieldIds(fields);
@@ -457,7 +456,6 @@ export default class APIImpl implements LXPAPI {
 
       return this._convertIssue(issue, fields);
     } catch (error) {
-      console.log("logging error");
       console.error(error);
       const prefix = i18n.t("lxp.api.issue-by-id-error-prefix");
 

@@ -17,7 +17,7 @@ export const TableFieldsDropdown = ({
   return (
     <Dropdown
       useTitleCaseOptions
-      dropdownName={t("tracebility-report.toolbar.tableFields.name")}
+      dropdownName={t("traceability-report.toolbar.tableFields.name")}
       options={options}
       selectedOptions={selectedOptions}
       updateSelectedOptions={updateSelectedOptionIds}

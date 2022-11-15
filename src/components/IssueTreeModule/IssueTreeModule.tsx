@@ -72,8 +72,6 @@ export const IssueTreeModule = () => {
       return newFilter;
     });
   };
-  // console.log("LOGGED!!!");
-  // console.log(Locale.getDefault().getLanguage());
 
   const filterDropdowns = [
     { key: "priorities", label: t("lxp.common.issue.priority") },
