@@ -144,7 +144,7 @@ export const TracebilityReportModule = (): JSX.Element => {
 
   const emptyEqualsAllTableIds =
     selectedTableFieldIds.length > 0 ? selectedTableFieldIds : allTableFieldIds;
-
+  const title = t("traceability-report.name");
   return (
     <FullWidthContainer>
       <PageHeader
@@ -175,7 +175,7 @@ export const TracebilityReportModule = (): JSX.Element => {
           />
         }
       >
-        Links Explorer Traceability and Reports
+        {title}
       </PageHeader>
       {errors.length > 0 && <ErrorsList errors={errors} />}
       <GrowContainer>

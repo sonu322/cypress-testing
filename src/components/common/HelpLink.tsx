@@ -8,12 +8,12 @@ interface Props {
 }
 export const HelpLink = ({ href, description }: Props): JSX.Element => {
   return (
-    <TooltipContainer content={description ?? "get help"}>
+    <TooltipContainer content={description}>
       <Button
         appearance="default"
         target="_blank"
         href={href}
-        iconBefore={<QuestionIcon label="" />}
+        iconBefore={<QuestionIcon label={description} />}
       />
     </TooltipContainer>
   );
