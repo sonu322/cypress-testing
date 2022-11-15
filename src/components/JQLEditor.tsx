@@ -1,6 +1,6 @@
 import React from "react";
 import Button from "@atlaskit/button";
-import { jqlDialogOptions } from "../constants/tracebilityReport";
+import { jqlDialogOptions } from "../constants/traceabilityReport";
 // @ts-expect-error
 const _AP: any = AP;
 

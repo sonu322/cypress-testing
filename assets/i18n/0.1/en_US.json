@@ -150,12 +150,14 @@
   "traceability-report.toolbar.or": "OR",
   // new
   "traceability-report.toolbar.filterdropdown.name": "Select filter",
-
-  "tracebility-report.toolbar.jqlDialogOptions.header": "Filter Issues with JQL Query",
-  "tracebility-report.toolbar.jqlDialogOptions.descriptionText": "Use a new JQL query to search issues",
-  "tracebility-report.toolbar.jqlDialogOptions.submitText": "Use filter",
-  "tracebility-report.toolbar.jqlDialogOptions.cancelText": "Cancel",
-  "tracebility-report.toolbar.jqlDialogOptions.jql": "order by status ASC",
+  // new
+  "traceability-report.toolbar.jqlDialogOptions.header": "Filter Issues with JQL Query",
+  "traceability-report.toolbar.jqlDialogOptions.descriptionText": "Use a new JQL query to search issues",
+  "traceability-report.toolbar.jqlDialogOptions.submitText": "Use filter",
+  "traceability-report.toolbar.jqlDialogOptions.cancelText": "Cancel",
+  "traceability-report.toolbar.jqlDialogOptions.jql": "order by status ASC",
+  // new
+  "tracebility-report.toolbar.tableFields.name": "Table Fields",
 
   "lxp.common.issue.key": "Issue Key",
   "lxp.common.issue.links": "Issue Links",
