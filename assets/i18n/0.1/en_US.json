@@ -141,11 +141,15 @@
   "traceability-report.label": "Links Explorer - Traceability Report",
   "traceability-report.description": "Links Explorer Traceability Report",
   // new
-  "traceability-issuetype-view.name": "Issue Type View",
-  "traceability-issuetype-view.description": "View related issues by their types",
+  "traceability-report.issuetype-view.name": "Issue Type View",
+  "traceability-report.issuetype-view.description": "View related issues by their types",
   // new
-  "traceability-linktype-view.name": "Link Type View",
-  "traceability-linktype-view.description": "View related issues by their link types",
+  "traceability-report.linktype-view.name": "Link Type View",
+  "traceability-report.linktype-view.description": "View related issues by their link types",
+  // new
+  "traceability-report.toolbar.or": "OR",
+  // new
+  "traceability-report.toolbar.filterdropdown.name": "Select filter",
 
   "lxp.common.issue.key": "Issue Key",
   "lxp.common.issue.links": "Issue Links",

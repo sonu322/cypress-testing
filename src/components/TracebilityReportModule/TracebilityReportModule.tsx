@@ -56,12 +56,12 @@ export const TracebilityReportModule = (): JSX.Element => {
   const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>(0);
   const viewTabs = [
     {
-      name: t("traceability-issuetype-view.name"),
-      description: t("traceability-issuetype-view.description"),
+      name: t("traceability-report.issuetype-view.name"),
+      description: t("traceability-report.issuetype-view.description"),
     },
     {
-      name: t("traceability-linktype-view.name"),
-      description: t("traceability-linktype-view.description"),
+      name: t("traceability-report.linktype-view.name"),
+      description: t("traceability-report.linktype-view.description"),
     },
   ];
   const handleTabOptionSelect = (tabIndex: SelectedType): void => {
