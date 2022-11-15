@@ -597,11 +597,15 @@ export default class APIImpl implements LXPAPI {
     try {
       projectKey = projectKey || (await this.api.getCurrentProjectKey());
       const project: JiraProject = await this.api.getProject(projectKey);
-      project || throwError("Project not found.");
+      project || throwError("lxp.api.project-error");
       return this._convertProject(project);
     } catch (error) {
       console.error(error);
-      throw new Error("Error in fetching project: " + error.message);
+      let message = i18n.t("lxp.api.project-error");
+      if (error.message) {
+        message = message.concat(`: ${error.message}`);
+      }
+      throw new Error(message);
     }
   }
 }

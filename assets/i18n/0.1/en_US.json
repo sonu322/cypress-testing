@@ -166,5 +166,8 @@
   "lxp.api.search-issues-error": "Error in searching issues",
 
   // new
-  "lxp.api.filters-error": "Error in fetching the issue filters"
+  "lxp.api.filters-error": "Error in fetching the issue filters",
+
+  // new
+  "lxp.api.project-error": "Project not found."
 }
