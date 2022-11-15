@@ -4,6 +4,7 @@ import { APIContext } from "../../context/api";
 import PageHeader from "@atlaskit/page-header";
 import { SelectedType } from "@atlaskit/tabs/types";
 import { Toolbar } from "./Toolbar";
+import { useTranslation } from "react-i18next";
 import {
   IssueField,
   IssueLinkType,
@@ -31,6 +32,7 @@ const GrowContainer = styled.div`
 `;
 
 export const TracebilityReportModule = (): JSX.Element => {
+  const { t } = useTranslation();
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
   const [filteredIssues, setFilteredIssues] = useState<
     IssueWithSortedLinks[] | null
@@ -54,12 +56,12 @@ export const TracebilityReportModule = (): JSX.Element => {
   const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>(0);
   const viewTabs = [
     {
-      name: "Issue Type View",
-      description: "View related issues by their types",
+      name: t("traceability-issuetype-view.name"),
+      description: t("traceability-issuetype-view.description"),
     },
     {
-      name: "Link Type View",
-      description: "View related issues by their link types",
+      name: t("traceability-linktype-view.name"),
+      description: t("traceability-linktype-view.description"),
     },
   ];
   const handleTabOptionSelect = (tabIndex: SelectedType): void => {
@@ -91,15 +93,7 @@ export const TracebilityReportModule = (): JSX.Element => {
         setSelectedIssueFieldIds(selectedFieldIds);
 
         // setting state - table field options
-        const fieldsMap = new Map<string, { name: string; values: any[] }>();
-        fieldsMap.set("issueTypes", {
-          name: "Issue Types",
-          values: issueTypes,
-        });
-        fieldsMap.set("linkTypes", {
-          name: "Issue Link Types",
-          values: linkTypes,
-        });
+
         setIssueTypes(issueTypes);
         setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
         setLinkTypes(linkTypes);
@@ -121,7 +115,7 @@ export const TracebilityReportModule = (): JSX.Element => {
     filteredIssues == null || filteredIssues.length === 0;
 
   if (areOptionsLoading) {
-    return <div>Loading data ...</div>;
+    return <div>{t("lxp.common.loading")}</div>;
   }
   const updateSelectedIssueTypeIds = (fieldIds: string[]): void => {
     const newSelectedIds = orderSelectedIds(fieldIds, issueTypes);

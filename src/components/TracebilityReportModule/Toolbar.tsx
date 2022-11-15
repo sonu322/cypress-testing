@@ -62,7 +62,7 @@ export const Toolbar = ({
   selectedTabIndex,
 }: Props): JSX.Element => {
   return (
-    <div style={{marginTop: '-16px', marginBottom: '-8px'}}>
+    <div style={{ marginTop: "-16px", marginBottom: "-8px" }}>
       <TabGroup
         handleOptionSelect={handleTabOptionSelect}
         id={viewTabsId}
@@ -76,12 +76,11 @@ export const Toolbar = ({
             setSelectedFilterId={setSelectedJQLString}
             handleNewError={handleNewError}
           />
-          OR
+          <span>OR</span>
           <JQLEditor
             selectedFilterId={selectedJQLString}
             setSelectedFilterId={setSelectedJQLString}
           />
-
         </FlexContainer>
 
         <div>

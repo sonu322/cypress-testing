@@ -140,6 +140,13 @@
   "traceability-report.name": "Links Explorer - Traceability Report",
   "traceability-report.label": "Links Explorer - Traceability Report",
   "traceability-report.description": "Links Explorer Traceability Report",
+  // new
+  "traceability-issuetype-view.name": "Issue Type View",
+  "traceability-issuetype-view.description": "View related issues by their types",
+  // new
+  "traceability-linktype-view.name": "Link Type View",
+  "traceability-linktype-view.description": "View related issues by their link types",
+
   "lxp.common.issue.key": "Issue Key",
   "lxp.common.issue.links": "Issue Links",
   "lxp.common.issue.summary": "Issue Summary",
