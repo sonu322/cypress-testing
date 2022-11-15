@@ -46,7 +46,7 @@ export const LinkTypeRow = ({
       issue.sortedLinks[linkId].forEach((issue) => {
         const singleIssue = (
           <IssueCard
-            key={`${issue.id}-${issue.type.id}`}
+            key={`${issue.id}-${issue.type?.id}`}
             issueData={issue}
             selectedIssueFieldIds={issueFieldIds}
           />

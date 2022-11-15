@@ -9,5 +9,5 @@ const Container = styled.span`
 `;
 
 export const EmptyCell = (): JSX.Element => {
-  return <Container>--</Container>;
+  return <Container></Container>;
 };

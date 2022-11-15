@@ -49,6 +49,7 @@ export const getScreenHeight = (): number => {
 };
 
 export const getStatusAppearance = (status: IssueStatus): ThemeAppearance => {
+  if(status === null || status === undefined) return "default";
   const known: ThemeAppearance[] = [
     "default", // gray
     "inprogress", // blue

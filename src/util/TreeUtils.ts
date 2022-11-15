@@ -117,7 +117,7 @@ export default class TreeUtils {
     }
   }
 
-  //Tree filter
+  // Tree filter
   _shouldIncludeNode(
     mainIssue: Issue,
     linkedIssue: Issue,
@@ -128,7 +128,7 @@ export default class TreeUtils {
 
     if (
       filter.issueTypes.length > 0 &&
-      !filter.issueTypes.includes(linkedIssue.type.id)
+      !filter.issueTypes.includes(linkedIssue.type?.id)
     ) {
       return false;
     } else if (
@@ -138,7 +138,7 @@ export default class TreeUtils {
       return false;
     } else if (
       filter.priorities.length > 0 &&
-      !filter.priorities.includes(linkedIssue.priority.id)
+      !filter.priorities.includes(linkedIssue.priority?.id)
     ) {
       return false;
     } else if (parentIssueId && parentIssueId === linkedIssue.id) {

@@ -8,9 +8,9 @@ interface Props {
 }
 export const StatusText = ({ statusInfo }: Props): JSX.Element => {
   return (
-    <TooltipContainer content={statusInfo.description}>
+    <TooltipContainer content={statusInfo?.description}>
       <Lozenge appearance={getStatusAppearance(statusInfo)}>
-        {statusInfo.name}
+        {statusInfo?.name}
       </Lozenge>
     </TooltipContainer>
   );

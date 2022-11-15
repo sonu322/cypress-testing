@@ -76,7 +76,7 @@ const processByIssueType = (
 
     Object.values(issue.sortedLinks).forEach((issues) => {
       const newIssues = issues.filter((issue) => {
-        return issue.type.id === selectedId;
+        return issue.type?.id === selectedId;
       });
       issuesOfType = issuesOfType.concat(newIssues);
     });

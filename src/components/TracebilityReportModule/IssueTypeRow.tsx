@@ -67,7 +67,7 @@ export const IssueTypeRow = ({
     let issuesOfType: Issue[] = [];
     Object.values(issue.sortedLinks).forEach((issues) => {
       const newIssues = issues.filter((issue) => {
-        return issue.type.id === typeId;
+        return issue.type?.id === typeId;
       });
       issuesOfType = issuesOfType.concat(newIssues);
     });
@@ -77,7 +77,7 @@ export const IssueTypeRow = ({
       issuesOfType.forEach((issue) => {
         const issueCard = (
           <IssueCard
-            key={`${issue.id}-${issue.type.id}`}
+            key={`${issue.id}-${issue.type?.id}`}
             issueData={issue}
             selectedIssueFieldIds={issueFieldIds}
           />
