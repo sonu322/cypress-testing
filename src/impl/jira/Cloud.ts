@@ -99,7 +99,8 @@ export default class JiraCloudImpl implements JiraAPI {
         if (res && res.jira) {
           resolve(res.jira.project?.key);
         } else {
-          reject("Project key not found in context.");
+          const message = i18n.t("lxp.api.project-error");
+          reject(message);
         }
       });
     });

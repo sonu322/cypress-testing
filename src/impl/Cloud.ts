@@ -602,7 +602,7 @@ export default class APIImpl implements LXPAPI {
     } catch (error) {
       console.error(error);
       let message = i18n.t("lxp.api.project-error");
-      if (error.message) {
+      if (error.message && error.message !== message) {
         message = message.concat(`: ${error.message}`);
       }
       throw new Error(message);
