@@ -13,6 +13,7 @@
   //new
   "lxp.common.please-wait": "Please wait...",
   "lxp.common.none": "None",
+
   "lxp.common.loading-error": "Error Loading Issue",
   "lxp.common.issue.unresolved": "Unresolved",
   "lxp.common.issue.detail": "Detail",
@@ -141,5 +142,23 @@
   "traceability-report.description": "Links Explorer Traceability Report",
   "lxp.common.issue.key": "Issue Key",
   "lxp.common.issue.links": "Issue Links",
-  "lxp.common.issue.summary": "Issue Summary"
+  "lxp.common.issue.summary": "Issue Summary",
+  // new
+  "lxp.api.priority-error-main": "Issue priorities not found.",
+  "lxp.api.priority-error-prefix": "Error in fetching the issue priorities",
+  // new
+  "lxp.api.issue-type-error-main": "Issue types not found.",
+  "lxp.api.issue-type-error-prefix": "Error in fetching the issue types - ",
+
+  // new
+  "lxp.api.link-type-error-main": "Link types not found.",
+  "lxp.api.link-type-error-prefix": "Error in fetching the link types - ",
+
+  // new
+  "lxp.api.issue-field-error-main": "Issue fields not found.",
+  "lxp.api.issue-field-error-prefix": "Error in fetching the issue fields - ",
+
+  // new
+  "lxp.api.issue-by-id-error-main": "Error Loading Issue",
+  "lxp.api.issue-by-id-error-prefix": "Error in fetching the issue"
 }

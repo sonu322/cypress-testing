@@ -1,3 +1,4 @@
+import i18n from "../../i18n";
 import LXPAPI, {
   CustomLinkType,
   Filter,
@@ -35,7 +36,7 @@ import {
 } from "../types/jira";
 
 function throwError(msg: string) {
-  throw new Error(msg);
+  throw new Error(i18n.t(msg));
 }
 // use secondary id field
 export default class APIImpl implements LXPAPI {
@@ -95,12 +96,12 @@ export default class APIImpl implements LXPAPI {
     try {
       const items: JiraIssuePriorityFull[] = await this.api.getPriorities();
 
-      items || throwError("Issue priorities not found.");
+      items || throwError("lxp.api.priority-error-main");
 
       return items.map((item) => this._convertPriority(item));
     } catch (error) {
       console.error(error);
-      let msg = "Error in fetching the issue priorities";
+      let msg = i18n.t("lxp.api.priority-error-prefix");
       msg += error.message ? " - " + error.message : ".";
       throw new Error(msg);
     }
@@ -123,7 +124,7 @@ export default class APIImpl implements LXPAPI {
     try {
       const items: JiraIssueType[] = await this.api.getIssueTypes();
 
-      items || throwError("Issue types not found.");
+      items || throwError("lxp.api.issue-type-error");
       const uniqueIssueTypes: IssueType[] = [];
       items.forEach((issueType) => {
         const name = issueType.name.toLowerCase().replace(/-/g, "");
@@ -137,7 +138,8 @@ export default class APIImpl implements LXPAPI {
       return uniqueIssueTypes;
     } catch (error) {
       console.error(error);
-      throw new Error("Error in fetching the issue types - " + error.message);
+      const prefix = i18n.t("lxp.api.issue-type-error-prefix");
+      throw new Error(prefix + error.message);
     }
   }
 
@@ -145,7 +147,7 @@ export default class APIImpl implements LXPAPI {
     try {
       const items: JiraLinkType[] = await this.api.getIssueLinkTypes();
 
-      items || throwError("Issue link types not found.");
+      items || throwError("lxp.api.link-type-error-main");
 
       const result = [];
       result.push({
@@ -173,9 +175,7 @@ export default class APIImpl implements LXPAPI {
       return result;
     } catch (error) {
       console.error(error);
-      throw new Error(
-        "Error in fetching the issue link types - " + error.message
-      );
+      throw new Error("lxp.api.link-type-error-prefix" + error.message);
     }
   }
 
@@ -271,18 +271,19 @@ export default class APIImpl implements LXPAPI {
       return result;
     } catch (error) {
       console.error(error);
-      throw new Error("Error in fetching the issue types - " + error.message);
+      const prefix = i18n.t("lxp.api.issue-field-error-prefix");
+      throw new Error(prefix + error.message);
     }
   }
 
   async getAllIssueFields(): Promise<JiraIssueField[]> {
     try {
       const fields = await this.api.getIssueFields();
-      fields || throwError("Issue fields not found.");
+      fields || throwError("lxp.api.issue-field-error-main");
       return fields;
     } catch (error) {
       console.error(error);
-      throw new Error("Error in fetching the issue types - " + error.message);
+      throw new Error(error.message);
     }
   }
 
@@ -444,6 +445,7 @@ export default class APIImpl implements LXPAPI {
   }
 
   async getIssueById(fields: IssueField[], issueId?: string): Promise<Issue> {
+    console.log("CALLED");
     try {
       issueId = issueId || (await this.getCurrentIssueId());
       const fieldIds = this._getFieldIds(fields);
@@ -451,14 +453,19 @@ export default class APIImpl implements LXPAPI {
       const query = "?fields=" + fieldIds.join(",");
       const issue: JiraIssueFull = await this.api.getIssueById(issueId, query);
 
-      issue || throwError("Issue not found.");
+      issue || throwError("lxp.api.issue-by-id-error-main");
 
       return this._convertIssue(issue, fields);
     } catch (error) {
+      console.log("logging error");
       console.error(error);
-      throw new Error(
-        `Error in fetching the issue ${issueId} - ${error.message}`
-      );
+      const prefix = i18n.t("lxp.api.issue-by-id-error-prefix");
+
+      let finalMessage = `${prefix} ${issueId}`;
+      if (error.message) {
+        finalMessage = finalMessage.concat(`- ${error.message}`);
+      }
+      throw new Error(finalMessage);
     }
   }
 
