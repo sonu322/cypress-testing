@@ -8,7 +8,7 @@ const StyledIssueKey = styled.a<any>`
   text-overflow: ellipsis;
   font-size: 12px;
   font-weight: 600;
-  color: ${colors.N400};
+  color: ${colors.B400};
   text-decoration: none;
   cursor: pointer;
   ${(props: any) =>
