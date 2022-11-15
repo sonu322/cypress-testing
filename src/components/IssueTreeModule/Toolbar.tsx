@@ -3,7 +3,7 @@ import { Dropdown } from "../common/Dropdown";
 import { ButtonGroup } from "@atlaskit/button";
 import styled from "styled-components";
 import { IssueOptionsDropdown } from "./IssueOptionsDropdown";
-import { helpLink } from "../../constants";
+import { helpLinkUrl } from "../../constants/common";
 import { ExportContent } from "../common/ExportContent";
 import { HelpLink } from "../common/HelpLink";
 import { useTranslation } from "react-i18next";
@@ -52,7 +52,7 @@ export const Toolbar = ({
             description={t("lxp.toolbar.export-csv.title")}
             exportContent={exportTree}
           />
-          <HelpLink description={t("lxp.common.get-help")} href={helpLink} />
+          <HelpLink description={t("lxp.common.get-help")} href={helpLinkUrl} />
         </ButtonGroup>
       </div>
     </Container>

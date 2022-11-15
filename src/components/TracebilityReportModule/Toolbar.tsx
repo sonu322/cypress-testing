@@ -4,7 +4,7 @@ import { colors } from "@atlaskit/theme";
 import { JQLSelectDropdown } from "../JQLSelectDropdown";
 import { ButtonGroup } from "@atlaskit/button";
 import { Dropdown } from "../common/Dropdown";
-import { helpLink } from "../../constants";
+import { helpLinkUrl } from "../../constants/common";
 import { HelpLink } from "../common/HelpLink";
 import { ExportContent } from "../common/ExportContent";
 import { JQLEditor } from "../JQLEditor";
@@ -107,7 +107,10 @@ export const Toolbar = ({
               }}
               isDisabled={isExportDisabled}
             />
-            <HelpLink description={t("lxp.common.get-help")} href={helpLink} />
+            <HelpLink
+              description={t("lxp.common.get-help")}
+              href={helpLinkUrl}
+            />
           </ButtonGroup>
         </div>
       </MainBar>
