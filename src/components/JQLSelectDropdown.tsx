@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { DropdownSingleSelect } from "./common/DropdownSingleSelect";
 import { APIContext } from "../context/api";
 import { Filter } from "../types/api";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   selectedFilterId: string;
@@ -14,6 +15,7 @@ export const JQLSelectDropdown = ({
   setSelectedFilterId,
   handleNewError,
 }: Props): JSX.Element => {
+  const { t } = useTranslation();
   const api = useContext(APIContext);
   const [filters, setFilters] = useState<Filter[]>([]);
   useEffect(() => {
@@ -35,7 +37,10 @@ export const JQLSelectDropdown = ({
 
   return (
     <DropdownSingleSelect
-      dropdownName={selectedOption?.name ?? "Select filter"}
+      dropdownName={
+        selectedOption?.name ??
+        t("traceability-report.toolbar.filterdropdown.name")
+      }
       options={filters}
       selectedOptionId={selectedFilterId}
       setSelectedOptionId={setSelectedFilterId}

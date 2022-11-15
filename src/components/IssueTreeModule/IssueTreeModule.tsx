@@ -5,8 +5,9 @@ import { ErrorsList } from "../common/ErrorsList";
 import TreeUtils from "../../util/TreeUtils";
 import { APIContext } from "../../context/api";
 import { IssueField, IssueTreeFilter } from "../../types/api";
-
+import { useTranslation } from "react-i18next";
 export const IssueTreeModule = () => {
+  const { t, i18n } = useTranslation();
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
 
@@ -73,13 +74,13 @@ export const IssueTreeModule = () => {
   };
 
   const filterDropdowns = [
-    { key: "priorities", label: "Priority" },
-    { key: "linkTypes", label: "Link type" },
-    { key: "issueTypes", label: "Issue type" },
+    { key: "priorities", label: t("lxp.common.issue.priority") },
+    { key: "linkTypes", label: t("lxp.toolbar.link-type.text") },
+    { key: "issueTypes", label: t("lxp.toolbar.issue-type.text") },
   ];
 
   return isLoading ? (
-    <div>Loading data ...</div>
+    <div>{t("lxp.common.loading")}.</div>
   ) : (
     <div>
       {errors && errors.length > 0 && <ErrorsList errors={errors} />}
