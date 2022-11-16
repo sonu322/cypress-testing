@@ -22,6 +22,7 @@ export const Toolbar = ({
   setSelectedIssueFieldIds,
   issueCardOptions,
   exportTree,
+  isExportDisabled,
 }) => {
   return (
     <Container>
@@ -48,6 +49,7 @@ export const Toolbar = ({
             updateSelectedOptions={setSelectedIssueFieldIds}
           />
           <ExportContent
+              isDisabled={isExportDisabled}
             description={"Export issue tree to csv"}
             exportContent={exportTree}
           />
