@@ -61,12 +61,12 @@ export const Main = ({
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
   const api = useContext(APIContext);
-  const addMoreIssues = (issues): void => {
+  const addMoreIssues = (issues: IssueWithSortedLinks[]): void => {
     const newIssues = filteredIssues ?? [];
     const updatedIssues = newIssues.concat(issues);
     setFilteredIssues(updatedIssues);
   };
-  const updateIssues = (issues): void => {
+  const updateIssues = (issues: IssueWithSortedLinks[]): void => {
     setFilteredIssues(issues);
   };
   const tracebilityReportUtils = new TracebilityReportUtils(api);

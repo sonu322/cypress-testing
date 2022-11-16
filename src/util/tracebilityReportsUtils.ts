@@ -25,6 +25,7 @@ export default class TracebilityReportUtils {
     handleError: (err: unknown) => void
   ): Promise<void> {
     setIsLoading(true);
+    updateIssues([]);
     try {
       const searchResult = await this.api.searchLinkedIssues(
         jqlString,
