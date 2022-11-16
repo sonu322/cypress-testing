@@ -18,7 +18,7 @@ export const JQLEditor = ({
   selectedFilterId,
   setSelectedFilterId,
 }: Props): JSX.Element => {
-  if (Boolean(selectedFilterId) && selectedFilterId !== null) {
+  if (selectedFilterId !== null) {
     options.jql = selectedFilterId;
   }
   const callback = function ({ jql }: { jql: string }): void {
