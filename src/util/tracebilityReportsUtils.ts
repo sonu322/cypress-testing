@@ -22,10 +22,14 @@ export default class TracebilityReportUtils {
     updateIssues: (issues: any) => void,
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
     setTotal: React.Dispatch<React.SetStateAction<number>>,
-    handleError: (err: unknown) => void
+    handleError: (err: unknown) => void,
+    clearAllErrors?: () => void
   ): Promise<void> {
     setIsLoading(true);
     updateIssues([]);
+    if (clearAllErrors !== undefined) {
+      clearAllErrors();
+    }
     try {
       const searchResult = await this.api.searchLinkedIssues(
         jqlString,

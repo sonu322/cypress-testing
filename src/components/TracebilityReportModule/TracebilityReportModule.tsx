@@ -70,6 +70,9 @@ export const TracebilityReportModule = (): JSX.Element => {
     console.log(err);
     setErrors((prevErrors) => [...prevErrors, err]);
   };
+  const clearAllErrors = (): void => {
+    setErrors([]);
+  };
   useEffect(() => {
     const loadData = async (): Promise<void> => {
       try {
@@ -188,6 +191,7 @@ export const TracebilityReportModule = (): JSX.Element => {
         <Main
           jqlString={selectedJQLString}
           handleNewError={handleNewError}
+          clearAllErrors={clearAllErrors}
           issueFields={issueFields}
           selectedIssueFieldIds={selectedIssueFieldIds}
           tableFields={tableFields}

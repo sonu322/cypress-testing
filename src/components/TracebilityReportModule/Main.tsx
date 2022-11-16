@@ -30,6 +30,7 @@ const START_INDEX = 0;
 interface Props {
   jqlString: string;
   handleNewError: (err: unknown) => void;
+  clearAllErrors: () => void;
   issueFields: IssueField[];
   selectedIssueFieldIds: string[];
   selectedTableFieldIds: string[];
@@ -47,6 +48,7 @@ interface Props {
 export const Main = ({
   jqlString,
   handleNewError,
+  clearAllErrors,
   issueFields,
   selectedIssueFieldIds,
   selectedTableFieldIds,
@@ -56,7 +58,7 @@ export const Main = ({
   setAreIssuesLoading,
   setFilteredIssues,
   isIssueTypeReport,
-  errors
+  errors,
 }: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
@@ -80,7 +82,8 @@ export const Main = ({
         updateIssues,
         setAreIssuesLoading,
         setTotalNumberOfIssues,
-        handleNewError
+        handleNewError,
+        clearAllErrors
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
