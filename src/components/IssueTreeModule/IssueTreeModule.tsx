@@ -5,7 +5,11 @@ import { ErrorsList } from "../common/ErrorsList";
 import TreeUtils from "../../util/TreeUtils";
 import { APIContext } from "../../context/api";
 import { IssueField, IssueTreeFilter } from "../../types/api";
+import styled from "styled-components";
 
+const Container = styled.div`
+  min-height: 20rem;
+`;
 export const IssueTreeModule = () => {
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
@@ -84,7 +88,7 @@ export const IssueTreeModule = () => {
   return isLoading ? (
     <div>Loading data ...</div>
   ) : (
-    <div>
+    <Container>
       {errors && errors.length > 0 && <ErrorsList errors={errors} />}
 
       <Toolbar
@@ -108,6 +112,6 @@ export const IssueTreeModule = () => {
         handleError={handleNewError}
         clearAllErrors={clearAllErrors}
       />
-    </div>
+    </Container>
   );
 };
