@@ -105,7 +105,7 @@ export const Main = ({
         <Spinner size="medium" />
       </FullHeightContainer>
     );
-  } else if (Boolean(jqlString) && filteredIssues != null) {
+  } else if (jqlString !== null && filteredIssues != null) {
     if (filteredIssues.length === 0) {
       return (
         <FullHeightContainer>
