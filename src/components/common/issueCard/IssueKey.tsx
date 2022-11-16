@@ -11,6 +11,7 @@ const StyledIssueKey = styled.a<any>`
   color: ${colors.N400};
   text-decoration: none;
   cursor: pointer;
+  white-space: nowrap;
   ${(props: any) =>
     props.isResolved &&
     css`
