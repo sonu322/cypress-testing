@@ -94,7 +94,6 @@ export default class APIImpl implements LXPAPI {
   async getPriorities(): Promise<IssuePriority[]> {
     try {
       const items: JiraIssuePriorityFull[] = await this.api.getPriorities();
-
       items || throwError("Issue priorities not found.");
 
       return items.map((item) => this._convertPriority(item));

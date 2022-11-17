@@ -27,6 +27,9 @@ export const IssueTreeModule = () => {
   const handleNewError = (error) => {
     setErrors((prevErrors) => [...prevErrors, error] as any);
   };
+  const clearAllErrors = (): void => {
+    setErrors([]);
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -86,6 +89,7 @@ export const IssueTreeModule = () => {
 
       <Toolbar
         exportTree={() => treeUtils.exportTree(tree)}
+        isExportDisabled={Object.keys(tree.items).length <= 1}
         options={options}
         filter={filter}
         updateFilteredKeyOptions={updateFilteredKeyOptions}
@@ -102,6 +106,7 @@ export const IssueTreeModule = () => {
         issueFields={issueFields}
         selectedIssueFieldIds={selectedIssueFieldIds}
         handleError={handleNewError}
+        clearAllErrors={clearAllErrors}
       />
     </div>
   );
