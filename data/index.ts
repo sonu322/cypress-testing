@@ -24,7 +24,7 @@ const module = {
 
   async generateIssues(project: any, noOfIssues: number): Promise<any[]> {
     const issues: any[] = [];
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < noOfIssues; i++) {
       issues.push(await api.createIssue());
     }
     return issues;
@@ -33,12 +33,19 @@ const module = {
   async generateLinks(issues: any[]) {
     const linkTypes: any[] = []; // TODO: fetch all the link types available
 
-    for(const issue of issues){
+    for (const issue of issues) {
       const noOfLinks = Util.getRandomNumber(linksRNG, maxLinks + 1);
-      for(let j = 0; j < noOfLinks; j++){
+      for (let j = 0; j < noOfLinks; j++) {
         const issueIndex = Util.getRandomNumber(linkFinderRNG, issues.length);
-        const linkTypeIndex = Util.getRandomNumber(linkTypesRNG, linkTypes.length);
-        await api.createLink(issue.id, issues[issueIndex].id, linkTypes[linkTypeIndex].id);
+        const linkTypeIndex = Util.getRandomNumber(
+          linkTypesRNG,
+          linkTypes.length
+        );
+        await api.createLink(
+          issue.id,
+          issues[issueIndex].id,
+          linkTypes[linkTypeIndex].id
+        );
       }
     }
   },
@@ -46,23 +53,24 @@ const module = {
   async generateVersions(project: any): Promise<any[]> {
     const noOfVersions = Util.getRandomNumber(versionsRNG, maxVersions);
     const versions: any[] = [];
-    for(let i = 0;  i < noOfVersions; i++){
+    for (let i = 0; i < noOfVersions; i++) {
       versions.push(await api.createVersion());
     }
     return versions;
-  }
+  },
 };
 
 // main logic
 const generateData = async (): Promise<void> => {
   console.log("called generate data");
-  const projects: any[] = await module.generateProjects();
-  const noOfIssues = noOfRecords / projects.length;
-  for (const project of projects) {
-    // const versions: any[] = await module.generateVersions(project);
-    const issues: any[] = await module.generateIssues(project, noOfIssues);
-    // await module.generateLinks(issues);
-  }
-};;
+  // const projects: any[] = await module.generateProjects();
+  // const noOfIssues = noOfRecords / projects.length;
+  // for (const project of projects) {
+  //   // const versions: any[] = await module.generateVersions(project);
+  //   const issues: any[] = await module.generateIssues(project, noOfIssues);
+  //   // await module.generateLinks(issues);
+  // }
+  const issue = await module.generateIssues("", 1);
+};
 
 generateData();
