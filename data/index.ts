@@ -15,9 +15,10 @@ const versionsRNG = Util.getRNG("versionsRNG");
 
 const module = {
   async generateProjects(): Promise<any[]> {
+    console.log("GEN PROJCECTS CALLEDS");
     const projects: any[] = [];
     projects.push(await api.createProject()); // classic project
-    projects.push(await api.createProject()); // non classic project
+    // projects.push(await api.createProject()); // non classic project
     return projects;
   },
 
@@ -54,13 +55,14 @@ const module = {
 
 // main logic
 const generateData = async (): Promise<void> => {
+  console.log("called generate data");
   const projects: any[] = await module.generateProjects();
-  const noOfIssues = (noOfRecords / projects.length);
-  for(const project of projects){
-    const versions: any[] = await module.generateVersions(project);
-    const issues: any[] = await module.generateIssues(project, noOfIssues);
-    await module.generateLinks(issues);
-  }
-};
+  // const noOfIssues = (noOfRecords / projects.length);
+  // for(const project of projects){
+  //   const versions: any[] = await module.generateVersions(project);
+  //   const issues: any[] = await module.generateIssues(project, noOfIssues);
+  //   await module.generateLinks(issues);
+  // }
+};;
 
 generateData();
