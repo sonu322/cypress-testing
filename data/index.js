@@ -153,17 +153,16 @@ var module = {
 };
 // main logic
 var generateData = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var projects;
+    var issue;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 console.log("called generate data");
-                return [4 /*yield*/, module.generateProjects()];
+                return [4 /*yield*/, module.generateIssues("", 1)];
             case 1:
-                projects = _a.sent();
+                issue = _a.sent();
                 return [2 /*return*/];
         }
     });
 }); };
-;
 generateData();

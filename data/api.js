@@ -56,20 +56,26 @@ var LXPAPI = /** @class */ (function () {
     // private readonly _AP: any = AP;
     LXPAPI.prototype.createIssue = function () {
         return __awaiter(this, void 0, void 0, function () {
+            var bodyData, res, data, err, error_1;
             return __generator(this, function (_a) {
-                throw Error("Method not implemented");
-            });
-        });
-    };
-    LXPAPI.prototype.createProject = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var bodyData, res, _a, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+                switch (_a.label) {
                     case 0:
-                        bodyData = "{\n      \"notificationScheme\": 10021,\n      \"description\": \"Cloud migration initiative\",\n      \"leadAccountId\": \"5b10a0effa615349cb016cd8\",\n      \"url\": \"http://atlassian.com\",\n      \"avatarId\": 10200,\n      \"issueSecurityScheme\": 10001,\n      \"projectTemplateKey\": \"com.atlassian.jira-core-project-templates:jira-core-simplified-process-control\",\n      \"name\": \"Example\",\n      \"permissionScheme\": 10011,\n      \"assigneeType\": \"PROJECT_LEAD\",\n      \"projectTypeKey\": \"business\",\n      \"key\": \"EX\",\n      \"categoryId\": 10120\n    }";
-                        console.log("CALLED CREATE PROJECCT");
-                        return [4 /*yield*/, (0, node_fetch_1["default"])("".concat(this.baseURL, "/rest/api/3/project"), {
+                        console.log("called create issue");
+                        bodyData = JSON.stringify({
+                            "fields": {
+                                "project": {
+                                    "key": "EX"
+                                },
+                                "summary": "sample",
+                                "issuetype": {
+                                    "name": "Task"
+                                }
+                            }
+                        });
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 7, , 8]);
+                        return [4 /*yield*/, (0, node_fetch_1["default"])("https://mahima-optimizory.atlassian.net/rest/api/3/issue/", {
                                 method: "POST",
                                 headers: {
                                     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -79,14 +85,67 @@ var LXPAPI = /** @class */ (function () {
                                 },
                                 body: bodyData
                             })];
+                    case 2:
+                        res = _a.sent();
+                        console.log(res);
+                        if (!res.ok) return [3 /*break*/, 4];
+                        console.log("res ok");
+                        return [4 /*yield*/, res.json()];
+                    case 3:
+                        data = _a.sent();
+                        console.log(data);
+                        console.log(res.statusText);
+                        return [3 /*break*/, 6];
+                    case 4:
+                        console.log("res not ok");
+                        return [4 /*yield*/, res.json()];
+                    case 5:
+                        err = _a.sent();
+                        throw new Error(err.message);
+                    case 6: return [3 /*break*/, 8];
+                    case 7:
+                        error_1 = _a.sent();
+                        console.log("caught error");
+                        console.log(error_1);
+                        return [3 /*break*/, 8];
+                    case 8: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    LXPAPI.prototype.createProject = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var bodyData, res, _a, _b, error_2;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        bodyData = "{\n      \"description\": \"Cloud migration initiative\",\n      \"leadAccountId\": \"632a903a409249995ee7141a\",\n      \"avatarId\": 10200,\n      \"issueSecurityScheme\": 10001,\n      \"projectTemplateKey\": \"com.atlassian.jira-core-project-templates:jira-core-simplified-process-control\",\n      \"name\": \"Example2\",\n      \"key\": \"EX2\"\n    }";
+                        console.log("CALLED CREATE PROJECCT");
+                        _c.label = 1;
                     case 1:
+                        _c.trys.push([1, 4, , 5]);
+                        return [4 /*yield*/, (0, node_fetch_1["default"])("".concat(this.baseURL, "/rest/api/3/project"), {
+                                method: "POST",
+                                headers: {
+                                    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                                    Authorization: "Basic ".concat(base64.encode("".concat(this.username, ":").concat(this.password))),
+                                    "Content-Type": "application/json"
+                                },
+                                body: bodyData
+                            })];
+                    case 2:
                         res = _c.sent();
                         _b = (_a = console).log;
-                        return [4 /*yield*/, res.json()];
-                    case 2:
+                        return [4 /*yield*/, res.text()];
+                    case 3:
                         _b.apply(_a, [_c.sent()]);
                         console.log(res.statusText);
-                        return [2 /*return*/];
+                        return [3 /*break*/, 5];
+                    case 4:
+                        error_2 = _c.sent();
+                        console.log(error_2);
+                        return [3 /*break*/, 5];
+                    case 5: return [2 /*return*/];
                 }
             });
         });
