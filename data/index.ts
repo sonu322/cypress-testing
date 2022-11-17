@@ -24,7 +24,7 @@ const module = {
 
   async generateIssues(project: any, noOfIssues: number): Promise<any[]> {
     const issues: any[] = [];
-    for(let i = 0;  i < noOfIssues; i++){
+    for (let i = 0; i < 1; i++) {
       issues.push(await api.createIssue());
     }
     return issues;
@@ -57,12 +57,12 @@ const module = {
 const generateData = async (): Promise<void> => {
   console.log("called generate data");
   const projects: any[] = await module.generateProjects();
-  // const noOfIssues = (noOfRecords / projects.length);
-  // for(const project of projects){
-  //   const versions: any[] = await module.generateVersions(project);
-  //   const issues: any[] = await module.generateIssues(project, noOfIssues);
-  //   await module.generateLinks(issues);
-  // }
+  const noOfIssues = noOfRecords / projects.length;
+  for (const project of projects) {
+    // const versions: any[] = await module.generateVersions(project);
+    const issues: any[] = await module.generateIssues(project, noOfIssues);
+    // await module.generateLinks(issues);
+  }
 };;
 
 generateData();

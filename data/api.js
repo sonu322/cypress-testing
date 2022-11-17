@@ -63,19 +63,21 @@ var LXPAPI = /** @class */ (function () {
     };
     LXPAPI.prototype.createProject = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var res, _a, _b;
+            var bodyData, res, _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
+                        bodyData = "{\n      \"notificationScheme\": 10021,\n      \"description\": \"Cloud migration initiative\",\n      \"leadAccountId\": \"5b10a0effa615349cb016cd8\",\n      \"url\": \"http://atlassian.com\",\n      \"avatarId\": 10200,\n      \"issueSecurityScheme\": 10001,\n      \"projectTemplateKey\": \"com.atlassian.jira-core-project-templates:jira-core-simplified-process-control\",\n      \"name\": \"Example\",\n      \"permissionScheme\": 10011,\n      \"assigneeType\": \"PROJECT_LEAD\",\n      \"projectTypeKey\": \"business\",\n      \"key\": \"EX\",\n      \"categoryId\": 10120\n    }";
                         console.log("CALLED CREATE PROJECCT");
-                        console.log(this.jira);
-                        return [4 /*yield*/, (0, node_fetch_1["default"])("".concat(this.baseURL, "/rest/api/3/priority/"), {
-                                method: "GET",
+                        return [4 /*yield*/, (0, node_fetch_1["default"])("".concat(this.baseURL, "/rest/api/3/project"), {
+                                method: "POST",
                                 headers: {
                                     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
                                     Authorization: "Basic ".concat(base64.encode("".concat(this.username, ":").concat(this.password))),
-                                    "Content-Type": "application/json"
-                                }
+                                    "Content-Type": "application/json",
+                                    Accept: "application/json"
+                                },
+                                body: bodyData
                             })];
                     case 1:
                         res = _c.sent();
@@ -83,7 +85,6 @@ var LXPAPI = /** @class */ (function () {
                         return [4 /*yield*/, res.json()];
                     case 2:
                         _b.apply(_a, [_c.sent()]);
-                        console.log();
                         console.log(res.statusText);
                         return [2 /*return*/];
                 }

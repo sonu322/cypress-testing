@@ -27,19 +27,29 @@ export default class LXPAPI {
   }
 
   async createProject(): Promise<any> {
+    const bodyData = `{
+      "description": "Cloud migration initiative",
+      "leadAccountId": "632a903a409249995ee7141a",
+      "avatarId": 10200,
+      "issueSecurityScheme": 10001,
+      "projectTemplateKey": "com.atlassian.jira-core-project-templates:jira-core-simplified-process-control",
+      "name": "Example2",
+      "key": "EX2"
+    }`;
     console.log("CALLED CREATE PROJECCT");
-    const res = await fetch(`${this.baseURL}/rest/api/3/priority/`, {
-      method: "GET",
+    const res = await fetch(`${this.baseURL}/rest/api/3/project`, {
+      method: "POST",
       headers: {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         Authorization: `Basic ${base64.encode(
           `${this.username}:${this.password}`
         )}`,
         "Content-Type": "application/json",
+        Accept: "application/json",
       },
+      body: bodyData,
     });
     console.log(await res.json());
-    console.log();
     console.log(res.statusText);
   }
 
