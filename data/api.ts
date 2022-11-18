@@ -65,16 +65,39 @@ export default class LXPAPI {
     }
   }
 
-  async createProject(): Promise<any> {
-    const bodyData = `{
-      "description": "Cloud migration initiative",
-      "leadAccountId": "632a903a409249995ee7141a",
-      "avatarId": 10200,
-      "issueSecurityScheme": 10001,
-      "projectTemplateKey": "com.atlassian.jira-core-project-templates:jira-core-simplified-process-control",
-      "name": "Example2",
-      "key": "EX2"
-    }`;
+  async getMyself(): Promise<any> {
+    try {
+      const res = await fetch(`${this.baseURL}/rest/api/3/myself`, {
+        method: "GET",
+        headers: {
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          Authorization: `Basic ${base64.encode(
+            `${this.username}:${this.password}`
+          )}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async createProject(
+    description: string,
+    leadAccountId: string,
+    projectTemplateKey: string,
+    name: string,
+    key: string
+  ): Promise<any> {
+    const bodyData = JSON.stringify({
+      description,
+      leadAccountId,
+      projectTemplateKey,
+      name,
+      key,
+    });
     console.log("CALLED CREATE PROJECCT");
     try {
       const res = await fetch(`${this.baseURL}/rest/api/3/project`, {
@@ -99,10 +122,11 @@ export default class LXPAPI {
     throw Error("Method not implemented");
   }
 
-  async createLink(): // issueId1: string,
-  // issueId2: string,
-  // linkTypeId: string
-  Promise<any> {
+  async createLink(
+    issueId1: string,
+    issueId2: string,
+    linkTypeId: string
+  ): Promise<any> {
     console.log("called create issue");
     const bodyData = JSON.stringify({
       outwardIssue: {

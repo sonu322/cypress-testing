@@ -15,9 +15,26 @@ const versionsRNG = Util.getRNG("versionsRNG");
 
 const module = {
   async generateProjects(): Promise<any[]> {
-    console.log("GEN PROJCECTS CALLEDS");
+    // {{baseURL}}/rest/api/3/myself
+    // get project types
+
+    // team - managed: com.atlassian.jira-core-project-templates:jira-work-management-process-control-team-managed
+    // company - managed: om.pyxis.greenhopper.jira:gh-simplified-scrum-classic
+    // com.pyxis.greenhopper.jira:gh-simplified-agility-scrum
+    // team - com.pyxis.greenhopper.jira:gh-simplified-agility-kanban
+    //
+    const myself = await api.getMyself();
+    console.log(myself);
     const projects: any[] = [];
-    projects.push(await api.createProject()); // classic project
+    projects.push(
+      await api.createProject(
+        "sample description",
+        myself.accountId,
+        "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban",
+        "sample1",
+        "SAM1"
+      )
+    ); // classic project
     // projects.push(await api.createProject()); // non classic project
     return projects;
   },
@@ -31,24 +48,23 @@ const module = {
   },
 
   async generateLinks(issues: any[]) {
-    // const linkTypes: any[] = []; // TODO: fetch all the link types available
+    const linkTypes: any[] = []; // TODO: fetch all the link types available
 
-    // for (const issue of issues) {
-    //   const noOfLinks = Util.getRandomNumber(linksRNG, maxLinks + 1);
-    //   for (let j = 0; j < noOfLinks; j++) {
-    //     const issueIndex = Util.getRandomNumber(linkFinderRNG, issues.length);
-    //     const linkTypeIndex = Util.getRandomNumber(
-    //       linkTypesRNG,
-    //       linkTypes.length
-    //     );
-    await api
-      .createLink
-      // issue.id,
-      // issues[issueIndex].id,
-      // linkTypes[linkTypeIndex].id
-      ();
-    //   }
-    // }
+    for (const issue of issues) {
+      const noOfLinks = Util.getRandomNumber(linksRNG, maxLinks + 1);
+      for (let j = 0; j < noOfLinks; j++) {
+        const issueIndex = Util.getRandomNumber(linkFinderRNG, issues.length);
+        const linkTypeIndex = Util.getRandomNumber(
+          linkTypesRNG,
+          linkTypes.length
+        );
+        await api.createLink(
+          issue.id,
+          issues[issueIndex].id,
+          linkTypes[linkTypeIndex].id
+        );
+      }
+    }
   },
 
   async generateVersions(project: any): Promise<any[]> {
@@ -63,15 +79,13 @@ const module = {
 
 // main logic
 const generateData = async (): Promise<void> => {
-  console.log("called generate data");
-  // const projects: any[] = await module.generateProjects();
-  // const noOfIssues = noOfRecords / projects.length;
+  const projects: any[] = await module.generateProjects();
+  const noOfIssues = noOfRecords / projects.length;
   // for (const project of projects) {
-  //   // const versions: any[] = await module.generateVersions(project);
+  //   const versions: any[] = await module.generateVersions(project);
   //   const issues: any[] = await module.generateIssues(project, noOfIssues);
-  //   // await module.generateLinks(issues);
+  //   await module.generateLinks(issues);
   // }
-  const issue = await module.generateLinks([]);
 };
 
 generateData();
