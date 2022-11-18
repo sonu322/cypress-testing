@@ -31,23 +31,24 @@ const module = {
   },
 
   async generateLinks(issues: any[]) {
-    const linkTypes: any[] = []; // TODO: fetch all the link types available
+    // const linkTypes: any[] = []; // TODO: fetch all the link types available
 
-    for (const issue of issues) {
-      const noOfLinks = Util.getRandomNumber(linksRNG, maxLinks + 1);
-      for (let j = 0; j < noOfLinks; j++) {
-        const issueIndex = Util.getRandomNumber(linkFinderRNG, issues.length);
-        const linkTypeIndex = Util.getRandomNumber(
-          linkTypesRNG,
-          linkTypes.length
-        );
-        await api.createLink(
-          issue.id,
-          issues[issueIndex].id,
-          linkTypes[linkTypeIndex].id
-        );
-      }
-    }
+    // for (const issue of issues) {
+    //   const noOfLinks = Util.getRandomNumber(linksRNG, maxLinks + 1);
+    //   for (let j = 0; j < noOfLinks; j++) {
+    //     const issueIndex = Util.getRandomNumber(linkFinderRNG, issues.length);
+    //     const linkTypeIndex = Util.getRandomNumber(
+    //       linkTypesRNG,
+    //       linkTypes.length
+    //     );
+    await api
+      .createLink
+      // issue.id,
+      // issues[issueIndex].id,
+      // linkTypes[linkTypeIndex].id
+      ();
+    //   }
+    // }
   },
 
   async generateVersions(project: any): Promise<any[]> {
@@ -70,7 +71,7 @@ const generateData = async (): Promise<void> => {
   //   const issues: any[] = await module.generateIssues(project, noOfIssues);
   //   // await module.generateLinks(issues);
   // }
-  const issue = await module.generateIssues("", 1);
+  const issue = await module.generateLinks([]);
 };
 
 generateData();

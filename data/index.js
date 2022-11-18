@@ -93,34 +93,32 @@ var module = {
     },
     generateLinks: function (issues) {
         return __awaiter(this, void 0, void 0, function () {
-            var linkTypes, _i, issues_1, issue, noOfLinks, j, issueIndex, linkTypeIndex;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        linkTypes = [];
-                        _i = 0, issues_1 = issues;
-                        _a.label = 1;
+                    case 0: 
+                    // const linkTypes: any[] = []; // TODO: fetch all the link types available
+                    // for (const issue of issues) {
+                    //   const noOfLinks = Util.getRandomNumber(linksRNG, maxLinks + 1);
+                    //   for (let j = 0; j < noOfLinks; j++) {
+                    //     const issueIndex = Util.getRandomNumber(linkFinderRNG, issues.length);
+                    //     const linkTypeIndex = Util.getRandomNumber(
+                    //       linkTypesRNG,
+                    //       linkTypes.length
+                    //     );
+                    return [4 /*yield*/, api
+                            .createLink()];
                     case 1:
-                        if (!(_i < issues_1.length)) return [3 /*break*/, 6];
-                        issue = issues_1[_i];
-                        noOfLinks = Util.getRandomNumber(linksRNG, maxLinks + 1);
-                        j = 0;
-                        _a.label = 2;
-                    case 2:
-                        if (!(j < noOfLinks)) return [3 /*break*/, 5];
-                        issueIndex = Util.getRandomNumber(linkFinderRNG, issues.length);
-                        linkTypeIndex = Util.getRandomNumber(linkTypesRNG, linkTypes.length);
-                        return [4 /*yield*/, api.createLink(issue.id, issues[issueIndex].id, linkTypes[linkTypeIndex].id)];
-                    case 3:
+                        // const linkTypes: any[] = []; // TODO: fetch all the link types available
+                        // for (const issue of issues) {
+                        //   const noOfLinks = Util.getRandomNumber(linksRNG, maxLinks + 1);
+                        //   for (let j = 0; j < noOfLinks; j++) {
+                        //     const issueIndex = Util.getRandomNumber(linkFinderRNG, issues.length);
+                        //     const linkTypeIndex = Util.getRandomNumber(
+                        //       linkTypesRNG,
+                        //       linkTypes.length
+                        //     );
                         _a.sent();
-                        _a.label = 4;
-                    case 4:
-                        j++;
-                        return [3 /*break*/, 2];
-                    case 5:
-                        _i++;
-                        return [3 /*break*/, 1];
-                    case 6: return [2 /*return*/];
+                        return [2 /*return*/];
                 }
             });
         });
@@ -158,7 +156,7 @@ var generateData = function () { return __awaiter(void 0, void 0, void 0, functi
         switch (_a.label) {
             case 0:
                 console.log("called generate data");
-                return [4 /*yield*/, module.generateIssues("", 1)];
+                return [4 /*yield*/, module.generateLinks([])];
             case 1:
                 issue = _a.sent();
                 return [2 /*return*/];
