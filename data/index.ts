@@ -19,7 +19,7 @@ const module = {
     // get project types
 
     // team - managed: com.atlassian.jira-core-project-templates:jira-work-management-process-control-team-managed
-    // company - managed: om.pyxis.greenhopper.jira:gh-simplified-scrum-classic
+    // company - managed: com.pyxis.greenhopper.jira:gh-simplified-scrum-classic
     // com.pyxis.greenhopper.jira:gh-simplified-agility-scrum
     // team - com.pyxis.greenhopper.jira:gh-simplified-agility-kanban
     //
@@ -28,21 +28,34 @@ const module = {
     const projects: any[] = [];
     projects.push(
       await api.createProject(
-        "sample description",
+        "sample description 400 700 random",
         myself.accountId,
         "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban",
-        "sample1",
-        "SAM1"
+        "issue-test-1",
+        "IST1"
       )
-    ); // classic project
+    );
+    console.log("in gen project");
+    console.log(projects);
+    // projects.push(
+    //   await api.createProject(
+    //     "sample description",
+    //     myself.accountId,
+    //     "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic",
+    //     "sample5",
+    //     "SAM5"
+    //   )
+    // ); // classic project// classic project
     // projects.push(await api.createProject()); // non classic project
     return projects;
   },
 
-  async generateIssues(project: any, noOfIssues: number): Promise<any[]> {
+  async generateIssues(projects: any, noOfIssues: number): Promise<any[]> {
+    console.log("in gen issues");
+    console.log(projects);
     const issues: any[] = [];
-    for (let i = 0; i < noOfIssues; i++) {
-      issues.push(await api.createIssue());
+    for (let i = 0; i < projects.length; i++) {
+      issues.concat(await api.createIssuesInBulk(projects[i], noOfIssues));
     }
     return issues;
   },
@@ -81,9 +94,14 @@ const module = {
 const generateData = async (): Promise<void> => {
   const projects: any[] = await module.generateProjects();
   const noOfIssues = noOfRecords / projects.length;
-  // for (const project of projects) {
-  //   const versions: any[] = await module.generateVersions(project);
-  //   const issues: any[] = await module.generateIssues(project, noOfIssues);
+  // // for (const project of projects) {
+  // //   const versions: any[] = await module.generateVersions(project);
+  // console.log(projects);
+
+  if (projects.length > 0) {
+    const issues: any[] = await module.generateIssues(projects, noOfIssues);
+  }
+
   //   await module.generateLinks(issues);
   // }
 };
