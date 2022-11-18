@@ -25,19 +25,18 @@ export default class LXPAPI {
   async createIssue(): Promise<any> {
     console.log("called create issue");
     const bodyData = JSON.stringify({
-      "fields": {
-         "project":
-         {
-            "key": "EX"
-         },
-         "summary": "sample",
-         "issuetype": {
-            "name": "Task"
-         }
-     }
-  });
+      fields: {
+        project: {
+          key: "EX",
+        },
+        summary: "sample",
+        issuetype: {
+          name: "Task",
+        },
+      },
+    });
     try {
-      const res = await fetch(`https://mahima-optimizory.atlassian.net/rest/api/3/issue/`, {
+      const res = await fetch(`${this.baseURL}/rest/api/3/issue/`, {
         method: "POST",
         headers: {
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -47,7 +46,7 @@ export default class LXPAPI {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: bodyData
+        body: bodyData,
       });
       console.log(res);
       if (res.ok) {
@@ -100,11 +99,49 @@ export default class LXPAPI {
     throw Error("Method not implemented");
   }
 
-  async createLink(
-    issueId1: string,
-    issueId2: string,
-    linkTypeId: string
-  ): Promise<any> {
-    throw Error("Method not implemented");
+  async createLink(): // issueId1: string,
+  // issueId2: string,
+  // linkTypeId: string
+  Promise<any> {
+    console.log("called create issue");
+    const bodyData = JSON.stringify({
+      outwardIssue: {
+        key: "EX-3",
+      },
+      inwardIssue: {
+        key: "EX-4",
+      },
+      type: {
+        name: "Blocks",
+      },
+    });
+    try {
+      const res = await fetch(`${this.baseURL}/rest/api/3/issueLink/`, {
+        method: "POST",
+        headers: {
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          Authorization: `Basic ${base64.encode(
+            `${this.username}:${this.password}`
+          )}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: bodyData,
+      });
+      console.log(res);
+      if (res.ok) {
+        console.log("res ok");
+        const data = await res.json();
+        console.log(data);
+        console.log(res.statusText);
+      } else {
+        console.log("res not ok");
+        const err = await res.json();
+        throw new Error(err.message);
+      }
+    } catch (error) {
+      console.log("caught error");
+      console.log(error);
+    }
   }
 }

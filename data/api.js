@@ -62,20 +62,20 @@ var LXPAPI = /** @class */ (function () {
                     case 0:
                         console.log("called create issue");
                         bodyData = JSON.stringify({
-                            "fields": {
-                                "project": {
-                                    "key": "EX"
+                            fields: {
+                                project: {
+                                    key: "EX"
                                 },
-                                "summary": "sample",
-                                "issuetype": {
-                                    "name": "Task"
+                                summary: "sample",
+                                issuetype: {
+                                    name: "Task"
                                 }
                             }
                         });
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 7, , 8]);
-                        return [4 /*yield*/, (0, node_fetch_1["default"])("https://mahima-optimizory.atlassian.net/rest/api/3/issue/", {
+                        return [4 /*yield*/, (0, node_fetch_1["default"])("".concat(this.baseURL, "/rest/api/3/issue/"), {
                                 method: "POST",
                                 headers: {
                                     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -157,10 +157,62 @@ var LXPAPI = /** @class */ (function () {
             });
         });
     };
-    LXPAPI.prototype.createLink = function (issueId1, issueId2, linkTypeId) {
+    LXPAPI.prototype.createLink = function () {
         return __awaiter(this, void 0, void 0, function () {
+            var bodyData, res, data, err, error_3;
             return __generator(this, function (_a) {
-                throw Error("Method not implemented");
+                switch (_a.label) {
+                    case 0:
+                        console.log("called create issue");
+                        bodyData = JSON.stringify({
+                            outwardIssue: {
+                                key: "EX-3"
+                            },
+                            inwardIssue: {
+                                key: "EX-4"
+                            },
+                            type: {
+                                name: "Blocks"
+                            }
+                        });
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 7, , 8]);
+                        return [4 /*yield*/, (0, node_fetch_1["default"])("".concat(this.baseURL, "/rest/api/3/issueLink/"), {
+                                method: "POST",
+                                headers: {
+                                    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                                    Authorization: "Basic ".concat(base64.encode("".concat(this.username, ":").concat(this.password))),
+                                    "Content-Type": "application/json",
+                                    Accept: "application/json"
+                                },
+                                body: bodyData
+                            })];
+                    case 2:
+                        res = _a.sent();
+                        console.log(res);
+                        if (!res.ok) return [3 /*break*/, 4];
+                        console.log("res ok");
+                        return [4 /*yield*/, res.json()];
+                    case 3:
+                        data = _a.sent();
+                        console.log(data);
+                        console.log(res.statusText);
+                        return [3 /*break*/, 6];
+                    case 4:
+                        console.log("res not ok");
+                        return [4 /*yield*/, res.json()];
+                    case 5:
+                        err = _a.sent();
+                        throw new Error(err.message);
+                    case 6: return [3 /*break*/, 8];
+                    case 7:
+                        error_3 = _a.sent();
+                        console.log("caught error");
+                        console.log(error_3);
+                        return [3 /*break*/, 8];
+                    case 8: return [2 /*return*/];
+                }
             });
         });
     };
