@@ -60,28 +60,41 @@ var module = {
                         console.log(myself);
                         projects = [];
                         _b = (_a = projects).push;
-                        return [4 /*yield*/, api.createProject("sample description", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "sample1", "SAM1")];
+                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "issue-test-1", "IST1")];
                     case 2:
-                        _b.apply(_a, [_c.sent()]); // classic project
+                        _b.apply(_a, [_c.sent()]);
+                        console.log("in gen project");
+                        console.log(projects);
+                        // projects.push(
+                        //   await api.createProject(
+                        //     "sample description",
+                        //     myself.accountId,
+                        //     "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic",
+                        //     "sample5",
+                        //     "SAM5"
+                        //   )
+                        // ); // classic project// classic project
                         // projects.push(await api.createProject()); // non classic project
                         return [2 /*return*/, projects];
                 }
             });
         });
     },
-    generateIssues: function (project, noOfIssues) {
+    generateIssues: function (projects, noOfIssues) {
         return __awaiter(this, void 0, void 0, function () {
             var issues, i, _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
+                        console.log("in gen issues");
+                        console.log(projects);
                         issues = [];
                         i = 0;
                         _c.label = 1;
                     case 1:
-                        if (!(i < noOfIssues)) return [3 /*break*/, 4];
-                        _b = (_a = issues).push;
-                        return [4 /*yield*/, api.createIssue()];
+                        if (!(i < projects.length)) return [3 /*break*/, 4];
+                        _b = (_a = issues).concat;
+                        return [4 /*yield*/, api.createIssuesInBulk(projects[i], noOfIssues)];
                     case 2:
                         _b.apply(_a, [_c.sent()]);
                         _c.label = 3;
@@ -155,14 +168,19 @@ var module = {
 };
 // main logic
 var generateData = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var projects, noOfIssues;
+    var projects, noOfIssues, issues;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, module.generateProjects()];
             case 1:
                 projects = _a.sent();
                 noOfIssues = noOfRecords / projects.length;
-                return [2 /*return*/];
+                if (!(projects.length > 0)) return [3 /*break*/, 3];
+                return [4 /*yield*/, module.generateIssues(projects, noOfIssues)];
+            case 2:
+                issues = _a.sent();
+                _a.label = 3;
+            case 3: return [2 /*return*/];
         }
     });
 }); };
