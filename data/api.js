@@ -113,13 +113,49 @@ var LXPAPI = /** @class */ (function () {
             });
         });
     };
-    LXPAPI.prototype.createProject = function () {
+    LXPAPI.prototype.getMyself = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var bodyData, res, _a, _b, error_2;
+            var res, data, error_2;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        return [4 /*yield*/, (0, node_fetch_1["default"])("".concat(this.baseURL, "/rest/api/3/myself"), {
+                                method: "GET",
+                                headers: {
+                                    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                                    Authorization: "Basic ".concat(base64.encode("".concat(this.username, ":").concat(this.password))),
+                                    "Content-Type": "application/json"
+                                }
+                            })];
+                    case 1:
+                        res = _a.sent();
+                        return [4 /*yield*/, res.json()];
+                    case 2:
+                        data = _a.sent();
+                        return [2 /*return*/, data];
+                    case 3:
+                        error_2 = _a.sent();
+                        console.log(error_2);
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    LXPAPI.prototype.createProject = function (description, leadAccountId, projectTemplateKey, name, key) {
+        return __awaiter(this, void 0, void 0, function () {
+            var bodyData, res, _a, _b, error_3;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        bodyData = "{\n      \"description\": \"Cloud migration initiative\",\n      \"leadAccountId\": \"632a903a409249995ee7141a\",\n      \"avatarId\": 10200,\n      \"issueSecurityScheme\": 10001,\n      \"projectTemplateKey\": \"com.atlassian.jira-core-project-templates:jira-core-simplified-process-control\",\n      \"name\": \"Example2\",\n      \"key\": \"EX2\"\n    }";
+                        bodyData = JSON.stringify({
+                            description: description,
+                            leadAccountId: leadAccountId,
+                            projectTemplateKey: projectTemplateKey,
+                            name: name,
+                            key: key
+                        });
                         console.log("CALLED CREATE PROJECCT");
                         _c.label = 1;
                     case 1:
@@ -142,8 +178,8 @@ var LXPAPI = /** @class */ (function () {
                         console.log(res.statusText);
                         return [3 /*break*/, 5];
                     case 4:
-                        error_2 = _c.sent();
-                        console.log(error_2);
+                        error_3 = _c.sent();
+                        console.log(error_3);
                         return [3 /*break*/, 5];
                     case 5: return [2 /*return*/];
                 }
@@ -157,9 +193,9 @@ var LXPAPI = /** @class */ (function () {
             });
         });
     };
-    LXPAPI.prototype.createLink = function () {
+    LXPAPI.prototype.createLink = function (issueId1, issueId2, linkTypeId) {
         return __awaiter(this, void 0, void 0, function () {
-            var bodyData, res, data, err, error_3;
+            var bodyData, res, data, err, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -207,9 +243,9 @@ var LXPAPI = /** @class */ (function () {
                         throw new Error(err.message);
                     case 6: return [3 /*break*/, 8];
                     case 7:
-                        error_3 = _a.sent();
+                        error_4 = _a.sent();
                         console.log("caught error");
-                        console.log(error_3);
+                        console.log(error_4);
                         return [3 /*break*/, 8];
                     case 8: return [2 /*return*/];
                 }
