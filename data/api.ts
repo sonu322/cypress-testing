@@ -70,7 +70,7 @@ export default class LXPAPI {
     }
   }
 
-  async getProjectIssueTypeIds(project: any): Promise<string[]> {
+  async getProjectIssueTypeNames(project: any): Promise<string[]> {
     console.log("calling issue type ids");
     console.log(project.self);
     try {
@@ -87,10 +87,61 @@ export default class LXPAPI {
       const data = await res.json();
       console.log(res.statusText);
 
-      return data.issueTypes.map((issueType) => issueType.id);
+      return data.issueTypes.map((issueType) => issueType.name);
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async getFields(): Promise<any[]> {
+    try {
+      const res = await fetch(`${this.baseURL}/rest/api/3/field`, {
+        method: "GET",
+        headers: {
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          Authorization: `Basic ${base64.encode(
+            `${this.username}:${this.password}`
+          )}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+      const data = await res.json();
+      if (res.ok) {
+        console.log("FIELDS!!!!");
+        console.log(data);
+        return data;
+      } else {
+        throw new Error("some error occurred fetching fields");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  _createBodyData(
+    projectKey: string,
+    issueTypeName: string,
+    epicFieldId: string
+  ): any {
+    const issueData = {
+      fields: {
+        summary: "testing epic 2",
+        project: {
+          key: projectKey,
+        },
+        issuetype: {
+          name: issueTypeName,
+        },
+      },
+    };
+    if (issueTypeName === "Epic") {
+      issueData.fields[epicFieldId] = "my_epic";
+    }
+    console.log("----------------------------");
+    console.log(issueData);
+    console.log("-------------------------------");
+    return issueData;
   }
 
   async createIssuesInBulk(
@@ -101,38 +152,43 @@ export default class LXPAPI {
     console.log(project);
 
     try {
-      const issueTypeIds = await this.getProjectIssueTypeIds(project);
+      const fields = await this.getFields();
+      const epicNameField = fields.find((field) => field.name === "Epic Name");
+      if (epicNameField === undefined) {
+        throw new Error("epic name field is undefined.");
+      }
+      console.log("epic: ", epicNameField.id);
+      const epiNameFieldId = epicNameField.id;
+      const issueTypeNames = await this.getProjectIssueTypeNames(project);
 
       console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      console.log(issueTypeIds);
-      if (issueTypeIds === undefined) {
+      console.log(issueTypeNames);
+      if (issueTypeNames === undefined) {
         throw new Error("no issue types from proje");
       }
-      const rng = getRNG("issuetype");
+      const rng1 = getRNG("issuetype1");
+      const rng2 = getRNG("asdf");
+      let typeIndex1 = getRandomNumber(rng1, issueTypeNames.length);
+      let typeIndex2 = getRandomNumber(rng1, issueTypeNames.length);
+      if (typeIndex1 < 0) {
+        typeIndex1 *= -1;
+      }
+      if (typeIndex2 < 0) {
+        typeIndex2 *= -1;
+      }
+      const typeName1 = issueTypeNames[typeIndex1];
+      const typeName2 = issueTypeNames[typeIndex2];
+      console.log(typeIndex1, typeName1);
+      console.log(typeIndex2, typeName2);
+
+      if (typeName1 === undefined || typeName2 === undefined) {
+        throw new Error("type id undefined");
+      }
+
       const bodyData = JSON.stringify({
         issueUpdates: [
-          {
-            fields: {
-              summary: "testing bulk isseu 2",
-              project: {
-                key: project.key,
-              },
-              issuetype: {
-                id: issueTypeIds[getRandomNumber(rng, issueTypeIds.length - 1)],
-              },
-            },
-          },
-          {
-            fields: {
-              summary: "testing bulk isseu 3",
-              project: {
-                key: project.key,
-              },
-              issuetype: {
-                id: issueTypeIds[getRandomNumber(rng, issueTypeIds.length - 1)],
-              },
-            },
-          },
+          this._createBodyData(project.key, typeName1, epiNameFieldId),
+          this._createBodyData(project.key, typeName1, epiNameFieldId),
         ],
       });
       const res = await fetch(`${this.baseURL}/rest/api/3/issue/bulk`, {

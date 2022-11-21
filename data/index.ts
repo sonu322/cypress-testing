@@ -31,22 +31,21 @@ const module = {
         "sample description 400 700 random",
         myself.accountId,
         "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban",
-        "issue-test-1",
-        "IST1"
+        "issue-create-test-3",
+        "ICT3"
       )
     );
     console.log("in gen project");
     console.log(projects);
-    // projects.push(
-    //   await api.createProject(
-    //     "sample description",
-    //     myself.accountId,
-    //     "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic",
-    //     "sample5",
-    //     "SAM5"
-    //   )
-    // ); // classic project// classic project
-    // projects.push(await api.createProject()); // non classic project
+    projects.push(
+      await api.createProject(
+        "sample description",
+        myself.accountId,
+        "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic",
+        "issue-create-test-4",
+        "ICT4"
+      )
+    ); // classic project
     return projects;
   },
 

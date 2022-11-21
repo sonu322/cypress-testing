@@ -51,30 +51,24 @@ var versionsRNG = Util.getRNG("versionsRNG");
 var module = {
     generateProjects: function () {
         return __awaiter(this, void 0, void 0, function () {
-            var myself, projects, _a, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            var myself, projects, _a, _b, _c, _d;
+            return __generator(this, function (_e) {
+                switch (_e.label) {
                     case 0: return [4 /*yield*/, api.getMyself()];
                     case 1:
-                        myself = _c.sent();
+                        myself = _e.sent();
                         console.log(myself);
                         projects = [];
                         _b = (_a = projects).push;
-                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "issue-test-1", "IST1")];
+                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "issue-create-test-3", "ICT3")];
                     case 2:
-                        _b.apply(_a, [_c.sent()]);
+                        _b.apply(_a, [_e.sent()]);
                         console.log("in gen project");
                         console.log(projects);
-                        // projects.push(
-                        //   await api.createProject(
-                        //     "sample description",
-                        //     myself.accountId,
-                        //     "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic",
-                        //     "sample5",
-                        //     "SAM5"
-                        //   )
-                        // ); // classic project// classic project
-                        // projects.push(await api.createProject()); // non classic project
+                        _d = (_c = projects).push;
+                        return [4 /*yield*/, api.createProject("sample description", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic", "issue-create-test-4", "ICT4")];
+                    case 3:
+                        _d.apply(_c, [_e.sent()]); // classic project
                         return [2 /*return*/, projects];
                 }
             });
