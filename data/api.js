@@ -55,13 +55,13 @@ var LXPAPI = /** @class */ (function () {
         // });
     }
     // private readonly _AP: any = AP;
-    LXPAPI.prototype.createIssue = function (projectKey, summary, issueTypeId) {
+    LXPAPI.prototype.createIssue = function (projectKey, summary, issueTypeName) {
         return __awaiter(this, void 0, void 0, function () {
-            var bodyData, res, data, err, error_1;
+            var bodyData, res, data, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        console.log("called create issue");
+                        console.log("called create issueeeeeeeeeeeee");
                         bodyData = JSON.stringify({
                             fields: {
                                 project: {
@@ -69,13 +69,13 @@ var LXPAPI = /** @class */ (function () {
                                 },
                                 summary: summary,
                                 issuetype: {
-                                    id: issueTypeId
+                                    name: issueTypeName
                                 }
                             }
                         });
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 7, , 8]);
+                        _a.trys.push([1, 4, , 5]);
                         return [4 /*yield*/, (0, node_fetch_1["default"])("".concat(this.baseURL, "/rest/api/3/issue/"), {
                                 method: "POST",
                                 headers: {
@@ -89,27 +89,27 @@ var LXPAPI = /** @class */ (function () {
                     case 2:
                         res = _a.sent();
                         console.log(res);
-                        if (!res.ok) return [3 /*break*/, 4];
-                        console.log("res ok");
                         return [4 /*yield*/, res.json()];
                     case 3:
                         data = _a.sent();
-                        console.log(data);
-                        console.log(res.statusText);
-                        return [3 /*break*/, 6];
+                        if (res.ok) {
+                            console.log("res ok");
+                            console.log("RETURNED ISSUE DATA");
+                            console.log(data);
+                            console.log(res.statusText);
+                            return [2 /*return*/, data];
+                        }
+                        else {
+                            console.log("res not ok");
+                            throw new Error("error fetchingissue");
+                        }
+                        return [3 /*break*/, 5];
                     case 4:
-                        console.log("res not ok");
-                        return [4 /*yield*/, res.json()];
-                    case 5:
-                        err = _a.sent();
-                        throw new Error(err.message);
-                    case 6: return [3 /*break*/, 8];
-                    case 7:
                         error_1 = _a.sent();
                         console.log("caught error");
                         console.log(error_1);
-                        return [3 /*break*/, 8];
-                    case 8: return [2 /*return*/];
+                        return [3 /*break*/, 5];
+                    case 5: return [2 /*return*/];
                 }
             });
         });
@@ -188,7 +188,7 @@ var LXPAPI = /** @class */ (function () {
             });
         });
     };
-    LXPAPI.prototype._createBodyData = function (projectKey, issueTypeName, epicFieldId) {
+    LXPAPI.prototype._createBodyData = function (projectKey, issueTypeName, epicFieldId, parentKey) {
         var issueData = {
             fields: {
                 summary: "testing epic 2",
@@ -203,6 +203,11 @@ var LXPAPI = /** @class */ (function () {
         if (issueTypeName === "Epic") {
             issueData.fields[epicFieldId] = "my_epic";
         }
+        if (issueTypeName.includes("Sub")) {
+            issueData.fields.parent = {
+                key: parentKey
+            };
+        }
         console.log("----------------------------");
         console.log(issueData);
         console.log("-------------------------------");
@@ -210,7 +215,7 @@ var LXPAPI = /** @class */ (function () {
     };
     LXPAPI.prototype.createIssuesInBulk = function (project, noOfIssuesPerProject) {
         return __awaiter(this, void 0, void 0, function () {
-            var fields, epicNameField, epiNameFieldId, issueTypeNames, rng1, rng2, typeIndex1, typeIndex2, typeName1, typeName2, bodyData, res, data, err, error_4;
+            var fields, epicNameField, epiNameFieldId, issueTypeNames, rng1, rng2, typeIndex1, typeIndex2, typeName1, typeName2, parentKey, parentIssue, issueData1, issueData2, bodyData, res, data, err, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -218,7 +223,7 @@ var LXPAPI = /** @class */ (function () {
                         console.log(project);
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 9, , 10]);
+                        _a.trys.push([1, 11, , 12]);
                         return [4 /*yield*/, this.getFields()];
                     case 2:
                         fields = _a.sent();
@@ -253,11 +258,19 @@ var LXPAPI = /** @class */ (function () {
                         if (typeName1 === undefined || typeName2 === undefined) {
                             throw new Error("type id undefined");
                         }
+                        parentKey = void 0;
+                        if (!typeName1.includes("Sub")) return [3 /*break*/, 5];
+                        console.log("hi from handle sub");
+                        return [4 /*yield*/, this.createIssue(project.key, "this is a parent", "Task")];
+                    case 4:
+                        parentIssue = _a.sent();
+                        parentKey = parentIssue.key;
+                        _a.label = 5;
+                    case 5:
+                        issueData1 = this._createBodyData(project.key, typeName1, epiNameFieldId, parentKey);
+                        issueData2 = this._createBodyData(project.key, typeName2, epiNameFieldId, parentKey);
                         bodyData = JSON.stringify({
-                            issueUpdates: [
-                                this._createBodyData(project.key, typeName1, epiNameFieldId),
-                                this._createBodyData(project.key, typeName1, epiNameFieldId),
-                            ]
+                            issueUpdates: [issueData1, issueData2]
                         });
                         return [4 /*yield*/, (0, node_fetch_1["default"])("".concat(this.baseURL, "/rest/api/3/issue/bulk"), {
                                 method: "POST",
@@ -269,30 +282,30 @@ var LXPAPI = /** @class */ (function () {
                                 },
                                 body: bodyData
                             })];
-                    case 4:
+                    case 6:
                         res = _a.sent();
                         console.log(res);
                         return [4 /*yield*/, res.json()];
-                    case 5:
+                    case 7:
                         data = _a.sent();
-                        if (!res.ok) return [3 /*break*/, 6];
+                        if (!res.ok) return [3 /*break*/, 8];
                         console.log("res ok");
                         console.log(data);
                         console.log(res.statusText);
-                        return [3 /*break*/, 8];
-                    case 6:
+                        return [3 /*break*/, 10];
+                    case 8:
                         console.log("res not ok");
                         return [4 /*yield*/, data];
-                    case 7:
+                    case 9:
                         err = _a.sent();
                         throw new Error(err.message);
-                    case 8: return [3 /*break*/, 10];
-                    case 9:
+                    case 10: return [3 /*break*/, 12];
+                    case 11:
                         error_4 = _a.sent();
                         console.log("caught error");
                         console.log(error_4);
-                        return [3 /*break*/, 10];
-                    case 10: return [2 /*return*/];
+                        return [3 /*break*/, 12];
+                    case 12: return [2 /*return*/];
                 }
             });
         });

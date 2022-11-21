@@ -3,6 +3,10 @@ import fetch from "node-fetch";
 import JiraApi from "jira-client";
 import { getRandomNumber, getRNG } from "./util";
 const base64 = require("base-64");
+
+interface IssueData {
+  [key: string]: any;
+}
 export default class LXPAPI {
   private readonly baseURL: string;
   private readonly username: string;
@@ -26,9 +30,9 @@ export default class LXPAPI {
   async createIssue(
     projectKey: string,
     summary: string,
-    issueTypeId: string
+    issueTypeName: string
   ): Promise<any> {
-    console.log("called create issue");
+    console.log("called create issueeeeeeeeeeeee");
     const bodyData = JSON.stringify({
       fields: {
         project: {
@@ -36,7 +40,7 @@ export default class LXPAPI {
         },
         summary,
         issuetype: {
-          id: issueTypeId,
+          name: issueTypeName,
         },
       },
     });
@@ -54,15 +58,16 @@ export default class LXPAPI {
         body: bodyData,
       });
       console.log(res);
+      const data = await res.json();
       if (res.ok) {
         console.log("res ok");
-        const data = await res.json();
+        console.log("RETURNED ISSUE DATA");
         console.log(data);
         console.log(res.statusText);
+        return data;
       } else {
         console.log("res not ok");
-        const err = await res.json();
-        throw new Error(err.message);
+        throw new Error("error fetchingissue");
       }
     } catch (error) {
       console.log("caught error");
@@ -122,9 +127,10 @@ export default class LXPAPI {
   _createBodyData(
     projectKey: string,
     issueTypeName: string,
-    epicFieldId: string
+    epicFieldId: string,
+    parentKey: string
   ): any {
-    const issueData = {
+    const issueData: IssueData = {
       fields: {
         summary: "testing epic 2",
         project: {
@@ -137,6 +143,11 @@ export default class LXPAPI {
     };
     if (issueTypeName === "Epic") {
       issueData.fields[epicFieldId] = "my_epic";
+    }
+    if (issueTypeName.includes("Sub")) {
+      issueData.fields.parent = {
+        key: parentKey,
+      };
     }
     console.log("----------------------------");
     console.log(issueData);
@@ -184,12 +195,31 @@ export default class LXPAPI {
       if (typeName1 === undefined || typeName2 === undefined) {
         throw new Error("type id undefined");
       }
-
+      // change to a more rigid condition that accepts Sub-task, Subtask
+      let parentKey;
+      if (typeName1.includes("Sub")) {
+        console.log("hi from handle sub");
+        const parentIssue = await this.createIssue(
+          project.key,
+          "this is a parent",
+          "Task"
+        );
+        parentKey = parentIssue.key;
+      }
+      const issueData1 = this._createBodyData(
+        project.key,
+        typeName1,
+        epiNameFieldId,
+        parentKey
+      );
+      const issueData2 = this._createBodyData(
+        project.key,
+        typeName2,
+        epiNameFieldId,
+        parentKey
+      );
       const bodyData = JSON.stringify({
-        issueUpdates: [
-          this._createBodyData(project.key, typeName1, epiNameFieldId),
-          this._createBodyData(project.key, typeName1, epiNameFieldId),
-        ],
+        issueUpdates: [issueData1, issueData2],
       });
       const res = await fetch(`${this.baseURL}/rest/api/3/issue/bulk`, {
         method: "POST",
