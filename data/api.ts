@@ -124,7 +124,7 @@ export default class LXPAPI {
     }
   }
 
-  _createBodyData(
+  _createIssueBodyData(
     projectKey: string,
     issueTypeName: string,
     epicFieldId: string,
@@ -155,6 +155,37 @@ export default class LXPAPI {
     return issueData;
   }
 
+  _createIssueDataList(
+    project: any,
+    issueTypeNames: string[],
+    numberOfIssues: number,
+    parentKey?: string,
+    epicNameFieldId?: string
+  ): any[] {
+    const rng = getRNG("issuetype");
+    const issues = [];
+    for (let i = 0; i < numberOfIssues; i++) {
+      let typeIndex1 = getRandomNumber(rng, issueTypeNames.length);
+      if (typeIndex1 < 0) {
+        typeIndex1 *= -1;
+      }
+      const typeName1 = issueTypeNames[typeIndex1];
+      console.log(typeIndex1, typeName1);
+      if (typeName1 === undefined) {
+        throw new Error("type NAME undefined");
+      }
+
+      const issueData = this._createIssueBodyData(
+        project.key,
+        typeName1,
+        epicNameFieldId,
+        parentKey
+      );
+      issues.push(issueData);
+    }
+    return issues;
+  }
+
   async createIssuesInBulk(
     project: any,
     noOfIssuesPerProject: number
@@ -177,49 +208,62 @@ export default class LXPAPI {
       if (issueTypeNames === undefined) {
         throw new Error("no issue types from proje");
       }
-      const rng1 = getRNG("issuetype1");
-      const rng2 = getRNG("asdf");
-      let typeIndex1 = getRandomNumber(rng1, issueTypeNames.length);
-      let typeIndex2 = getRandomNumber(rng1, issueTypeNames.length);
-      if (typeIndex1 < 0) {
-        typeIndex1 *= -1;
-      }
-      if (typeIndex2 < 0) {
-        typeIndex2 *= -1;
-      }
-      const typeName1 = issueTypeNames[typeIndex1];
-      const typeName2 = issueTypeNames[typeIndex2];
-      console.log(typeIndex1, typeName1);
-      console.log(typeIndex2, typeName2);
 
-      if (typeName1 === undefined || typeName2 === undefined) {
-        throw new Error("type id undefined");
-      }
+      const parentIssue = await this.createIssue(
+        project.key,
+        "this is a parent",
+        "Task"
+      );
+      const parentKey = parentIssue.key;
+      const issueDataList = this._createIssueDataList(
+        project,
+        issueTypeNames,
+        noOfIssuesPerProject,
+        parentKey,
+        epiNameFieldId
+      );
+      // const rng = getRNG("issuetype1");
+      // let typeIndex1 = getRandomNumber(rng, issueTypeNames.length);
+      // let typeIndex2 = getRandomNumber(rng, issueTypeNames.length);
+      // if (typeIndex1 < 0) {
+      //   typeIndex1 *= -1;
+      // }
+      // if (typeIndex2 < 0) {
+      //   typeIndex2 *= -1;
+      // }
+      // const typeName1 = issueTypeNames[typeIndex1];
+      // const typeName2 = issueTypeNames[typeIndex2];
+      // console.log(typeIndex1, typeName1);
+      // console.log(typeIndex2, typeName2);
+
+      // if (typeName1 === undefined || typeName2 === undefined) {
+      //   throw new Error("type NAME undefined");
+      // }
       // change to a more rigid condition that accepts Sub-task, Subtask
-      let parentKey;
-      if (typeName1.includes("Sub")) {
-        console.log("hi from handle sub");
-        const parentIssue = await this.createIssue(
-          project.key,
-          "this is a parent",
-          "Task"
-        );
-        parentKey = parentIssue.key;
-      }
-      const issueData1 = this._createBodyData(
-        project.key,
-        typeName1,
-        epiNameFieldId,
-        parentKey
-      );
-      const issueData2 = this._createBodyData(
-        project.key,
-        typeName2,
-        epiNameFieldId,
-        parentKey
-      );
+      // let parentKey;
+      // if (typeName1.includes("Sub")) {
+      //   console.log("hi from handle sub");
+      //   const parentIssue = await this.createIssue(
+      //     project.key,
+      //     "this is a parent",
+      //     "Task"
+      //   );
+      //   parentKey = parentIssue.key;
+      // }
+      // const issueData1 = this._createIssueBodyData(
+      //   project.key,
+      //   typeName1,
+      //   epiNameFieldId,
+      //   parentKey
+      // );
+      // const issueData2 = this._createIssueBodyData(
+      //   project.key,
+      //   typeName2,
+      //   epiNameFieldId,
+      //   parentKey
+      // );
       const bodyData = JSON.stringify({
-        issueUpdates: [issueData1, issueData2],
+        issueUpdates: issueDataList,
       });
       const res = await fetch(`${this.baseURL}/rest/api/3/issue/bulk`, {
         method: "POST",
