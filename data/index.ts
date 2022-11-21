@@ -31,8 +31,8 @@ const module = {
         "sample description 400 700 random",
         myself.accountId,
         "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban",
-        "issue-create-test-3",
-        "ICT3"
+        "subtask-create-test-6",
+        "SCT6"
       )
     );
     console.log("in gen project");
@@ -42,8 +42,8 @@ const module = {
         "sample description",
         myself.accountId,
         "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic",
-        "issue-create-test-4",
-        "ICT4"
+        "subtask-create-test-2",
+        "SCT2"
       )
     ); // classic project
     return projects;
@@ -53,7 +53,7 @@ const module = {
     console.log("in gen issues");
     console.log(projects);
     const issues: any[] = [];
-    for (let i = 0; i < projects.length; i++) {
+    for (let i = 0; i < 1; i++) {
       issues.concat(await api.createIssuesInBulk(projects[i], noOfIssues));
     }
     return issues;

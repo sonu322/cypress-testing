@@ -60,13 +60,13 @@ var module = {
                         console.log(myself);
                         projects = [];
                         _b = (_a = projects).push;
-                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "issue-create-test-3", "ICT3")];
+                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "subtask-create-test-6", "SCT6")];
                     case 2:
                         _b.apply(_a, [_e.sent()]);
                         console.log("in gen project");
                         console.log(projects);
                         _d = (_c = projects).push;
-                        return [4 /*yield*/, api.createProject("sample description", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic", "issue-create-test-4", "ICT4")];
+                        return [4 /*yield*/, api.createProject("sample description", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic", "subtask-create-test-2", "SCT2")];
                     case 3:
                         _d.apply(_c, [_e.sent()]); // classic project
                         return [2 /*return*/, projects];
@@ -86,7 +86,7 @@ var module = {
                         i = 0;
                         _c.label = 1;
                     case 1:
-                        if (!(i < projects.length)) return [3 /*break*/, 4];
+                        if (!(i < 1)) return [3 /*break*/, 4];
                         _b = (_a = issues).concat;
                         return [4 /*yield*/, api.createIssuesInBulk(projects[i], noOfIssues)];
                     case 2:
