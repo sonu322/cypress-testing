@@ -207,6 +207,9 @@ export interface JiraFilter {
 }
 
 export interface JiraAPI {
+  
+  isJiraCloud(): boolean;
+
   hasValidLicense(): boolean;
 
   getJiraBaseURL(): string;

@@ -1,10 +1,11 @@
-import IssueLinksHierarchy from "./IssueLinksHierarchy";
-import ReactDOM from "react-dom";
+import TracebilityReport from "./TracebilityReport";
 import APIImpl from "./impl/Cloud";
 import JiraServerImpl from "./impl/jira/Server";
 import { APIContext } from "./context/api";
+import ReactDOM from "react-dom";
 import React from "react";
 import { getAppRoot } from "./util/common";
+window.React = React;
 
 const render = async (): Promise<void> => {
   // eslint-disable-next-line no-undef
@@ -14,21 +15,11 @@ const render = async (): Promise<void> => {
     const api = new APIImpl(jiraServer);
     ReactDOM.render(
       <APIContext.Provider value={api}>
-        <IssueLinksHierarchy />
+        <TracebilityReport />
       </APIContext.Provider>,
       App
     );
   }
 };
 
-/**
- * JIRA function to initialize LXP - Links Explorer tab content
- */
-// @ts-expect-error
-JIRA.ViewIssueTabs.onTabReady(function (event, eee) {
-  render();
-});
-
-// TODO: reload the tree on this event...
-// @ts-expect-error
-JIRA.bind("GH.DetailView.updated", render);
+render();

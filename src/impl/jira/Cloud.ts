@@ -16,6 +16,10 @@ export default class JiraCloudImpl implements JiraAPI {
   // @ts-ignore
   private _AP: any = AP;
 
+  isJiraCloud(): boolean {
+    return true;
+  }
+
   hasValidLicense(): boolean {
     const lic = getQueryParam("lic");
     return !(lic && "none" === lic);

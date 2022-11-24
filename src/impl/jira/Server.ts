@@ -11,20 +11,29 @@ import {
 } from "../../types/jira";
 
 export default class JiraServerImpl implements JiraAPI {
-  // @ts-ignore
-  private _AJS: any = AJS;
-  // @ts-ignore
-  private _JIRA: any = JIRA;
-  private contextPath: string = "";
+  // @ts-expect-error
+  private readonly _AJS: any = AJS;
+  // @ts-expect-error
+  private readonly _JIRA: any = JIRA;
+  private readonly contextPath: string = "";
+  private readonly isValidLicense: boolean = false;
+
+  constructor(rootElement: HTMLElement){
+    this.isValidLicense = rootElement.dataset.license === "true";
+    this.contextPath = rootElement.dataset.contextpath;
+  }
+
+  isJiraCloud(): boolean {
+    return false;
+  }
 
   hasValidLicense(): boolean {
-    // throw new Error("Method not implemented.");
-    return true;
+    // return this.isValidLicense;
+    return true; // TODO: fix me
   }
 
   getJiraBaseURL(): string {
-    // throw new Error("Method not implemented.");
-    return "http://localhost:8082";
+    return this.contextPath;
   }
 
   async getPriorities(): Promise<JiraIssuePriorityFull[]> {
@@ -84,8 +93,15 @@ export default class JiraServerImpl implements JiraAPI {
   }
 
   async getFilters(): Promise<JiraFiltersResponse> {
-    let response = await this._AJS.getJSON("/rest/api/2/filter/search");
-    return response.body && JSON.parse(response.body);
+    const res = await this._AJS.$.getJSON("/rest/api/2/filter/favourite");
+    return {
+      self: null,
+      maxResults: res.length,
+      startAt: 0,
+      total: res.length,
+      isLast: true,
+      values: res
+    };
   }
 
   getCurrentProjectKey(): Promise<string> {

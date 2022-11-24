@@ -18,6 +18,3 @@ ReactDOM.render(
   </APIContext.Provider>,
   App
 );
-
-
-

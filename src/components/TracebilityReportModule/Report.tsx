@@ -26,6 +26,10 @@ const BorderTr = styled.tr`
 const Table = styled.table`
   border: 1px solid ${colors.N40};
 `;
+
+// @ts-expect-error
+const _AP: any = typeof AP !== "undefined" ? AP: null;
+
 interface Props {
   filteredIssues: IssueWithSortedLinks[];
   tableFields: IssueType[] | IssueLinkType[];
@@ -58,8 +62,11 @@ export const Report = ({
   useEffect(() => {
     const resizeHandler = () => {
       setTableHeight((prevHeight) => {
-        //@ts-ignore
-        AP.sizeToParent();
+        if(_AP){
+          //@ts-ignore
+          _AP.sizeToParent();
+        }
+        
         return calculateTableHeight(errors);
       });
     };

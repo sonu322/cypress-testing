@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "@atlaskit/button";
 // @ts-expect-error
-const _AP: any = AP;
+const _AP: any = typeof AP !== "undefined" ? AP: null;
 const options = {
   header: "Filter Issues with JQL Query",
   descriptionText: "Use a new JQL query to search issues",
@@ -25,7 +25,9 @@ export const JQLEditor = ({
     setSelectedFilterId(jql);
   };
   const openJQLEditor = (): void => {
-    _AP.jira.showJQLEditor(options, callback);
+    if(_AP){
+      _AP.jira.showJQLEditor(options, callback);
+    }
   };
   return (
     <Button appearance="default" onClick={openJQLEditor}>

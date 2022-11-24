@@ -89,3 +89,24 @@ export const getStatusAppearance = (status: IssueStatus): ThemeAppearance => {
 
   return type;
 };
+
+export const getAppRoot = (): Promise<HTMLElement>  => {
+  let root = document.getElementById("lxp-container-root");
+  if(root) return Promise.resolve(root);
+  else {
+    return new Promise((resolve) => {
+      let counter = 0;
+      const interval = setInterval(() => {
+        counter++;
+        root = document.getElementById("lxp-container-root");
+        if(root){
+          clearInterval(interval);
+          resolve(root);
+        } else if(counter > 20){
+          clearInterval(interval);
+          resolve(null);
+        }
+      }, 50);
+    });
+  }
+};
