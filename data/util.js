@@ -1,12 +1,16 @@
 "use strict";
 exports.__esModule = true;
-exports.getRandomNumber = exports.getRNG = void 0;
+exports.getPositiveRandomNumber = exports.getRNG = void 0;
 var seedrandom = require("seedrandom");
 var getRNG = function (seed) {
     return seedrandom(seed);
 };
 exports.getRNG = getRNG;
-var getRandomNumber = function (rng, max) {
-    return rng.int32() % max;
+var getPositiveRandomNumber = function (rng, max) {
+    var randomInt = rng.int32() % max;
+    if (randomInt < 0) {
+        randomInt = randomInt * -1;
+    }
+    return randomInt;
 };
-exports.getRandomNumber = getRandomNumber;
+exports.getPositiveRandomNumber = getPositiveRandomNumber;

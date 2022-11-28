@@ -59,28 +59,32 @@ const module = {
     return issues;
   },
 
-  async generateLinks(issues: any[]) {
-    const linkTypes: any[] = []; // TODO: fetch all the link types available
+  async generateLinks() // issues: any[]
+  {
+    const linkTypeNames: any[] = await api.getIssueLinkTypeNames(); // TODO: fetch all the link types available
+    console.log("FETCTHDE LINK TYPES!!");
+    console.log(linkTypeNames);
+    const noOfLinks = Util.getPositiveRandomNumber(linksRNG, maxLinks + 1);
+    // for (const issue of issues) {
 
-    for (const issue of issues) {
-      const noOfLinks = Util.getRandomNumber(linksRNG, maxLinks + 1);
-      for (let j = 0; j < noOfLinks; j++) {
-        const issueIndex = Util.getRandomNumber(linkFinderRNG, issues.length);
-        const linkTypeIndex = Util.getRandomNumber(
-          linkTypesRNG,
-          linkTypes.length
-        );
-        await api.createLink(
-          issue.id,
-          issues[issueIndex].id,
-          linkTypes[linkTypeIndex].id
-        );
-      }
-    }
+    // for (let j = 0; j < noOfLinks; j++) {
+    //     const issueIndex = Util.getRandomNumber(linkFinderRNG, issues.length);
+    const linkTypeIndex = Util.getPositiveRandomNumber(
+      linkTypesRNG,
+      linkTypeNames.length
+    );
+    console.log(linkTypeIndex);
+    await api.createLink(
+      "issue.id",
+      "issues[issueIndex].id",
+      linkTypeNames[linkTypeIndex]
+    );
+    //   }
+    // }
   },
 
   async generateVersions(project: any): Promise<any[]> {
-    const noOfVersions = Util.getRandomNumber(versionsRNG, maxVersions);
+    const noOfVersions = Util.getPositiveRandomNumber(versionsRNG, maxVersions);
     const versions: any[] = [];
     for (let i = 0; i < noOfVersions; i++) {
       versions.push(await api.createVersion());
@@ -101,9 +105,9 @@ const generateData = async (): Promise<void> => {
   //   const issues: any[] = await module.generateIssues(projects, noOfIssues);
   // }
 
-  //   await module.generateLinks(issues);
+  await module.generateLinks();
   // }
-  await api.createLink("x", "y", "z");
-};
+  // await api.createLink("x", "y", "z");
+};;
 
 generateData();
