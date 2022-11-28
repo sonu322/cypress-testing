@@ -392,6 +392,50 @@ var LXPAPI = /** @class */ (function () {
             });
         });
     };
+    // async createLink(
+    // issueId1: string,
+    // issueId2: string,
+    // linkTypeId: string
+    // ): Promise<any> {
+    //   console.log("called create link");
+    // const bodyData = JSON.stringify({
+    //   outwardIssue: {
+    //     key: "MT7-6",
+    //   },
+    //   inwardIssue: {
+    //     key: "MT7-8",
+    //   },
+    //   type: {
+    //     name: "Blocks",
+    //   },
+    // });
+    //   try {
+    //     const res = await fetch(`${this.baseURL}/rest/api/3/issueLink/`, {
+    //       method: "POST",
+    //       headers: {
+    //         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    //         Authorization: `Basic ${base64.encode(
+    //           `${this.username}:${this.password}`
+    //         )}`,
+    //         "Content-Type": "application/json",
+    //         Accept: "application/json",
+    //       },
+    //       body: bodyData,
+    //     });
+    //     console.log(res);
+    //     // FIX: res.json() gives error
+    //     console.log(res.statusText);
+    //     if (res.ok) {
+    //       console.log("res ok");
+    //     } else {
+    //       console.log("res not ok");
+    //       throw new Error(res.statusText);
+    //     }
+    //   } catch (error) {
+    //     console.log("caught error");
+    //     console.log(error);
+    //   }
+    // }
     LXPAPI.prototype.createLink = function (issueId1, issueId2, linkTypeId) {
         return __awaiter(this, void 0, void 0, function () {
             var bodyData, res, error_7;
@@ -426,14 +470,14 @@ var LXPAPI = /** @class */ (function () {
                     case 2:
                         res = _a.sent();
                         console.log(res);
-                        // FIX: res.json() gives error
-                        console.log(res.statusText);
+                        // console.log(await res.json());
                         if (res.ok) {
                             console.log("res ok");
+                            console.log(res.statusText);
                         }
                         else {
                             console.log("res not ok");
-                            throw new Error(res.statusText);
+                            throw new Error("error fetchingissue");
                         }
                         return [3 /*break*/, 4];
                     case 3:
