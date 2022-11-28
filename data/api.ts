@@ -1,7 +1,7 @@
 import axios from "axios";
 import fetch from "node-fetch";
 import JiraApi from "jira-client";
-import { getRandomNumber, getRNG } from "./util";
+import { getPositiveRandomNumber, getRNG } from "./util";
 import mockIssueData from "./mockIssueData";
 const base64 = require("base-64");
 
@@ -101,6 +101,30 @@ export default class LXPAPI {
     }
   }
 
+  async getIssueLinkTypeNames(): Promise<string[]> {
+    console.log("calling issue link type names");
+    try {
+      const res = await fetch(`${this.baseURL}/rest/api/3/issueLinkType/`, {
+        method: "GET",
+        headers: {
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          Authorization: `Basic ${base64.encode(
+            `${this.username}:${this.password}`
+          )}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      console.log(res.statusText);
+      console.log("links!!!!!!!!!!!!!!");
+      console.log(data);
+
+      return data.issueLinkTypes.map((issueLinkType) => issueLinkType.name);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async getFields(): Promise<any[]> {
     try {
       const res = await fetch(`${this.baseURL}/rest/api/3/field`, {
@@ -134,10 +158,11 @@ export default class LXPAPI {
     parentKey: string
   ): any {
     const rngIssueData = getRNG("issuedatamock");
-    let mockIssueIndex = getRandomNumber(rngIssueData, mockIssueData.length);
-    if (mockIssueIndex < 0) {
-      mockIssueIndex *= -1;
-    }
+    let mockIssueIndex = getPositiveRandomNumber(
+      rngIssueData,
+      mockIssueData.length
+    );
+
     const issueData: IssueData = {
       fields: {
         summary: mockIssueData[mockIssueIndex].summary,
@@ -173,10 +198,8 @@ export default class LXPAPI {
     const rng = getRNG("issuetype");
     const issues = [];
     for (let i = 0; i < numberOfIssues; i++) {
-      let typeIndex1 = getRandomNumber(rng, issueTypeNames.length);
-      if (typeIndex1 < 0) {
-        typeIndex1 *= -1;
-      }
+      let typeIndex1 = getPositiveRandomNumber(rng, issueTypeNames.length);
+
       const typeName1 = issueTypeNames[typeIndex1];
       console.log(typeIndex1, typeName1);
       if (typeName1 === undefined) {
@@ -324,66 +347,21 @@ export default class LXPAPI {
     throw Error("Method not implemented");
   }
 
-  // async createLink(
-  // issueId1: string,
-  // issueId2: string,
-  // linkTypeId: string
-  // ): Promise<any> {
-  //   console.log("called create link");
-  // const bodyData = JSON.stringify({
-  //   outwardIssue: {
-  //     key: "MT7-6",
-  //   },
-  //   inwardIssue: {
-  //     key: "MT7-8",
-  //   },
-  //   type: {
-  //     name: "Blocks",
-  //   },
-  // });
-  //   try {
-  //     const res = await fetch(`${this.baseURL}/rest/api/3/issueLink/`, {
-  //       method: "POST",
-  //       headers: {
-  //         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-  //         Authorization: `Basic ${base64.encode(
-  //           `${this.username}:${this.password}`
-  //         )}`,
-  //         "Content-Type": "application/json",
-  //         Accept: "application/json",
-  //       },
-  //       body: bodyData,
-  //     });
-  //     console.log(res);
-  //     // FIX: res.json() gives error
-  //     console.log(res.statusText);
-  //     if (res.ok) {
-  //       console.log("res ok");
-  //     } else {
-  //       console.log("res not ok");
-  //       throw new Error(res.statusText);
-  //     }
-  //   } catch (error) {
-  //     console.log("caught error");
-  //     console.log(error);
-  //   }
-  // }
-
   async createLink(
     issueId1: string,
     issueId2: string,
-    linkTypeId: string
+    linkTypeName: string
   ): Promise<any> {
-    console.log("called create link");
+    console.log("called create link", linkTypeName);
     const bodyData = JSON.stringify({
       outwardIssue: {
-        key: "MT7-6",
+        key: "AT7-8",
       },
       inwardIssue: {
-        key: "MT7-8",
+        key: "AT7-6",
       },
       type: {
-        name: "Blocks",
+        name: linkTypeName,
       },
     });
     try {

@@ -100,36 +100,23 @@ var module = {
             });
         });
     },
-    generateLinks: function (issues) {
+    generateLinks: function () {
         return __awaiter(this, void 0, void 0, function () {
-            var linkTypes, _i, issues_1, issue, noOfLinks, j, issueIndex, linkTypeIndex;
+            var linkTypeNames, noOfLinks, linkTypeIndex;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        linkTypes = [];
-                        _i = 0, issues_1 = issues;
-                        _a.label = 1;
+                    case 0: return [4 /*yield*/, api.getIssueLinkTypeNames()];
                     case 1:
-                        if (!(_i < issues_1.length)) return [3 /*break*/, 6];
-                        issue = issues_1[_i];
-                        noOfLinks = Util.getRandomNumber(linksRNG, maxLinks + 1);
-                        j = 0;
-                        _a.label = 2;
+                        linkTypeNames = _a.sent();
+                        console.log("FETCTHDE LINK TYPES!!");
+                        console.log(linkTypeNames);
+                        noOfLinks = Util.getPositiveRandomNumber(linksRNG, maxLinks + 1);
+                        linkTypeIndex = Util.getPositiveRandomNumber(linkTypesRNG, linkTypeNames.length);
+                        console.log(linkTypeIndex);
+                        return [4 /*yield*/, api.createLink("issue.id", "issues[issueIndex].id", linkTypeNames[linkTypeIndex])];
                     case 2:
-                        if (!(j < noOfLinks)) return [3 /*break*/, 5];
-                        issueIndex = Util.getRandomNumber(linkFinderRNG, issues.length);
-                        linkTypeIndex = Util.getRandomNumber(linkTypesRNG, linkTypes.length);
-                        return [4 /*yield*/, api.createLink(issue.id, issues[issueIndex].id, linkTypes[linkTypeIndex].id)];
-                    case 3:
                         _a.sent();
-                        _a.label = 4;
-                    case 4:
-                        j++;
-                        return [3 /*break*/, 2];
-                    case 5:
-                        _i++;
-                        return [3 /*break*/, 1];
-                    case 6: return [2 /*return*/];
+                        return [2 /*return*/];
                 }
             });
         });
@@ -140,7 +127,7 @@ var module = {
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        noOfVersions = Util.getRandomNumber(versionsRNG, maxVersions);
+                        noOfVersions = Util.getPositiveRandomNumber(versionsRNG, maxVersions);
                         versions = [];
                         i = 0;
                         _c.label = 1;
@@ -173,9 +160,7 @@ var generateData = function () { return __awaiter(void 0, void 0, void 0, functi
             // if (projects.length > 0) {
             //   const issues: any[] = await module.generateIssues(projects, noOfIssues);
             // }
-            //   await module.generateLinks(issues);
-            // }
-            return [4 /*yield*/, api.createLink("x", "y", "z")];
+            return [4 /*yield*/, module.generateLinks()];
             case 1:
                 // const projects: any[] = await module.generateProjects();
                 // const noOfIssues = noOfRecords / projects.length;
@@ -185,11 +170,10 @@ var generateData = function () { return __awaiter(void 0, void 0, void 0, functi
                 // if (projects.length > 0) {
                 //   const issues: any[] = await module.generateIssues(projects, noOfIssues);
                 // }
-                //   await module.generateLinks(issues);
-                // }
                 _a.sent();
                 return [2 /*return*/];
         }
     });
 }); };
+;
 generateData();
