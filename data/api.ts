@@ -230,46 +230,6 @@ export default class LXPAPI {
         parentKey,
         epiNameFieldId
       );
-      // const rng = getRNG("issuetype1");
-      // let typeIndex1 = getRandomNumber(rng, issueTypeNames.length);
-      // let typeIndex2 = getRandomNumber(rng, issueTypeNames.length);
-      // if (typeIndex1 < 0) {
-      //   typeIndex1 *= -1;
-      // }
-      // if (typeIndex2 < 0) {
-      //   typeIndex2 *= -1;
-      // }
-      // const typeName1 = issueTypeNames[typeIndex1];
-      // const typeName2 = issueTypeNames[typeIndex2];
-      // console.log(typeIndex1, typeName1);
-      // console.log(typeIndex2, typeName2);
-
-      // if (typeName1 === undefined || typeName2 === undefined) {
-      //   throw new Error("type NAME undefined");
-      // }
-      // change to a more rigid condition that accepts Sub-task, Subtask
-      // let parentKey;
-      // if (typeName1.includes("Sub")) {
-      //   console.log("hi from handle sub");
-      //   const parentIssue = await this.createIssue(
-      //     project.key,
-      //     "this is a parent",
-      //     "Task"
-      //   );
-      //   parentKey = parentIssue.key;
-      // }
-      // const issueData1 = this._createIssueBodyData(
-      //   project.key,
-      //   typeName1,
-      //   epiNameFieldId,
-      //   parentKey
-      // );
-      // const issueData2 = this._createIssueBodyData(
-      //   project.key,
-      //   typeName2,
-      //   epiNameFieldId,
-      //   parentKey
-      // );
       const bodyData = JSON.stringify({
         issueUpdates: issueDataList,
       });
@@ -369,13 +329,13 @@ export default class LXPAPI {
     issueId2: string,
     linkTypeId: string
   ): Promise<any> {
-    console.log("called create issue");
+    console.log("called create link");
     const bodyData = JSON.stringify({
       outwardIssue: {
-        key: "EX-3",
+        key: "MT7-6",
       },
       inwardIssue: {
-        key: "EX-4",
+        key: "MT7-8",
       },
       type: {
         name: "Blocks",
@@ -395,15 +355,13 @@ export default class LXPAPI {
         body: bodyData,
       });
       console.log(res);
+      // FIX: res.json() gives error
+      console.log(res.statusText);
       if (res.ok) {
         console.log("res ok");
-        const data = await res.json();
-        console.log(data);
-        console.log(res.statusText);
       } else {
         console.log("res not ok");
-        const err = await res.json();
-        throw new Error(err.message);
+        throw new Error(res.statusText);
       }
     } catch (error) {
       console.log("caught error");

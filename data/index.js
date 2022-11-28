@@ -162,19 +162,33 @@ var module = {
 };
 // main logic
 var generateData = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var projects, noOfIssues, issues;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, module.generateProjects()];
+            case 0: 
+            // const projects: any[] = await module.generateProjects();
+            // const noOfIssues = noOfRecords / projects.length;
+            // // // for (const project of projects) {
+            // // //   const versions: any[] = await module.generateVersions(project);
+            // // console.log(projects);
+            // if (projects.length > 0) {
+            //   const issues: any[] = await module.generateIssues(projects, noOfIssues);
+            // }
+            //   await module.generateLinks(issues);
+            // }
+            return [4 /*yield*/, api.createLink("x", "y", "z")];
             case 1:
-                projects = _a.sent();
-                noOfIssues = noOfRecords / projects.length;
-                if (!(projects.length > 0)) return [3 /*break*/, 3];
-                return [4 /*yield*/, module.generateIssues(projects, noOfIssues)];
-            case 2:
-                issues = _a.sent();
-                _a.label = 3;
-            case 3: return [2 /*return*/];
+                // const projects: any[] = await module.generateProjects();
+                // const noOfIssues = noOfRecords / projects.length;
+                // // // for (const project of projects) {
+                // // //   const versions: any[] = await module.generateVersions(project);
+                // // console.log(projects);
+                // if (projects.length > 0) {
+                //   const issues: any[] = await module.generateIssues(projects, noOfIssues);
+                // }
+                //   await module.generateLinks(issues);
+                // }
+                _a.sent();
+                return [2 /*return*/];
         }
     });
 }); };
