@@ -40,6 +40,7 @@ var node_fetch_1 = require("node-fetch");
 var util_1 = require("./util");
 var mockIssueData_1 = require("./mockIssueData");
 var base64 = require("base-64");
+var rngIssueData = (0, util_1.getRNG)("mockissuedata");
 var LXPAPI = /** @class */ (function () {
     function LXPAPI(baseURL, username, password) {
         this.baseURL = baseURL;
@@ -225,9 +226,9 @@ var LXPAPI = /** @class */ (function () {
             });
         });
     };
-    LXPAPI.prototype._createIssueBodyData = function (projectKey, issueTypeName, epicFieldId, parentKey) {
-        var rngIssueData = (0, util_1.getRNG)("issuedatamock");
+    LXPAPI.prototype._createIssueBodyData = function (projectKey, issueTypeName, epicFieldId, parentKey, rngIssueData) {
         var mockIssueIndex = (0, util_1.getPositiveRandomNumber)(rngIssueData, mockIssueData_1["default"].length);
+        console.log("mock issue index", mockIssueIndex);
         var issueData = {
             fields: {
                 summary: mockIssueData_1["default"][mockIssueIndex].summary,
@@ -262,7 +263,7 @@ var LXPAPI = /** @class */ (function () {
             if (typeName1 === undefined) {
                 throw new Error("type NAME undefined");
             }
-            var issueData = this._createIssueBodyData(project.key, typeName1, epicNameFieldId, parentKey);
+            var issueData = this._createIssueBodyData(project.key, typeName1, epicNameFieldId, parentKey, rngIssueData);
             issues.push(issueData);
         }
         return issues;

@@ -4,7 +4,7 @@ import JiraApi from "jira-client";
 import { getPositiveRandomNumber, getRNG } from "./util";
 import mockIssueData from "./mockIssueData";
 const base64 = require("base-64");
-
+const rngIssueData = getRNG("mockissuedata");
 // TODO: automate parent: currently, one parent per project.
 // idea: for 5 issues, use 1 parent.
 interface IssueData {
@@ -155,14 +155,14 @@ export default class LXPAPI {
     projectKey: string,
     issueTypeName: string,
     epicFieldId: string,
-    parentKey: string
+    parentKey: string,
+    rngIssueData: any
   ): any {
-    const rngIssueData = getRNG("issuedatamock");
-    let mockIssueIndex = getPositiveRandomNumber(
+    const mockIssueIndex = getPositiveRandomNumber(
       rngIssueData,
       mockIssueData.length
     );
-
+    console.log("mock issue index", mockIssueIndex);
     const issueData: IssueData = {
       fields: {
         summary: mockIssueData[mockIssueIndex].summary,
@@ -210,7 +210,8 @@ export default class LXPAPI {
         project.key,
         typeName1,
         epicNameFieldId,
-        parentKey
+        parentKey,
+        rngIssueData
       );
       issues.push(issueData);
     }

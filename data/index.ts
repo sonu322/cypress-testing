@@ -32,8 +32,8 @@ const module = {
         "sample description 400 700 random",
         myself.accountId,
         "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban",
-        "link-test-9",
-        "LT9"
+        "dup-test-11",
+        "DUPT11"
       )
     );
     console.log("in gen project");
@@ -43,8 +43,8 @@ const module = {
         "sample description",
         myself.accountId,
         "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic",
-        "link-test-10",
-        "LT10"
+        "dup-test-12",
+        "DUPT12"
       )
     ); // classic project
     return projects;
@@ -126,7 +126,7 @@ const generateData = async (): Promise<void> => {
     if (issues.length > 0) {
       console.log("issues are there");
       console.log(issues.length);
-      await module.generateLinks(issues);
+      // await module.generateLinks(issues);
     }
   }
 
