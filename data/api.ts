@@ -324,6 +324,51 @@ export default class LXPAPI {
     throw Error("Method not implemented");
   }
 
+  // async createLink(
+  // issueId1: string,
+  // issueId2: string,
+  // linkTypeId: string
+  // ): Promise<any> {
+  //   console.log("called create link");
+  // const bodyData = JSON.stringify({
+  //   outwardIssue: {
+  //     key: "MT7-6",
+  //   },
+  //   inwardIssue: {
+  //     key: "MT7-8",
+  //   },
+  //   type: {
+  //     name: "Blocks",
+  //   },
+  // });
+  //   try {
+  //     const res = await fetch(`${this.baseURL}/rest/api/3/issueLink/`, {
+  //       method: "POST",
+  //       headers: {
+  //         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  //         Authorization: `Basic ${base64.encode(
+  //           `${this.username}:${this.password}`
+  //         )}`,
+  //         "Content-Type": "application/json",
+  //         Accept: "application/json",
+  //       },
+  //       body: bodyData,
+  //     });
+  //     console.log(res);
+  //     // FIX: res.json() gives error
+  //     console.log(res.statusText);
+  //     if (res.ok) {
+  //       console.log("res ok");
+  //     } else {
+  //       console.log("res not ok");
+  //       throw new Error(res.statusText);
+  //     }
+  //   } catch (error) {
+  //     console.log("caught error");
+  //     console.log(error);
+  //   }
+  // }
+
   async createLink(
     issueId1: string,
     issueId2: string,
@@ -355,13 +400,14 @@ export default class LXPAPI {
         body: bodyData,
       });
       console.log(res);
-      // FIX: res.json() gives error
-      console.log(res.statusText);
+      // NOTE: returns invalid json. res.json() gives error
+      // console.log(await res.json());
       if (res.ok) {
         console.log("res ok");
+        console.log(res.statusText);
       } else {
         console.log("res not ok");
-        throw new Error(res.statusText);
+        throw new Error("error fetchingissue");
       }
     } catch (error) {
       console.log("caught error");
