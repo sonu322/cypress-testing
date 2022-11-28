@@ -38,6 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 var node_fetch_1 = require("node-fetch");
 var util_1 = require("./util");
+var mockIssueData_1 = require("./mockIssueData");
 var base64 = require("base-64");
 var LXPAPI = /** @class */ (function () {
     function LXPAPI(baseURL, username, password) {
@@ -189,9 +190,14 @@ var LXPAPI = /** @class */ (function () {
         });
     };
     LXPAPI.prototype._createIssueBodyData = function (projectKey, issueTypeName, epicFieldId, parentKey) {
+        var rngIssueData = (0, util_1.getRNG)("issuedatamock");
+        var mockIssueIndex = (0, util_1.getRandomNumber)(rngIssueData, mockIssueData_1["default"].length);
+        if (mockIssueIndex < 0) {
+            mockIssueIndex *= -1;
+        }
         var issueData = {
             fields: {
-                summary: "testing epic 2",
+                summary: mockIssueData_1["default"][mockIssueIndex].summary,
                 project: {
                     key: projectKey
                 },
