@@ -5,7 +5,8 @@ import * as Util from "./util";
 const noOfRecords = config.noOfRecords;
 const noOfProjects = 2;
 const api = new API(config.baseURL, config.username, config.password);
-const maxLinks = 10, maxVersions = 5;
+const maxLinks = 10,
+  maxVersions = 5;
 
 // Random number generators
 const linksRNG = Util.getRNG("linksRNG");
@@ -31,8 +32,8 @@ const module = {
         "sample description 400 700 random",
         myself.accountId,
         "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban",
-        "mock-data-test-1",
-        "MT6"
+        "link-test-9",
+        "LT9"
       )
     );
     console.log("in gen project");
@@ -42,8 +43,8 @@ const module = {
         "sample description",
         myself.accountId,
         "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic",
-        "mock-data-test-2",
-        "MT7"
+        "link-test-10",
+        "LT10"
       )
     ); // classic project
     return projects;
@@ -52,35 +53,54 @@ const module = {
   async generateIssues(projects: any, noOfIssues: number): Promise<any[]> {
     console.log("in gen issues");
     console.log(projects);
-    const issues: any[] = [];
+    let issues: any[] = [];
     for (let i = 0; i < projects.length; i++) {
-      issues.concat(await api.createIssuesInBulk(projects[i], noOfIssues));
+      const resultantIssues = await api.createIssuesInBulk(
+        projects[i],
+        noOfIssues
+      );
+      console.log("RESULTATNT ISSSUES");
+      console.log(resultantIssues);
+      if (resultantIssues.length > 0) {
+        issues = issues.concat(resultantIssues);
+      }
     }
+    console.log(
+      "-----------------------------ALL ISSUES-----------------------------"
+    );
+    console.log(issues);
+    console.log("----------------------------------------------------------");
     return issues;
   },
 
-  async generateLinks() // issues: any[]
-  {
+  async generateLinks(issues: any[]) {
     const linkTypeNames: any[] = await api.getIssueLinkTypeNames(); // TODO: fetch all the link types available
     console.log("FETCTHDE LINK TYPES!!");
     console.log(linkTypeNames);
-    const noOfLinks = Util.getPositiveRandomNumber(linksRNG, maxLinks + 1);
-    // for (const issue of issues) {
+    console.log("issues");
+    console.log(issues);
+    console.log("-----------------------------------------------------");
 
-    // for (let j = 0; j < noOfLinks; j++) {
-    //     const issueIndex = Util.getRandomNumber(linkFinderRNG, issues.length);
-    const linkTypeIndex = Util.getPositiveRandomNumber(
-      linkTypesRNG,
-      linkTypeNames.length
-    );
-    console.log(linkTypeIndex);
-    await api.createLink(
-      "issue.id",
-      "issues[issueIndex].id",
-      linkTypeNames[linkTypeIndex]
-    );
-    //   }
-    // }
+    for (const issue of issues) {
+      const noOfLinks = Util.getPositiveRandomNumber(linksRNG, maxLinks + 1);
+      console.log("NO OF LINKS", noOfLinks);
+      for (let j = 0; j < noOfLinks; j++) {
+        const issueIndex = Util.getPositiveRandomNumber(
+          linkFinderRNG,
+          issues.length
+        );
+        const linkTypeIndex = Util.getPositiveRandomNumber(
+          linkTypesRNG,
+          linkTypeNames.length
+        );
+        console.log(issueIndex, linkTypeIndex);
+        await api.createLink(
+          issue.key,
+          issues[issueIndex].key,
+          linkTypeNames[linkTypeIndex]
+        );
+      }
+    }
   },
 
   async generateVersions(project: any): Promise<any[]> {
@@ -95,19 +115,23 @@ const module = {
 
 // main logic
 const generateData = async (): Promise<void> => {
-  // const projects: any[] = await module.generateProjects();
-  // const noOfIssues = noOfRecords / projects.length;
-  // // // for (const project of projects) {
-  // // //   const versions: any[] = await module.generateVersions(project);
-  // // console.log(projects);
+  const projects: any[] = await module.generateProjects();
+  const noOfIssues = noOfRecords / projects.length;
+  // // for (const project of projects) {
+  // //   const versions: any[] = await module.generateVersions(project);
+  // console.log(projects);
 
-  // if (projects.length > 0) {
-  //   const issues: any[] = await module.generateIssues(projects, noOfIssues);
-  // }
+  if (projects.length > 0) {
+    const issues: any[] = await module.generateIssues(projects, noOfIssues);
+    if (issues.length > 0) {
+      console.log("issues are there");
+      console.log(issues.length);
+      await module.generateLinks(issues);
+    }
+  }
 
-  await module.generateLinks();
   // }
   // await api.createLink("x", "y", "z");
-};;
+};
 
 generateData();

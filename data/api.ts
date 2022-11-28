@@ -220,7 +220,7 @@ export default class LXPAPI {
   async createIssuesInBulk(
     project: any,
     noOfIssuesPerProject: number
-  ): Promise<any> {
+  ): Promise<any[]> {
     console.log("called create issues");
     console.log(project);
 
@@ -272,9 +272,9 @@ export default class LXPAPI {
       const data = await res.json();
       if (res.ok) {
         console.log("res ok");
-
         console.log(data);
         console.log(res.statusText);
+        return data.issues;
       } else {
         console.log("res not ok");
         const err = await data;
@@ -348,17 +348,19 @@ export default class LXPAPI {
   }
 
   async createLink(
-    issueId1: string,
-    issueId2: string,
+    outwardIssueKey: string,
+    inwardIssueKey: string,
     linkTypeName: string
   ): Promise<any> {
     console.log("called create link", linkTypeName);
+    console.log("outward", outwardIssueKey);
+    console.log("inward", inwardIssueKey);
     const bodyData = JSON.stringify({
       outwardIssue: {
-        key: "AT7-8",
+        key: outwardIssueKey,
       },
       inwardIssue: {
-        key: "AT7-6",
+        key: inwardIssueKey,
       },
       type: {
         name: linkTypeName,
