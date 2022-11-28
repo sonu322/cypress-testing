@@ -323,7 +323,7 @@ var LXPAPI = /** @class */ (function () {
                         console.log("res ok");
                         console.log(data);
                         console.log(res.statusText);
-                        return [3 /*break*/, 9];
+                        return [2 /*return*/, data.issues];
                     case 7:
                         console.log("res not ok");
                         return [4 /*yield*/, data];
@@ -422,19 +422,21 @@ var LXPAPI = /** @class */ (function () {
             });
         });
     };
-    LXPAPI.prototype.createLink = function (issueId1, issueId2, linkTypeName) {
+    LXPAPI.prototype.createLink = function (outwardIssueKey, inwardIssueKey, linkTypeName) {
         return __awaiter(this, void 0, void 0, function () {
             var bodyData, res, error_8;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         console.log("called create link", linkTypeName);
+                        console.log("outward", outwardIssueKey);
+                        console.log("inward", inwardIssueKey);
                         bodyData = JSON.stringify({
                             outwardIssue: {
-                                key: "AT7-8"
+                                key: outwardIssueKey
                             },
                             inwardIssue: {
-                                key: "AT7-6"
+                                key: inwardIssueKey
                             },
                             type: {
                                 name: linkTypeName

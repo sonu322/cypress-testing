@@ -60,13 +60,13 @@ var module = {
                         console.log(myself);
                         projects = [];
                         _b = (_a = projects).push;
-                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "mock-data-test-1", "MT6")];
+                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "link-test-9", "LT9")];
                     case 2:
                         _b.apply(_a, [_e.sent()]);
                         console.log("in gen project");
                         console.log(projects);
                         _d = (_c = projects).push;
-                        return [4 /*yield*/, api.createProject("sample description", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic", "mock-data-test-2", "MT7")];
+                        return [4 /*yield*/, api.createProject("sample description", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic", "link-test-10", "LT10")];
                     case 3:
                         _d.apply(_c, [_e.sent()]); // classic project
                         return [2 /*return*/, projects];
@@ -76,33 +76,41 @@ var module = {
     },
     generateIssues: function (projects, noOfIssues) {
         return __awaiter(this, void 0, void 0, function () {
-            var issues, i, _a, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            var issues, i, resultantIssues;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
                         console.log("in gen issues");
                         console.log(projects);
                         issues = [];
                         i = 0;
-                        _c.label = 1;
+                        _a.label = 1;
                     case 1:
                         if (!(i < projects.length)) return [3 /*break*/, 4];
-                        _b = (_a = issues).concat;
                         return [4 /*yield*/, api.createIssuesInBulk(projects[i], noOfIssues)];
                     case 2:
-                        _b.apply(_a, [_c.sent()]);
-                        _c.label = 3;
+                        resultantIssues = _a.sent();
+                        console.log("RESULTATNT ISSSUES");
+                        console.log(resultantIssues);
+                        if (resultantIssues.length > 0) {
+                            issues = issues.concat(resultantIssues);
+                        }
+                        _a.label = 3;
                     case 3:
                         i++;
                         return [3 /*break*/, 1];
-                    case 4: return [2 /*return*/, issues];
+                    case 4:
+                        console.log("-----------------------------ALL ISSUES-----------------------------");
+                        console.log(issues);
+                        console.log("----------------------------------------------------------");
+                        return [2 /*return*/, issues];
                 }
             });
         });
     },
-    generateLinks: function () {
+    generateLinks: function (issues) {
         return __awaiter(this, void 0, void 0, function () {
-            var linkTypeNames, noOfLinks, linkTypeIndex;
+            var linkTypeNames, _i, issues_1, issue, noOfLinks, j, issueIndex, linkTypeIndex;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, api.getIssueLinkTypeNames()];
@@ -110,13 +118,34 @@ var module = {
                         linkTypeNames = _a.sent();
                         console.log("FETCTHDE LINK TYPES!!");
                         console.log(linkTypeNames);
-                        noOfLinks = Util.getPositiveRandomNumber(linksRNG, maxLinks + 1);
-                        linkTypeIndex = Util.getPositiveRandomNumber(linkTypesRNG, linkTypeNames.length);
-                        console.log(linkTypeIndex);
-                        return [4 /*yield*/, api.createLink("issue.id", "issues[issueIndex].id", linkTypeNames[linkTypeIndex])];
+                        console.log("issues");
+                        console.log(issues);
+                        console.log("-----------------------------------------------------");
+                        _i = 0, issues_1 = issues;
+                        _a.label = 2;
                     case 2:
+                        if (!(_i < issues_1.length)) return [3 /*break*/, 7];
+                        issue = issues_1[_i];
+                        noOfLinks = Util.getPositiveRandomNumber(linksRNG, maxLinks + 1);
+                        console.log("NO OF LINKS", noOfLinks);
+                        j = 0;
+                        _a.label = 3;
+                    case 3:
+                        if (!(j < noOfLinks)) return [3 /*break*/, 6];
+                        issueIndex = Util.getPositiveRandomNumber(linkFinderRNG, issues.length);
+                        linkTypeIndex = Util.getPositiveRandomNumber(linkTypesRNG, linkTypeNames.length);
+                        console.log(issueIndex, linkTypeIndex);
+                        return [4 /*yield*/, api.createLink(issue.key, issues[issueIndex].key, linkTypeNames[linkTypeIndex])];
+                    case 4:
                         _a.sent();
-                        return [2 /*return*/];
+                        _a.label = 5;
+                    case 5:
+                        j++;
+                        return [3 /*break*/, 3];
+                    case 6:
+                        _i++;
+                        return [3 /*break*/, 2];
+                    case 7: return [2 /*return*/];
                 }
             });
         });
@@ -149,31 +178,26 @@ var module = {
 };
 // main logic
 var generateData = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var projects, noOfIssues, issues;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: 
-            // const projects: any[] = await module.generateProjects();
-            // const noOfIssues = noOfRecords / projects.length;
-            // // // for (const project of projects) {
-            // // //   const versions: any[] = await module.generateVersions(project);
-            // // console.log(projects);
-            // if (projects.length > 0) {
-            //   const issues: any[] = await module.generateIssues(projects, noOfIssues);
-            // }
-            return [4 /*yield*/, module.generateLinks()];
+            case 0: return [4 /*yield*/, module.generateProjects()];
             case 1:
-                // const projects: any[] = await module.generateProjects();
-                // const noOfIssues = noOfRecords / projects.length;
-                // // // for (const project of projects) {
-                // // //   const versions: any[] = await module.generateVersions(project);
-                // // console.log(projects);
-                // if (projects.length > 0) {
-                //   const issues: any[] = await module.generateIssues(projects, noOfIssues);
-                // }
+                projects = _a.sent();
+                noOfIssues = noOfRecords / projects.length;
+                if (!(projects.length > 0)) return [3 /*break*/, 4];
+                return [4 /*yield*/, module.generateIssues(projects, noOfIssues)];
+            case 2:
+                issues = _a.sent();
+                if (!(issues.length > 0)) return [3 /*break*/, 4];
+                console.log("issues are there");
+                console.log(issues.length);
+                return [4 /*yield*/, module.generateLinks(issues)];
+            case 3:
                 _a.sent();
-                return [2 /*return*/];
+                _a.label = 4;
+            case 4: return [2 /*return*/];
         }
     });
 }); };
-;
 generateData();
