@@ -2,8 +2,11 @@ import axios from "axios";
 import fetch from "node-fetch";
 import JiraApi from "jira-client";
 import { getRandomNumber, getRNG } from "./util";
+import mockIssueData from "./mockIssueData";
 const base64 = require("base-64");
 
+// TODO: automate parent: currently, one parent per project.
+// idea: for 5 issues, use 1 parent.
 interface IssueData {
   [key: string]: any;
 }
@@ -130,9 +133,14 @@ export default class LXPAPI {
     epicFieldId: string,
     parentKey: string
   ): any {
+    const rngIssueData = getRNG("issuedatamock");
+    let mockIssueIndex = getRandomNumber(rngIssueData, mockIssueData.length);
+    if (mockIssueIndex < 0) {
+      mockIssueIndex *= -1;
+    }
     const issueData: IssueData = {
       fields: {
-        summary: "testing epic 2",
+        summary: mockIssueData[mockIssueIndex].summary,
         project: {
           key: projectKey,
         },
