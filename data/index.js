@@ -60,13 +60,13 @@ var module = {
                         console.log(myself);
                         projects = [];
                         _b = (_a = projects).push;
-                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "dup-test-11", "DUPT11")];
+                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "small-test-11", "SMT1")];
                     case 2:
                         _b.apply(_a, [_e.sent()]);
                         console.log("in gen project");
                         console.log(projects);
                         _d = (_c = projects).push;
-                        return [4 /*yield*/, api.createProject("sample description", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic", "dup-test-12", "DUPT12")];
+                        return [4 /*yield*/, api.createProject("sample description", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic", "small-test-12", "SMT2")];
                     case 3:
                         _d.apply(_c, [_e.sent()]); // classic project
                         return [2 /*return*/, projects];
@@ -185,17 +185,18 @@ var generateData = function () { return __awaiter(void 0, void 0, void 0, functi
             case 1:
                 projects = _a.sent();
                 noOfIssues = noOfRecords / projects.length;
-                if (!(projects.length > 0)) return [3 /*break*/, 3];
+                if (!(projects.length > 0)) return [3 /*break*/, 4];
                 return [4 /*yield*/, module.generateIssues(projects, noOfIssues)];
             case 2:
                 issues = _a.sent();
-                if (issues.length > 0) {
-                    console.log("issues are there");
-                    console.log(issues.length);
-                    // await module.generateLinks(issues);
-                }
-                _a.label = 3;
-            case 3: return [2 /*return*/];
+                if (!(issues.length > 0)) return [3 /*break*/, 4];
+                console.log("issues are there");
+                console.log(issues.length);
+                return [4 /*yield*/, module.generateLinks(issues)];
+            case 3:
+                _a.sent();
+                _a.label = 4;
+            case 4: return [2 /*return*/];
         }
     });
 }); };
