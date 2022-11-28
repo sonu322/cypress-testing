@@ -60,13 +60,13 @@ var module = {
                         console.log(myself);
                         projects = [];
                         _b = (_a = projects).push;
-                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "big-test-1", "BT1")];
+                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "no-epic-subtask-test-3", "NEST3")];
                     case 2:
                         _b.apply(_a, [_e.sent()]);
                         console.log("in gen project");
                         console.log(projects);
                         _d = (_c = projects).push;
-                        return [4 /*yield*/, api.createProject("sample description", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic", "big-test-2", "BT2")];
+                        return [4 /*yield*/, api.createProject("sample description", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic", "no-epic-subtask-test-4", "NEST4")];
                     case 3:
                         _d.apply(_c, [_e.sent()]); // classic project
                         return [2 /*return*/, projects];
@@ -76,7 +76,7 @@ var module = {
     },
     generateIssues: function (projects, noOfIssues) {
         return __awaiter(this, void 0, void 0, function () {
-            var issues, i, resultantIssues;
+            var issues, i, issueTypeNames, resultantIssues;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -86,20 +86,23 @@ var module = {
                         i = 0;
                         _a.label = 1;
                     case 1:
-                        if (!(i < projects.length)) return [3 /*break*/, 4];
-                        return [4 /*yield*/, api.createIssuesInBulk(projects[i], noOfIssues)];
+                        if (!(i < projects.length)) return [3 /*break*/, 5];
+                        return [4 /*yield*/, api.getProjectIssueTypeNames(projects[i])];
                     case 2:
+                        issueTypeNames = _a.sent();
+                        return [4 /*yield*/, api.createIssuesInBulk(projects[i], noOfIssues, issueTypeNames)];
+                    case 3:
                         resultantIssues = _a.sent();
                         console.log("RESULTATNT ISSSUES");
                         console.log(resultantIssues);
                         if (resultantIssues.length > 0) {
                             issues = issues.concat(resultantIssues);
                         }
-                        _a.label = 3;
-                    case 3:
+                        _a.label = 4;
+                    case 4:
                         i++;
                         return [3 /*break*/, 1];
-                    case 4:
+                    case 5:
                         console.log("-----------------------------ALL ISSUES-----------------------------");
                         console.log(issues);
                         console.log("----------------------------------------------------------");

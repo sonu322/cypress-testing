@@ -154,8 +154,8 @@ export default class LXPAPI {
   _createIssueBodyData(
     projectKey: string,
     issueTypeName: string,
-    epicFieldId: string,
-    parentKey: string,
+    // epicFieldId: string,
+    // parentKey: string,
     rngIssueData: any
   ): any {
     const mockIssueIndex = getPositiveRandomNumber(
@@ -174,14 +174,14 @@ export default class LXPAPI {
         },
       },
     };
-    if (issueTypeName === "Epic") {
-      issueData.fields[epicFieldId] = "my_epic";
-    }
-    if (issueTypeName.includes("Sub")) {
-      issueData.fields.parent = {
-        key: parentKey,
-      };
-    }
+    // if (issueTypeName === "Epic") {
+    //   issueData.fields[epicFieldId] = "my_epic";
+    // }
+    // if (issueTypeName.includes("Sub")) {
+    //   issueData.fields.parent = {
+    //     key: parentKey,
+    //   };
+    // }
     console.log("----------------------------");
     console.log(issueData);
     console.log("-------------------------------");
@@ -198,19 +198,22 @@ export default class LXPAPI {
     const rng = getRNG("issuetype");
     const issues = [];
     for (let i = 0; i < numberOfIssues; i++) {
-      let typeIndex1 = getPositiveRandomNumber(rng, issueTypeNames.length);
+      const typeIndex1 = getPositiveRandomNumber(rng, issueTypeNames.length);
 
       const typeName1 = issueTypeNames[typeIndex1];
       console.log(typeIndex1, typeName1);
       if (typeName1 === undefined) {
         throw new Error("type NAME undefined");
       }
+      if (typeName1 === "Epic" || typeName1.includes("Sub")) {
+        continue;
+      }
 
       const issueData = this._createIssueBodyData(
         project.key,
         typeName1,
-        epicNameFieldId,
-        parentKey,
+        // epicNameFieldId
+        // parentKey,
         rngIssueData
       );
       issues.push(issueData);
@@ -220,20 +223,19 @@ export default class LXPAPI {
 
   async createIssuesInBulk(
     project: any,
-    noOfIssuesPerProject: number
+    noOfIssuesPerProject: number,
+    issueTypeNames: string[]
   ): Promise<any[]> {
     console.log("called create issues");
-    console.log(project);
 
     try {
-      const fields = await this.getFields();
-      const epicNameField = fields.find((field) => field.name === "Epic Name");
-      if (epicNameField === undefined) {
-        throw new Error("epic name field is undefined.");
-      }
-      console.log("epic: ", epicNameField.id);
-      const epiNameFieldId = epicNameField.id;
-      const issueTypeNames = await this.getProjectIssueTypeNames(project);
+      // const fields = await this.getFields();
+      // const epicNameField = fields.find((field) => field.name === "Epic Name");
+      // if (epicNameField === undefined) {
+      //   throw new Error("epic name field is undefined.");
+      // }
+      // console.log("epic: ", epicNameField.id);
+      // const epiNameFieldId = epicNameField.id;
 
       console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       console.log(issueTypeNames);
@@ -241,18 +243,18 @@ export default class LXPAPI {
         throw new Error("no issue types from proje");
       }
 
-      const parentIssue = await this.createIssue(
-        project.key,
-        "this is a parent",
-        "Task"
-      );
-      const parentKey = parentIssue.key;
+      // const parentIssue = await this.createIssue(
+      //   project.key,
+      //   "this is a parent",
+      //   "Task"
+      // );
+      // const parentKey = parentIssue.key;
       const issueDataList = this._createIssueDataList(
         project,
         issueTypeNames,
-        noOfIssuesPerProject,
-        parentKey,
-        epiNameFieldId
+        noOfIssuesPerProject
+        // parentKey,
+        // epiNameFieldId
       );
       const bodyData = JSON.stringify({
         issueUpdates: issueDataList,
