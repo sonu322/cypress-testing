@@ -32,8 +32,8 @@ const module = {
         "sample description 400 700 random",
         myself.accountId,
         "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban",
-        "small-test-11",
-        "SMT1"
+        "big-test-1",
+        "BT1"
       )
     );
     console.log("in gen project");
@@ -43,8 +43,8 @@ const module = {
         "sample description",
         myself.accountId,
         "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic",
-        "small-test-12",
-        "SMT2"
+        "big-test-2",
+        "BT2"
       )
     ); // classic project
     return projects;
