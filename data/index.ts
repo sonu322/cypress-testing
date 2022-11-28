@@ -91,18 +91,19 @@ const module = {
 
 // main logic
 const generateData = async (): Promise<void> => {
-  const projects: any[] = await module.generateProjects();
-  const noOfIssues = noOfRecords / projects.length;
-  // // for (const project of projects) {
-  // //   const versions: any[] = await module.generateVersions(project);
-  // console.log(projects);
+  // const projects: any[] = await module.generateProjects();
+  // const noOfIssues = noOfRecords / projects.length;
+  // // // for (const project of projects) {
+  // // //   const versions: any[] = await module.generateVersions(project);
+  // // console.log(projects);
 
-  if (projects.length > 0) {
-    const issues: any[] = await module.generateIssues(projects, noOfIssues);
-  }
+  // if (projects.length > 0) {
+  //   const issues: any[] = await module.generateIssues(projects, noOfIssues);
+  // }
 
   //   await module.generateLinks(issues);
   // }
+  await api.createLink("x", "y", "z");
 };
 
 generateData();

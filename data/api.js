@@ -394,17 +394,17 @@ var LXPAPI = /** @class */ (function () {
     };
     LXPAPI.prototype.createLink = function (issueId1, issueId2, linkTypeId) {
         return __awaiter(this, void 0, void 0, function () {
-            var bodyData, res, data, err, error_7;
+            var bodyData, res, error_7;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        console.log("called create issue");
+                        console.log("called create link");
                         bodyData = JSON.stringify({
                             outwardIssue: {
-                                key: "EX-3"
+                                key: "MT7-6"
                             },
                             inwardIssue: {
-                                key: "EX-4"
+                                key: "MT7-8"
                             },
                             type: {
                                 name: "Blocks"
@@ -412,7 +412,7 @@ var LXPAPI = /** @class */ (function () {
                         });
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 7, , 8]);
+                        _a.trys.push([1, 3, , 4]);
                         return [4 /*yield*/, (0, node_fetch_1["default"])("".concat(this.baseURL, "/rest/api/3/issueLink/"), {
                                 method: "POST",
                                 headers: {
@@ -426,27 +426,22 @@ var LXPAPI = /** @class */ (function () {
                     case 2:
                         res = _a.sent();
                         console.log(res);
-                        if (!res.ok) return [3 /*break*/, 4];
-                        console.log("res ok");
-                        return [4 /*yield*/, res.json()];
-                    case 3:
-                        data = _a.sent();
-                        console.log(data);
+                        // FIX: res.json() gives error
                         console.log(res.statusText);
-                        return [3 /*break*/, 6];
-                    case 4:
-                        console.log("res not ok");
-                        return [4 /*yield*/, res.json()];
-                    case 5:
-                        err = _a.sent();
-                        throw new Error(err.message);
-                    case 6: return [3 /*break*/, 8];
-                    case 7:
+                        if (res.ok) {
+                            console.log("res ok");
+                        }
+                        else {
+                            console.log("res not ok");
+                            throw new Error(res.statusText);
+                        }
+                        return [3 /*break*/, 4];
+                    case 3:
                         error_7 = _a.sent();
                         console.log("caught error");
                         console.log(error_7);
-                        return [3 /*break*/, 8];
-                    case 8: return [2 /*return*/];
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
                 }
             });
         });
