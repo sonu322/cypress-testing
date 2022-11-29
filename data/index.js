@@ -48,35 +48,56 @@ var linksRNG = Util.getRNG("linksRNG");
 var linkFinderRNG = Util.getRNG("linkFinderRNG");
 var linkTypesRNG = Util.getRNG("linkTypesRNG");
 var versionsRNG = Util.getRNG("versionsRNG");
+var parentIssueNumberRNG = Util.getRNG("no-of-parent-issues");
 var module = {
     generateProjects: function () {
         return __awaiter(this, void 0, void 0, function () {
-            var myself, projects, _a, _b, _c, _d;
-            return __generator(this, function (_e) {
-                switch (_e.label) {
+            var myself, projects, _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0: return [4 /*yield*/, api.getMyself()];
                     case 1:
-                        myself = _e.sent();
+                        myself = _c.sent();
                         console.log(myself);
                         projects = [];
                         _b = (_a = projects).push;
-                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "no-epic-subtask-test-3", "NEST3")];
+                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "subtask-parent-test-1", "SPT1")];
                     case 2:
-                        _b.apply(_a, [_e.sent()]);
+                        _b.apply(_a, [_c.sent()]);
                         console.log("in gen project");
                         console.log(projects);
-                        _d = (_c = projects).push;
-                        return [4 /*yield*/, api.createProject("sample description", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic", "no-epic-subtask-test-4", "NEST4")];
-                    case 3:
-                        _d.apply(_c, [_e.sent()]); // classic project
+                        // projects.push(
+                        //   await api.createProject(
+                        //     "sample description",
+                        //     myself.accountId,
+                        //     "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic",
+                        //     "new-subtask-test-10",
+                        //     "NST10"
+                        //   )
+                        // ); // classic project
                         return [2 /*return*/, projects];
+                }
+            });
+        });
+    },
+    generateSubtasks: function (project, noOfIssues, subtaskFieldName, parentIssues) {
+        return __awaiter(this, void 0, void 0, function () {
+            var parentIssueKeys, childIssues;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        parentIssueKeys = parentIssues.map(function (parentIssue) { return parentIssue.key; });
+                        return [4 /*yield*/, api.createSubtasksInBulk(project, noOfIssues, subtaskFieldName, parentIssueKeys)];
+                    case 1:
+                        childIssues = _a.sent();
+                        return [2 /*return*/, childIssues];
                 }
             });
         });
     },
     generateIssues: function (projects, noOfIssues) {
         return __awaiter(this, void 0, void 0, function () {
-            var issues, i, issueTypeNames, resultantIssues;
+            var issues, i, issueTypeNames, parentIssueTypeNames, noOfParents, parentIssues, subtaskField, childIssues;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -86,23 +107,34 @@ var module = {
                         i = 0;
                         _a.label = 1;
                     case 1:
-                        if (!(i < projects.length)) return [3 /*break*/, 5];
+                        if (!(i < projects.length)) return [3 /*break*/, 6];
                         return [4 /*yield*/, api.getProjectIssueTypeNames(projects[i])];
                     case 2:
                         issueTypeNames = _a.sent();
-                        return [4 /*yield*/, api.createIssuesInBulk(projects[i], noOfIssues, issueTypeNames)];
+                        parentIssueTypeNames = issueTypeNames.filter(function (type) { return !type.includes("Sub"); });
+                        noOfParents = Util.getPositiveRandomNumber(parentIssueNumberRNG, 
+                        // noOfIssues
+                        5);
+                        return [4 /*yield*/, api.createIssuesInBulk(projects[i], noOfParents, parentIssueTypeNames)];
                     case 3:
-                        resultantIssues = _a.sent();
+                        parentIssues = _a.sent();
                         console.log("RESULTATNT ISSSUES");
-                        console.log(resultantIssues);
-                        if (resultantIssues.length > 0) {
-                            issues = issues.concat(resultantIssues);
+                        console.log(parentIssues);
+                        if (parentIssues.length > 0) {
+                            issues = issues.concat(parentIssues);
                         }
-                        _a.label = 4;
+                        subtaskField = issueTypeNames.find(function (type) { return type.includes("Sub"); });
+                        return [4 /*yield*/, module.generateSubtasks(projects[i], noOfIssues, subtaskField, parentIssues)];
                     case 4:
+                        childIssues = _a.sent();
+                        if (childIssues.length > 0) {
+                            issues = issues.concat(childIssues);
+                        }
+                        _a.label = 5;
+                    case 5:
                         i++;
                         return [3 /*break*/, 1];
-                    case 5:
+                    case 6:
                         console.log("-----------------------------ALL ISSUES-----------------------------");
                         console.log(issues);
                         console.log("----------------------------------------------------------");

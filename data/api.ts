@@ -5,6 +5,7 @@ import { getPositiveRandomNumber, getRNG } from "./util";
 import mockIssueData from "./mockIssueData";
 const base64 = require("base-64");
 const rngIssueData = getRNG("mockissuedata");
+const rngParentKey = getRNG("parent");
 // TODO: automate parent: currently, one parent per project.
 // idea: for 5 issues, use 1 parent.
 interface IssueData {
@@ -154,9 +155,9 @@ export default class LXPAPI {
   _createIssueBodyData(
     projectKey: string,
     issueTypeName: string,
-    // epicFieldId: string,
-    // parentKey: string,
-    rngIssueData: any
+    rngIssueData: any,
+    epicFieldId?: string,
+    parentIssueKeys?: string[]
   ): any {
     const mockIssueIndex = getPositiveRandomNumber(
       rngIssueData,
@@ -174,14 +175,22 @@ export default class LXPAPI {
         },
       },
     };
-    // if (issueTypeName === "Epic") {
-    //   issueData.fields[epicFieldId] = "my_epic";
-    // }
-    // if (issueTypeName.includes("Sub")) {
-    //   issueData.fields.parent = {
-    //     key: parentKey,
-    //   };
-    // }
+    if (issueTypeName === "Epic") {
+      issueData.fields[epicFieldId] = "my_epic";
+    }
+    if (issueTypeName.includes("Sub")) {
+      console.log("PARENT KEYS!!!!!!!!!!!!!!!!");
+      console.log(parentIssueKeys);
+      const chosenIndex = getPositiveRandomNumber(
+        rngParentKey,
+        parentIssueKeys.length
+      );
+      const chosenParentKey = parentIssueKeys[chosenIndex];
+      console.log("CHOSEN PARENT", chosenIndex, chosenParentKey);
+      issueData.fields.parent = {
+        key: chosenParentKey,
+      };
+    }
     console.log("----------------------------");
     console.log(issueData);
     console.log("-------------------------------");
@@ -192,29 +201,32 @@ export default class LXPAPI {
     project: any,
     issueTypeNames: string[],
     numberOfIssues: number,
-    parentKey?: string,
+    parentIssueKeys?: string[],
     epicNameFieldId?: string
   ): any[] {
     const rng = getRNG("issuetype");
     const issues = [];
     for (let i = 0; i < numberOfIssues; i++) {
-      const typeIndex1 = getPositiveRandomNumber(rng, issueTypeNames.length);
+      let typeIndex1 = 0;
+      if (issueTypeNames.length > 1) {
+        typeIndex1 = getPositiveRandomNumber(rng, issueTypeNames.length);
+      }
 
       const typeName1 = issueTypeNames[typeIndex1];
       console.log(typeIndex1, typeName1);
       if (typeName1 === undefined) {
         throw new Error("type NAME undefined");
       }
-      if (typeName1 === "Epic" || typeName1.includes("Sub")) {
+      if (typeName1 === "Epic") {
         continue;
       }
 
       const issueData = this._createIssueBodyData(
         project.key,
         typeName1,
-        // epicNameFieldId
-        // parentKey,
-        rngIssueData
+        rngIssueData,
+        epicNameFieldId,
+        parentIssueKeys
       );
       issues.push(issueData);
     }
@@ -256,6 +268,9 @@ export default class LXPAPI {
         // parentKey,
         // epiNameFieldId
       );
+      console.log("------------------------------");
+      console.log(issueDataList);
+      console.log("------------------------------");
       const bodyData = JSON.stringify({
         issueUpdates: issueDataList,
       });
@@ -275,6 +290,55 @@ export default class LXPAPI {
       const data = await res.json();
       if (res.ok) {
         console.log("res ok");
+        console.log(data);
+        console.log(res.statusText);
+        return data.issues;
+      } else {
+        console.log("res not ok");
+        const err = await data;
+        throw new Error(err.message);
+      }
+    } catch (error) {
+      console.log("caught error");
+      console.log(error);
+    }
+  }
+
+  async createSubtasksInBulk(
+    project: any,
+    noOfIssues: number,
+    subtaskFieldName: string,
+    parentIssueKeys: string[]
+  ): Promise<any[]> {
+    console.log("-------------------------------------");
+    console.log("called create subtask issues");
+
+    try {
+      const issueDataList = this._createIssueDataList(
+        project,
+        [subtaskFieldName],
+        noOfIssues,
+        parentIssueKeys
+      );
+      const bodyData = JSON.stringify({
+        issueUpdates: issueDataList,
+      });
+      const res = await fetch(`${this.baseURL}/rest/api/3/issue/bulk`, {
+        method: "POST",
+        headers: {
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          Authorization: `Basic ${base64.encode(
+            `${this.username}:${this.password}`
+          )}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: bodyData,
+      });
+      console.log(res);
+      const data = await res.json();
+      if (res.ok) {
+        console.log("subtask res ok");
         console.log(data);
         console.log(res.statusText);
         return data.issues;
