@@ -210,12 +210,9 @@ export default class LXPAPI {
   }
 
   _createIssueDataList(
-    project: any,
     issueTypeNames: string[],
     numberOfIssues: number,
-    parentIssueKeys?: string[],
-    epicNameFieldId?: string,
-    epicName?: string
+    issueDataGenerator
   ): any[] {
     console.log("CREATE DATA LIST CALLED");
     console.log(numberOfIssues);
@@ -233,15 +230,18 @@ export default class LXPAPI {
         throw new Error("type NAME undefined");
       }
 
-      const issueData = this._createIssueBodyData(
-        project.key,
-        typeName1,
-        rngIssueData,
-        epicNameFieldId,
-        parentIssueKeys,
-        epicName
-      );
-      issues.push(issueData);
+      // const issueData = this._createIssueBodyData(
+      //   project.key,
+      //   typeName1,
+      //   rngIssueData,
+      //   epicNameFieldId,
+      //   parentIssueKeys,
+      //   epicName
+      // );
+      // issues.push(issueData);
+
+      const issue = issueDataGenerator(typeName1, rngIssueData);
+      issues.push(issue);
     }
     return issues;
   }
@@ -261,9 +261,16 @@ export default class LXPAPI {
       }
       console.log("calling data list");
       const issueDataList = this._createIssueDataList(
-        project,
+        // project,
         issueTypeNames,
-        noOfIssuesPerProject
+        noOfIssuesPerProject,
+        (issueTypeName: string, rngIssueData: any) => {
+          return this._createIssueBodyData(
+            project.key,
+            issueTypeName,
+            rngIssueData
+          );
+        }
       );
       if (issueDataList.length === 0) {
         throw new Error("no data list");
@@ -304,60 +311,100 @@ export default class LXPAPI {
     }
   }
 
-  async createEpicIssuesInBulk(
-    project: any,
-    noOfIssues: number,
-    epicIssueTypeName: string,
-    epicName?: string,
-    epiNameFieldId?: string
-  ): Promise<any[]> {
-    console.log("-------------------------------------");
-    console.log("called create epic issues");
+  // async createEpicIssuesInBulk(
+  //   project: any,
+  //   noOfIssues: number,
+  //   epicIssueTypeName: string,
+  //   epicName?: string,
+  //   epiNameFieldId?: string
+  // ): Promise<any[]> {
+  //   console.log("-------------------------------------");
+  //   console.log("called create epic issues");
 
-    try {
-      const issueDataList = this._createIssueDataList(
-        project,
-        [epicIssueTypeName],
-        noOfIssues,
-        undefined,
-        epiNameFieldId,
-        epicName
-      );
-      const bodyData = JSON.stringify({
-        issueUpdates: issueDataList,
-      });
-      const res = await fetch(`${this.baseURL}/rest/api/3/issue/bulk`, {
-        method: "POST",
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          Authorization: `Basic ${base64.encode(
-            `${this.username}:${this.password}`
-          )}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
+  //   try {
+  //     const issueDataList = this._createIssueDataList(
+  //       project,
+  //       [epicIssueTypeName],
+  //       noOfIssues,
+  //       undefined,
+  //       epiNameFieldId,
+  //       epicName
+  //     );
+  //     const bodyData = JSON.stringify({
+  //       issueUpdates: issueDataList,
+  //     });
+  //     const res = await fetch(`${this.baseURL}/rest/api/3/issue/bulk`, {
+  //       method: "POST",
+  //       headers: {
+  //         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  //         Authorization: `Basic ${base64.encode(
+  //           `${this.username}:${this.password}`
+  //         )}`,
+  //         "Content-Type": "application/json",
+  //         Accept: "application/json",
+  //       },
+  //       body: bodyData,
+  //     });
+  //     console.log(res);
+  //     const data = await res.json();
+  //     if (res.ok) {
+  //       console.log("epic res ok");
+  //       console.log(data);
+  //       console.log(res.statusText);
+  //       return data.issues;
+  //     } else {
+  //       console.log("epic res not ok");
+  //       const err = await data;
+  //       throw new Error(err.message);
+  //     }
+  //   } catch (error) {
+  //     console.log("caught error");
+  //     console.log(error);
+  //   }
+  // }
+
+  _createSubtaskBodyData(
+    projectKey: string,
+    issueTypeName: string,
+    rngIssueData: any,
+    parentIssueKeys: string[]
+  ): any {
+    console.log("CREATE BODY DATA CALLED");
+    const mockIssueIndex = getRandomWholeNumber(
+      rngIssueData,
+      mockIssueData.length
+    );
+    console.log("mock issue index", mockIssueIndex);
+    const issueData: IssueData = {
+      fields: {
+        summary: mockIssueData[mockIssueIndex].summary,
+        project: {
+          key: projectKey,
         },
-        body: bodyData,
-      });
-      console.log(res);
-      const data = await res.json();
-      if (res.ok) {
-        console.log("epic res ok");
-        console.log(data);
-        console.log(res.statusText);
-        return data.issues;
-      } else {
-        console.log("epic res not ok");
-        const err = await data;
-        throw new Error(err.message);
-      }
-    } catch (error) {
-      console.log("caught error");
-      console.log(error);
-    }
+        issuetype: {
+          name: issueTypeName,
+        },
+      },
+    };
+    console.log("PARENT KEYS!!!!!!!!!!!!!!!!");
+    console.log(parentIssueKeys);
+    const chosenIndex = getRandomWholeNumber(
+      rngParentKey,
+      parentIssueKeys.length
+    );
+    const chosenParentKey = parentIssueKeys[chosenIndex];
+    console.log("CHOSEN PARENT", chosenIndex, chosenParentKey);
+    issueData.fields.parent = {
+      key: chosenParentKey,
+    };
+    console.log("----------------------------");
+    console.log(issueData);
+    console.log("-------------------------------");
+    return issueData;
   }
 
   async createSubtasksInBulk(
-    project: any,
+    projectKey: string,
     noOfIssues: number,
     subtaskFieldName: string,
     parentIssueKeys: string[]
@@ -367,10 +414,17 @@ export default class LXPAPI {
 
     try {
       const issueDataList = this._createIssueDataList(
-        project,
+        // project,
         [subtaskFieldName],
         noOfIssues,
-        parentIssueKeys
+        // parentIssueKeys
+        (subtaskFieldName: string, rngIssueData: any) =>
+          this._createSubtaskBodyData(
+            projectKey,
+            subtaskFieldName,
+            rngIssueData,
+            parentIssueKeys
+          )
       );
       const bodyData = JSON.stringify({
         issueUpdates: issueDataList,
@@ -404,6 +458,72 @@ export default class LXPAPI {
       console.log(error);
     }
   }
+
+  // async createEpicChildrenInBulk(
+  //   project,
+  //   noOfIssues,
+  //   childIssueTypeNames,
+  //   epicIssueKeys,
+  //   projectStyle,
+  //   epicLinkFieldKey
+  // ): Promise<any[]> {
+  //   console.log("-------------------------------------");
+  //   console.log("called create epic children issues");
+
+  //   try {
+  //     let issueDataList = [];
+  //     if (projectStyle === "classic") {
+  //       issueDataList = this._createIssueDataList(
+  //         project,
+  //         childIssueTypeNames,
+  //         noOfIssues,
+  //         undefined,
+  //         undefined,
+  //         undefined,
+  //         epicIssueKeys,
+  //         epicLinkFieldKey
+  //       );
+  //     } else {
+  //       issueDataList = this._createIssueDataList(
+  //         project,
+  //         childIssueTypeNames,
+  //         noOfIssues,
+  //         epicIssueKeys
+  //       );
+  //     }
+
+  //     const bodyData = JSON.stringify({
+  //       issueUpdates: issueDataList,
+  //     });
+  //     const res = await fetch(`${this.baseURL}/rest/api/3/issue/bulk`, {
+  //       method: "POST",
+  //       headers: {
+  //         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  //         Authorization: `Basic ${base64.encode(
+  //           `${this.username}:${this.password}`
+  //         )}`,
+  //         "Content-Type": "application/json",
+  //         Accept: "application/json",
+  //       },
+  //       body: bodyData,
+  //     });
+  //     console.log(res);
+  //     const data = await res.json();
+  //     if (res.ok) {
+  //       console.log("subtask res ok");
+  //       console.log(data);
+  //       console.log(res.statusText);
+  //       return data.issues;
+  //     } else {
+  //       console.log("res not ok");
+  //       const err = await data;
+  //       throw new Error(err.message);
+  //     }
+  //   } catch (error) {
+  //     console.log("caught error");
+  //     console.log(error);
+  //   }
+  // }
 
   async getMyself(): Promise<any> {
     try {
