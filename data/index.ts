@@ -32,8 +32,8 @@ const module = {
         "sample description 400 700 random",
         myself.accountId,
         "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban",
-        "call-7",
-        "CB7"
+        "call-13",
+        "CB13"
       )
     );
     console.log("in gen project");
@@ -43,45 +43,33 @@ const module = {
         "sample description",
         myself.accountId,
         "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic",
-        "call-8",
-        "CB8"
+        "call-14",
+        "CB14"
       )
     ); // classic project
     return projects;
   },
-  // async generateEpics(
-  //   project: any,
-  //   noOfIssues: number,
-  //   epicName: string,
-  //   epicIssueTypeName: string,
-  //   projectStyle: string,
-  //   fields: any[]
-  // ) {
-  //   let epicIssues = [];
-  //   if (projectStyle !== "next-gen") {
-  //     const epicNameField = fields.find((field) => field.name === "Epic Name");
-  //     if (epicNameField === undefined) {
-  //       throw new Error("epic name field is undefined.");
-  //     }
-  //     console.log("epic: ", epicNameField.id);
-  //     const epiNameFieldId = epicNameField.id;
+  async generateEpics(
+    project: any,
+    numberOfIssues: number,
+    epicName: string,
+    epicIssueTypeName: string,
+    projectStyle: string,
+    fields: any[]
+  ) {
+    const epicNameField = fields.find((field) => field.name === "Epic Name");
+    const epicNameFieldKey = epicNameField.key;
+    const epicIssues = await api.createEpicIssuesInBulk(
+      project.key,
+      numberOfIssues,
+      epicIssueTypeName,
+      epicName,
+      epicNameFieldKey,
+      projectStyle
+    );
+    return epicIssues;
+  },
 
-  //     epicIssues = await api.createEpicIssuesInBulk(
-  //       project,
-  //       noOfIssues,
-  //       epicIssueTypeName,
-  //       epicName,
-  //       epiNameFieldId
-  //     );
-  //   } else {
-  //     epicIssues = await api.createEpicIssuesInBulk(
-  //       project,
-  //       noOfIssues,
-  //       epicIssueTypeName
-  //     );
-  //   }
-  //   return epicIssues;
-  // },
   // async generateChildIssues(
   //   project,
   //   noOfIssues,
@@ -156,29 +144,29 @@ const module = {
       }
 
       // // adding epic issues
-      // console.log("creating epic issues");
-      // const noOfEpics = Util.getRandomPositiveNumber(
-      //   epicIssueNumberRNG,
-      //   // noOfIssues
-      //   5
-      // );
-      // const epicIssues = await module.generateEpics(
-      //   projects[i],
-      //   noOfEpics,
-      //   "my-epic",
-      //   "Epic",
-      //   projectStyle,
-      //   fields
-      // );
-      // if (epicIssues.length > 0) {
-      //   issues = issues.concat(epicIssues);
-      // }
+      console.log("creating epic issues");
+      const noOfEpics = Util.getRandomPositiveNumber(
+        epicIssueNumberRNG,
+        // noOfIssues
+        5
+      );
+      const epicIssues = await module.generateEpics(
+        projects[i],
+        noOfEpics,
+        "my-epic",
+        "Epic",
+        projectStyle,
+        fields
+      );
+      if (epicIssues.length > 0) {
+        issues = issues.concat(epicIssues);
+      }
       // add child issues for epics
 
-      console.log("creating chil issues fro epics");
-      const childIssueTypeNames = issueTypeNames.filter(
-        (type) => !type.includes("Sub") && !(type === "Epic")
-      );
+      // console.log("creating chil issues fro epics");
+      // const childIssueTypeNames = issueTypeNames.filter(
+      //   (type) => !type.includes("Sub") && !(type === "Epic")
+      // );
       // const childIssues = await module.generateChildIssues(
       //   projects[i],
       //   noOfIssues,
