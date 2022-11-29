@@ -5,7 +5,7 @@ import * as Util from "./util";
 const noOfRecords = config.noOfRecords;
 // const noOfProjects = 2;
 const api = new API(config.baseURL, config.username, config.password);
-const maxLinks = 3;
+const maxLinks = 2;
 const maxVersions = 5;
 
 // Random number generators
@@ -14,12 +14,11 @@ const linkFinderRNG = Util.getRNG("linkFinderRNG");
 const linkTypesRNG = Util.getRNG("linkTypesRNG");
 const versionsRNG = Util.getRNG("versionsRNG");
 const parentIssueNumberRNG = Util.getRNG("no-of-parent-issues");
-const epicIssueNumberRNG = Util.getRNG("no-of-epic-issues");
+const epicIssueNumberRNG = Util.getRNG("epic-issues");
 const module = {
   async generateProjects(): Promise<any[]> {
     // {{baseURL}}/rest/api/3/myself
     // get project types
-
     // team - managed: com.atlassian.jira-core-project-templates:jira-work-management-process-control-team-managed
     // company - managed: com.pyxis.greenhopper.jira:gh-simplified-scrum-classic
     // com.pyxis.greenhopper.jira:gh-simplified-agility-scrum
@@ -33,8 +32,8 @@ const module = {
         "sample description 400 700 random",
         myself.accountId,
         "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban",
-        "epic-test-600",
-        "ET600"
+        "bug-next-v1",
+        "BUN1"
       )
     );
     console.log("in gen project");
@@ -44,8 +43,8 @@ const module = {
         "sample description",
         myself.accountId,
         "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic",
-        "epic-test-700",
-        "ET700"
+        "bug-classic-v1",
+        "BUC1"
       )
     ); // classic project
     return projects;
@@ -101,41 +100,31 @@ const module = {
     console.log(projects);
     let issues: any[] = [];
     for (let i = 0; i < projects.length; i++) {
-      // const issueTypeNames = await api.getProjectIssueTypeNames(projects[i]);
-      // const parentIssueTypeNames = issueTypeNames.filter(
-      //   (type) => !type.includes("Sub")
-      // );
+      const issueTypeNames = await api.getProjectIssueTypeNames(projects[i]);
+      const parentIssueTypeNames = issueTypeNames.filter(
+        (type) => !type.includes("Sub") && !(type === "Epic")
+      );
       // parents
-      // const noOfParents = Util.getPositiveRandomNumber(
-      //   parentIssueNumberRNG,
-      //   // noOfIssues
-      //   5
-      // );
-      // const parentIssues = await api.createIssuesInBulk(
-      //   projects[i],
-      //   noOfParents,
-      //   parentIssueTypeNames
-      // );
-      // console.log("RESULTATNT ISSSUES");
-      // console.log(parentIssues);
-      // if (parentIssues.length > 0) {
-      //   issues = issues.concat(parentIssues);
-      // }
-      // add subtasks to parents
-      // const subtaskIssueTypeName = issueTypeNames.find((type) =>
-      //   type.includes("Sub")
-      // );
-      // const childIssues = await module.generateSubtasks(
-      //   projects[i],
-      //   noOfIssues,
-      //   subtaskIssueTypeName,
-      //   parentIssues
-      // );
-      // if (childIssues.length > 0) {
-      //   issues = issues.concat(childIssues);
-      // }
+      console.log("creating parent issues");
+      const noOfParents = Util.getRandomPositiveNumber(
+        parentIssueNumberRNG,
+        // noOfIssues
+        5
+      );
+      let parentIssues = await api.createIssuesInBulk(
+        projects[i],
+        noOfParents,
+        parentIssueTypeNames
+      );
+      console.log("RESULTATNT ISSSUES");
+      console.log(parentIssues);
+      if (parentIssues.length > 0) {
+        issues = issues.concat(parentIssues);
+      }
+
       // adding epic issues
-      const noOfEpics = Util.getPositiveRandomNumber(
+      console.log("creating epic issues");
+      const noOfEpics = Util.getRandomPositiveNumber(
         epicIssueNumberRNG,
         // noOfIssues
         5
@@ -149,7 +138,40 @@ const module = {
       if (epicIssues.length > 0) {
         issues = issues.concat(epicIssues);
       }
+
+      // add subtasks to parents
+      console.log("creating subtask issues");
+      const subtaskIssueTypeName = issueTypeNames.find((type) =>
+        type.includes("Sub")
+      );
+      parentIssues = parentIssues.concat(epicIssues);
+      const childIssues = await module.generateSubtasks(
+        projects[i],
+        noOfIssues,
+        subtaskIssueTypeName,
+        parentIssues
+      );
+      if (childIssues.length > 0) {
+        issues = issues.concat(childIssues);
+      }
+
+      const otherIssueTypeNames = issueTypeNames.filter(
+        (type) => !type.includes("Sub") && !(type === "Epic")
+      );
+      // other issues
+      console.log("creating other issues");
+      const otherIssues = await api.createIssuesInBulk(
+        projects[i],
+        noOfIssues,
+        otherIssueTypeNames
+      );
+      console.log("OTHER ISSSUES");
+      console.log(otherIssues);
+      if (otherIssues.length > 0) {
+        issues = issues.concat(otherIssues);
+      }
     }
+
     console.log(
       "-----------------------------ALL ISSUES-----------------------------"
     );
@@ -167,14 +189,14 @@ const module = {
     console.log("-----------------------------------------------------");
 
     for (const issue of issues) {
-      const noOfLinks = Util.getPositiveRandomNumber(linksRNG, maxLinks + 1);
+      const noOfLinks = Util.getRandomPositiveNumber(linksRNG, maxLinks + 1);
       console.log("NO OF LINKS", noOfLinks);
       for (let j = 0; j < noOfLinks; j++) {
-        const issueIndex = Util.getPositiveRandomNumber(
+        const issueIndex = Util.getRandomWholeNumber(
           linkFinderRNG,
           issues.length
         );
-        const linkTypeIndex = Util.getPositiveRandomNumber(
+        const linkTypeIndex = Util.getRandomWholeNumber(
           linkTypesRNG,
           linkTypeNames.length
         );
@@ -190,7 +212,7 @@ const module = {
 
   async generateVersions(project: any): Promise<any[]> {
     console.log(project);
-    const noOfVersions = Util.getPositiveRandomNumber(versionsRNG, maxVersions);
+    const noOfVersions = Util.getRandomWholeNumber(versionsRNG, maxVersions);
     const versions: any[] = [];
     for (let i = 0; i < noOfVersions; i++) {
       versions.push(await api.createVersion());
@@ -203,16 +225,13 @@ const module = {
 const generateData = async (): Promise<void> => {
   const projects: any[] = await module.generateProjects();
   const noOfIssues = noOfRecords / projects.length;
-  // // for (const project of projects) {
-  // //   const versions: any[] = await module.generateVersions(project);
-  // console.log(projects);
 
   if (projects.length > 0) {
     const issues: any[] = await module.generateIssues(projects, noOfIssues);
     if (issues.length > 0) {
       console.log("issues are there");
       console.log(issues.length);
-      // await module.generateLinks(issues);
+      await module.generateLinks(issues);
     }
   }
 };
