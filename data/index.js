@@ -40,15 +40,17 @@ var config_1 = require("./config");
 var api_1 = require("./api");
 var Util = require("./util");
 var noOfRecords = config_1["default"].noOfRecords;
-var noOfProjects = 2;
+// const noOfProjects = 2;
 var api = new api_1["default"](config_1["default"].baseURL, config_1["default"].username, config_1["default"].password);
-var maxLinks = 10, maxVersions = 5;
+var maxLinks = 3;
+var maxVersions = 5;
 // Random number generators
 var linksRNG = Util.getRNG("linksRNG");
 var linkFinderRNG = Util.getRNG("linkFinderRNG");
 var linkTypesRNG = Util.getRNG("linkTypesRNG");
 var versionsRNG = Util.getRNG("versionsRNG");
 var parentIssueNumberRNG = Util.getRNG("no-of-parent-issues");
+var epicIssueNumberRNG = Util.getRNG("no-of-epic-issues");
 var module = {
     generateProjects: function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -61,7 +63,7 @@ var module = {
                         console.log(myself);
                         projects = [];
                         _b = (_a = projects).push;
-                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "subtask-parent-test-1", "SPT1")];
+                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "epic-test-500", "ET500")];
                     case 2:
                         _b.apply(_a, [_c.sent()]);
                         console.log("in gen project");
@@ -76,6 +78,41 @@ var module = {
                         //   )
                         // ); // classic project
                         return [2 /*return*/, projects];
+                }
+            });
+        });
+    },
+    generateEpics: function (project, noOfIssues, epicName, epicIssueTypeName) {
+        return __awaiter(this, void 0, void 0, function () {
+            var fullProject, epicIssues, fields, epicNameField, epiNameFieldId;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        console.log("PROJECT!!!!!!!!!!!!!!!!!!!!!");
+                        return [4 /*yield*/, api.getFullProject(project)];
+                    case 1:
+                        fullProject = _a.sent();
+                        console.log(fullProject.style);
+                        epicIssues = [];
+                        if (!(fullProject.style !== "next-gen")) return [3 /*break*/, 4];
+                        return [4 /*yield*/, api.getFields()];
+                    case 2:
+                        fields = _a.sent();
+                        epicNameField = fields.find(function (field) { return field.name === "Epic Name"; });
+                        if (epicNameField === undefined) {
+                            throw new Error("epic name field is undefined.");
+                        }
+                        console.log("epic: ", epicNameField.id);
+                        epiNameFieldId = epicNameField.id;
+                        return [4 /*yield*/, api.createEpicIssuesInBulk(project, noOfIssues, epicIssueTypeName, epicName, epiNameFieldId)];
+                    case 3:
+                        epicIssues = _a.sent();
+                        return [3 /*break*/, 6];
+                    case 4: return [4 /*yield*/, api.createEpicIssuesInBulk(project, noOfIssues, epicIssueTypeName)];
+                    case 5:
+                        epicIssues = _a.sent();
+                        _a.label = 6;
+                    case 6: return [2 /*return*/, epicIssues];
                 }
             });
         });
@@ -97,7 +134,7 @@ var module = {
     },
     generateIssues: function (projects, noOfIssues) {
         return __awaiter(this, void 0, void 0, function () {
-            var issues, i, issueTypeNames, parentIssueTypeNames, noOfParents, parentIssues, subtaskField, childIssues;
+            var issues, i, noOfEpics, epicIssues;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -107,34 +144,21 @@ var module = {
                         i = 0;
                         _a.label = 1;
                     case 1:
-                        if (!(i < projects.length)) return [3 /*break*/, 6];
-                        return [4 /*yield*/, api.getProjectIssueTypeNames(projects[i])];
-                    case 2:
-                        issueTypeNames = _a.sent();
-                        parentIssueTypeNames = issueTypeNames.filter(function (type) { return !type.includes("Sub"); });
-                        noOfParents = Util.getPositiveRandomNumber(parentIssueNumberRNG, 
+                        if (!(i < projects.length)) return [3 /*break*/, 4];
+                        noOfEpics = Util.getPositiveRandomNumber(epicIssueNumberRNG, 
                         // noOfIssues
                         5);
-                        return [4 /*yield*/, api.createIssuesInBulk(projects[i], noOfParents, parentIssueTypeNames)];
+                        return [4 /*yield*/, module.generateEpics(projects[i], noOfEpics, "my-epic", "Epic")];
+                    case 2:
+                        epicIssues = _a.sent();
+                        if (epicIssues.length > 0) {
+                            issues = issues.concat(epicIssues);
+                        }
+                        _a.label = 3;
                     case 3:
-                        parentIssues = _a.sent();
-                        console.log("RESULTATNT ISSSUES");
-                        console.log(parentIssues);
-                        if (parentIssues.length > 0) {
-                            issues = issues.concat(parentIssues);
-                        }
-                        subtaskField = issueTypeNames.find(function (type) { return type.includes("Sub"); });
-                        return [4 /*yield*/, module.generateSubtasks(projects[i], noOfIssues, subtaskField, parentIssues)];
-                    case 4:
-                        childIssues = _a.sent();
-                        if (childIssues.length > 0) {
-                            issues = issues.concat(childIssues);
-                        }
-                        _a.label = 5;
-                    case 5:
                         i++;
                         return [3 /*break*/, 1];
-                    case 6:
+                    case 4:
                         console.log("-----------------------------ALL ISSUES-----------------------------");
                         console.log(issues);
                         console.log("----------------------------------------------------------");
@@ -191,6 +215,7 @@ var module = {
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
+                        console.log(project);
                         noOfVersions = Util.getPositiveRandomNumber(versionsRNG, maxVersions);
                         versions = [];
                         i = 0;
@@ -220,19 +245,18 @@ var generateData = function () { return __awaiter(void 0, void 0, void 0, functi
             case 1:
                 projects = _a.sent();
                 noOfIssues = noOfRecords / projects.length;
-                if (!(projects.length > 0)) return [3 /*break*/, 4];
+                if (!(projects.length > 0)) return [3 /*break*/, 3];
                 return [4 /*yield*/, module.generateIssues(projects, noOfIssues)];
             case 2:
                 issues = _a.sent();
-                if (!(issues.length > 0)) return [3 /*break*/, 4];
-                console.log("issues are there");
-                console.log(issues.length);
-                return [4 /*yield*/, module.generateLinks(issues)];
-            case 3:
-                _a.sent();
-                _a.label = 4;
-            case 4: return [2 /*return*/];
+                if (issues.length > 0) {
+                    console.log("issues are there");
+                    console.log(issues.length);
+                    // await module.generateLinks(issues);
+                }
+                _a.label = 3;
+            case 3: return [2 /*return*/];
         }
     });
 }); };
-generateData();
+void generateData();
