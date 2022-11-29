@@ -33,21 +33,21 @@ const module = {
         "sample description 400 700 random",
         myself.accountId,
         "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban",
-        "epic-test-500",
-        "ET500"
+        "epic-test-600",
+        "ET600"
       )
     );
     console.log("in gen project");
     console.log(projects);
-    // projects.push(
-    //   await api.createProject(
-    //     "sample description",
-    //     myself.accountId,
-    //     "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic",
-    //     "new-subtask-test-10",
-    //     "NST10"
-    //   )
-    // ); // classic project
+    projects.push(
+      await api.createProject(
+        "sample description",
+        myself.accountId,
+        "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic",
+        "epic-test-700",
+        "ET700"
+      )
+    ); // classic project
     return projects;
   },
   async generateEpics(

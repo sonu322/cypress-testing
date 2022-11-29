@@ -54,29 +54,24 @@ var epicIssueNumberRNG = Util.getRNG("no-of-epic-issues");
 var module = {
     generateProjects: function () {
         return __awaiter(this, void 0, void 0, function () {
-            var myself, projects, _a, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            var myself, projects, _a, _b, _c, _d;
+            return __generator(this, function (_e) {
+                switch (_e.label) {
                     case 0: return [4 /*yield*/, api.getMyself()];
                     case 1:
-                        myself = _c.sent();
+                        myself = _e.sent();
                         console.log(myself);
                         projects = [];
                         _b = (_a = projects).push;
-                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "epic-test-500", "ET500")];
+                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "epic-test-600", "ET600")];
                     case 2:
-                        _b.apply(_a, [_c.sent()]);
+                        _b.apply(_a, [_e.sent()]);
                         console.log("in gen project");
                         console.log(projects);
-                        // projects.push(
-                        //   await api.createProject(
-                        //     "sample description",
-                        //     myself.accountId,
-                        //     "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic",
-                        //     "new-subtask-test-10",
-                        //     "NST10"
-                        //   )
-                        // ); // classic project
+                        _d = (_c = projects).push;
+                        return [4 /*yield*/, api.createProject("sample description", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic", "epic-test-700", "ET700")];
+                    case 3:
+                        _d.apply(_c, [_e.sent()]); // classic project
                         return [2 /*return*/, projects];
                 }
             });
