@@ -63,13 +63,13 @@ var module = {
                         console.log(myself);
                         projects = [];
                         _b = (_a = projects).push;
-                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "call-7", "CB7")];
+                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "call-13", "CB13")];
                     case 2:
                         _b.apply(_a, [_e.sent()]);
                         console.log("in gen project");
                         console.log(projects);
                         _d = (_c = projects).push;
-                        return [4 /*yield*/, api.createProject("sample description", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic", "call-8", "CB8")];
+                        return [4 /*yield*/, api.createProject("sample description", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic", "call-14", "CB14")];
                     case 3:
                         _d.apply(_c, [_e.sent()]); // classic project
                         return [2 /*return*/, projects];
@@ -77,38 +77,22 @@ var module = {
             });
         });
     },
-    // async generateEpics(
-    //   project: any,
-    //   noOfIssues: number,
-    //   epicName: string,
-    //   epicIssueTypeName: string,
-    //   projectStyle: string,
-    //   fields: any[]
-    // ) {
-    //   let epicIssues = [];
-    //   if (projectStyle !== "next-gen") {
-    //     const epicNameField = fields.find((field) => field.name === "Epic Name");
-    //     if (epicNameField === undefined) {
-    //       throw new Error("epic name field is undefined.");
-    //     }
-    //     console.log("epic: ", epicNameField.id);
-    //     const epiNameFieldId = epicNameField.id;
-    //     epicIssues = await api.createEpicIssuesInBulk(
-    //       project,
-    //       noOfIssues,
-    //       epicIssueTypeName,
-    //       epicName,
-    //       epiNameFieldId
-    //     );
-    //   } else {
-    //     epicIssues = await api.createEpicIssuesInBulk(
-    //       project,
-    //       noOfIssues,
-    //       epicIssueTypeName
-    //     );
-    //   }
-    //   return epicIssues;
-    // },
+    generateEpics: function (project, numberOfIssues, epicName, epicIssueTypeName, projectStyle, fields) {
+        return __awaiter(this, void 0, void 0, function () {
+            var epicNameField, epicNameFieldKey, epicIssues;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        epicNameField = fields.find(function (field) { return field.name === "Epic Name"; });
+                        epicNameFieldKey = epicNameField.key;
+                        return [4 /*yield*/, api.createEpicIssuesInBulk(project.key, numberOfIssues, epicIssueTypeName, epicName, epicNameFieldKey, projectStyle)];
+                    case 1:
+                        epicIssues = _a.sent();
+                        return [2 /*return*/, epicIssues];
+                }
+            });
+        });
+    },
     // async generateChildIssues(
     //   project,
     //   noOfIssues,
@@ -147,7 +131,7 @@ var module = {
     },
     generateIssues: function (projects, noOfIssues) {
         return __awaiter(this, void 0, void 0, function () {
-            var issues, i, fullProject, issueTypeNames, projectStyle, parentIssueTypeNames, fields, noOfParents, parentIssues, childIssueTypeNames, subtaskIssueTypeName, subtasks, otherIssueTypeNames, otherIssues;
+            var issues, i, fullProject, issueTypeNames, projectStyle, parentIssueTypeNames, fields, noOfParents, parentIssues, noOfEpics, epicIssues, subtaskIssueTypeName, subtasks, otherIssueTypeNames, otherIssues;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -157,7 +141,7 @@ var module = {
                         i = 0;
                         _a.label = 1;
                     case 1:
-                        if (!(i < projects.length)) return [3 /*break*/, 8];
+                        if (!(i < projects.length)) return [3 /*break*/, 9];
                         console.log("PROJECT!!!!!!!!!!!!!!!!!!!!!");
                         return [4 /*yield*/, api.getFullProject(projects[i])];
                     case 2:
@@ -183,26 +167,21 @@ var module = {
                             issues = issues.concat(parentIssues);
                         }
                         // // adding epic issues
-                        // console.log("creating epic issues");
-                        // const noOfEpics = Util.getRandomPositiveNumber(
-                        //   epicIssueNumberRNG,
-                        //   // noOfIssues
-                        //   5
-                        // );
-                        // const epicIssues = await module.generateEpics(
-                        //   projects[i],
-                        //   noOfEpics,
-                        //   "my-epic",
-                        //   "Epic",
-                        //   projectStyle,
-                        //   fields
-                        // );
-                        // if (epicIssues.length > 0) {
-                        //   issues = issues.concat(epicIssues);
-                        // }
+                        console.log("creating epic issues");
+                        noOfEpics = Util.getRandomPositiveNumber(epicIssueNumberRNG, 
+                        // noOfIssues
+                        5);
+                        return [4 /*yield*/, module.generateEpics(projects[i], noOfEpics, "my-epic", "Epic", projectStyle, fields)];
+                    case 5:
+                        epicIssues = _a.sent();
+                        if (epicIssues.length > 0) {
+                            issues = issues.concat(epicIssues);
+                        }
                         // add child issues for epics
-                        console.log("creating chil issues fro epics");
-                        childIssueTypeNames = issueTypeNames.filter(function (type) { return !type.includes("Sub") && !(type === "Epic"); });
+                        // console.log("creating chil issues fro epics");
+                        // const childIssueTypeNames = issueTypeNames.filter(
+                        //   (type) => !type.includes("Sub") && !(type === "Epic")
+                        // );
                         // const childIssues = await module.generateChildIssues(
                         //   projects[i],
                         //   noOfIssues,
@@ -220,7 +199,7 @@ var module = {
                             return type.includes("Sub");
                         });
                         return [4 /*yield*/, module.generateSubtasks(projects[i].key, noOfIssues, subtaskIssueTypeName, parentIssues)];
-                    case 5:
+                    case 6:
                         subtasks = _a.sent();
                         if (subtasks.length > 0) {
                             issues = issues.concat(subtasks);
@@ -229,18 +208,18 @@ var module = {
                         // other issues
                         console.log("creating other issues");
                         return [4 /*yield*/, api.createIssuesInBulk(projects[i], noOfIssues, otherIssueTypeNames)];
-                    case 6:
+                    case 7:
                         otherIssues = _a.sent();
                         console.log("OTHER ISSSUES");
                         console.log(otherIssues);
                         if (otherIssues.length > 0) {
                             issues = issues.concat(otherIssues);
                         }
-                        _a.label = 7;
-                    case 7:
+                        _a.label = 8;
+                    case 8:
                         i++;
                         return [3 /*break*/, 1];
-                    case 8:
+                    case 9:
                         console.log("-----------------------------ALL ISSUES-----------------------------");
                         console.log(issues);
                         console.log("----------------------------------------------------------");
