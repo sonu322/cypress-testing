@@ -32,8 +32,8 @@ const module = {
         "sample description 400 700 random",
         myself.accountId,
         "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban",
-        "bug-next-v4",
-        "BUN3"
+        "call-7",
+        "CB7"
       )
     );
     console.log("in gen project");
@@ -43,52 +43,76 @@ const module = {
         "sample description",
         myself.accountId,
         "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic",
-        "bug-classic-v4",
-        "BUC4"
+        "call-8",
+        "CB8"
       )
     ); // classic project
     return projects;
   },
-  async generateEpics(
-    project: any,
+  // async generateEpics(
+  //   project: any,
+  //   noOfIssues: number,
+  //   epicName: string,
+  //   epicIssueTypeName: string,
+  //   projectStyle: string,
+  //   fields: any[]
+  // ) {
+  //   let epicIssues = [];
+  //   if (projectStyle !== "next-gen") {
+  //     const epicNameField = fields.find((field) => field.name === "Epic Name");
+  //     if (epicNameField === undefined) {
+  //       throw new Error("epic name field is undefined.");
+  //     }
+  //     console.log("epic: ", epicNameField.id);
+  //     const epiNameFieldId = epicNameField.id;
+
+  //     epicIssues = await api.createEpicIssuesInBulk(
+  //       project,
+  //       noOfIssues,
+  //       epicIssueTypeName,
+  //       epicName,
+  //       epiNameFieldId
+  //     );
+  //   } else {
+  //     epicIssues = await api.createEpicIssuesInBulk(
+  //       project,
+  //       noOfIssues,
+  //       epicIssueTypeName
+  //     );
+  //   }
+  //   return epicIssues;
+  // },
+  // async generateChildIssues(
+  //   project,
+  //   noOfIssues,
+  //   childIssueTypeNames,
+  //   epicIssues,
+  //   projectStyle,
+  //   fields
+  // ) {
+  //   const epicIssueKeys = epicIssues.map((epicIssue) => epicIssue.key);
+  //   const epicLinkField = fields.map((field) => field.name === "Epic Link");
+  //   const epicLinkFieldKey = epicLinkField.key;
+  //   const childIssues = await api.createEpicChildrenInBulk(
+  //     project,
+  //     noOfIssues,
+  //     childIssueTypeNames,
+  //     epicIssueKeys,
+  //     projectStyle,
+  //     epicLinkFieldKey
+  //   );
+  //   return childIssues;
+  // },
+
+  async generateSubtasks(
+    projectKey: string,
     noOfIssues: number,
-    epicName: string,
-    epicIssueTypeName: string
-  ) {
-    console.log("PROJECT!!!!!!!!!!!!!!!!!!!!!");
-    const fullProject = await api.getFullProject(project);
-    console.log(fullProject.style);
-    let epicIssues = [];
-    if (fullProject.style !== "next-gen") {
-      const fields = await api.getFields();
-      const epicNameField = fields.find((field) => field.name === "Epic Name");
-      if (epicNameField === undefined) {
-        throw new Error("epic name field is undefined.");
-      }
-      console.log("epic: ", epicNameField.id);
-      const epiNameFieldId = epicNameField.id;
-
-      epicIssues = await api.createEpicIssuesInBulk(
-        project,
-        noOfIssues,
-        epicIssueTypeName,
-        epicName,
-        epiNameFieldId
-      );
-    } else {
-      epicIssues = await api.createEpicIssuesInBulk(
-        project,
-        noOfIssues,
-        epicIssueTypeName
-      );
-    }
-    return epicIssues;
-  },
-
-  async generateSubtasks(project, noOfIssues, subtaskFieldName, parentIssues) {
+    subtaskFieldName: string,
+    parentIssues: any[]
+  ): Promise<any[]> {
     const parentIssueKeys = parentIssues.map((parentIssue) => parentIssue.key);
     const childIssues = await api.createSubtasksInBulk(
-      project,
+      projectKey,
       noOfIssues,
       subtaskFieldName,
       parentIssueKeys
@@ -100,59 +124,87 @@ const module = {
     console.log(projects);
     let issues: any[] = [];
     for (let i = 0; i < projects.length; i++) {
-      const issueTypeNames = await api.getProjectIssueTypeNames(projects[i]);
+      console.log("PROJECT!!!!!!!!!!!!!!!!!!!!!");
+      const fullProject = await api.getFullProject(projects[i]);
+      console.log(fullProject.style);
+
+      const issueTypeNames = fullProject.issueTypes.map(
+        (issueType) => issueType.name
+      );
+      const projectStyle = fullProject.style;
       const parentIssueTypeNames = issueTypeNames.filter(
         (type) => !type.includes("Sub") && !(type === "Epic")
       );
-      // parents
+      const fields = await api.getFields();
+      // creating parents
       console.log("creating parent issues");
       const noOfParents = Util.getRandomPositiveNumber(
         parentIssueNumberRNG,
         // noOfIssues
         5
       );
+      // eslint-disable-next-line prefer-const
       let parentIssues = await api.createIssuesInBulk(
         projects[i],
         noOfParents,
         parentIssueTypeNames
       );
-      console.log("RESULTATNT ISSSUES");
+      console.log("PARENT ISSSUES");
       console.log(parentIssues);
       if (parentIssues.length > 0) {
         issues = issues.concat(parentIssues);
       }
 
-      // adding epic issues
-      console.log("creating epic issues");
-      const noOfEpics = Util.getRandomPositiveNumber(
-        epicIssueNumberRNG,
-        // noOfIssues
-        5
+      // // adding epic issues
+      // console.log("creating epic issues");
+      // const noOfEpics = Util.getRandomPositiveNumber(
+      //   epicIssueNumberRNG,
+      //   // noOfIssues
+      //   5
+      // );
+      // const epicIssues = await module.generateEpics(
+      //   projects[i],
+      //   noOfEpics,
+      //   "my-epic",
+      //   "Epic",
+      //   projectStyle,
+      //   fields
+      // );
+      // if (epicIssues.length > 0) {
+      //   issues = issues.concat(epicIssues);
+      // }
+      // add child issues for epics
+
+      console.log("creating chil issues fro epics");
+      const childIssueTypeNames = issueTypeNames.filter(
+        (type) => !type.includes("Sub") && !(type === "Epic")
       );
-      const epicIssues = await module.generateEpics(
-        projects[i],
-        noOfEpics,
-        "my-epic",
-        "Epic"
-      );
-      if (epicIssues.length > 0) {
-        issues = issues.concat(epicIssues);
-      }
+      // const childIssues = await module.generateChildIssues(
+      //   projects[i],
+      //   noOfIssues,
+      //   childIssueTypeNames,
+      //   epicIssues,
+      //   projectStyle,
+      //   fields
+      // );
+      // if (childIssues.length > 0) {
+      //   issues = issues.concat(childIssues);
+      // }
 
       // add subtasks to parents
       console.log("creating subtask issues");
       const subtaskIssueTypeName = issueTypeNames.find((type) =>
         type.includes("Sub")
       );
-      parentIssues = parentIssues.concat(epicIssues);
-      const childIssues = await module.generateSubtasks(
-        projects[i],
+      // parentIssues = parentIssues.concat(childIssues);
+      const subtasks = await module.generateSubtasks(
+        projects[i].key,
         noOfIssues,
         subtaskIssueTypeName,
         parentIssues
       );
-      if (childIssues.length > 0) {
-        issues = issues.concat(childIssues);
+      if (subtasks.length > 0) {
+        issues = issues.concat(subtasks);
       }
 
       const otherIssueTypeNames = issueTypeNames.filter(
@@ -231,7 +283,7 @@ const generateData = async (): Promise<void> => {
     if (issues.length > 0) {
       console.log("issues are there");
       console.log(issues.length);
-      await module.generateLinks(issues);
+      // await module.generateLinks(issues);
     }
   }
 };
