@@ -63,13 +63,13 @@ var module = {
                         console.log(myself);
                         projects = [];
                         _b = (_a = projects).push;
-                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "bug-next-v1", "BUN1")];
+                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "bug-next-v4", "BUN3")];
                     case 2:
                         _b.apply(_a, [_e.sent()]);
                         console.log("in gen project");
                         console.log(projects);
                         _d = (_c = projects).push;
-                        return [4 /*yield*/, api.createProject("sample description", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic", "bug-classic-v1", "BUC1")];
+                        return [4 /*yield*/, api.createProject("sample description", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic", "bug-classic-v4", "BUC4")];
                     case 3:
                         _d.apply(_c, [_e.sent()]); // classic project
                         return [2 /*return*/, projects];
@@ -149,9 +149,7 @@ var module = {
                         noOfParents = Util.getRandomPositiveNumber(parentIssueNumberRNG, 
                         // noOfIssues
                         5);
-                        return [4 /*yield*/, api.createIssuesInBulk(projects[i], noOfParents, 
-                            // parentIssueTypeNames
-                            ["Bug"])];
+                        return [4 /*yield*/, api.createIssuesInBulk(projects[i], noOfParents, parentIssueTypeNames)];
                     case 3:
                         parentIssues = _a.sent();
                         console.log("RESULTATNT ISSSUES");
