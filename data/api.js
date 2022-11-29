@@ -47,15 +47,6 @@ var LXPAPI = /** @class */ (function () {
         this.baseURL = baseURL;
         this.username = username;
         this.password = password;
-        // this._axios = axios.create({ baseURL: this.baseURL });
-        // this.jira = new JiraApi({
-        //   protocol: "https",
-        //   host: baseURL,
-        //   username: username,
-        //   password: password,
-        //   apiVersion: "3",
-        //   strictSSL: true,
-        // });
     }
     // private readonly _AP: any = AP;
     LXPAPI.prototype.createIssue = function (projectKey, summary, issueTypeName) {
@@ -263,7 +254,8 @@ var LXPAPI = /** @class */ (function () {
         });
     };
     LXPAPI.prototype._createIssueBodyData = function (projectKey, issueTypeName, rngIssueData, epicFieldId, parentIssueKeys, epicName) {
-        var mockIssueIndex = (0, util_1.getPositiveRandomNumber)(rngIssueData, mockIssueData_1["default"].length);
+        console.log("CREATE BODY DATA CALLED");
+        var mockIssueIndex = (0, util_1.getRandomWholeNumber)(rngIssueData, mockIssueData_1["default"].length);
         console.log("mock issue index", mockIssueIndex);
         var issueData = {
             fields: {
@@ -282,7 +274,7 @@ var LXPAPI = /** @class */ (function () {
         if (issueTypeName.includes("Sub")) {
             console.log("PARENT KEYS!!!!!!!!!!!!!!!!");
             console.log(parentIssueKeys);
-            var chosenIndex = (0, util_1.getPositiveRandomNumber)(rngParentKey, parentIssueKeys.length);
+            var chosenIndex = (0, util_1.getRandomWholeNumber)(rngParentKey, parentIssueKeys.length);
             var chosenParentKey = parentIssueKeys[chosenIndex];
             console.log("CHOSEN PARENT", chosenIndex, chosenParentKey);
             issueData.fields.parent = {
@@ -295,21 +287,20 @@ var LXPAPI = /** @class */ (function () {
         return issueData;
     };
     LXPAPI.prototype._createIssueDataList = function (project, issueTypeNames, numberOfIssues, parentIssueKeys, epicNameFieldId, epicName) {
+        console.log("CREATE DATA LIST CALLED");
+        console.log(numberOfIssues);
         var rng = (0, util_1.getRNG)("issuetype");
         var issues = [];
         for (var i = 0; i < numberOfIssues; i++) {
             var typeIndex1 = 0;
             if (issueTypeNames.length > 1) {
-                typeIndex1 = (0, util_1.getPositiveRandomNumber)(rng, issueTypeNames.length);
+                typeIndex1 = (0, util_1.getRandomWholeNumber)(rng, issueTypeNames.length);
             }
             var typeName1 = issueTypeNames[typeIndex1];
             console.log(typeIndex1, typeName1);
             if (typeName1 === undefined) {
                 throw new Error("type NAME undefined");
             }
-            // if (typeName1 === "Epic") {
-            //   continue;
-            // }
             var issueData = this._createIssueBodyData(project.key, typeName1, rngIssueData, epicNameFieldId, parentIssueKeys, epicName);
             issues.push(issueData);
         }
@@ -325,22 +316,16 @@ var LXPAPI = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 7, , 8]);
-                        // const fields = await this.getFields();
-                        // const epicNameField = fields.find((field) => field.name === "Epic Name");
-                        // if (epicNameField === undefined) {
-                        //   throw new Error("epic name field is undefined.");
-                        // }
-                        // console.log("epic: ", epicNameField.id);
-                        // const epiNameFieldId = epicNameField.id;
                         console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                         console.log(issueTypeNames);
                         if (issueTypeNames === undefined) {
                             throw new Error("no issue types from proje");
                         }
-                        issueDataList = this._createIssueDataList(project, issueTypeNames, noOfIssuesPerProject
-                        // parentKey,
-                        // epiNameFieldId
-                        );
+                        console.log("calling data list");
+                        issueDataList = this._createIssueDataList(project, issueTypeNames, noOfIssuesPerProject);
+                        if (issueDataList.length === 0) {
+                            throw new Error("no data list");
+                        }
                         console.log("------------------------------");
                         console.log(issueDataList);
                         console.log("------------------------------");

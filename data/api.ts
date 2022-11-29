@@ -1,13 +1,9 @@
-import axios from "axios";
 import fetch from "node-fetch";
-import JiraApi from "jira-client";
-import { getPositiveRandomNumber, getRNG } from "./util";
+import { getRandomWholeNumber, getRNG } from "./util";
 import mockIssueData from "./mockIssueData";
 const base64 = require("base-64");
 const rngIssueData = getRNG("mockissuedata");
 const rngParentKey = getRNG("parent");
-// TODO: automate parent: currently, one parent per project.
-// idea: for 5 issues, use 1 parent.
 interface IssueData {
   [key: string]: any;
 }
@@ -19,15 +15,6 @@ export default class LXPAPI {
     this.baseURL = baseURL;
     this.username = username;
     this.password = password;
-    // this._axios = axios.create({ baseURL: this.baseURL });
-    // this.jira = new JiraApi({
-    //   protocol: "https",
-    //   host: baseURL,
-    //   username: username,
-    //   password: password,
-    //   apiVersion: "3",
-    //   strictSSL: true,
-    // });
   }
 
   // private readonly _AP: any = AP;
@@ -183,7 +170,8 @@ export default class LXPAPI {
     parentIssueKeys?: string[],
     epicName?: string
   ): any {
-    const mockIssueIndex = getPositiveRandomNumber(
+    console.log("CREATE BODY DATA CALLED");
+    const mockIssueIndex = getRandomWholeNumber(
       rngIssueData,
       mockIssueData.length
     );
@@ -205,7 +193,7 @@ export default class LXPAPI {
     if (issueTypeName.includes("Sub")) {
       console.log("PARENT KEYS!!!!!!!!!!!!!!!!");
       console.log(parentIssueKeys);
-      const chosenIndex = getPositiveRandomNumber(
+      const chosenIndex = getRandomWholeNumber(
         rngParentKey,
         parentIssueKeys.length
       );
@@ -229,12 +217,14 @@ export default class LXPAPI {
     epicNameFieldId?: string,
     epicName?: string
   ): any[] {
+    console.log("CREATE DATA LIST CALLED");
+    console.log(numberOfIssues);
     const rng = getRNG("issuetype");
     const issues = [];
     for (let i = 0; i < numberOfIssues; i++) {
       let typeIndex1 = 0;
       if (issueTypeNames.length > 1) {
-        typeIndex1 = getPositiveRandomNumber(rng, issueTypeNames.length);
+        typeIndex1 = getRandomWholeNumber(rng, issueTypeNames.length);
       }
 
       const typeName1 = issueTypeNames[typeIndex1];
@@ -242,9 +232,6 @@ export default class LXPAPI {
       if (typeName1 === undefined) {
         throw new Error("type NAME undefined");
       }
-      // if (typeName1 === "Epic") {
-      //   continue;
-      // }
 
       const issueData = this._createIssueBodyData(
         project.key,
@@ -267,33 +254,20 @@ export default class LXPAPI {
     console.log("called create issues");
 
     try {
-      // const fields = await this.getFields();
-      // const epicNameField = fields.find((field) => field.name === "Epic Name");
-      // if (epicNameField === undefined) {
-      //   throw new Error("epic name field is undefined.");
-      // }
-      // console.log("epic: ", epicNameField.id);
-      // const epiNameFieldId = epicNameField.id;
-
       console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       console.log(issueTypeNames);
       if (issueTypeNames === undefined) {
         throw new Error("no issue types from proje");
       }
-
-      // const parentIssue = await this.createIssue(
-      //   project.key,
-      //   "this is a parent",
-      //   "Task"
-      // );
-      // const parentKey = parentIssue.key;
+      console.log("calling data list");
       const issueDataList = this._createIssueDataList(
         project,
         issueTypeNames,
         noOfIssuesPerProject
-        // parentKey,
-        // epiNameFieldId
       );
+      if (issueDataList.length === 0) {
+        throw new Error("no data list");
+      }
       console.log("------------------------------");
       console.log(issueDataList);
       console.log("------------------------------");

@@ -42,7 +42,7 @@ var Util = require("./util");
 var noOfRecords = config_1["default"].noOfRecords;
 // const noOfProjects = 2;
 var api = new api_1["default"](config_1["default"].baseURL, config_1["default"].username, config_1["default"].password);
-var maxLinks = 3;
+var maxLinks = 2;
 var maxVersions = 5;
 // Random number generators
 var linksRNG = Util.getRNG("linksRNG");
@@ -50,7 +50,7 @@ var linkFinderRNG = Util.getRNG("linkFinderRNG");
 var linkTypesRNG = Util.getRNG("linkTypesRNG");
 var versionsRNG = Util.getRNG("versionsRNG");
 var parentIssueNumberRNG = Util.getRNG("no-of-parent-issues");
-var epicIssueNumberRNG = Util.getRNG("no-of-epic-issues");
+var epicIssueNumberRNG = Util.getRNG("epic-issues");
 var module = {
     generateProjects: function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -63,13 +63,13 @@ var module = {
                         console.log(myself);
                         projects = [];
                         _b = (_a = projects).push;
-                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "epic-test-600", "ET600")];
+                        return [4 /*yield*/, api.createProject("sample description 400 700 random", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "bug-next-v1", "BUN1")];
                     case 2:
                         _b.apply(_a, [_e.sent()]);
                         console.log("in gen project");
                         console.log(projects);
                         _d = (_c = projects).push;
-                        return [4 /*yield*/, api.createProject("sample description", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic", "epic-test-700", "ET700")];
+                        return [4 /*yield*/, api.createProject("sample description", myself.accountId, "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic", "bug-classic-v1", "BUC1")];
                     case 3:
                         _d.apply(_c, [_e.sent()]); // classic project
                         return [2 /*return*/, projects];
@@ -129,7 +129,7 @@ var module = {
     },
     generateIssues: function (projects, noOfIssues) {
         return __awaiter(this, void 0, void 0, function () {
-            var issues, i, noOfEpics, epicIssues;
+            var issues, i, issueTypeNames, parentIssueTypeNames, noOfParents, parentIssues, noOfEpics, epicIssues, subtaskIssueTypeName, childIssues, otherIssueTypeNames, otherIssues;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -139,21 +139,65 @@ var module = {
                         i = 0;
                         _a.label = 1;
                     case 1:
-                        if (!(i < projects.length)) return [3 /*break*/, 4];
-                        noOfEpics = Util.getPositiveRandomNumber(epicIssueNumberRNG, 
+                        if (!(i < projects.length)) return [3 /*break*/, 8];
+                        return [4 /*yield*/, api.getProjectIssueTypeNames(projects[i])];
+                    case 2:
+                        issueTypeNames = _a.sent();
+                        parentIssueTypeNames = issueTypeNames.filter(function (type) { return !type.includes("Sub") && !(type === "Epic"); });
+                        // parents
+                        console.log("creating parent issues");
+                        noOfParents = Util.getRandomPositiveNumber(parentIssueNumberRNG, 
+                        // noOfIssues
+                        5);
+                        return [4 /*yield*/, api.createIssuesInBulk(projects[i], noOfParents, 
+                            // parentIssueTypeNames
+                            ["Bug"])];
+                    case 3:
+                        parentIssues = _a.sent();
+                        console.log("RESULTATNT ISSSUES");
+                        console.log(parentIssues);
+                        if (parentIssues.length > 0) {
+                            issues = issues.concat(parentIssues);
+                        }
+                        // adding epic issues
+                        console.log("creating epic issues");
+                        noOfEpics = Util.getRandomPositiveNumber(epicIssueNumberRNG, 
                         // noOfIssues
                         5);
                         return [4 /*yield*/, module.generateEpics(projects[i], noOfEpics, "my-epic", "Epic")];
-                    case 2:
+                    case 4:
                         epicIssues = _a.sent();
                         if (epicIssues.length > 0) {
                             issues = issues.concat(epicIssues);
                         }
-                        _a.label = 3;
-                    case 3:
+                        // add subtasks to parents
+                        console.log("creating subtask issues");
+                        subtaskIssueTypeName = issueTypeNames.find(function (type) {
+                            return type.includes("Sub");
+                        });
+                        parentIssues = parentIssues.concat(epicIssues);
+                        return [4 /*yield*/, module.generateSubtasks(projects[i], noOfIssues, subtaskIssueTypeName, parentIssues)];
+                    case 5:
+                        childIssues = _a.sent();
+                        if (childIssues.length > 0) {
+                            issues = issues.concat(childIssues);
+                        }
+                        otherIssueTypeNames = issueTypeNames.filter(function (type) { return !type.includes("Sub") && !(type === "Epic"); });
+                        // other issues
+                        console.log("creating other issues");
+                        return [4 /*yield*/, api.createIssuesInBulk(projects[i], noOfIssues, otherIssueTypeNames)];
+                    case 6:
+                        otherIssues = _a.sent();
+                        console.log("OTHER ISSSUES");
+                        console.log(otherIssues);
+                        if (otherIssues.length > 0) {
+                            issues = issues.concat(otherIssues);
+                        }
+                        _a.label = 7;
+                    case 7:
                         i++;
                         return [3 /*break*/, 1];
-                    case 4:
+                    case 8:
                         console.log("-----------------------------ALL ISSUES-----------------------------");
                         console.log(issues);
                         console.log("----------------------------------------------------------");
@@ -180,14 +224,14 @@ var module = {
                     case 2:
                         if (!(_i < issues_1.length)) return [3 /*break*/, 7];
                         issue = issues_1[_i];
-                        noOfLinks = Util.getPositiveRandomNumber(linksRNG, maxLinks + 1);
+                        noOfLinks = Util.getRandomPositiveNumber(linksRNG, maxLinks + 1);
                         console.log("NO OF LINKS", noOfLinks);
                         j = 0;
                         _a.label = 3;
                     case 3:
                         if (!(j < noOfLinks)) return [3 /*break*/, 6];
-                        issueIndex = Util.getPositiveRandomNumber(linkFinderRNG, issues.length);
-                        linkTypeIndex = Util.getPositiveRandomNumber(linkTypesRNG, linkTypeNames.length);
+                        issueIndex = Util.getRandomWholeNumber(linkFinderRNG, issues.length);
+                        linkTypeIndex = Util.getRandomWholeNumber(linkTypesRNG, linkTypeNames.length);
                         console.log(issueIndex, linkTypeIndex);
                         return [4 /*yield*/, api.createLink(issue.key, issues[issueIndex].key, linkTypeNames[linkTypeIndex])];
                     case 4:
@@ -211,7 +255,7 @@ var module = {
                 switch (_c.label) {
                     case 0:
                         console.log(project);
-                        noOfVersions = Util.getPositiveRandomNumber(versionsRNG, maxVersions);
+                        noOfVersions = Util.getRandomWholeNumber(versionsRNG, maxVersions);
                         versions = [];
                         i = 0;
                         _c.label = 1;
@@ -240,17 +284,18 @@ var generateData = function () { return __awaiter(void 0, void 0, void 0, functi
             case 1:
                 projects = _a.sent();
                 noOfIssues = noOfRecords / projects.length;
-                if (!(projects.length > 0)) return [3 /*break*/, 3];
+                if (!(projects.length > 0)) return [3 /*break*/, 4];
                 return [4 /*yield*/, module.generateIssues(projects, noOfIssues)];
             case 2:
                 issues = _a.sent();
-                if (issues.length > 0) {
-                    console.log("issues are there");
-                    console.log(issues.length);
-                    // await module.generateLinks(issues);
-                }
-                _a.label = 3;
-            case 3: return [2 /*return*/];
+                if (!(issues.length > 0)) return [3 /*break*/, 4];
+                console.log("issues are there");
+                console.log(issues.length);
+                return [4 /*yield*/, module.generateLinks(issues)];
+            case 3:
+                _a.sent();
+                _a.label = 4;
+            case 4: return [2 /*return*/];
         }
     });
 }); };
