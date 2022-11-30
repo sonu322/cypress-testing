@@ -60,8 +60,8 @@
   },
   "scripts": {
     "start": "parcel serve --no-source-maps public/issueTreeModuleEntry.html public/tracebilityReportModuleEntry.html",
-    "build-data": "parcel build  --no-source-maps --no-minify data/index.ts",
-    "generate-data": "node dist/index.js",
+    "build-data": "npx tsc data/index.ts --outDir dist/data",
+    "generate-data": "node dist/data/index.js",
     "prettify": "npx prettier --write .",
     "prebuild-dev": "/bin/bash prebuild_dev.sh",
     "prebuild": "/bin/bash prebuild.sh",
