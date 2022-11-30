@@ -16,15 +16,15 @@ export const mockProjectsData = [
     description: "Ea quis ea sit laboris quis.",
     projectTemplateKey:
       "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban",
-    name: "from-config-test-20",
-    key: "FCT20",
+    name: "from-config-test-41",
+    key: "FCT41",
   },
   {
     description:
       "Ad velit cupidatat consequat nulla dolore in fugiat ea laborum amet duis ad.",
     projectTemplateKey:
       "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic",
-    name: "from-config-test-21",
-    key: "FCT21",
+    name: "from-config-test-42",
+    key: "FCT42",
   },
 ];
