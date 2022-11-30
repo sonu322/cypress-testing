@@ -577,72 +577,122 @@ var LXPAPI = /** @class */ (function () {
             });
         });
     };
-    // async createEpicChildrenInBulk(
-    //   project,
-    //   noOfIssues,
-    //   childIssueTypeNames,
-    //   epicIssueKeys,
-    //   projectStyle,
-    //   epicLinkFieldKey
-    // ): Promise<any[]> {
-    //   console.log("-------------------------------------");
-    //   console.log("called create epic children issues");
-    //   try {
-    //     let issueDataList = [];
-    //     if (projectStyle === "classic") {
-    //       issueDataList = this._createIssueDataList(
-    //         project,
-    //         childIssueTypeNames,
-    //         noOfIssues,
-    //         undefined,
-    //         undefined,
-    //         undefined,
-    //         epicIssueKeys,
-    //         epicLinkFieldKey
-    //       );
-    //     } else {
-    //       issueDataList = this._createIssueDataList(
-    //         project,
-    //         childIssueTypeNames,
-    //         noOfIssues,
-    //         epicIssueKeys
-    //       );
-    //     }
-    //     const bodyData = JSON.stringify({
-    //       issueUpdates: issueDataList,
-    //     });
-    //     const res = await fetch(`${this.baseURL}/rest/api/3/issue/bulk`, {
-    //       method: "POST",
-    //       headers: {
-    //         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    //         Authorization: `Basic ${base64.encode(
-    //           `${this.username}:${this.password}`
-    //         )}`,
-    //         "Content-Type": "application/json",
-    //         Accept: "application/json",
-    //       },
-    //       body: bodyData,
-    //     });
-    //     console.log(res);
-    //     const data = await res.json();
-    //     if (res.ok) {
-    //       console.log("subtask res ok");
-    //       console.log(data);
-    //       console.log(res.statusText);
-    //       return data.issues;
-    //     } else {
-    //       console.log("res not ok");
-    //       const err = await data;
-    //       throw new Error(err.message);
-    //     }
-    //   } catch (error) {
-    //     console.log("caught error");
-    //     console.log(error);
-    //   }
-    // }
+    LXPAPI.prototype._createClassicEpicChildBodyData = function (projectKey, issueTypeName, rngIssueData, epicLinkFieldKey, parentEpicKeys) {
+        console.log("CREATE CLASSIC EPIC CHILD BODY DATA CALLED");
+        var mockIssueIndex = (0, util_1.getRandomWholeNumber)(rngIssueData, mockIssueData_1["default"].length);
+        console.log("mock issue index", mockIssueIndex);
+        var issueData = {
+            fields: {
+                summary: mockIssueData_1["default"][mockIssueIndex].summary,
+                project: {
+                    key: projectKey
+                },
+                issuetype: {
+                    name: issueTypeName
+                }
+            }
+        };
+        console.log("PARENT EPIC NAME FIELD KEY", epicLinkFieldKey);
+        var chosenIndex = (0, util_1.getRandomWholeNumber)(rngParentKey, parentEpicKeys.length);
+        var chosenParentKey = parentEpicKeys[chosenIndex];
+        console.log("CHOSEN PARENT", chosenIndex, chosenParentKey);
+        issueData.fields[epicLinkFieldKey] = chosenParentKey;
+        console.log("----------------------------");
+        console.log(issueData);
+        console.log("-------------------------------");
+        return issueData;
+    };
+    LXPAPI.prototype._createNextGenEpicChildBodyData = function (projectKey, issueTypeName, // no subtask or epic
+    rngIssueData, parentEpicKeys) {
+        console.log("CREATE NEXT Gen EPIC CHILD BODY DATA CALLED");
+        var mockIssueIndex = (0, util_1.getRandomWholeNumber)(rngIssueData, mockIssueData_1["default"].length);
+        console.log("mock issue index", mockIssueIndex);
+        var chosenIndex = (0, util_1.getRandomWholeNumber)(rngParentKey, parentEpicKeys.length);
+        var chosenParentKey = parentEpicKeys[chosenIndex];
+        console.log("CHOSEN PARENT", chosenIndex, chosenParentKey);
+        var issueData = {
+            fields: {
+                summary: mockIssueData_1["default"][mockIssueIndex].summary,
+                project: {
+                    key: projectKey
+                },
+                issuetype: {
+                    name: issueTypeName
+                },
+                parent: {
+                    key: chosenParentKey
+                }
+            }
+        };
+        console.log("----------------------------");
+        console.log(issueData);
+        console.log("-------------------------------");
+        return issueData;
+    };
+    LXPAPI.prototype.createEpicChildrenInBulk = function (projectKey, numberOfIssues, childIssueTypeNames, parentEpicKeys, projectStyle, epicLinkFieldKey) {
+        return __awaiter(this, void 0, void 0, function () {
+            var issueDataList, bodyData, res, data, err, error_9;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        console.log("-------------------------------------");
+                        console.log("called create epic children issues");
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 7, , 8]);
+                        issueDataList = this._createIssueDataList(childIssueTypeNames, numberOfIssues, function (childIssueTypeName, rngIssueData) {
+                            if (projectStyle === "classic") {
+                                return _this._createClassicEpicChildBodyData(projectKey, childIssueTypeName, rngIssueData, epicLinkFieldKey, parentEpicKeys);
+                            }
+                            else {
+                                return _this._createNextGenEpicChildBodyData(projectKey, childIssueTypeName, rngIssueData, parentEpicKeys);
+                            }
+                        });
+                        bodyData = JSON.stringify({
+                            issueUpdates: issueDataList
+                        });
+                        return [4 /*yield*/, (0, node_fetch_1["default"])("".concat(this.baseURL, "/rest/api/3/issue/bulk"), {
+                                method: "POST",
+                                headers: {
+                                    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                                    Authorization: "Basic ".concat(base64.encode("".concat(this.username, ":").concat(this.password))),
+                                    "Content-Type": "application/json",
+                                    Accept: "application/json"
+                                },
+                                body: bodyData
+                            })];
+                    case 2:
+                        res = _a.sent();
+                        console.log(res);
+                        return [4 /*yield*/, res.json()];
+                    case 3:
+                        data = _a.sent();
+                        if (!res.ok) return [3 /*break*/, 4];
+                        console.log("subtask res ok");
+                        console.log(data);
+                        console.log(res.statusText);
+                        return [2 /*return*/, data.issues];
+                    case 4:
+                        console.log("res not ok");
+                        return [4 /*yield*/, data];
+                    case 5:
+                        err = _a.sent();
+                        throw new Error(err.message);
+                    case 6: return [3 /*break*/, 8];
+                    case 7:
+                        error_9 = _a.sent();
+                        console.log("caught error");
+                        console.log(error_9);
+                        return [3 /*break*/, 8];
+                    case 8: return [2 /*return*/];
+                }
+            });
+        });
+    };
     LXPAPI.prototype.getMyself = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var res, data, error_9;
+            var res, data, error_10;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -662,8 +712,8 @@ var LXPAPI = /** @class */ (function () {
                         data = _a.sent();
                         return [2 /*return*/, data];
                     case 3:
-                        error_9 = _a.sent();
-                        console.log(error_9);
+                        error_10 = _a.sent();
+                        console.log(error_10);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -672,7 +722,7 @@ var LXPAPI = /** @class */ (function () {
     };
     LXPAPI.prototype.createProject = function (description, leadAccountId, projectTemplateKey, name, key) {
         return __awaiter(this, void 0, void 0, function () {
-            var bodyData, res, data, error_10;
+            var bodyData, res, data, error_11;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -705,9 +755,9 @@ var LXPAPI = /** @class */ (function () {
                         console.log(res.statusText);
                         return [2 /*return*/, data];
                     case 4:
-                        error_10 = _a.sent();
+                        error_11 = _a.sent();
                         console.log("error from create project");
-                        console.log(error_10);
+                        console.log(error_11);
                         return [3 /*break*/, 5];
                     case 5: return [2 /*return*/];
                 }
@@ -723,7 +773,7 @@ var LXPAPI = /** @class */ (function () {
     };
     LXPAPI.prototype.createLink = function (outwardIssueKey, inwardIssueKey, linkTypeName) {
         return __awaiter(this, void 0, void 0, function () {
-            var bodyData, res, error_11;
+            var bodyData, res, error_12;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -769,9 +819,9 @@ var LXPAPI = /** @class */ (function () {
                         }
                         return [3 /*break*/, 4];
                     case 3:
-                        error_11 = _a.sent();
+                        error_12 = _a.sent();
                         console.log("caught error");
-                        console.log(error_11);
+                        console.log(error_12);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }

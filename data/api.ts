@@ -535,71 +535,152 @@ export default class LXPAPI {
     }
   }
 
-  // async createEpicChildrenInBulk(
-  //   project,
-  //   noOfIssues,
-  //   childIssueTypeNames,
-  //   epicIssueKeys,
-  //   projectStyle,
-  //   epicLinkFieldKey
-  // ): Promise<any[]> {
-  //   console.log("-------------------------------------");
-  //   console.log("called create epic children issues");
+  _createClassicEpicChildBodyData(
+    projectKey: string,
+    issueTypeName: string,
+    rngIssueData: any,
+    epicLinkFieldKey: string,
+    parentEpicKeys: string[]
+  ): any {
+    console.log("CREATE CLASSIC EPIC CHILD BODY DATA CALLED");
+    const mockIssueIndex = getRandomWholeNumber(
+      rngIssueData,
+      mockIssueData.length
+    );
+    console.log("mock issue index", mockIssueIndex);
+    const issueData: IssueData = {
+      fields: {
+        summary: mockIssueData[mockIssueIndex].summary,
+        project: {
+          key: projectKey,
+        },
+        issuetype: {
+          name: issueTypeName,
+        },
+      },
+    };
+    console.log("PARENT EPIC NAME FIELD KEY", epicLinkFieldKey);
 
-  //   try {
-  //     let issueDataList = [];
-  //     if (projectStyle === "classic") {
-  //       issueDataList = this._createIssueDataList(
-  //         project,
-  //         childIssueTypeNames,
-  //         noOfIssues,
-  //         undefined,
-  //         undefined,
-  //         undefined,
-  //         epicIssueKeys,
-  //         epicLinkFieldKey
-  //       );
-  //     } else {
-  //       issueDataList = this._createIssueDataList(
-  //         project,
-  //         childIssueTypeNames,
-  //         noOfIssues,
-  //         epicIssueKeys
-  //       );
-  //     }
+    const chosenIndex = getRandomWholeNumber(
+      rngParentKey,
+      parentEpicKeys.length
+    );
+    const chosenParentKey = parentEpicKeys[chosenIndex];
+    console.log("CHOSEN PARENT", chosenIndex, chosenParentKey);
 
-  //     const bodyData = JSON.stringify({
-  //       issueUpdates: issueDataList,
-  //     });
-  //     const res = await fetch(`${this.baseURL}/rest/api/3/issue/bulk`, {
-  //       method: "POST",
-  //       headers: {
-  //         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-  //         Authorization: `Basic ${base64.encode(
-  //           `${this.username}:${this.password}`
-  //         )}`,
-  //         "Content-Type": "application/json",
-  //         Accept: "application/json",
-  //       },
-  //       body: bodyData,
-  //     });
-  //     console.log(res);
-  //     const data = await res.json();
-  //     if (res.ok) {
-  //       console.log("subtask res ok");
-  //       console.log(data);
-  //       console.log(res.statusText);
-  //       return data.issues;
-  //     } else {
-  //       console.log("res not ok");
-  //       const err = await data;
-  //       throw new Error(err.message);
-  //     }
-  //   } catch (error) {
-  //     console.log("caught error");
-  //     console.log(error);
-  //   }
-  // }
+    issueData.fields[epicLinkFieldKey] = chosenParentKey;
+    console.log("----------------------------");
+    console.log(issueData);
+    console.log("-------------------------------");
+    return issueData;
+  }
+
+  _createNextGenEpicChildBodyData(
+    projectKey: string,
+    issueTypeName: string, // no subtask or epic
+    rngIssueData: any,
+    parentEpicKeys: string[]
+  ): any {
+    console.log("CREATE NEXT Gen EPIC CHILD BODY DATA CALLED");
+    const mockIssueIndex = getRandomWholeNumber(
+      rngIssueData,
+      mockIssueData.length
+    );
+    console.log("mock issue index", mockIssueIndex);
+    const chosenIndex = getRandomWholeNumber(
+      rngParentKey,
+      parentEpicKeys.length
+    );
+    const chosenParentKey = parentEpicKeys[chosenIndex];
+    console.log("CHOSEN PARENT", chosenIndex, chosenParentKey);
+
+    const issueData: IssueData = {
+      fields: {
+        summary: mockIssueData[mockIssueIndex].summary,
+        project: {
+          key: projectKey,
+        },
+        issuetype: {
+          name: issueTypeName,
+        },
+        parent: {
+          key: chosenParentKey,
+        },
+      },
+    };
+    console.log("----------------------------");
+    console.log(issueData);
+    console.log("-------------------------------");
+    return issueData;
+  }
+
+  async createEpicChildrenInBulk(
+    projectKey: string,
+    numberOfIssues: number,
+    childIssueTypeNames: string[],
+    parentEpicKeys: string[],
+    projectStyle: string,
+    epicLinkFieldKey
+  ): Promise<any[]> {
+    console.log("-------------------------------------");
+    console.log("called create epic children issues");
+
+    try {
+      const issueDataList = this._createIssueDataList(
+        childIssueTypeNames,
+        numberOfIssues,
+        (childIssueTypeName, rngIssueData) => {
+          if (projectStyle === "classic") {
+            return this._createClassicEpicChildBodyData(
+              projectKey,
+              childIssueTypeName,
+              rngIssueData,
+              epicLinkFieldKey,
+              parentEpicKeys
+            );
+          } else {
+            return this._createNextGenEpicChildBodyData(
+              projectKey,
+              childIssueTypeName,
+              rngIssueData,
+              parentEpicKeys
+            );
+          }
+        }
+      );
+
+      const bodyData = JSON.stringify({
+        issueUpdates: issueDataList,
+      });
+      const res = await fetch(`${this.baseURL}/rest/api/3/issue/bulk`, {
+        method: "POST",
+        headers: {
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          Authorization: `Basic ${base64.encode(
+            `${this.username}:${this.password}`
+          )}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: bodyData,
+      });
+      console.log(res);
+      const data = await res.json();
+      if (res.ok) {
+        console.log("subtask res ok");
+        console.log(data);
+        console.log(res.statusText);
+        return data.issues;
+      } else {
+        console.log("res not ok");
+        const err = await data;
+        throw new Error(err.message);
+      }
+    } catch (error) {
+      console.log("caught error");
+      console.log(error);
+    }
+  }
 
   async getMyself(): Promise<any> {
     try {

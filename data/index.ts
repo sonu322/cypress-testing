@@ -1,7 +1,7 @@
 import config from "./config";
 import API from "./api";
 import * as Util from "./util";
-
+import { mockProjectsData } from "./mockProjectsData";
 const noOfRecords = config.noOfRecords;
 // const noOfProjects = 2;
 const api = new API(config.baseURL, config.username, config.password);
@@ -16,37 +16,29 @@ const versionsRNG = Util.getRNG("versionsRNG");
 const parentIssueNumberRNG = Util.getRNG("no-of-parent-issues");
 const epicIssueNumberRNG = Util.getRNG("epic-issues");
 const module = {
-  async generateProjects(): Promise<any[]> {
-    // {{baseURL}}/rest/api/3/myself
-    // get project types
-    // team - managed: com.atlassian.jira-core-project-templates:jira-work-management-process-control-team-managed
-    // company - managed: com.pyxis.greenhopper.jira:gh-simplified-scrum-classic
-    // com.pyxis.greenhopper.jira:gh-simplified-agility-scrum
-    // team - com.pyxis.greenhopper.jira:gh-simplified-agility-kanban
-    //
+  async generateProjects(
+    mockProjectsData: Array<{
+      description: string;
+      projectTemplateKey: string;
+      name: string;
+      key: string;
+    }>
+  ): Promise<any[]> {
     const myself = await api.getMyself();
     console.log(myself);
-    const projects: any[] = [];
-    projects.push(
-      await api.createProject(
-        "sample description 400 700 random",
-        myself.accountId,
-        "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban",
-        "call-13",
-        "CB13"
-      )
-    );
-    console.log("in gen project");
-    console.log(projects);
-    projects.push(
-      await api.createProject(
-        "sample description",
-        myself.accountId,
-        "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic",
-        "call-14",
-        "CB14"
-      )
-    ); // classic project
+    const promises: Array<Promise<any>> = [];
+    mockProjectsData.forEach((projectData) => {
+      promises.push(
+        api.createProject(
+          projectData.description,
+          myself.accountId,
+          projectData.projectTemplateKey,
+          projectData.name,
+          projectData.key
+        )
+      );
+    });
+    const projects = await Promise.all(promises);
     return projects;
   },
   async generateEpics(
@@ -70,27 +62,27 @@ const module = {
     return epicIssues;
   },
 
-  // async generateChildIssues(
-  //   project,
-  //   noOfIssues,
-  //   childIssueTypeNames,
-  //   epicIssues,
-  //   projectStyle,
-  //   fields
-  // ) {
-  //   const epicIssueKeys = epicIssues.map((epicIssue) => epicIssue.key);
-  //   const epicLinkField = fields.map((field) => field.name === "Epic Link");
-  //   const epicLinkFieldKey = epicLinkField.key;
-  //   const childIssues = await api.createEpicChildrenInBulk(
-  //     project,
-  //     noOfIssues,
-  //     childIssueTypeNames,
-  //     epicIssueKeys,
-  //     projectStyle,
-  //     epicLinkFieldKey
-  //   );
-  //   return childIssues;
-  // },
+  async generateChildIssues(
+    project: any,
+    numberOfIssues: number,
+    childIssueTypeNames: string[],
+    epicIssues: any[],
+    projectStyle: string,
+    fields: any[]
+  ) {
+    const epicIssueKeys = epicIssues.map((epicIssue) => epicIssue.key);
+    const epicLinkField = fields.find((field) => field.name === "Epic Link");
+    const epicLinkFieldKey = epicLinkField.key;
+    const childIssues = await api.createEpicChildrenInBulk(
+      project.key,
+      numberOfIssues,
+      childIssueTypeNames,
+      epicIssueKeys,
+      projectStyle,
+      epicLinkFieldKey
+    );
+    return childIssues;
+  },
 
   async generateSubtasks(
     projectKey: string,
@@ -163,28 +155,28 @@ const module = {
       }
       // add child issues for epics
 
-      // console.log("creating chil issues fro epics");
-      // const childIssueTypeNames = issueTypeNames.filter(
-      //   (type) => !type.includes("Sub") && !(type === "Epic")
-      // );
-      // const childIssues = await module.generateChildIssues(
-      //   projects[i],
-      //   noOfIssues,
-      //   childIssueTypeNames,
-      //   epicIssues,
-      //   projectStyle,
-      //   fields
-      // );
-      // if (childIssues.length > 0) {
-      //   issues = issues.concat(childIssues);
-      // }
+      console.log("creating chil issues fro epics");
+      const childIssueTypeNames = issueTypeNames.filter(
+        (type) => !type.includes("Sub") && !(type === "Epic")
+      );
+      const childIssues = await module.generateChildIssues(
+        projects[i],
+        noOfIssues,
+        childIssueTypeNames,
+        epicIssues,
+        projectStyle,
+        fields
+      );
+      if (childIssues.length > 0) {
+        issues = issues.concat(childIssues);
+      }
 
       // add subtasks to parents
       console.log("creating subtask issues");
       const subtaskIssueTypeName = issueTypeNames.find((type) =>
         type.includes("Sub")
       );
-      // parentIssues = parentIssues.concat(childIssues);
+      parentIssues = parentIssues.concat(childIssues);
       const subtasks = await module.generateSubtasks(
         projects[i].key,
         noOfIssues,
@@ -262,8 +254,15 @@ const module = {
 };
 
 // main logic
-const generateData = async (): Promise<void> => {
-  const projects: any[] = await module.generateProjects();
+const generateData = async (
+  mockProjectsData: Array<{
+    description: string;
+    projectTemplateKey: string;
+    name: string;
+    key: string;
+  }>
+): Promise<void> => {
+  const projects: any[] = await module.generateProjects(mockProjectsData);
   const noOfIssues = noOfRecords / projects.length;
 
   if (projects.length > 0) {
@@ -271,9 +270,9 @@ const generateData = async (): Promise<void> => {
     if (issues.length > 0) {
       console.log("issues are there");
       console.log(issues.length);
-      // await module.generateLinks(issues);
+      await module.generateLinks(issues);
     }
   }
 };
 
-void generateData();
+void generateData(mockProjectsData);
