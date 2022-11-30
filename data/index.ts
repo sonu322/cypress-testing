@@ -213,6 +213,8 @@ const module = {
       if (otherIssues.length > 0) {
         issues = issues.concat(otherIssues);
       }
+      const addStatusPromises = issues.map((issue) => api.addStatusInfo(issue));
+      await Promise.all(addStatusPromises);
     }
 
     console.log(

@@ -8,6 +8,9 @@ const rngParentKey = getRNG("parent");
 const rngPriorities = getRNG("priorities");
 const rngStoryPoints = getRNG("story");
 const rngLabels = getRNG("labels");
+const rngAssignee = getRNG("assignee");
+const rngReporter = getRNG("reporter");
+const rngTransition = getRNG("transition");
 interface IssueData {
   [key: string]: any;
 }
@@ -192,6 +195,36 @@ export default class LXPAPI {
     }
   }
 
+  async getAssignableUsers(projectKeys: string[]): Promise<any[]> {
+    const projectKeyString = projectKeys.toString();
+    try {
+      const res = await fetch(
+        `${this.baseURL}/user/assignable/multiProjectSearch?projectKeys=${projectKeyString}`,
+        {
+          method: "GET",
+          headers: {
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            Authorization: `Basic ${base64.encode(
+              `${this.username}:${this.password}`
+            )}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+      const data = await res.json();
+      if (res.ok) {
+        console.log("users");
+        console.log(data);
+        return data;
+      } else {
+        throw new Error("some error occurred fetching fields");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   _createIssueBodyData(
     projectKey: string,
     storyPointsFieldKey,
@@ -225,12 +258,12 @@ export default class LXPAPI {
           name: issueTypeName,
         },
         labels,
-        // assignee: {
-        //   id: assigneeId,
-        // },
-        // reporter: {
-        //   id: reporterId,
-        // },
+        assignee: {
+          id: assigneeId,
+        },
+        reporter: {
+          id: reporterId,
+        },
       },
     };
     if (shouldSetPriority) {
@@ -246,11 +279,13 @@ export default class LXPAPI {
   }
 
   async _createIssueDataList(
+    projectKey: string,
     issueTypeNames: string[],
     numberOfIssues: number,
     issueDataGenerator
   ): Promise<any[]> {
     const priorities = await this.getPriorities();
+    const assignableUsers = await this.getAssignableUsers([projectKey]);
     let priorityNames = [];
     if (priorities.length > 0) {
       priorityNames = priorities.map((priority) => priority.name);
@@ -291,6 +326,19 @@ export default class LXPAPI {
       const index2 = getRandomWholeNumber(rngLabels, labels.length);
       const selectedLabels = labels.slice(index1, index2);
 
+      const selectedAssigneeIndex = getRandomWholeNumber(
+        rngAssignee,
+        assignableUsers.length
+      );
+      const selectedReporterIndex = getRandomWholeNumber(
+        rngReporter,
+        assignableUsers.length
+      );
+
+      const selectedAssigneeId =
+        assignableUsers[selectedAssigneeIndex].accountId;
+      const selectedReporterId =
+        assignableUsers[selectedReporterIndex].accountId;
       const issue = issueDataGenerator({
         issueTypeName: selectedTypeName,
         priorityName: selectedPriorityName,
@@ -298,6 +346,8 @@ export default class LXPAPI {
         rngIssueData,
         summary,
         labels: selectedLabels,
+        reporterId: selectedReporterId,
+        assigneeId: selectedAssigneeId,
       });
       issues.push(issue);
     }
@@ -321,6 +371,7 @@ export default class LXPAPI {
       }
       console.log("calling data list");
       const issueDataList = await this._createIssueDataList(
+        project.key,
         issueTypeNames,
         noOfIssuesPerProject,
         (config) => {
@@ -444,6 +495,7 @@ export default class LXPAPI {
 
     try {
       const issueDataList = this._createIssueDataList(
+        projectKey,
         [epicIssueTypeName],
         numberOfIssues,
         (epicIssueTypeName, rngIssueData) => {
@@ -550,7 +602,7 @@ export default class LXPAPI {
 
     try {
       const issueDataList = this._createIssueDataList(
-        // project,
+        projectKey,
         [subtaskFieldName],
         noOfIssues,
         // parentIssueKeys
@@ -687,6 +739,7 @@ export default class LXPAPI {
 
     try {
       const issueDataList = this._createIssueDataList(
+        projectKey,
         childIssueTypeNames,
         numberOfIssues,
         (childIssueTypeName, rngIssueData) => {
@@ -848,6 +901,76 @@ export default class LXPAPI {
       }
     } catch (error) {
       console.log("caught error");
+      console.log(error);
+    }
+  }
+
+  async addStatusInfo(issue): Promise<void> {
+    try {
+      let transitionsData = await fetch(
+        `${this.baseURL}/issue/${issue.key}/transitions`,
+        {
+          method: "GET",
+          headers: {
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            Authorization: `Basic ${base64.encode(
+              `${this.username}:${this.password}`
+            )}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+      transitionsData = await transitionsData.json();
+      console.log("-------------------------------");
+      console.log(transitionsData);
+      console.log("-------------------------------");
+      const transitions = transitionsData.transitions;
+      const selectedTransitionIndex = getRandomWholeNumber(
+        rngTransition,
+        transitions.length
+      );
+      const transitionId = transitions[selectedTransitionIndex].id;
+      const bodyData = JSON.stringify({
+        transition: {
+          id: transitionId,
+        },
+      });
+      console.log(`---------------${issue.key}----------------`);
+      console.log("-------------------------------");
+      console.log("-------------------------------");
+      console.log(bodyData);
+      console.log("-------------------------------");
+      console.log("-------------------------------");
+      console.log("-------------------------------");
+      console.log("-------------------------------");
+      const res = await fetch(
+        `${this.baseURL}/issue/${issue.key}/transitions`,
+        {
+          method: "POST",
+          headers: {
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            Authorization: `Basic ${base64.encode(
+              `${this.username}:${this.password}`
+            )}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: bodyData,
+        }
+      );
+      if (res.ok) {
+        console.log("res status ok");
+        console.log(res.statusText);
+      } else {
+        console.log(res.statusText);
+        console.log("res not ok");
+        const data = await res.json();
+        console.log(data);
+        throw new Error("error setting status");
+      }
+    } catch (error) {
+      console.log("caught status error");
       console.log(error);
     }
   }
