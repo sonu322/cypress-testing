@@ -1,9 +1,13 @@
 import fetch from "node-fetch";
-import { getRandomWholeNumber, getRNG } from "./util";
+import { getRandomPositiveNumber, getRandomWholeNumber, getRNG } from "./util";
 import mockIssueData from "./mockIssueData";
+import labels from "./labels";
 const base64 = require("base-64");
 const rngIssueData = getRNG("mockissuedata");
 const rngParentKey = getRNG("parent");
+const rngPriorities = getRNG("priorities");
+const rngStoryPoints = getRNG("story");
+const rngLabels = getRNG("labels");
 interface IssueData {
   [key: string]: any;
 }
@@ -36,7 +40,7 @@ export default class LXPAPI {
       },
     });
     try {
-      const res = await fetch(`${this.baseURL}/rest/api/3/issue/`, {
+      const res = await fetch(`${this.baseURL}/issue/`, {
         method: "POST",
         headers: {
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -115,7 +119,7 @@ export default class LXPAPI {
   async getIssueLinkTypeNames(): Promise<string[]> {
     console.log("calling issue link type names");
     try {
-      const res = await fetch(`${this.baseURL}/rest/api/3/issueLinkType/`, {
+      const res = await fetch(`${this.baseURL}/issueLinkType/`, {
         method: "GET",
         headers: {
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -138,7 +142,7 @@ export default class LXPAPI {
 
   async getFields(): Promise<any[]> {
     try {
-      const res = await fetch(`${this.baseURL}/rest/api/3/field`, {
+      const res = await fetch(`${this.baseURL}/field`, {
         method: "GET",
         headers: {
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -162,85 +166,139 @@ export default class LXPAPI {
     }
   }
 
+  async getPriorities(): Promise<any[]> {
+    try {
+      const res = await fetch(`${this.baseURL}/priority`, {
+        method: "GET",
+        headers: {
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          Authorization: `Basic ${base64.encode(
+            `${this.username}:${this.password}`
+          )}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+      const data = await res.json();
+      if (res.ok) {
+        console.log("Priorities");
+        console.log(data);
+        return data;
+      } else {
+        throw new Error("some error occurred fetching fields");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   _createIssueBodyData(
     projectKey: string,
-    issueTypeName: string,
-    rngIssueData: any,
-    epicFieldId?: string,
-    parentIssueKeys?: string[],
-    epicName?: string
+    storyPointsFieldKey,
+    config: any,
+    shouldSetPriority: boolean
   ): any {
-    console.log("CREATE BODY DATA CALLED");
-    const mockIssueIndex = getRandomWholeNumber(
+    const {
+      issueTypeName,
+      priorityName,
+      storyPoints,
       rngIssueData,
-      mockIssueData.length
-    );
-    console.log("mock issue index", mockIssueIndex);
+      summary,
+      assigneeId,
+      reporterId,
+      labels,
+    } = config;
+    console.log("CREATE BODY DATA CALLED");
+    //     const mockIssueIndex = getRandomWholeNumber(
+    //       rngIssueData,
+    //       mockIssueData.length
+    //     );
+    // mockIssueData[mockIssueIndex].summary,
     const issueData: IssueData = {
       fields: {
-        summary: mockIssueData[mockIssueIndex].summary,
+        summary,
         project: {
           key: projectKey,
         },
+
         issuetype: {
           name: issueTypeName,
         },
+        labels,
+        // assignee: {
+        //   id: assigneeId,
+        // },
+        // reporter: {
+        //   id: reporterId,
+        // },
       },
     };
-    if (issueTypeName === "Epic") {
-      issueData.fields[epicFieldId] = epicName;
-    }
-    if (issueTypeName.includes("Sub")) {
-      console.log("PARENT KEYS!!!!!!!!!!!!!!!!");
-      console.log(parentIssueKeys);
-      const chosenIndex = getRandomWholeNumber(
-        rngParentKey,
-        parentIssueKeys.length
-      );
-      const chosenParentKey = parentIssueKeys[chosenIndex];
-      console.log("CHOSEN PARENT", chosenIndex, chosenParentKey);
-      issueData.fields.parent = {
-        key: chosenParentKey,
+    if (shouldSetPriority) {
+      issueData.fields.priority = {
+        name: priorityName,
       };
     }
+    // issueData.fields[storyPointsFieldKey] = storyPoints;
     console.log("----------------------------");
     console.log(issueData);
     console.log("-------------------------------");
     return issueData;
   }
 
-  _createIssueDataList(
+  async _createIssueDataList(
     issueTypeNames: string[],
     numberOfIssues: number,
     issueDataGenerator
-  ): any[] {
+  ): Promise<any[]> {
+    const priorities = await this.getPriorities();
+    let priorityNames = [];
+    if (priorities.length > 0) {
+      priorityNames = priorities.map((priority) => priority.name);
+    }
+
     console.log("CREATE DATA LIST CALLED");
     console.log(numberOfIssues);
     const rng = getRNG("issuetype");
     const issues = [];
     for (let i = 0; i < numberOfIssues; i++) {
-      let typeIndex1 = 0;
+      let selectedTypeIndex = 0;
+      let selectedPriorityIndex;
       if (issueTypeNames.length > 1) {
-        typeIndex1 = getRandomWholeNumber(rng, issueTypeNames.length);
+        selectedTypeIndex = getRandomWholeNumber(rng, issueTypeNames.length);
       }
+      if (priorityNames.length > 0) {
+        selectedPriorityIndex = getRandomWholeNumber(
+          rngPriorities,
+          priorityNames.length
+        );
+      }
+      const selectedPriorityName = priorities[selectedPriorityIndex].name;
 
-      const typeName1 = issueTypeNames[typeIndex1];
-      console.log(typeIndex1, typeName1);
-      if (typeName1 === undefined) {
+      const selectedTypeName = issueTypeNames[selectedTypeIndex];
+      const storyPoints = getRandomPositiveNumber(rngStoryPoints, 10);
+
+      const issueDataIndex = getRandomWholeNumber(
+        rngIssueData,
+        mockIssueData.length
+      );
+      const summary = mockIssueData[issueDataIndex].summary;
+
+      if (selectedTypeName === undefined) {
         throw new Error("type NAME undefined");
       }
 
-      // const issueData = this._createIssueBodyData(
-      //   project.key,
-      //   typeName1,
-      //   rngIssueData,
-      //   epicNameFieldId,
-      //   parentIssueKeys,
-      //   epicName
-      // );
-      // issues.push(issueData);
+      const index1 = getRandomWholeNumber(rngLabels, labels.length);
+      const index2 = getRandomWholeNumber(rngLabels, labels.length);
+      const selectedLabels = labels.slice(index1, index2);
 
-      const issue = issueDataGenerator(typeName1, rngIssueData);
+      const issue = issueDataGenerator({
+        issueTypeName: selectedTypeName,
+        priorityName: selectedPriorityName,
+        storyPoints,
+        rngIssueData,
+        summary,
+        labels: selectedLabels,
+      });
       issues.push(issue);
     }
     return issues;
@@ -248,8 +306,10 @@ export default class LXPAPI {
 
   async createIssuesInBulk(
     project: any,
+    projectStyle: string,
     noOfIssuesPerProject: number,
-    issueTypeNames: string[]
+    issueTypeNames: string[],
+    storyPointsFieldKey: string
   ): Promise<any[]> {
     console.log("called create issues");
 
@@ -260,15 +320,15 @@ export default class LXPAPI {
         throw new Error("no issue types from proje");
       }
       console.log("calling data list");
-      const issueDataList = this._createIssueDataList(
-        // project,
+      const issueDataList = await this._createIssueDataList(
         issueTypeNames,
         noOfIssuesPerProject,
-        (issueTypeName: string, rngIssueData: any) => {
+        (config) => {
           return this._createIssueBodyData(
             project.key,
-            issueTypeName,
-            rngIssueData
+            storyPointsFieldKey,
+            config,
+            projectStyle === "classic"
           );
         }
       );
@@ -281,7 +341,7 @@ export default class LXPAPI {
       const bodyData = JSON.stringify({
         issueUpdates: issueDataList,
       });
-      const res = await fetch(`${this.baseURL}/rest/api/3/issue/bulk`, {
+      const res = await fetch(`${this.baseURL}/issue/bulk`, {
         method: "POST",
         headers: {
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -409,7 +469,7 @@ export default class LXPAPI {
       });
       console.log("FINALBODYDATA");
       console.log(bodyData);
-      const res = await fetch(`${this.baseURL}/rest/api/3/issue/bulk`, {
+      const res = await fetch(`${this.baseURL}/issue/bulk`, {
         method: "POST",
         headers: {
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -505,7 +565,7 @@ export default class LXPAPI {
       const bodyData = JSON.stringify({
         issueUpdates: issueDataList,
       });
-      const res = await fetch(`${this.baseURL}/rest/api/3/issue/bulk`, {
+      const res = await fetch(`${this.baseURL}/issue/bulk`, {
         method: "POST",
         headers: {
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -652,7 +712,7 @@ export default class LXPAPI {
       const bodyData = JSON.stringify({
         issueUpdates: issueDataList,
       });
-      const res = await fetch(`${this.baseURL}/rest/api/3/issue/bulk`, {
+      const res = await fetch(`${this.baseURL}/issue/bulk`, {
         method: "POST",
         headers: {
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -682,9 +742,10 @@ export default class LXPAPI {
     }
   }
 
+  // fetch current user
   async getMyself(): Promise<any> {
     try {
-      const res = await fetch(`${this.baseURL}/rest/api/3/myself`, {
+      const res = await fetch(`${this.baseURL}/myself`, {
         method: "GET",
         headers: {
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -717,7 +778,7 @@ export default class LXPAPI {
     });
     console.log("CALLED CREATE PROJECCT");
     try {
-      const res = await fetch(`${this.baseURL}/rest/api/3/project`, {
+      const res = await fetch(`${this.baseURL}/project`, {
         method: "POST",
         headers: {
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -763,7 +824,7 @@ export default class LXPAPI {
       },
     });
     try {
-      const res = await fetch(`${this.baseURL}/rest/api/3/issueLink/`, {
+      const res = await fetch(`${this.baseURL}/issueLink/`, {
         method: "POST",
         headers: {
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions

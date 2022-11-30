@@ -3,9 +3,9 @@ import API from "./api";
 import * as Util from "./util";
 import { mockProjectsData } from "./mockProjectsData";
 const noOfRecords = config.noOfRecords;
-// const noOfProjects = 2;
+
 const api = new API(config.baseURL, config.username, config.password);
-const maxLinks = 2;
+const maxLinks = 10;
 const maxVersions = 5;
 
 // Random number generators
@@ -16,6 +16,8 @@ const versionsRNG = Util.getRNG("versionsRNG");
 const parentIssueNumberRNG = Util.getRNG("no-of-parent-issues");
 const epicIssueNumberRNG = Util.getRNG("epic-issues");
 const module = {
+  // generate projects
+
   async generateProjects(
     mockProjectsData: Array<{
       description: string;
@@ -112,80 +114,87 @@ const module = {
         (issueType) => issueType.name
       );
       const projectStyle = fullProject.style;
-      const parentIssueTypeNames = issueTypeNames.filter(
-        (type) => !type.includes("Sub") && !(type === "Epic")
-      );
       const fields = await api.getFields();
-      // creating parents
-      console.log("creating parent issues");
-      const noOfParents = Util.getRandomPositiveNumber(
-        parentIssueNumberRNG,
-        // noOfIssues
-        5
+      const storyPointsField = fields.find((field) =>
+        projectStyle === "classic"
+          ? field.name === "Story Points"
+          : field.name === "Story point estimate"
       );
-      // eslint-disable-next-line prefer-const
-      let parentIssues = await api.createIssuesInBulk(
-        projects[i],
-        noOfParents,
-        parentIssueTypeNames
-      );
-      console.log("PARENT ISSSUES");
-      console.log(parentIssues);
-      if (parentIssues.length > 0) {
-        issues = issues.concat(parentIssues);
-      }
+      const storyPointsFieldKey = storyPointsField.key;
+      // const parentIssueTypeNames = issueTypeNames.filter(
+      //   (type) => !type.includes("Sub") && !(type === "Epic")
+      // );
 
-      // // adding epic issues
-      console.log("creating epic issues");
-      const noOfEpics = Util.getRandomPositiveNumber(
-        epicIssueNumberRNG,
-        // noOfIssues
-        5
-      );
-      const epicIssues = await module.generateEpics(
-        projects[i],
-        noOfEpics,
-        "my-epic",
-        "Epic",
-        projectStyle,
-        fields
-      );
-      if (epicIssues.length > 0) {
-        issues = issues.concat(epicIssues);
-      }
-      // add child issues for epics
+      // // creating parents
+      // console.log("creating parent issues");
+      // const noOfParents = Util.getRandomPositiveNumber(
+      //   parentIssueNumberRNG,
+      //   // noOfIssues
+      //   5
+      // );
+      // // eslint-disable-next-line prefer-const
+      // let parentIssues = await api.createIssuesInBulk(
+      //   projects[i],
+      //   noOfParents,
+      //   parentIssueTypeNames
+      // );
+      // console.log("PARENT ISSSUES");
+      // console.log(parentIssues);
+      // if (parentIssues.length > 0) {
+      //   issues = issues.concat(parentIssues);
+      // }
 
-      console.log("creating chil issues fro epics");
-      const childIssueTypeNames = issueTypeNames.filter(
-        (type) => !type.includes("Sub") && !(type === "Epic")
-      );
-      const childIssues = await module.generateChildIssues(
-        projects[i],
-        noOfIssues,
-        childIssueTypeNames,
-        epicIssues,
-        projectStyle,
-        fields
-      );
-      if (childIssues.length > 0) {
-        issues = issues.concat(childIssues);
-      }
+      // // // adding epic issues
+      // console.log("creating epic issues");
+      // const noOfEpics = Util.getRandomPositiveNumber(
+      //   epicIssueNumberRNG,
+      //   // noOfIssues
+      //   5
+      // );
+      // const epicIssues = await module.generateEpics(
+      //   projects[i],
+      //   noOfEpics,
+      //   "my-epic",
+      //   "Epic",
+      //   projectStyle,
+      //   fields
+      // );
+      // if (epicIssues.length > 0) {
+      //   issues = issues.concat(epicIssues);
+      // }
+      // // add child issues for epics
 
-      // add subtasks to parents
-      console.log("creating subtask issues");
-      const subtaskIssueTypeName = issueTypeNames.find((type) =>
-        type.includes("Sub")
-      );
-      parentIssues = parentIssues.concat(childIssues);
-      const subtasks = await module.generateSubtasks(
-        projects[i].key,
-        noOfIssues,
-        subtaskIssueTypeName,
-        parentIssues
-      );
-      if (subtasks.length > 0) {
-        issues = issues.concat(subtasks);
-      }
+      // console.log("creating chil issues fro epics");
+      // const childIssueTypeNames = issueTypeNames.filter(
+      //   (type) => !type.includes("Sub") && !(type === "Epic")
+      // );
+      // const childIssues = await module.generateChildIssues(
+      //   projects[i],
+      //   noOfIssues,
+      //   childIssueTypeNames,
+      //   epicIssues,
+      //   projectStyle,
+      //   fields
+      // );
+      // if (childIssues.length > 0) {
+      //   issues = issues.concat(childIssues);
+      // }
+
+      // // add subtasks to parents
+      // console.log("creating subtask issues");
+      // const subtaskIssueTypeName = issueTypeNames.find((type) =>
+      //   type.includes("Sub")
+      // );
+      // parentIssues = parentIssues.concat(childIssues);
+      // const subtasks = await module.generateSubtasks(
+      //   projects[i].key,
+      //   noOfIssues,
+      //   subtaskIssueTypeName,
+      //   parentIssues
+      // );
+      // if (subtasks.length > 0) {
+      //   issues = issues.concat(subtasks);
+      // }
 
       const otherIssueTypeNames = issueTypeNames.filter(
         (type) => !type.includes("Sub") && !(type === "Epic")
@@ -194,8 +203,10 @@ const module = {
       console.log("creating other issues");
       const otherIssues = await api.createIssuesInBulk(
         projects[i],
+        projectStyle,
         noOfIssues,
-        otherIssueTypeNames
+        otherIssueTypeNames,
+        storyPointsFieldKey
       );
       console.log("OTHER ISSSUES");
       console.log(otherIssues);
@@ -270,7 +281,7 @@ const generateData = async (
     if (issues.length > 0) {
       console.log("issues are there");
       console.log(issues.length);
-      await module.generateLinks(issues);
+      // await module.generateLinks(issues);
     }
   }
 };
