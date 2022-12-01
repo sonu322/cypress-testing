@@ -159,8 +159,7 @@ const module = {
       // creating parents
       const noOfParents = Util.getRandomPositiveNumber(
         parentIssueNumberRNG,
-        // noOfIssues
-        5
+        numberOfIssuesPerType
       );
       // eslint-disable-next-line prefer-const
       let parentIssues = await api.createIssuesInBulk(
@@ -179,8 +178,7 @@ const module = {
       // // adding epic issues
       const noOfEpics = Util.getRandomPositiveNumber(
         epicIssueNumberRNG,
-        // noOfIssues
-        5
+        numberOfIssuesPerType
       );
       const epicIssues = await module.generateEpics(
         projects[i],
@@ -302,7 +300,7 @@ const generateData = async (
       console.log("generating links");
       const response = await module.generateLinks(issues);
       if (response === undefined) {
-        console.log("done");
+        console.log("done ✨");
       }
     }
   }
