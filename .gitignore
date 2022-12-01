@@ -1,5 +1,4 @@
 dist/*
-data/config.ts
 data/*.js
 node_modules/*
 yarn-error.log
