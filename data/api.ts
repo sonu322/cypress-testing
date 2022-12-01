@@ -844,7 +844,7 @@ export default class LXPAPI {
       const data = await res.json();
       return data;
     } catch (error) {
-      console.log("error getting self")
+      console.log("error getting self");
       console.log(error);
     }
   }
@@ -922,40 +922,42 @@ export default class LXPAPI {
     outwardIssueKey: string,
     inwardIssueKey: string,
     linkTypeName: string
-  ): Promise<any> {
-    const bodyData = JSON.stringify({
-      outwardIssue: {
-        key: outwardIssueKey,
-      },
-      inwardIssue: {
-        key: inwardIssueKey,
-      },
-      type: {
-        name: linkTypeName,
-      },
-    });
-    try {
-      const res = await fetch(`${this.baseURL}/issueLink/`, {
-        method: "POST",
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          Authorization: `Basic ${base64.encode(
-            `${this.username}:${this.password}`
-          )}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
+  ): Promise<void> {
+    if (inwardIssueKey !== outwardIssueKey) {
+      const bodyData = JSON.stringify({
+        outwardIssue: {
+          key: outwardIssueKey,
         },
-        body: bodyData,
+        inwardIssue: {
+          key: inwardIssueKey,
+        },
+        type: {
+          name: linkTypeName,
+        },
       });
-      // NOTE: returns invalid json. res.json() gives error
-      // console.log(await res.json());
-      if (!res.ok) {
-        console.log("res not ok");
-        throw new Error("error fetchingissue");
+      try {
+        const res = await fetch(`${this.baseURL}/issueLink/`, {
+          method: "POST",
+          headers: {
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            Authorization: `Basic ${base64.encode(
+              `${this.username}:${this.password}`
+            )}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: bodyData,
+        });
+        // NOTE: returns invalid json. res.json() gives error
+        // console.log(await res.json());
+        if (!res.ok) {
+          console.log("res not ok");
+          throw new Error("error fetchingissue");
+        }
+      } catch (error) {
+        console.log("caught error");
+        console.log(error);
       }
-    } catch (error) {
-      console.log("caught error");
-      console.log(error);
     }
   }
 
