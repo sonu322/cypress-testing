@@ -15,10 +15,10 @@ export const ExportContent = ({
   isDisabled,
 }: Props): JSX.Element => {
   return (
-    <TooltipContainer content={description ?? "export"}>
+    <TooltipContainer content={description}>
       <Button
         appearance="default"
-        iconBefore={<ExportIcon label="" />}
+        iconBefore={<ExportIcon label={description} />}
         onClick={exportContent}
         isDisabled={isDisabled}
       />

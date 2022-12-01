@@ -4,7 +4,7 @@ import { colors } from "@atlaskit/theme";
 import { JQLSelectDropdown } from "../JQLSelectDropdown";
 import { ButtonGroup } from "@atlaskit/button";
 import { Dropdown } from "../common/Dropdown";
-import { helpLink } from "../../constants";
+import { helpLinkUrl } from "../../constants/common";
 import { HelpLink } from "../common/HelpLink";
 import { ExportContent } from "../common/ExportContent";
 import { JQLEditor } from "../JQLEditor";
@@ -13,6 +13,7 @@ import { IssueField, IssueLinkType, IssueType } from "../../types/api";
 
 import { TabGroup } from "./TabGroup";
 import { SelectedType } from "@atlaskit/tabs/types";
+import { useTranslation } from "react-i18next";
 const MainBar = styled.div`
   padding: 8px;
   border-radius: 3px;
@@ -61,8 +62,9 @@ export const Toolbar = ({
   handleTabOptionSelect,
   selectedTabIndex,
 }: Props): JSX.Element => {
+  const { t } = useTranslation();
   return (
-    <div style={{marginTop: '-16px', marginBottom: '-8px'}}>
+    <div style={{ marginTop: "-16px", marginBottom: "-8px" }}>
       <TabGroup
         handleOptionSelect={handleTabOptionSelect}
         id={viewTabsId}
@@ -76,12 +78,11 @@ export const Toolbar = ({
             setSelectedFilterId={setSelectedJQLString}
             handleNewError={handleNewError}
           />
-          OR
+          <span>{t("traceability-report.toolbar.or")}</span>
           <JQLEditor
             selectedFilterId={selectedJQLString}
             setSelectedFilterId={setSelectedJQLString}
           />
-
         </FlexContainer>
 
         <div>
@@ -94,19 +95,22 @@ export const Toolbar = ({
               />
             )}
             <Dropdown
-              dropdownName={"Issue Card Fields"}
+              dropdownName={t("lxp.toolbar.issue-card-fields")}
               options={issueCardOptions}
               selectedOptions={selectedIssueFieldIds}
               updateSelectedOptions={setSelectedIssueFieldIds}
             />
             <ExportContent
-              description={"Export report to csv"}
+              description={t("lxp.toolbar.export-csv.title")}
               exportContent={() => {
                 exportReport();
               }}
               isDisabled={isExportDisabled}
             />
-            <HelpLink description={"Get help"} href={helpLink} />
+            <HelpLink
+              description={t("lxp.common.get-help")}
+              href={helpLinkUrl}
+            />
           </ButtonGroup>
         </div>
       </MainBar>
