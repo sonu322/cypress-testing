@@ -2,6 +2,7 @@ import fetch from "node-fetch";
 import { getRandomPositiveNumber, getRandomWholeNumber, getRNG } from "./util";
 import mockIssueData from "./mockIssueData";
 import labels from "./labels";
+import versions from "./versions";
 const base64 = require("base-64");
 const rngIssueData = getRNG("mockissuedata");
 const rngParentKey = getRNG("parent");
@@ -11,6 +12,8 @@ const rngLabels = getRNG("labels");
 const rngAssignee = getRNG("assignee");
 const rngReporter = getRNG("reporter");
 const rngTransition = getRNG("transition");
+const rngCreateProjectVersion = getRNG("projectVersion");
+const rngFixVersion = getRNG("chosenversion");
 interface IssueData {
   [key: string]: any;
 }
@@ -240,6 +243,7 @@ export default class LXPAPI {
       assigneeId,
       reporterId,
       labels,
+      versionIds,
     } = config;
     console.log("CREATE BODY DATA CALLED");
     //     const mockIssueIndex = getRandomWholeNumber(
@@ -271,6 +275,11 @@ export default class LXPAPI {
         name: priorityName,
       };
     }
+    if (versionIds !== undefined && versionIds.length > 0) {
+      issueData.fields.fixVersions = versionIds.map((versionId) => ({
+        id: versionId,
+      }));
+    }
     // issueData.fields[storyPointsFieldKey] = storyPoints;
     console.log("----------------------------");
     console.log(issueData);
@@ -282,6 +291,7 @@ export default class LXPAPI {
     projectKey: string,
     issueTypeNames: string[],
     numberOfIssues: number,
+    versionIds: string[],
     issueDataGenerator
   ): Promise<any[]> {
     const priorities = await this.getPriorities();
@@ -321,6 +331,15 @@ export default class LXPAPI {
       if (selectedTypeName === undefined) {
         throw new Error("type NAME undefined");
       }
+      let chosenVersionIds: string[] = [];
+      if (versionIds.length > 0) {
+        const startIndex = getRandomWholeNumber(
+          rngFixVersion,
+          versionIds.length
+        );
+        const endIndex = getRandomWholeNumber(rngFixVersion, versionIds.length);
+        chosenVersionIds = versionIds.slice(startIndex, endIndex);
+      }
 
       const index1 = getRandomWholeNumber(rngLabels, labels.length);
       const index2 = getRandomWholeNumber(rngLabels, labels.length);
@@ -339,6 +358,7 @@ export default class LXPAPI {
         assignableUsers[selectedAssigneeIndex].accountId;
       const selectedReporterId =
         assignableUsers[selectedReporterIndex].accountId;
+      console.log(issueDataGenerator);
       const issue = issueDataGenerator({
         issueTypeName: selectedTypeName,
         priorityName: selectedPriorityName,
@@ -348,9 +368,13 @@ export default class LXPAPI {
         labels: selectedLabels,
         reporterId: selectedReporterId,
         assigneeId: selectedAssigneeId,
+        versionIds: chosenVersionIds,
       });
       issues.push(issue);
     }
+    console.log("ISSUES TO RETURN");
+    console.log(issues);
+    console.log("xxxxxxxxxxxxxxx");
     return issues;
   }
 
@@ -359,7 +383,8 @@ export default class LXPAPI {
     projectStyle: string,
     noOfIssuesPerProject: number,
     issueTypeNames: string[],
-    storyPointsFieldKey: string
+    storyPointsFieldKey: string,
+    versionIds: string[]
   ): Promise<any[]> {
     console.log("called create issues");
 
@@ -374,6 +399,7 @@ export default class LXPAPI {
         project.key,
         issueTypeNames,
         noOfIssuesPerProject,
+        versionIds,
         (config) => {
           return this._createIssueBodyData(
             project.key,
@@ -424,55 +450,83 @@ export default class LXPAPI {
 
   _createClassicEpicBodyData(
     projectKey: string,
-    issueTypeName: string,
-    rngIssueData: any,
     epicNameFieldKey: string,
-    epicName: string
+    epicName: string,
+    config: any
   ): any {
-    console.log("CREATE CLASSIC EPIC BODY DATA CALLED");
-    const mockIssueIndex = getRandomWholeNumber(
+    const {
+      issueTypeName,
+      priorityName,
+      storyPoints,
       rngIssueData,
-      mockIssueData.length
-    );
-    console.log("mock issue index", mockIssueIndex);
+      summary,
+      labels,
+      reporterId,
+      assigneeId,
+      versionIds,
+    } = config;
+    console.log("CREATE CLASSIC EPIC BODY DATA CALLED");
     const issueData: IssueData = {
       fields: {
-        summary: mockIssueData[mockIssueIndex].summary,
+        summary,
         project: {
           key: projectKey,
         },
         issuetype: {
           name: issueTypeName,
         },
+        priority: {
+          name: priorityName,
+        },
+        labels,
+        assignee: {
+          id: assigneeId,
+        },
+        reporter: {
+          id: reporterId,
+        },
       },
     };
     console.log("EPIC NAME FIELD KEY", epicNameFieldKey);
     issueData.fields[epicNameFieldKey] = epicName;
+    if (versionIds.length > 0) {
+      issueData.fields.fixVersions = versionIds.map((versionId) => ({
+        id: versionId,
+      }));
+    }
     console.log("----------------------------");
     console.log(issueData);
     console.log("-------------------------------");
     return issueData;
   }
 
-  _createNextGenEpicBodyData(
-    projectKey: string,
-    issueTypeName: string,
-    rngIssueData: any
-  ): any {
-    console.log("CREATE CLASSIC EPIC BODY DATA CALLED");
-    const mockIssueIndex = getRandomWholeNumber(
+  _createNextGenEpicBodyData(projectKey: string, config: any): any {
+    const {
+      issueTypeName,
+      priorityName,
+      storyPoints,
       rngIssueData,
-      mockIssueData.length
-    );
-    console.log("mock issue index", mockIssueIndex);
+      summary,
+      labels,
+      reporterId,
+      assigneeId,
+    } = config;
+    console.log("CREATE next EPIC BODY DATA CALLED");
     const issueData: IssueData = {
       fields: {
-        summary: mockIssueData[mockIssueIndex].summary,
+        summary,
         project: {
           key: projectKey,
         },
         issuetype: {
           name: issueTypeName,
+        },
+        labels,
+        assignee: {
+          id: assigneeId,
+        },
+        reporter: {
+          id: reporterId,
         },
       },
     };
@@ -488,31 +542,32 @@ export default class LXPAPI {
     epicIssueTypeName: string,
     epicName: string,
     epicNameFieldKey: string,
-    projectStyle
+    projectStyle,
+    versionIds: string[]
   ): Promise<any[]> {
     console.log("-------------------------------------");
     console.log("called create epic issues");
 
     try {
-      const issueDataList = this._createIssueDataList(
+      const issueDataList = await this._createIssueDataList(
         projectKey,
         [epicIssueTypeName],
         numberOfIssues,
-        (epicIssueTypeName, rngIssueData) => {
+        versionIds,
+        (config) => {
+          console.log("called GEN EPICS");
+          console.log(projectStyle);
           if (projectStyle === "classic") {
+            console.log("CLASSIC EPICS CALLING");
             return this._createClassicEpicBodyData(
               projectKey,
-              epicIssueTypeName,
-              rngIssueData,
               epicNameFieldKey,
-              epicName
+              epicName,
+              config
             );
           } else {
-            return this._createNextGenEpicBodyData(
-              projectKey,
-              epicIssueTypeName,
-              rngIssueData
-            );
+            console.log("next-gen EPICS CALLING");
+            return this._createNextGenEpicBodyData(projectKey, config);
           }
         }
       );
@@ -552,28 +607,46 @@ export default class LXPAPI {
   }
 
   _createSubtaskBodyData(
+    shouldSetPriority: boolean,
     projectKey: string,
-    issueTypeName: string,
-    rngIssueData: any,
-    parentIssueKeys: string[]
+    parentIssueKeys: string[],
+    config
   ): any {
-    console.log("CREATE BODY DATA CALLED");
-    const mockIssueIndex = getRandomWholeNumber(
+    const {
+      issueTypeName,
+      priorityName,
+      storyPoints,
       rngIssueData,
-      mockIssueData.length
-    );
-    console.log("mock issue index", mockIssueIndex);
+      summary,
+      labels,
+      reporterId,
+      assigneeId,
+      versionIds,
+    } = config;
+    console.log("CREATE BODY DATA CALLED");
     const issueData: IssueData = {
       fields: {
-        summary: mockIssueData[mockIssueIndex].summary,
+        summary,
         project: {
           key: projectKey,
         },
         issuetype: {
           name: issueTypeName,
         },
+        labels,
+        assignee: {
+          id: assigneeId,
+        },
+        reporter: {
+          id: reporterId,
+        },
       },
     };
+    if (shouldSetPriority) {
+      issueData.fields.priority = {
+        name: priorityName,
+      };
+    }
     console.log("PARENT KEYS!!!!!!!!!!!!!!!!");
     console.log(parentIssueKeys);
     const chosenIndex = getRandomWholeNumber(
@@ -585,6 +658,11 @@ export default class LXPAPI {
     issueData.fields.parent = {
       key: chosenParentKey,
     };
+    if (versionIds.length > 0) {
+      issueData.fields.fixVersions = versionIds.map((versionId) => ({
+        id: versionId,
+      }));
+    }
     console.log("----------------------------");
     console.log(issueData);
     console.log("-------------------------------");
@@ -595,23 +673,26 @@ export default class LXPAPI {
     projectKey: string,
     noOfIssues: number,
     subtaskFieldName: string,
-    parentIssueKeys: string[]
+    parentIssueKeys: string[],
+    projectStyle: string,
+    versionIds: string[]
   ): Promise<any[]> {
     console.log("-------------------------------------");
     console.log("called create subtask issues");
 
     try {
-      const issueDataList = this._createIssueDataList(
+      const shouldSetPriority = projectStyle === "classic";
+      const issueDataList = await this._createIssueDataList(
         projectKey,
         [subtaskFieldName],
         noOfIssues,
-        // parentIssueKeys
-        (subtaskFieldName: string, rngIssueData: any) =>
+        versionIds,
+        (config) =>
           this._createSubtaskBodyData(
+            shouldSetPriority,
             projectKey,
-            subtaskFieldName,
-            rngIssueData,
-            parentIssueKeys
+            parentIssueKeys,
+            config
           )
       );
       const bodyData = JSON.stringify({
@@ -649,25 +730,40 @@ export default class LXPAPI {
 
   _createClassicEpicChildBodyData(
     projectKey: string,
-    issueTypeName: string,
-    rngIssueData: any,
     epicLinkFieldKey: string,
-    parentEpicKeys: string[]
+    parentEpicKeys: string[],
+    config
   ): any {
     console.log("CREATE CLASSIC EPIC CHILD BODY DATA CALLED");
-    const mockIssueIndex = getRandomWholeNumber(
+    const {
+      issueTypeName,
+      priorityName,
+      storyPoints,
       rngIssueData,
-      mockIssueData.length
-    );
-    console.log("mock issue index", mockIssueIndex);
+      summary,
+      labels,
+      reporterId,
+      assigneeId,
+      versionIds,
+    } = config;
     const issueData: IssueData = {
       fields: {
-        summary: mockIssueData[mockIssueIndex].summary,
+        summary,
         project: {
           key: projectKey,
         },
         issuetype: {
           name: issueTypeName,
+        },
+        priority: {
+          name: priorityName,
+        },
+        labels,
+        assignee: {
+          id: assigneeId,
+        },
+        reporter: {
+          id: reporterId,
         },
       },
     };
@@ -679,7 +775,11 @@ export default class LXPAPI {
     );
     const chosenParentKey = parentEpicKeys[chosenIndex];
     console.log("CHOSEN PARENT", chosenIndex, chosenParentKey);
-
+    if (versionIds.length > 0) {
+      issueData.fields.fixVersions = versionIds.map((versionId) => ({
+        id: versionId,
+      }));
+    }
     issueData.fields[epicLinkFieldKey] = chosenParentKey;
     console.log("----------------------------");
     console.log(issueData);
@@ -689,16 +789,21 @@ export default class LXPAPI {
 
   _createNextGenEpicChildBodyData(
     projectKey: string,
-    issueTypeName: string, // no subtask or epic
-    rngIssueData: any,
-    parentEpicKeys: string[]
+    parentEpicKeys: string[],
+    config
   ): any {
-    console.log("CREATE NEXT Gen EPIC CHILD BODY DATA CALLED");
-    const mockIssueIndex = getRandomWholeNumber(
+    const {
+      issueTypeName,
+      priorityName,
+      storyPoints,
       rngIssueData,
-      mockIssueData.length
-    );
-    console.log("mock issue index", mockIssueIndex);
+      summary,
+      labels,
+      reporterId,
+      assigneeId,
+    } = config;
+
+    console.log("CREATE NEXT Gen EPIC CHILD BODY DATA CALLED");
     const chosenIndex = getRandomWholeNumber(
       rngParentKey,
       parentEpicKeys.length
@@ -708,15 +813,19 @@ export default class LXPAPI {
 
     const issueData: IssueData = {
       fields: {
-        summary: mockIssueData[mockIssueIndex].summary,
+        summary,
         project: {
           key: projectKey,
         },
         issuetype: {
           name: issueTypeName,
         },
-        parent: {
-          key: chosenParentKey,
+        labels,
+        assignee: {
+          id: assigneeId,
+        },
+        reporter: {
+          id: reporterId,
         },
       },
     };
@@ -732,31 +841,31 @@ export default class LXPAPI {
     childIssueTypeNames: string[],
     parentEpicKeys: string[],
     projectStyle: string,
-    epicLinkFieldKey
+    epicLinkFieldKey,
+    versionIds
   ): Promise<any[]> {
     console.log("-------------------------------------");
     console.log("called create epic children issues");
 
     try {
-      const issueDataList = this._createIssueDataList(
+      const issueDataList = await this._createIssueDataList(
         projectKey,
         childIssueTypeNames,
         numberOfIssues,
-        (childIssueTypeName, rngIssueData) => {
+        versionIds,
+        (config) => {
           if (projectStyle === "classic") {
             return this._createClassicEpicChildBodyData(
               projectKey,
-              childIssueTypeName,
-              rngIssueData,
               epicLinkFieldKey,
-              parentEpicKeys
+              parentEpicKeys,
+              config
             );
           } else {
             return this._createNextGenEpicChildBodyData(
               projectKey,
-              childIssueTypeName,
-              rngIssueData,
-              parentEpicKeys
+              parentEpicKeys,
+              config
             );
           }
         }
@@ -853,8 +962,44 @@ export default class LXPAPI {
     }
   }
 
-  async createVersion(): Promise<any> {
-    throw Error("Method not implemented");
+  async createProjectVersion(projectId): Promise<any> {
+    console.log("called create versions", projectId);
+    const selectedProjectVersionIndex = getRandomWholeNumber(
+      rngCreateProjectVersion,
+      versions.length
+    );
+    const selectedProjectVersion = versions[selectedProjectVersionIndex];
+    selectedProjectVersion.projectId = projectId;
+    const bodyData = JSON.stringify(selectedProjectVersion);
+    console.log("PROJECT VER BODY DATA");
+    console.log(bodyData);
+    try {
+      const res = await fetch(`${this.baseURL}/version/`, {
+        method: "POST",
+        headers: {
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          Authorization: `Basic ${base64.encode(
+            `${this.username}:${this.password}`
+          )}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: bodyData,
+      });
+      console.log(res);
+      const data = await res.json();
+      if (res.ok) {
+        console.log("res ver ok");
+        console.log(res.status, res.statusText);
+        return data;
+      } else {
+        console.log("res not ok");
+        throw new Error("error fetchingissue");
+      }
+    } catch (error) {
+      console.log("caught error");
+      console.log(error);
+    }
   }
 
   async createLink(
