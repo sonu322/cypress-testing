@@ -16,22 +16,16 @@ export const mockProjectsData = [
     description: "Ea quis ea sit laboris quis.",
     projectTemplateKey:
       "com.pyxis.greenhopper.jira:gh-simplified-agility-scrum",
-    name: "from-config-test-63",
-    key: "FCT63",
+    // story points enabled
+    name: "from-config-test-72",
+    key: "FCT72",
   },
   {
     description:
       "Ad velit cupidatat consequat nulla dolore in fugiat ea laborum amet duis ad.",
     projectTemplateKey:
       "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic",
-    name: "from-config-test-64",
-    key: "FCT64",
-  },
-  {
-    description: "Ea quis ea sit laboris quis.",
-    projectTemplateKey:
-      "com.atlassian.jira-core-project-templates:jira-core-simplified-project-management",
-    name: "from-config-test-65",
-    key: "FCT65",
+    name: "from-config-test-73",
+    key: "FCT73",
   },
 ];
