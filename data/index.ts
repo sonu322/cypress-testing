@@ -12,7 +12,6 @@ const maxVersions = 5;
 const linksRNG = Util.getRNG("linksRNG");
 const linkFinderRNG = Util.getRNG("linkFinderRNG");
 const linkTypesRNG = Util.getRNG("linkTypesRNG");
-const versionsRNG = Util.getRNG("versionsRNG");
 const parentIssueNumberRNG = Util.getRNG("no-of-parent-issues");
 const epicIssueNumberRNG = Util.getRNG("epic-issues");
 const versionsNumberRNG = Util.getRNG("versions-number");
@@ -28,7 +27,6 @@ const module = {
     }>
   ): Promise<any[]> {
     const myself = await api.getMyself();
-    console.log(myself);
     const promises: Array<Promise<any>> = [];
     mockProjectsData.forEach((projectData) => {
       promises.push(
@@ -51,11 +49,10 @@ const module = {
     epicIssueTypeName: string,
     projectStyle: string,
     fields: any[],
-    versionIds
+    versionIds,
+    storyPointsFieldKey,
+    shouldSetStoryPointsEstimate
   ) {
-    console.log("PROJEDT STYLE");
-    console.log(projectStyle);
-    console.log("***********************");
     const epicNameField = fields.find((field) => field.name === "Epic Name");
     const epicNameFieldKey = epicNameField.key;
     const epicIssues = await api.createEpicIssuesInBulk(
@@ -65,7 +62,9 @@ const module = {
       epicName,
       epicNameFieldKey,
       projectStyle,
-      versionIds
+      versionIds,
+      storyPointsFieldKey,
+      shouldSetStoryPointsEstimate
     );
     return epicIssues;
   },
@@ -77,7 +76,9 @@ const module = {
     epicIssues: any[],
     projectStyle: string,
     fields: any[],
-    versionIds
+    versionIds,
+    storyPointsFieldKey,
+    shouldSetStoryPointsEstimate
   ) {
     const epicIssueKeys = epicIssues.map((epicIssue) => epicIssue.key);
     const epicLinkField = fields.find((field) => field.name === "Epic Link");
@@ -89,7 +90,9 @@ const module = {
       epicIssueKeys,
       projectStyle,
       epicLinkFieldKey,
-      versionIds
+      versionIds,
+      storyPointsFieldKey,
+      shouldSetStoryPointsEstimate
     );
     return childIssues;
   },
@@ -109,23 +112,26 @@ const module = {
       subtaskFieldName,
       parentIssueKeys,
       projectStyle,
-      versionIds
+      versionIds,
+      false
     );
     return childIssues;
   },
-  async generateIssues(projects: any, noOfIssues: number): Promise<any[]> {
-    console.log("in gen issues");
-    console.log(projects);
+  async generateIssues(projects: any, numberOfIssues: number): Promise<any[]> {
     let issues: any[] = [];
     for (let i = 0; i < projects.length; i++) {
-      console.log("PROJECT!!!!!!!!!!!!!!!!!!!!!");
       const fullProject = await api.getFullProject(projects[i]);
-      console.log(fullProject.style);
       const issueTypeNames = fullProject.issueTypes.map(
         (issueType) => issueType.name
       );
+      const numberOfIssuesPerType = numberOfIssues / issueTypeNames.length;
       const projectStyle = fullProject.style;
       const projectType = fullProject.projectTypeKey;
+      const shouldSetStoryPointsEstimate =
+        projectStyle === "next-gen" &&
+        projectType === "software" &&
+        fullProject.issueTypes.length > 3;
+
       const fields = await api.getFields();
       const versionIds = [];
       if (projectStyle === "classic") {
@@ -151,7 +157,6 @@ const module = {
       );
 
       // creating parents
-      console.log("creating parent issues");
       const noOfParents = Util.getRandomPositiveNumber(
         parentIssueNumberRNG,
         // noOfIssues
@@ -164,16 +169,14 @@ const module = {
         noOfParents,
         parentIssueTypeNames,
         storyPointsFieldKey,
-        versionIds
+        versionIds,
+        shouldSetStoryPointsEstimate
       );
-      console.log("PARENT ISSSUES");
-      console.log(parentIssues);
       if (parentIssues.length > 0) {
         issues = issues.concat(parentIssues);
       }
 
       // // adding epic issues
-      console.log("creating epic issues");
       const noOfEpics = Util.getRandomPositiveNumber(
         epicIssueNumberRNG,
         // noOfIssues
@@ -186,39 +189,41 @@ const module = {
         "Epic",
         projectStyle,
         fields,
-        versionIds
+        versionIds,
+        storyPointsFieldKey,
+        false
       );
       if (epicIssues.length > 0) {
         issues = issues.concat(epicIssues);
       }
       // add child issues for epics
 
-      console.log("creating chil issues fro epics");
       const childIssueTypeNames = issueTypeNames.filter(
         (type) => !type.includes("Sub") && !(type === "Epic")
       );
       const childIssues = await module.generateChildIssues(
         projects[i],
-        noOfIssues,
+        numberOfIssuesPerType,
         childIssueTypeNames,
         epicIssues,
         projectStyle,
         fields,
-        versionIds
+        versionIds,
+        storyPointsFieldKey,
+        shouldSetStoryPointsEstimate
       );
       if (childIssues.length > 0) {
         issues = issues.concat(childIssues);
       }
 
       // add subtasks to parents
-      console.log("creating subtask issues");
       const subtaskIssueTypeName = issueTypeNames.find((type) =>
         type.includes("Sub")
       );
       parentIssues = parentIssues.concat(childIssues);
       const subtasks = await module.generateSubtasks(
         projects[i].key,
-        noOfIssues,
+        numberOfIssuesPerType,
         subtaskIssueTypeName,
         parentIssues,
         projectStyle,
@@ -232,17 +237,16 @@ const module = {
         (type) => !type.includes("Sub") && !(type === "Epic")
       );
       // other issues
-      console.log("creating other issues");
       const otherIssues = await api.createIssuesInBulk(
         projects[i],
         projectStyle,
-        noOfIssues,
+        numberOfIssuesPerType,
         otherIssueTypeNames,
         storyPointsFieldKey,
-        versionIds
+        versionIds,
+        shouldSetStoryPointsEstimate
       );
-      console.log("OTHER ISSSUES");
-      console.log(otherIssues);
+
       if (otherIssues.length > 0) {
         issues = issues.concat(otherIssues);
       }
@@ -250,25 +254,14 @@ const module = {
       await Promise.all(addStatusPromises);
     }
 
-    console.log(
-      "-----------------------------ALL ISSUES-----------------------------"
-    );
-    console.log(issues);
-    console.log("----------------------------------------------------------");
     return issues;
   },
 
   async generateLinks(issues: any[]) {
     const linkTypeNames: any[] = await api.getIssueLinkTypeNames(); // TODO: fetch all the link types available
-    console.log("FETCTHDE LINK TYPES!!");
-    console.log(linkTypeNames);
-    console.log("issues");
-    console.log(issues);
-    console.log("-----------------------------------------------------");
 
     for (const issue of issues) {
       const noOfLinks = Util.getRandomPositiveNumber(linksRNG, maxLinks + 1);
-      console.log("NO OF LINKS", noOfLinks);
       for (let j = 0; j < noOfLinks; j++) {
         const issueIndex = Util.getRandomWholeNumber(
           linkFinderRNG,
@@ -278,7 +271,6 @@ const module = {
           linkTypesRNG,
           linkTypeNames.length
         );
-        console.log(issueIndex, linkTypeIndex);
         await api.createLink(
           issue.key,
           issues[issueIndex].key,
@@ -298,15 +290,20 @@ const generateData = async (
     key: string;
   }>
 ): Promise<void> => {
+  console.log("generating data");
+  console.log("generating projects");
   const projects: any[] = await module.generateProjects(mockProjectsData);
   const noOfIssues = noOfRecords / projects.length;
 
   if (projects.length > 0) {
+    console.log("generating issues");
     const issues: any[] = await module.generateIssues(projects, noOfIssues);
     if (issues.length > 0) {
-      console.log("issues are there");
-      console.log(issues.length);
-      await module.generateLinks(issues);
+      console.log("generating links");
+      const response = await module.generateLinks(issues);
+      if (response === undefined) {
+        console.log("done");
+      }
     }
   }
 };

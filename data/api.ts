@@ -33,7 +33,6 @@ export default class LXPAPI {
     summary: string,
     issueTypeName: string
   ): Promise<any> {
-    console.log("called create issueeeeeeeeeeeee");
     const bodyData = JSON.stringify({
       fields: {
         project: {
@@ -58,13 +57,8 @@ export default class LXPAPI {
         },
         body: bodyData,
       });
-      console.log(res);
       const data = await res.json();
       if (res.ok) {
-        console.log("res ok");
-        console.log("RETURNED ISSUE DATA");
-        console.log(data);
-        console.log(res.statusText);
         return data;
       } else {
         console.log("res not ok");
@@ -77,8 +71,6 @@ export default class LXPAPI {
   }
 
   async getFullProject(project: any): Promise<any> {
-    console.log("calling full project");
-    console.log(project.self);
     try {
       const res = await fetch(project.self, {
         method: "GET",
@@ -91,17 +83,15 @@ export default class LXPAPI {
         },
       });
       const data = await res.json();
-      console.log(res.statusText);
 
       return data;
     } catch (error) {
+      console.log("get full project error");
       console.log(error);
     }
   }
 
   async getProjectIssueTypeNames(project: any): Promise<string[]> {
-    console.log("calling issue type ids");
-    console.log(project.self);
     try {
       const res = await fetch(project.self, {
         method: "GET",
@@ -114,16 +104,15 @@ export default class LXPAPI {
         },
       });
       const data = await res.json();
-      console.log(res.statusText);
 
       return data.issueTypes.map((issueType) => issueType.name);
     } catch (error) {
+      console.log("get issue types error");
       console.log(error);
     }
   }
 
   async getIssueLinkTypeNames(): Promise<string[]> {
-    console.log("calling issue link type names");
     try {
       const res = await fetch(`${this.baseURL}/issueLinkType/`, {
         method: "GET",
@@ -136,12 +125,10 @@ export default class LXPAPI {
         },
       });
       const data = await res.json();
-      console.log(res.statusText);
-      console.log("links!!!!!!!!!!!!!!");
-      console.log(data);
 
       return data.issueLinkTypes.map((issueLinkType) => issueLinkType.name);
     } catch (error) {
+      console.log("get issue link types error");
       console.log(error);
     }
   }
@@ -161,13 +148,12 @@ export default class LXPAPI {
       });
       const data = await res.json();
       if (res.ok) {
-        console.log("FIELDS!!!!");
-        console.log(data);
         return data;
       } else {
         throw new Error("some error occurred fetching fields");
       }
     } catch (error) {
+      console.log("get fields error");
       console.log(error);
     }
   }
@@ -187,13 +173,12 @@ export default class LXPAPI {
       });
       const data = await res.json();
       if (res.ok) {
-        console.log("Priorities");
-        console.log(data);
         return data;
       } else {
-        throw new Error("some error occurred fetching fields");
+        throw new Error("some error occurred fetching priorities");
       }
     } catch (error) {
+      console.log("get priorities error");
       console.log(error);
     }
   }
@@ -217,13 +202,12 @@ export default class LXPAPI {
       );
       const data = await res.json();
       if (res.ok) {
-        console.log("users");
-        console.log(data);
         return data;
       } else {
-        throw new Error("some error occurred fetching fields");
+        throw new Error("some error occurred fetching users");
       }
     } catch (error) {
+      console.log("error fetching users");
       console.log(error);
     }
   }
@@ -238,19 +222,12 @@ export default class LXPAPI {
       issueTypeName,
       priorityName,
       storyPoints,
-      rngIssueData,
       summary,
       assigneeId,
       reporterId,
       labels,
       versionIds,
     } = config;
-    console.log("CREATE BODY DATA CALLED");
-    //     const mockIssueIndex = getRandomWholeNumber(
-    //       rngIssueData,
-    //       mockIssueData.length
-    //     );
-    // mockIssueData[mockIssueIndex].summary,
     const issueData: IssueData = {
       fields: {
         summary,
@@ -275,15 +252,14 @@ export default class LXPAPI {
         name: priorityName,
       };
     }
+    if (storyPoints !== undefined) {
+      issueData.fields[storyPointsFieldKey] = storyPoints;
+    }
     if (versionIds !== undefined && versionIds.length > 0) {
       issueData.fields.fixVersions = versionIds.map((versionId) => ({
         id: versionId,
       }));
     }
-    // issueData.fields[storyPointsFieldKey] = storyPoints;
-    console.log("----------------------------");
-    console.log(issueData);
-    console.log("-------------------------------");
     return issueData;
   }
 
@@ -292,6 +268,7 @@ export default class LXPAPI {
     issueTypeNames: string[],
     numberOfIssues: number,
     versionIds: string[],
+    shouldSetStoryPointsEstimate: boolean,
     issueDataGenerator
   ): Promise<any[]> {
     const priorities = await this.getPriorities();
@@ -300,9 +277,6 @@ export default class LXPAPI {
     if (priorities.length > 0) {
       priorityNames = priorities.map((priority) => priority.name);
     }
-
-    console.log("CREATE DATA LIST CALLED");
-    console.log(numberOfIssues);
     const rng = getRNG("issuetype");
     const issues = [];
     for (let i = 0; i < numberOfIssues; i++) {
@@ -320,7 +294,10 @@ export default class LXPAPI {
       const selectedPriorityName = priorities[selectedPriorityIndex].name;
 
       const selectedTypeName = issueTypeNames[selectedTypeIndex];
-      const storyPoints = getRandomPositiveNumber(rngStoryPoints, 10);
+      let storyPoints: number;
+      if (shouldSetStoryPointsEstimate) {
+        storyPoints = getRandomPositiveNumber(rngStoryPoints, 10);
+      }
 
       const issueDataIndex = getRandomWholeNumber(
         rngIssueData,
@@ -358,7 +335,6 @@ export default class LXPAPI {
         assignableUsers[selectedAssigneeIndex].accountId;
       const selectedReporterId =
         assignableUsers[selectedReporterIndex].accountId;
-      console.log(issueDataGenerator);
       const issue = issueDataGenerator({
         issueTypeName: selectedTypeName,
         priorityName: selectedPriorityName,
@@ -372,9 +348,6 @@ export default class LXPAPI {
       });
       issues.push(issue);
     }
-    console.log("ISSUES TO RETURN");
-    console.log(issues);
-    console.log("xxxxxxxxxxxxxxx");
     return issues;
   }
 
@@ -384,22 +357,19 @@ export default class LXPAPI {
     noOfIssuesPerProject: number,
     issueTypeNames: string[],
     storyPointsFieldKey: string,
-    versionIds: string[]
+    versionIds: string[],
+    shouldSetStoryPointsEstimate: boolean
   ): Promise<any[]> {
-    console.log("called create issues");
-
     try {
-      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      console.log(issueTypeNames);
       if (issueTypeNames === undefined) {
         throw new Error("no issue types from proje");
       }
-      console.log("calling data list");
       const issueDataList = await this._createIssueDataList(
         project.key,
         issueTypeNames,
         noOfIssuesPerProject,
         versionIds,
+        shouldSetStoryPointsEstimate,
         (config) => {
           return this._createIssueBodyData(
             project.key,
@@ -412,9 +382,6 @@ export default class LXPAPI {
       if (issueDataList.length === 0) {
         throw new Error("no data list");
       }
-      console.log("------------------------------");
-      console.log(issueDataList);
-      console.log("------------------------------");
       const bodyData = JSON.stringify({
         issueUpdates: issueDataList,
       });
@@ -430,12 +397,8 @@ export default class LXPAPI {
         },
         body: bodyData,
       });
-      console.log(res);
       const data = await res.json();
       if (res.ok) {
-        console.log("res ok");
-        console.log(data);
-        console.log(res.statusText);
         return data.issues;
       } else {
         console.log("res not ok");
@@ -443,7 +406,7 @@ export default class LXPAPI {
         throw new Error(err.message);
       }
     } catch (error) {
-      console.log("caught error");
+      console.log("caught create bulk issues error");
       console.log(error);
     }
   }
@@ -457,15 +420,12 @@ export default class LXPAPI {
     const {
       issueTypeName,
       priorityName,
-      storyPoints,
-      rngIssueData,
       summary,
       labels,
       reporterId,
       assigneeId,
       versionIds,
     } = config;
-    console.log("CREATE CLASSIC EPIC BODY DATA CALLED");
     const issueData: IssueData = {
       fields: {
         summary,
@@ -487,31 +447,28 @@ export default class LXPAPI {
         },
       },
     };
-    console.log("EPIC NAME FIELD KEY", epicNameFieldKey);
     issueData.fields[epicNameFieldKey] = epicName;
     if (versionIds.length > 0) {
       issueData.fields.fixVersions = versionIds.map((versionId) => ({
         id: versionId,
       }));
     }
-    console.log("----------------------------");
-    console.log(issueData);
-    console.log("-------------------------------");
     return issueData;
   }
 
-  _createNextGenEpicBodyData(projectKey: string, config: any): any {
+  _createNextGenEpicBodyData(
+    projectKey: string,
+    storyPointsFieldKey: string,
+    config: any
+  ): any {
     const {
       issueTypeName,
-      priorityName,
       storyPoints,
-      rngIssueData,
       summary,
       labels,
       reporterId,
       assigneeId,
     } = config;
-    console.log("CREATE next EPIC BODY DATA CALLED");
     const issueData: IssueData = {
       fields: {
         summary,
@@ -530,9 +487,9 @@ export default class LXPAPI {
         },
       },
     };
-    console.log("----------------------------");
-    console.log(issueData);
-    console.log("-------------------------------");
+    if (storyPoints !== undefined) {
+      issueData.fields[storyPointsFieldKey] = storyPoints;
+    }
     return issueData;
   }
 
@@ -543,22 +500,19 @@ export default class LXPAPI {
     epicName: string,
     epicNameFieldKey: string,
     projectStyle,
-    versionIds: string[]
+    versionIds: string[],
+    storyPointsFieldKey,
+    shouldSetStoryPointsEstimate
   ): Promise<any[]> {
-    console.log("-------------------------------------");
-    console.log("called create epic issues");
-
     try {
       const issueDataList = await this._createIssueDataList(
         projectKey,
         [epicIssueTypeName],
         numberOfIssues,
         versionIds,
+        shouldSetStoryPointsEstimate,
         (config) => {
-          console.log("called GEN EPICS");
-          console.log(projectStyle);
           if (projectStyle === "classic") {
-            console.log("CLASSIC EPICS CALLING");
             return this._createClassicEpicBodyData(
               projectKey,
               epicNameFieldKey,
@@ -566,16 +520,17 @@ export default class LXPAPI {
               config
             );
           } else {
-            console.log("next-gen EPICS CALLING");
-            return this._createNextGenEpicBodyData(projectKey, config);
+            return this._createNextGenEpicBodyData(
+              projectKey,
+              storyPointsFieldKey,
+              config
+            );
           }
         }
       );
       const bodyData = JSON.stringify({
         issueUpdates: issueDataList,
       });
-      console.log("FINALBODYDATA");
-      console.log(bodyData);
       const res = await fetch(`${this.baseURL}/issue/bulk`, {
         method: "POST",
         headers: {
@@ -588,15 +543,10 @@ export default class LXPAPI {
         },
         body: bodyData,
       });
-      console.log(res);
       const data = await res.json();
       if (res.ok) {
-        console.log("epic res ok");
-        console.log(data);
-        console.log(res.statusText);
         return data.issues;
       } else {
-        console.log("epic res not ok");
         const err = await data;
         throw new Error(err.message);
       }
@@ -615,15 +565,12 @@ export default class LXPAPI {
     const {
       issueTypeName,
       priorityName,
-      storyPoints,
-      rngIssueData,
       summary,
       labels,
       reporterId,
       assigneeId,
       versionIds,
     } = config;
-    console.log("CREATE BODY DATA CALLED");
     const issueData: IssueData = {
       fields: {
         summary,
@@ -647,14 +594,11 @@ export default class LXPAPI {
         name: priorityName,
       };
     }
-    console.log("PARENT KEYS!!!!!!!!!!!!!!!!");
-    console.log(parentIssueKeys);
     const chosenIndex = getRandomWholeNumber(
       rngParentKey,
       parentIssueKeys.length
     );
     const chosenParentKey = parentIssueKeys[chosenIndex];
-    console.log("CHOSEN PARENT", chosenIndex, chosenParentKey);
     issueData.fields.parent = {
       key: chosenParentKey,
     };
@@ -663,9 +607,6 @@ export default class LXPAPI {
         id: versionId,
       }));
     }
-    console.log("----------------------------");
-    console.log(issueData);
-    console.log("-------------------------------");
     return issueData;
   }
 
@@ -675,11 +616,9 @@ export default class LXPAPI {
     subtaskFieldName: string,
     parentIssueKeys: string[],
     projectStyle: string,
-    versionIds: string[]
+    versionIds: string[],
+    shouldSetStoryPointsEstimate
   ): Promise<any[]> {
-    console.log("-------------------------------------");
-    console.log("called create subtask issues");
-
     try {
       const shouldSetPriority = projectStyle === "classic";
       const issueDataList = await this._createIssueDataList(
@@ -687,6 +626,7 @@ export default class LXPAPI {
         [subtaskFieldName],
         noOfIssues,
         versionIds,
+        shouldSetStoryPointsEstimate,
         (config) =>
           this._createSubtaskBodyData(
             shouldSetPriority,
@@ -710,15 +650,10 @@ export default class LXPAPI {
         },
         body: bodyData,
       });
-      console.log(res);
       const data = await res.json();
       if (res.ok) {
-        console.log("subtask res ok");
-        console.log(data);
-        console.log(res.statusText);
         return data.issues;
       } else {
-        console.log("res not ok");
         const err = await data;
         throw new Error(err.message);
       }
@@ -734,12 +669,9 @@ export default class LXPAPI {
     parentEpicKeys: string[],
     config
   ): any {
-    console.log("CREATE CLASSIC EPIC CHILD BODY DATA CALLED");
     const {
       issueTypeName,
       priorityName,
-      storyPoints,
-      rngIssueData,
       summary,
       labels,
       reporterId,
@@ -767,49 +699,41 @@ export default class LXPAPI {
         },
       },
     };
-    console.log("PARENT EPIC NAME FIELD KEY", epicLinkFieldKey);
 
     const chosenIndex = getRandomWholeNumber(
       rngParentKey,
       parentEpicKeys.length
     );
     const chosenParentKey = parentEpicKeys[chosenIndex];
-    console.log("CHOSEN PARENT", chosenIndex, chosenParentKey);
     if (versionIds.length > 0) {
       issueData.fields.fixVersions = versionIds.map((versionId) => ({
         id: versionId,
       }));
     }
     issueData.fields[epicLinkFieldKey] = chosenParentKey;
-    console.log("----------------------------");
-    console.log(issueData);
-    console.log("-------------------------------");
     return issueData;
   }
 
   _createNextGenEpicChildBodyData(
     projectKey: string,
     parentEpicKeys: string[],
+    storyPointsFieldKey,
     config
   ): any {
     const {
       issueTypeName,
-      priorityName,
       storyPoints,
-      rngIssueData,
       summary,
       labels,
       reporterId,
       assigneeId,
     } = config;
 
-    console.log("CREATE NEXT Gen EPIC CHILD BODY DATA CALLED");
     const chosenIndex = getRandomWholeNumber(
       rngParentKey,
       parentEpicKeys.length
     );
     const chosenParentKey = parentEpicKeys[chosenIndex];
-    console.log("CHOSEN PARENT", chosenIndex, chosenParentKey);
 
     const issueData: IssueData = {
       fields: {
@@ -827,11 +751,14 @@ export default class LXPAPI {
         reporter: {
           id: reporterId,
         },
+        parent: {
+          key: chosenParentKey,
+        },
       },
     };
-    console.log("----------------------------");
-    console.log(issueData);
-    console.log("-------------------------------");
+    if (storyPoints !== undefined) {
+      issueData.fields[storyPointsFieldKey] = storyPoints;
+    }
     return issueData;
   }
 
@@ -842,17 +769,17 @@ export default class LXPAPI {
     parentEpicKeys: string[],
     projectStyle: string,
     epicLinkFieldKey,
-    versionIds
+    versionIds,
+    storyPointsFieldKey,
+    shouldSetStoryPointsEstimate
   ): Promise<any[]> {
-    console.log("-------------------------------------");
-    console.log("called create epic children issues");
-
     try {
       const issueDataList = await this._createIssueDataList(
         projectKey,
         childIssueTypeNames,
         numberOfIssues,
         versionIds,
+        shouldSetStoryPointsEstimate,
         (config) => {
           if (projectStyle === "classic") {
             return this._createClassicEpicChildBodyData(
@@ -865,6 +792,7 @@ export default class LXPAPI {
             return this._createNextGenEpicChildBodyData(
               projectKey,
               parentEpicKeys,
+              storyPointsFieldKey,
               config
             );
           }
@@ -886,12 +814,8 @@ export default class LXPAPI {
         },
         body: bodyData,
       });
-      console.log(res);
       const data = await res.json();
       if (res.ok) {
-        console.log("subtask res ok");
-        console.log(data);
-        console.log(res.statusText);
         return data.issues;
       } else {
         console.log("res not ok");
@@ -920,6 +844,7 @@ export default class LXPAPI {
       const data = await res.json();
       return data;
     } catch (error) {
+      console.log("error getting self")
       console.log(error);
     }
   }
@@ -938,7 +863,6 @@ export default class LXPAPI {
       name,
       key,
     });
-    console.log("CALLED CREATE PROJECCT");
     try {
       const res = await fetch(`${this.baseURL}/project`, {
         method: "POST",
@@ -953,8 +877,6 @@ export default class LXPAPI {
       });
 
       const data = await res.json();
-      console.log(data);
-      console.log(res.statusText);
       return data;
     } catch (error) {
       console.log("error from create project");
@@ -963,7 +885,6 @@ export default class LXPAPI {
   }
 
   async createProjectVersion(projectId): Promise<any> {
-    console.log("called create versions", projectId);
     const selectedProjectVersionIndex = getRandomWholeNumber(
       rngCreateProjectVersion,
       versions.length
@@ -971,8 +892,6 @@ export default class LXPAPI {
     const selectedProjectVersion = versions[selectedProjectVersionIndex];
     selectedProjectVersion.projectId = projectId;
     const bodyData = JSON.stringify(selectedProjectVersion);
-    console.log("PROJECT VER BODY DATA");
-    console.log(bodyData);
     try {
       const res = await fetch(`${this.baseURL}/version/`, {
         method: "POST",
@@ -989,8 +908,6 @@ export default class LXPAPI {
       console.log(res);
       const data = await res.json();
       if (res.ok) {
-        console.log("res ver ok");
-        console.log(res.status, res.statusText);
         return data;
       } else {
         console.log("res not ok");
@@ -1007,9 +924,6 @@ export default class LXPAPI {
     inwardIssueKey: string,
     linkTypeName: string
   ): Promise<any> {
-    console.log("called create link", linkTypeName);
-    console.log("outward", outwardIssueKey);
-    console.log("inward", inwardIssueKey);
     const bodyData = JSON.stringify({
       outwardIssue: {
         key: outwardIssueKey,
@@ -1034,13 +948,9 @@ export default class LXPAPI {
         },
         body: bodyData,
       });
-      console.log(res);
       // NOTE: returns invalid json. res.json() gives error
       // console.log(await res.json());
-      if (res.ok) {
-        console.log("res ok");
-        console.log(res.statusText);
-      } else {
+      if (!res.ok) {
         console.log("res not ok");
         throw new Error("error fetchingissue");
       }
@@ -1067,9 +977,6 @@ export default class LXPAPI {
         }
       );
       transitionsData = await transitionsData.json();
-      console.log("-------------------------------");
-      console.log(transitionsData);
-      console.log("-------------------------------");
       const transitions = transitionsData.transitions;
       const selectedTransitionIndex = getRandomWholeNumber(
         rngTransition,
@@ -1081,14 +988,6 @@ export default class LXPAPI {
           id: transitionId,
         },
       });
-      console.log(`---------------${issue.key}----------------`);
-      console.log("-------------------------------");
-      console.log("-------------------------------");
-      console.log(bodyData);
-      console.log("-------------------------------");
-      console.log("-------------------------------");
-      console.log("-------------------------------");
-      console.log("-------------------------------");
       const res = await fetch(
         `${this.baseURL}/issue/${issue.key}/transitions`,
         {
@@ -1104,10 +1003,7 @@ export default class LXPAPI {
           body: bodyData,
         }
       );
-      if (res.ok) {
-        console.log("res status ok");
-        console.log(res.statusText);
-      } else {
+      if (!res.ok) {
         console.log(res.statusText);
         console.log("res not ok");
         const data = await res.json();
