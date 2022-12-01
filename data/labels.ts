@@ -1,4 +1,5 @@
 const labels = [
+  "goodFirstIssue",
   "takeHelp",
   "immediate",
   "legacy",

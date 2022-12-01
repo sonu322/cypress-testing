@@ -5,7 +5,7 @@ import { mockProjectsData } from "./mockProjectsData";
 const noOfRecords = config.noOfRecords;
 
 const api = new API(config.baseURL, config.username, config.password);
-const maxLinks = 10;
+const maxLinks = 5;
 const maxVersions = 5;
 
 // Random number generators
@@ -15,6 +15,7 @@ const linkTypesRNG = Util.getRNG("linkTypesRNG");
 const versionsRNG = Util.getRNG("versionsRNG");
 const parentIssueNumberRNG = Util.getRNG("no-of-parent-issues");
 const epicIssueNumberRNG = Util.getRNG("epic-issues");
+const versionsNumberRNG = Util.getRNG("versions-number");
 const module = {
   // generate projects
 
@@ -49,8 +50,12 @@ const module = {
     epicName: string,
     epicIssueTypeName: string,
     projectStyle: string,
-    fields: any[]
+    fields: any[],
+    versionIds
   ) {
+    console.log("PROJEDT STYLE");
+    console.log(projectStyle);
+    console.log("***********************");
     const epicNameField = fields.find((field) => field.name === "Epic Name");
     const epicNameFieldKey = epicNameField.key;
     const epicIssues = await api.createEpicIssuesInBulk(
@@ -59,7 +64,8 @@ const module = {
       epicIssueTypeName,
       epicName,
       epicNameFieldKey,
-      projectStyle
+      projectStyle,
+      versionIds
     );
     return epicIssues;
   },
@@ -70,7 +76,8 @@ const module = {
     childIssueTypeNames: string[],
     epicIssues: any[],
     projectStyle: string,
-    fields: any[]
+    fields: any[],
+    versionIds
   ) {
     const epicIssueKeys = epicIssues.map((epicIssue) => epicIssue.key);
     const epicLinkField = fields.find((field) => field.name === "Epic Link");
@@ -81,7 +88,8 @@ const module = {
       childIssueTypeNames,
       epicIssueKeys,
       projectStyle,
-      epicLinkFieldKey
+      epicLinkFieldKey,
+      versionIds
     );
     return childIssues;
   },
@@ -90,14 +98,18 @@ const module = {
     projectKey: string,
     noOfIssues: number,
     subtaskFieldName: string,
-    parentIssues: any[]
+    parentIssues: any[],
+    projectStyle: string,
+    versionIds
   ): Promise<any[]> {
     const parentIssueKeys = parentIssues.map((parentIssue) => parentIssue.key);
     const childIssues = await api.createSubtasksInBulk(
       projectKey,
       noOfIssues,
       subtaskFieldName,
-      parentIssueKeys
+      parentIssueKeys,
+      projectStyle,
+      versionIds
     );
     return childIssues;
   },
@@ -109,92 +121,112 @@ const module = {
       console.log("PROJECT!!!!!!!!!!!!!!!!!!!!!");
       const fullProject = await api.getFullProject(projects[i]);
       console.log(fullProject.style);
-
       const issueTypeNames = fullProject.issueTypes.map(
         (issueType) => issueType.name
       );
       const projectStyle = fullProject.style;
+      const projectType = fullProject.projectTypeKey;
       const fields = await api.getFields();
+      const versionIds = [];
+      if (projectStyle === "classic") {
+        const numberOfVersions = Util.getRandomWholeNumber(
+          versionsNumberRNG,
+          maxVersions
+        );
+        if (numberOfVersions > 0) {
+          for (let i = 0; i < numberOfVersions; i++) {
+            const version = await api.createProjectVersion(fullProject.id);
+            versionIds.push(version.id);
+          }
+        }
+      }
       const storyPointsField = fields.find((field) =>
         projectStyle === "classic"
           ? field.name === "Story Points"
           : field.name === "Story point estimate"
       );
       const storyPointsFieldKey = storyPointsField.key;
-      // const parentIssueTypeNames = issueTypeNames.filter(
-      //   (type) => !type.includes("Sub") && !(type === "Epic")
-      // );
+      const parentIssueTypeNames = issueTypeNames.filter(
+        (type) => !type.includes("Sub") && !(type === "Epic")
+      );
 
-      // // creating parents
-      // console.log("creating parent issues");
-      // const noOfParents = Util.getRandomPositiveNumber(
-      //   parentIssueNumberRNG,
-      //   // noOfIssues
-      //   5
-      // );
-      // // eslint-disable-next-line prefer-const
-      // let parentIssues = await api.createIssuesInBulk(
-      //   projects[i],
-      //   noOfParents,
-      //   parentIssueTypeNames
-      // );
-      // console.log("PARENT ISSSUES");
-      // console.log(parentIssues);
-      // if (parentIssues.length > 0) {
-      //   issues = issues.concat(parentIssues);
-      // }
+      // creating parents
+      console.log("creating parent issues");
+      const noOfParents = Util.getRandomPositiveNumber(
+        parentIssueNumberRNG,
+        // noOfIssues
+        5
+      );
+      // eslint-disable-next-line prefer-const
+      let parentIssues = await api.createIssuesInBulk(
+        projects[i],
+        projectStyle,
+        noOfParents,
+        parentIssueTypeNames,
+        storyPointsFieldKey,
+        versionIds
+      );
+      console.log("PARENT ISSSUES");
+      console.log(parentIssues);
+      if (parentIssues.length > 0) {
+        issues = issues.concat(parentIssues);
+      }
 
-      // // // adding epic issues
-      // console.log("creating epic issues");
-      // const noOfEpics = Util.getRandomPositiveNumber(
-      //   epicIssueNumberRNG,
-      //   // noOfIssues
-      //   5
-      // );
-      // const epicIssues = await module.generateEpics(
-      //   projects[i],
-      //   noOfEpics,
-      //   "my-epic",
-      //   "Epic",
-      //   projectStyle,
-      //   fields
-      // );
-      // if (epicIssues.length > 0) {
-      //   issues = issues.concat(epicIssues);
-      // }
-      // // add child issues for epics
+      // // adding epic issues
+      console.log("creating epic issues");
+      const noOfEpics = Util.getRandomPositiveNumber(
+        epicIssueNumberRNG,
+        // noOfIssues
+        5
+      );
+      const epicIssues = await module.generateEpics(
+        projects[i],
+        noOfEpics,
+        "my-epic",
+        "Epic",
+        projectStyle,
+        fields,
+        versionIds
+      );
+      if (epicIssues.length > 0) {
+        issues = issues.concat(epicIssues);
+      }
+      // add child issues for epics
 
-      // console.log("creating chil issues fro epics");
-      // const childIssueTypeNames = issueTypeNames.filter(
-      //   (type) => !type.includes("Sub") && !(type === "Epic")
-      // );
-      // const childIssues = await module.generateChildIssues(
-      //   projects[i],
-      //   noOfIssues,
-      //   childIssueTypeNames,
-      //   epicIssues,
-      //   projectStyle,
-      //   fields
-      // );
-      // if (childIssues.length > 0) {
-      //   issues = issues.concat(childIssues);
-      // }
+      console.log("creating chil issues fro epics");
+      const childIssueTypeNames = issueTypeNames.filter(
+        (type) => !type.includes("Sub") && !(type === "Epic")
+      );
+      const childIssues = await module.generateChildIssues(
+        projects[i],
+        noOfIssues,
+        childIssueTypeNames,
+        epicIssues,
+        projectStyle,
+        fields,
+        versionIds
+      );
+      if (childIssues.length > 0) {
+        issues = issues.concat(childIssues);
+      }
 
-      // // add subtasks to parents
-      // console.log("creating subtask issues");
-      // const subtaskIssueTypeName = issueTypeNames.find((type) =>
-      //   type.includes("Sub")
-      // );
-      // parentIssues = parentIssues.concat(childIssues);
-      // const subtasks = await module.generateSubtasks(
-      //   projects[i].key,
-      //   noOfIssues,
-      //   subtaskIssueTypeName,
-      //   parentIssues
-      // );
-      // if (subtasks.length > 0) {
-      //   issues = issues.concat(subtasks);
-      // }
+      // add subtasks to parents
+      console.log("creating subtask issues");
+      const subtaskIssueTypeName = issueTypeNames.find((type) =>
+        type.includes("Sub")
+      );
+      parentIssues = parentIssues.concat(childIssues);
+      const subtasks = await module.generateSubtasks(
+        projects[i].key,
+        noOfIssues,
+        subtaskIssueTypeName,
+        parentIssues,
+        projectStyle,
+        versionIds
+      );
+      if (subtasks.length > 0) {
+        issues = issues.concat(subtasks);
+      }
 
       const otherIssueTypeNames = issueTypeNames.filter(
         (type) => !type.includes("Sub") && !(type === "Epic")
@@ -206,7 +238,8 @@ const module = {
         projectStyle,
         noOfIssues,
         otherIssueTypeNames,
-        storyPointsFieldKey
+        storyPointsFieldKey,
+        versionIds
       );
       console.log("OTHER ISSSUES");
       console.log(otherIssues);
@@ -254,16 +287,6 @@ const module = {
       }
     }
   },
-
-  async generateVersions(project: any): Promise<any[]> {
-    console.log(project);
-    const noOfVersions = Util.getRandomWholeNumber(versionsRNG, maxVersions);
-    const versions: any[] = [];
-    for (let i = 0; i < noOfVersions; i++) {
-      versions.push(await api.createVersion());
-    }
-    return versions;
-  },
 };
 
 // main logic
@@ -283,7 +306,7 @@ const generateData = async (
     if (issues.length > 0) {
       console.log("issues are there");
       console.log(issues.length);
-      // await module.generateLinks(issues);
+      await module.generateLinks(issues);
     }
   }
 };
