@@ -72,6 +72,7 @@ export default class JiraCloudImpl implements JiraAPI {
       data: JSON.stringify(data),
     });
     return response.body && JSON.parse(response.body);
+
   }
 
   getCurrentIssueId(): Promise<string> {

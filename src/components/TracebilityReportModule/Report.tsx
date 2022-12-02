@@ -43,11 +43,11 @@ export const Report = ({
   errors
 }: Props): JSX.Element => {
   
-  //TODO: probably we may improve this calculation
+  // TODO: probably we may improve this calculation
   const calculateTableHeight = (errors) => {
-    const headingHeight = 40 + 8, //8: margin top
-      toolbarHeight = 94 + 8, //8: table top margin
-      footerHeight = 32 + 8 + 8,//more button 8: margin top and bottom
+    const headingHeight = 40 + 8; // 8: margin top
+      const toolbarHeight = 94 + 8; // 8: table top margin
+      const footerHeight = 32 + 8 + 8; const // more button 8: margin top and bottom
       errorsHeight = errors && errors.length ? ((52 + 8) * errors.length) : 0;
     const finalHeight = getScreenHeight() - headingHeight - toolbarHeight - footerHeight - errorsHeight - 2;
     return finalHeight < 200 ? 200 : finalHeight;
@@ -58,7 +58,7 @@ export const Report = ({
   useEffect(() => {
     const resizeHandler = () => {
       setTableHeight((prevHeight) => {
-        //@ts-ignore
+        // @ts-expect-error
         AP.sizeToParent();
         return calculateTableHeight(errors);
       });

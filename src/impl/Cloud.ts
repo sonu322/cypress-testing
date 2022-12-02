@@ -522,7 +522,11 @@ export default class APIImpl implements LXPAPI {
         const linkedIssue = linkedIssues.find(
           (linkedIssue) => linkedIssue.id === link.issueId
         );
-        sortedLinks[link.linkTypeId].push(linkedIssue);
+        if (linkedIssue !== undefined) {
+          sortedLinks[link.linkTypeId].push(linkedIssue);
+        } else {
+          throwError(`search could not fetch linked issues of ${link.issueId}`);
+        }
       });
       populatedIssues.push(item);
     });
@@ -537,15 +541,32 @@ export default class APIImpl implements LXPAPI {
   ): Promise<{ data: IssueWithSortedLinks[]; total: number }> {
     const searchResult = await this.searchIssues(jql, fields, start, max);
     const issues: Issue[] = searchResult.data;
+
     const { jqlString: linkedIssuesJQL, total } =
       this._getLinkedIssueJQL(issues);
-    const linkedIssuesResult = await this.searchIssues(
-      linkedIssuesJQL,
-      fields,
-      0,
-      total
-    );
-    const linkedIssues = linkedIssuesResult.data;
+    let linkedIssues = [];
+    if (linkedIssuesJQL !== undefined && linkedIssuesJQL.length > 0) {
+      const linkedIssuesResult = await this.searchIssues(
+        linkedIssuesJQL,
+        fields,
+        0,
+        total
+      );
+      linkedIssues = linkedIssuesResult.data;
+      const totalLinkedIssues = linkedIssuesResult.total;
+      // danger - while loop may lead to infinite looping
+      while (linkedIssues.length < totalLinkedIssues) {
+        const moreLinkedIssuesData = await this.searchIssues(
+          linkedIssuesJQL,
+          fields,
+          linkedIssues.length,
+          totalLinkedIssues
+        );
+        linkedIssues = linkedIssues.concat(moreLinkedIssuesData.data);
+      }
+      // danger end
+    }
+
     const populatedIssues = this._populateIssueLinks(issues, linkedIssues);
     return { data: populatedIssues, total: searchResult.total };
   }
