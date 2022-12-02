@@ -496,7 +496,10 @@ export default class APIImpl implements LXPAPI {
     issues.forEach((issue) => {
       issue.links.forEach((link) => {
         const { issueId } = link;
-        if (!ids.includes(issueId)) {
+        if (
+          !ids.includes(issueId)
+          && issues.find(issue => issue.id === issueId) === undefined
+        ) {
           ids.push(issueId);
         }
       });
@@ -522,7 +525,11 @@ export default class APIImpl implements LXPAPI {
         const linkedIssue = linkedIssues.find(
           (linkedIssue) => linkedIssue.id === link.issueId
         );
-        sortedLinks[link.linkTypeId].push(linkedIssue);
+        if (linkedIssue !== undefined) {
+          sortedLinks[link.linkTypeId].push(linkedIssue);
+        } else {
+          throwError(`search could not fetch linked issue ${link.issueId}`);
+        }
       });
       populatedIssues.push(item);
     });
@@ -545,7 +552,8 @@ export default class APIImpl implements LXPAPI {
       0,
       total
     );
-    const linkedIssues = linkedIssuesResult.data;
+    let linkedIssues = linkedIssuesResult.data;
+    linkedIssues = linkedIssues.concat(issues);
     const populatedIssues = this._populateIssueLinks(issues, linkedIssues);
     return { data: populatedIssues, total: searchResult.total };
   }

@@ -43,15 +43,19 @@ export const LinkTypeRow = ({
 
     if (issue.sortedLinks[linkId] !== undefined) {
       const allIssues = [];
-      issue.sortedLinks[linkId].forEach((issue) => {
-        const singleIssue = (
-          <IssueCard
-            key={`${issue.id}-${issue.type?.id}`}
-            issueData={issue}
-            selectedIssueFieldIds={issueFieldIds}
-          />
-        );
-        allIssues.push(singleIssue);
+      issue.sortedLinks[linkId].forEach((linkedIssue) => {
+        if (linkedIssue !== undefined) {
+          const singleIssue = (
+            <IssueCard
+              key={`${linkedIssue.id}-${linkedIssue.type?.id}`}
+              issueData={linkedIssue}
+              selectedIssueFieldIds={issueFieldIds}
+            />
+          );
+          allIssues.push(singleIssue);
+        } else {
+          console.log(issue.issueKey, issue.sortedLinks);
+        }
       });
       if (allIssues.length > 0) {
         issueCell = (
