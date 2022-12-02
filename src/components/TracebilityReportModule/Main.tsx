@@ -22,7 +22,7 @@ const MarginAddedContainer = styled.div`
   margin-top: 8px;
   margin-bottom: 8px;
 `;
-const DEFAULT_ROWS_PER_PAGE = 100;
+const DEFAULT_ROWS_PER_PAGE = 20;
 const START_INDEX = 0;
 
 interface Props {
