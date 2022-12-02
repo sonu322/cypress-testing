@@ -23,11 +23,8 @@ export default class TracebilityReportUtils {
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
     setTotal: React.Dispatch<React.SetStateAction<number>>,
     handleError: (err: unknown) => void,
-    clearAllErrors?: () => void,
-    previouslyFetchedIssues?: IssueWithSortedLinks[],
+    clearAllErrors?: () => void
   ): Promise<void> {
-
-    console.log("called populate issues")
     setIsLoading(true);
     updateIssues([]);
     if (clearAllErrors !== undefined) {
@@ -38,13 +35,11 @@ export default class TracebilityReportUtils {
         jqlString,
         issueFields,
         startIndex,
-        maxResults,
-        previouslyFetchedIssues
+        maxResults
       );
       const { data, total } = searchResult;
       updateIssues(data);
       setIsLoading(false);
-      console.log(startIndex, maxResults, total);
       if (setTotal !== null) {
         setTotal(total);
       }
@@ -66,7 +61,7 @@ const processByLinkType = (
     if (issue.sortedLinks[selectedId] !== undefined) {
       const rowItem = [];
       issue.sortedLinks[selectedId].forEach((issue) => {
-        rowItem.push(issue.issueKey);
+        rowItem.push(issue?.issueKey);
       });
       rowItemString = `"${rowItem.toString()}"`;
     }
@@ -86,7 +81,7 @@ const processByIssueType = (
 
     Object.values(issue.sortedLinks).forEach((issues) => {
       const newIssues = issues.filter((issue) => {
-        return issue.type?.id === selectedId;
+        return issue?.type?.id === selectedId;
       });
       issuesOfType = issuesOfType.concat(newIssues);
     });

@@ -88,7 +88,6 @@ export const Main = ({
   }, [jqlString]);
 
   const fetchMoreIssues = (): void => {
-    console.log(totalNumberOfIssues);
     void tracebilityReportUtils.populateIssues(
       jqlString,
       issueFields,
@@ -98,8 +97,7 @@ export const Main = ({
       setAreMoreIssuesLoading,
       null,
       handleNewError,
-      undefined,
-      filteredIssues
+      undefined
     );
   };
 
