@@ -58,6 +58,8 @@ export default class JiraCloudImpl implements JiraAPI {
     start?: number,
     max?: number
   ): Promise<JiraIssueSearchResult> {
+    console.log("SEARCH ISSSUES IN SRC/IMPL/JIRA/CLOUD.TS CALLED")
+    console.log(start, max)
     const data = {
       fields,
       startAt: start ?? 0,
@@ -71,7 +73,9 @@ export default class JiraCloudImpl implements JiraAPI {
       url: "/rest/api/3/search",
       data: JSON.stringify(data),
     });
+    console.log(response.body)
     return response.body && JSON.parse(response.body);
+
   }
 
   getCurrentIssueId(): Promise<string> {

@@ -23,8 +23,11 @@ export default class TracebilityReportUtils {
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
     setTotal: React.Dispatch<React.SetStateAction<number>>,
     handleError: (err: unknown) => void,
-    clearAllErrors?: () => void
+    clearAllErrors?: () => void,
+    previouslyFetchedIssues?: IssueWithSortedLinks[],
   ): Promise<void> {
+
+    console.log("called populate issues")
     setIsLoading(true);
     updateIssues([]);
     if (clearAllErrors !== undefined) {
@@ -35,11 +38,13 @@ export default class TracebilityReportUtils {
         jqlString,
         issueFields,
         startIndex,
-        maxResults
+        maxResults,
+        previouslyFetchedIssues
       );
       const { data, total } = searchResult;
       updateIssues(data);
       setIsLoading(false);
+      console.log(startIndex, maxResults, total);
       if (setTotal !== null) {
         setTotal(total);
       }

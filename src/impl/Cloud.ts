@@ -467,6 +467,8 @@ export default class APIImpl implements LXPAPI {
     start?: number,
     max?: number
   ): Promise<{ data: Issue[]; total: number }> {
+    console.log("called searchIssues !!!!!!!!!!!!!!!!!!");
+    console.log(start, max, jql);
     try {
       const fieldIds = this._getFieldIds(fields);
       const issues: JiraIssueSearchResult = await this.api.searchIssues(
@@ -479,9 +481,12 @@ export default class APIImpl implements LXPAPI {
       const result: Issue[] = [];
       const total = issues.total;
       const jiraIssues = issues?.issues || [];
+      console.log("jira issue length", jiraIssues.length);
       for (const issue of jiraIssues) {
         result.push(this._convertIssue(issue, fields));
       }
+      console.log(result.length);
+      console.log(result.length, total)
       return { data: result, total };
     } catch (error) {
       console.error(error);
@@ -490,16 +495,23 @@ export default class APIImpl implements LXPAPI {
   }
 
   private readonly _getLinkedIssueJQL = (
-    issues: Issue[]
+    issues: Issue[],
+    previouslyLoadedIssues?: IssueWithSortedLinks[]
   ): { jqlString: string; total: number } => {
     const ids: string[] = [];
     issues.forEach((issue) => {
       issue.links.forEach((link) => {
-        const { issueId } = link;
-        if (
-          !ids.includes(issueId)
-          && issues.find(issue => issue.id === issueId) === undefined
+        let isIssueAlreadyLoaded = false;
+        if (issues.find((issue) => issue.id === issueId) !== undefined) {
+          isIssueAlreadyLoaded = true;
+        } else if (
+          previouslyLoadedIssues!== undefined && previouslyLoadedIssues.length>0 && previouslyLoadedIssues.find((issue) => issue.id === issueId) !==
+          undefined
         ) {
+          isIssueAlreadyLoaded = true;
+        }
+        const { issueId } = link;
+        if (!ids.includes(issueId) && !isIssueAlreadyLoaded) {
           ids.push(issueId);
         }
       });
@@ -528,7 +540,7 @@ export default class APIImpl implements LXPAPI {
         if (linkedIssue !== undefined) {
           sortedLinks[link.linkTypeId].push(linkedIssue);
         } else {
-          throwError(`search could not fetch linked issue ${link.issueId}`);
+          throwError(`search could not fetch linked issues of ${link.issueId}`);
         }
       });
       populatedIssues.push(item);
@@ -540,20 +552,67 @@ export default class APIImpl implements LXPAPI {
     jql: string,
     fields: IssueField[],
     start?: number,
-    max?: number
+    max?: number,
+    previouslyFetchedIssues?: Array<Issue | IssueWithLinkedIssues>
   ): Promise<{ data: IssueWithSortedLinks[]; total: number }> {
+    // remove concatenated previos issues before returning
+    console.log("called searchLinkedIssues");
+    console.log(start, max);
     const searchResult = await this.searchIssues(jql, fields, start, max);
     const issues: Issue[] = searchResult.data;
+    console.log(issues.length, max, searchResult.total);
+    let issuesToSearch = issues;
+    if (
+      previouslyFetchedIssues !== undefined &&
+      previouslyFetchedIssues.length > 0
+    ) {
+      issuesToSearch = previouslyFetchedIssues.concat(issues);
+    }
+    console.log("called _getLinkedIssueJQL");
     const { jqlString: linkedIssuesJQL, total } =
-      this._getLinkedIssueJQL(issues);
-    const linkedIssuesResult = await this.searchIssues(
+      this._getLinkedIssueJQL(issues, previouslyFetchedIssues);
+    console.log("called search issues for linked issues");
+    console.log(0, total);
+    let linkedIssues = [];
+if(linkedIssuesJQL !== undefined && linkedIssuesJQL.length>0) {
+  console.log("linkedissueqjl", linkedIssuesJQL)
+  const linkedIssuesResult = await this.searchIssues(
+    linkedIssuesJQL,
+    fields,
+    0,
+    total
+  );
+  linkedIssues = linkedIssuesResult.data;
+  console.log(
+    "==============================================================="
+  );
+  console.log(linkedIssues.length, linkedIssuesResult.total);
+  console.log(
+    "==============================================================="
+  );
+  const totalLinkedIssues = linkedIssuesResult.total;
+  // let linkedIssueLength = linkedIssues.length;
+  // danger 
+  while (linkedIssues.length < totalLinkedIssues) {
+    console.log(linkedIssues.length, totalLinkedIssues);
+    console.log("calling search issues again because of large no of links ");
+    
+    console.log(linkedIssues.length)
+    const moreLinkedIssuesData = await this.searchIssues(
       linkedIssuesJQL,
       fields,
-      0,
-      total
+      linkedIssues.length,
+      totalLinkedIssues
     );
-    let linkedIssues = linkedIssuesResult.data;
-    linkedIssues = linkedIssues.concat(issues);
+    linkedIssues = linkedIssues.concat(moreLinkedIssuesData.data);
+  }
+  // danger end
+  console.log(linkedIssues.length)
+}
+
+
+    linkedIssues = linkedIssues.concat(issuesToSearch);
+    console.log("called populate links");
     const populatedIssues = this._populateIssueLinks(issues, linkedIssues);
     return { data: populatedIssues, total: searchResult.total };
   }

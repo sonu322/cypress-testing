@@ -14,9 +14,7 @@ import {
 const Container = styled.div`
   width: 100%;
 `;
-const FullHeightContainer = styled.div`
-  
-`;
+const FullHeightContainer = styled.div``;
 const TableContainer = styled.div`
   display: flex;
 `;
@@ -24,7 +22,7 @@ const MarginAddedContainer = styled.div`
   margin-top: 8px;
   margin-bottom: 8px;
 `;
-const DEFAULT_ROWS_PER_PAGE = 20;
+const DEFAULT_ROWS_PER_PAGE = 100;
 const START_INDEX = 0;
 
 interface Props {
@@ -90,15 +88,18 @@ export const Main = ({
   }, [jqlString]);
 
   const fetchMoreIssues = (): void => {
+    console.log(totalNumberOfIssues);
     void tracebilityReportUtils.populateIssues(
       jqlString,
       issueFields,
       filteredIssues.length,
-      totalNumberOfIssues,
+      DEFAULT_ROWS_PER_PAGE,
       addMoreIssues,
       setAreMoreIssuesLoading,
       null,
-      handleNewError
+      handleNewError,
+      undefined,
+      filteredIssues
     );
   };
 

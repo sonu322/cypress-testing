@@ -139,7 +139,8 @@ export default interface LXPAPI {
     jql: string,
     fields: IssueField[],
     start?: number,
-    max?: number
+    max?: number,
+    previouslyFetchedIssues?: Array<Issue | IssueWithLinkedIssues>
   ) => Promise<{ data: IssueWithSortedLinks[]; total: number }>;
 
   getFilters: () => Promise<Filter[]>;
