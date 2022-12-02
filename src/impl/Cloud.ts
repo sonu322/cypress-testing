@@ -495,7 +495,6 @@ export default class APIImpl implements LXPAPI {
     const ids: string[] = [];
     issues.forEach((issue) => {
       issue.links.forEach((link) => {
-
         const { issueId } = link;
         if (!ids.includes(issueId)) {
           ids.push(issueId);
@@ -542,33 +541,31 @@ export default class APIImpl implements LXPAPI {
   ): Promise<{ data: IssueWithSortedLinks[]; total: number }> {
     const searchResult = await this.searchIssues(jql, fields, start, max);
     const issues: Issue[] = searchResult.data;
-    let issuesToSearch = issues;
 
     const { jqlString: linkedIssuesJQL, total } =
       this._getLinkedIssueJQL(issues);
     let linkedIssues = [];
-if(linkedIssuesJQL !== undefined && linkedIssuesJQL.length>0) {
-  const linkedIssuesResult = await this.searchIssues(
-    linkedIssuesJQL,
-    fields,
-    0,
-    total
-  );
-  linkedIssues = linkedIssuesResult.data;
-  const totalLinkedIssues = linkedIssuesResult.total;
-  // let linkedIssueLength = linkedIssues.length;
-  // danger 
-  while (linkedIssues.length < totalLinkedIssues) {
-    const moreLinkedIssuesData = await this.searchIssues(
-      linkedIssuesJQL,
-      fields,
-      linkedIssues.length,
-      totalLinkedIssues
-    );
-    linkedIssues = linkedIssues.concat(moreLinkedIssuesData.data);
-  }
-  // danger end
-}
+    if (linkedIssuesJQL !== undefined && linkedIssuesJQL.length > 0) {
+      const linkedIssuesResult = await this.searchIssues(
+        linkedIssuesJQL,
+        fields,
+        0,
+        total
+      );
+      linkedIssues = linkedIssuesResult.data;
+      const totalLinkedIssues = linkedIssuesResult.total;
+      // danger - while loop may lead to infinite looping
+      while (linkedIssues.length < totalLinkedIssues) {
+        const moreLinkedIssuesData = await this.searchIssues(
+          linkedIssuesJQL,
+          fields,
+          linkedIssues.length,
+          totalLinkedIssues
+        );
+        linkedIssues = linkedIssues.concat(moreLinkedIssuesData.data);
+      }
+      // danger end
+    }
 
     const populatedIssues = this._populateIssueLinks(issues, linkedIssues);
     return { data: populatedIssues, total: searchResult.total };
