@@ -67,7 +67,7 @@ export const TracebilityReportModule = (): JSX.Element => {
   };
   const api = useContext(APIContext);
   const handleNewError = (err: unknown): void => {
-    console.log(err);
+    console.error(err);
     setErrors((prevErrors) => [...prevErrors, err]);
   };
   const clearAllErrors = (): void => {

@@ -53,8 +53,6 @@ export const LinkTypeRow = ({
             />
           );
           allIssues.push(singleIssue);
-        } else {
-          console.log(issue.issueKey, issue.sortedLinks);
         }
       });
       if (allIssues.length > 0) {
