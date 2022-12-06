@@ -259,7 +259,6 @@ export default class APIImpl implements LXPAPI {
       ];
 
       const fields = await this.getAllIssueFields();
-      console.log("fields", fields);
       await this.addCustomFields(issueFields, fields);
       const fieldMap = {};
       issueFields.forEach((issueField) => {

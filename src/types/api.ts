@@ -22,7 +22,7 @@ export interface Issue {
   id: ID;
   priority: IssuePriority;
   type: IssueType;
-  fixVersions: IssueVersion;
+  fixVersions: IssueVersion[];
   status: IssueStatus;
   summary: string;
   isResolved: boolean;

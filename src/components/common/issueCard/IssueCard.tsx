@@ -67,8 +67,6 @@ export const IssueCard = ({
   const assigneeInfo = issueData.assignee;
   const statusInfo = issueData.status;
   const versionInfo = issueData.fixVersions;
-  console.log("versionInfo", versionInfo);
-  console.log("issueData", issueData);
   // component to render
   return (
     <Container>
