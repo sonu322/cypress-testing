@@ -42,7 +42,7 @@ export default class LXPAPI {
 
   async _makeFetchRequest(
     apiEndpoint: string,
-    method: string,
+    requestMethod?: string,
     bodyData?: object,
     requestHeaders?: RequestHeaders
   ): Promise<any> {
@@ -61,6 +61,7 @@ export default class LXPAPI {
       if (headers === undefined) {
         headers = this._getHeaders();
       }
+      const method = requestMethod ?? "GET";
       const res = await fetch(`${this.baseURL}/${apiEndpoint}`, {
         method,
         headers,
@@ -124,25 +125,7 @@ export default class LXPAPI {
   }
 
   async getFullProject(project: any): Promise<any> {
-    // try {
-    //   const res = await fetch(project.self, {
-    //     method: "GET",
-    //     headers: {
-    //       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    //       Authorization: `Basic ${base64.encode(
-    //         `${this.username}:${this.password}`
-    //       )}`,
-    //       "Content-Type": "application/json",
-    //     },
-    //   });
-    //   const data = await res.json();
-
-    //   return data;
-    // } catch (error) {
-    //   console.log("get full project error");
-    //   console.log(error);
-    // }
-    const data = await this._makeFetchRequest(`project/${project.key}`, "GET");
+    const data = await this._makeFetchRequest(`project/${project.key}`);
     return data;
   }
 
@@ -189,28 +172,30 @@ export default class LXPAPI {
   }
 
   async getFields(): Promise<any[]> {
-    try {
-      const res = await fetch(`${this.baseURL}/field`, {
-        method: "GET",
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          Authorization: `Basic ${base64.encode(
-            `${this.username}:${this.password}`
-          )}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
-      const data = await res.json();
-      if (res.ok) {
-        return data;
-      } else {
-        throw new Error("some error occurred fetching fields");
-      }
-    } catch (error) {
-      console.log("get fields error");
-      console.log(error);
-    }
+    // try {
+    //   const res = await fetch(`${this.baseURL}/field`, {
+    //     method: "GET",
+    //     headers: {
+    //       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    //       Authorization: `Basic ${base64.encode(
+    //         `${this.username}:${this.password}`
+    //       )}`,
+    //       "Content-Type": "application/json",
+    //       Accept: "application/json",
+    //     },
+    //   });
+    //   const data = await res.json();
+    //   if (res.ok) {
+    //     return data;
+    //   } else {
+    //     throw new Error("some error occurred fetching fields");
+    //   }
+    // } catch (error) {
+    //   console.log("get fields error");
+    //   console.log(error);
+    // }
+    const data = await this._makeFetchRequest("field");
+    return data;
   }
 
   async getPriorities(): Promise<any[]> {
@@ -885,7 +870,7 @@ export default class LXPAPI {
 
   // fetch current user
   async getMyself(): Promise<any> {
-    const myself = await this._makeFetchRequest("/myself", "GET");
+    const myself = await this._makeFetchRequest("myself");
     return myself;
   }
 
