@@ -10,6 +10,7 @@ import { AssigneeInfo } from "./AssigneeInfo";
 import { IssueSummary } from "./IssueSummary";
 import { Issue } from "../../../types/api";
 import { StatusText } from "./StatusInfo";
+import { FixVersion } from "./FixVersion";
 
 const Container = styled.div`
   background-color: #fff;
@@ -65,6 +66,9 @@ export const IssueCard = ({
   const issueTypeInfo = issueData.type;
   const assigneeInfo = issueData.assignee;
   const statusInfo = issueData.status;
+  const versionInfo = issueData.fixVersions;
+  console.log("versionInfo", versionInfo);
+  console.log("issueData", issueData);
   // component to render
   return (
     <Container>
@@ -87,6 +91,7 @@ export const IssueCard = ({
           )}
         </FooterSideContainer>
         <FooterSideContainer>
+          {selectedMap["fixVersions"] && <FixVersion versionInfo={versionInfo} />} 
           {selectedMap["status"] && <StatusText statusInfo={statusInfo} />}
           <IssueKey
             isResolved={issueData.isResolved}

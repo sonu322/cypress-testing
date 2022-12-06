@@ -22,7 +22,7 @@ export interface Issue {
   id: ID;
   priority: IssuePriority;
   type: IssueType;
-  fixVersions: IssueVersion[];
+  fixVersions: IssueVersion;
   status: IssueStatus;
   summary: string;
   isResolved: boolean;
@@ -64,12 +64,13 @@ export interface IssueWithSortedLinks extends Issue {
   };
 }
 
-export interface IssueVersion {
+export interface IssueVersion extends IssueOption { 
   id: ID;
   name: string;
   archived: boolean;
   released: boolean;
   releaseDate: string;
+  versionsColor: string;
 }
 
 export interface IssueStatus extends IssueOption {
@@ -145,4 +146,4 @@ export default interface LXPAPI {
   getFilters: () => Promise<Filter[]>;
 
   getCurrentProject: (projectKey?: string) => Promise<Project>;
-}
+};

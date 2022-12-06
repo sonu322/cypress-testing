@@ -251,9 +251,15 @@ export default class APIImpl implements LXPAPI {
           name: "Assignee",
           jiraId: "assignee",
         },
+        {
+          id: "fixVersions",
+          name:"Fix versions",
+          jiraId: "fixVersions",
+        }
       ];
 
       const fields = await this.getAllIssueFields();
+      console.log("fields", fields);
       await this.addCustomFields(issueFields, fields);
       const fieldMap = {};
       issueFields.forEach((issueField) => {
