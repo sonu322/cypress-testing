@@ -64,7 +64,7 @@ export interface IssueWithSortedLinks extends Issue {
   };
 }
 
-export interface IssueVersion extends IssueOption { 
+export interface IssueVersion { 
   id: ID;
   name: string;
   archived: boolean;
