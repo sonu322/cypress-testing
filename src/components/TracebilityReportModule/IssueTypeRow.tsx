@@ -67,7 +67,7 @@ export const IssueTypeRow = ({
     let issuesOfType: Issue[] = [];
     Object.values(issue.sortedLinks).forEach((issues) => {
       const newIssues = issues.filter((issue) => {
-        return issue.type?.id === typeId;
+        return issue?.type?.id === typeId;
       });
       issuesOfType = issuesOfType.concat(newIssues);
     });

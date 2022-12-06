@@ -61,7 +61,7 @@ const processByLinkType = (
     if (issue.sortedLinks[selectedId] !== undefined) {
       const rowItem = [];
       issue.sortedLinks[selectedId].forEach((issue) => {
-        rowItem.push(issue.issueKey);
+        rowItem.push(issue?.issueKey);
       });
       rowItemString = `"${rowItem.toString()}"`;
     }
@@ -81,7 +81,7 @@ const processByIssueType = (
 
     Object.values(issue.sortedLinks).forEach((issues) => {
       const newIssues = issues.filter((issue) => {
-        return issue.type?.id === selectedId;
+        return issue?.type?.id === selectedId;
       });
       issuesOfType = issuesOfType.concat(newIssues);
     });

@@ -14,9 +14,7 @@ import {
 const Container = styled.div`
   width: 100%;
 `;
-const FullHeightContainer = styled.div`
-  
-`;
+const FullHeightContainer = styled.div``;
 const TableContainer = styled.div`
   display: flex;
 `;
@@ -94,11 +92,12 @@ export const Main = ({
       jqlString,
       issueFields,
       filteredIssues.length,
-      totalNumberOfIssues,
+      DEFAULT_ROWS_PER_PAGE,
       addMoreIssues,
       setAreMoreIssuesLoading,
       null,
-      handleNewError
+      handleNewError,
+      undefined
     );
   };
 
