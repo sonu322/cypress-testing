@@ -1,6 +1,6 @@
 export default {
-  baseURL: "base url. ex: https://bob.atlassian.net/rest/api/3",
-  username: "username. ex:bob@bingo.com",
-  password: "atlassian api token",
+  baseURL: "https://mahima-optimizory.atlassian.net/rest/api/3",
+  username: "mahima@optimizory.com",
+  password: "hw6wqf65fMtxY9fzlL6W578A",
   noOfRecords: 100,
 };
