@@ -17,15 +17,15 @@ export const mockProjectsData = [
     projectTemplateKey:
       "com.pyxis.greenhopper.jira:gh-simplified-agility-scrum",
     // story points enabled
-    name: "testnextgen",
-    key: "TNG",
+    name: "testnextgen8",
+    key: "TNG8",
   },
   {
     description:
       "Ad velit cupidatat consequat nulla dolore in fugiat ea laborum amet duis ad.",
     projectTemplateKey:
       "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic",
-    name: "testclassic",
-    key: "TCL",
+    name: "testclass9",
+    key: "TCL9",
   },
 ];
