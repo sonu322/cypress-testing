@@ -45,7 +45,7 @@ const render = async () => {
  * JIRA function to initialize LXP - Links Explorer tab content
  */
 // @ts-ignore
-JIRA.ViewIssueTabs.onTabReady(function (event, eee) {
+JIRA.ViewIssueTabs && JIRA.ViewIssueTabs.onTabReady(function (event, eee) {
   render();
 });
 
