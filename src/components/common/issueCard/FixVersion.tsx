@@ -18,16 +18,12 @@ export const FixVersion = ({ versionInfo }: Props): JSX.Element => {
   else {
     totalversions = versionInfo[0]?.name;
   }
-let map = versionInfo.map((versionInfo) => {
-  if(length > 1){
-  return versionInfo.name + ", ";
-  }
-  else{
+let versionNames = versionInfo.map((versionInfo) => {
     return versionInfo.name;
-  }
 });
+const tooltipContent = versionNames.join(", ");
     return (
-      <TooltipContainer content={map} position="bottom">
+      <TooltipContainer content={tooltipContent} position="bottom">
         <Lozenge>
           {totalversions}  
         </Lozenge>
