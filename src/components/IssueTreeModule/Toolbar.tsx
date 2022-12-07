@@ -3,10 +3,10 @@ import { Dropdown } from "../common/Dropdown";
 import { ButtonGroup } from "@atlaskit/button";
 import styled from "styled-components";
 import { IssueOptionsDropdown } from "./IssueOptionsDropdown";
-import { helpLink } from "../../constants";
+import { helpLinkUrl } from "../../constants/common";
 import { ExportContent } from "../common/ExportContent";
 import { HelpLink } from "../common/HelpLink";
-
+import { useTranslation } from "react-i18next";
 export const Container = styled.div`
   display: flex;
   justify-content: space-between;
@@ -24,6 +24,7 @@ export const Toolbar = ({
   exportTree,
   isExportDisabled,
 }) => {
+  const { t } = useTranslation();
   return (
     <Container>
       <ButtonGroup>
@@ -43,17 +44,17 @@ export const Toolbar = ({
       <div>
         <ButtonGroup>
           <Dropdown
-            dropdownName={"Issue Card Fields"}
+            dropdownName={t("lxp.toolbar.issue-card-fields")}
             options={issueCardOptions}
             selectedOptions={selectedIssueFieldIds}
             updateSelectedOptions={setSelectedIssueFieldIds}
           />
           <ExportContent
-              isDisabled={isExportDisabled}
-            description={"Export issue tree to csv"}
+            isDisabled={isExportDisabled}
+            description={t("lxp.toolbar.export-csv.title")}
             exportContent={exportTree}
           />
-          <HelpLink description={"Get help"} href={helpLink} />
+          <HelpLink description={t("lxp.common.get-help")} href={helpLinkUrl} />
         </ButtonGroup>
       </div>
     </Container>

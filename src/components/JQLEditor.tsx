@@ -1,14 +1,9 @@
 import React from "react";
 import Button from "@atlaskit/button";
+import { jqlDialogOptions } from "../constants/traceabilityReport";
 // @ts-expect-error
 const _AP: any = AP;
-const options = {
-  header: "Filter Issues with JQL Query",
-  descriptionText: "Use a new JQL query to search issues",
-  submitText: "Use filter",
-  cancelText: "Cancel",
-  jql: "order by status ASC",
-};
+
 interface Props {
   selectedFilterId: string;
   setSelectedFilterId: React.Dispatch<React.SetStateAction<string>>;
@@ -18,7 +13,8 @@ export const JQLEditor = ({
   selectedFilterId,
   setSelectedFilterId,
 }: Props): JSX.Element => {
-  if (selectedFilterId !== null) {
+  const options = { ...jqlDialogOptions };
+  if (Boolean(selectedFilterId) && selectedFilterId !== null) {
     options.jql = selectedFilterId;
   }
   const callback = function ({ jql }: { jql: string }): void {

@@ -11,6 +11,7 @@ import {
   IssueType,
   IssueWithSortedLinks,
 } from "../../types/api";
+import { useTranslation } from "react-i18next";
 const Container = styled.div`
   width: 100%;
 `;
@@ -60,6 +61,7 @@ export const Main = ({
 }: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
+  const { t } = useTranslation();
   const api = useContext(APIContext);
   const addMoreIssues = (issues: IssueWithSortedLinks[]): void => {
     const newIssues = filteredIssues ?? [];
@@ -111,7 +113,7 @@ export const Main = ({
     if (filteredIssues.length === 0) {
       return (
         <FullHeightContainer>
-          <em>No matching issues</em>
+          <em>{t("lxp.common.no-issues-text")}</em>
         </FullHeightContainer>
       );
     }
@@ -134,7 +136,7 @@ export const Main = ({
             isDisabled={filteredIssues.length >= totalNumberOfIssues}
             onClick={fetchMoreIssues}
           >
-            More
+            {t("traceability-report.load-more-issues-button.name")}
           </LoadingButton>
         </MarginAddedContainer>
       </Container>
@@ -142,7 +144,7 @@ export const Main = ({
   } else {
     return (
       <FullHeightContainer>
-        <em>Please select filter to view report</em>
+        <em>{t("traceability-report.select-filter.text")}</em>
       </FullHeightContainer>
     );
   }

@@ -37,11 +37,7 @@ export const reportCsv = function (classifieds, links) {
   });
   let header = headerLinks.toString();
   header = header += "\n";
-  // if (header) {
   content += header;
-  // } else {
-  //   content += `"","","","","","",""\n`;
-  // }
 
   classifieds.forEach((classified) => {
     const rowItems = [];
@@ -61,13 +57,7 @@ export const reportCsv = function (classifieds, links) {
       }
       rowItems.push(`"${item}"`);
     });
-    // if(classified.subtasks) {
-    //   subtasks.forEach(subtask => {
-    //     rowItems.push(`"${subtask.key}"`)
-    //   });
-    // } else {
-    //   rowItems.push("")
-    // }
+
     if (classified.parent) {
       rowItems.unshift(`"${classified.parent.key}"`);
     } else {
