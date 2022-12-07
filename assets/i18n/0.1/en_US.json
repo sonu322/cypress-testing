@@ -42,7 +42,6 @@
   "lxp.common.epic-links": "Epic Links",
   // new
   "lxp.toolbar.issue-card-fields": "Issue Card Fields",
-
   "lxp.toolbar.link-type.text": "Issue Link Type",
   "lxp.toolbar.link-type.title": "Select Issue link type to show",
   "lxp.toolbar.link-direction.text": "Link Direction",
@@ -126,7 +125,7 @@
   "plugin.license.storage.admin.upm.licensing.aware": "Sorry, you cannot update your plugin license on this screen. Please use the <a href=''{0}''>Plugin Manager</a> instead.",
   "lxp.license.do-not-have": "No license found",
   "lxp.license.no-resource": "License resource not available, contact system   administrator",
-  "lxp.license-error.title.text": "Licence Error",
+  "lxp.license-error.title.text": "License Error",
   "lxp.license.get.text": "Visit UPM to get or update licence",
   "version-links-report.label": "Links Explorer - Version Report",
   "version-links-report.name": "Links Explorer - Version Report",

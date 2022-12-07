@@ -5,6 +5,8 @@ import Backend from "i18next-http-backend";
 import LanguageDetector from "i18next-browser-languagedetector";
 
 import translationEN from "./assets/i18n/0.1/en_US.json";
+import translationENUS from "./assets/i18n/0.1/en_US.json";
+import translationDE from "./assets/i18n/0.1/de_DE.json";
 // don't want to use this?
 // have a look at the Quick start guide
 // for passing in lng and translations on init
@@ -12,6 +14,12 @@ import translationEN from "./assets/i18n/0.1/en_US.json";
 const resources = {
   en: {
     translation: translationEN,
+  },
+  "en-US": {
+    translation: translationENUS,
+  },
+  "de-DE": {
+    translation: translationDE,
   },
 };
 
@@ -29,7 +37,8 @@ i18n
   // for all options read: https://www.i18next.com/overview/configuration-options
   .init({
     resources,
-    fallbackLng: "en",
+    lng: "de-DE",
+    fallbackLng: "de-DE",
     debug: true,
 
     interpolation: {
