@@ -133,124 +133,124 @@ const module = {
         fullProject.issueTypes.length > 3;
 
       const fields = await api.getFields();
-      console.log("FIELDS", fields);
-      // const versionIds = [];
-      // if (projectStyle === "classic") {
-      //   const numberOfVersions = Util.getRandomWholeNumber(
-      //     versionsNumberRNG,
-      //     maxVersions
-      //   );
-      //   if (numberOfVersions > 0) {
-      //     for (let i = 0; i < numberOfVersions; i++) {
-      //       const version = await api.createProjectVersion(fullProject.id);
-      //       versionIds.push(version.id);
-      //     }
-      //   }
-      // }
-      // const storyPointsField = fields.find((field) =>
-      //   projectStyle === "classic"
-      //     ? field.name === "Story Points"
-      //     : field.name === "Story point estimate"
-      // );
-      // const storyPointsFieldKey = storyPointsField.key;
-      // const parentIssueTypeNames = issueTypeNames.filter(
-      //   (type) => !type.includes("Sub") && !(type === "Epic")
-      // );
+      const versionIds = [];
+      if (projectStyle === "classic") {
+        const numberOfVersions = Util.getRandomWholeNumber(
+          versionsNumberRNG,
+          maxVersions
+        );
+        if (numberOfVersions > 0) {
+          for (let i = 0; i < numberOfVersions; i++) {
+            const version = await api.createProjectVersion(fullProject.id);
+            versionIds.push(version.id);
+          }
+        }
+      }
+      const storyPointsField = fields.find((field) =>
+        projectStyle === "classic"
+          ? field.name === "Story Points"
+          : field.name === "Story point estimate"
+      );
+      const storyPointsFieldKey = storyPointsField.key;
+      const parentIssueTypeNames = issueTypeNames.filter(
+        (type) => !type.includes("Sub") && !(type === "Epic")
+      );
 
-      // // creating parents
-      // const noOfParents = Util.getRandomPositiveNumber(
-      //   parentIssueNumberRNG,
-      //   numberOfIssuesPerType
-      // );
-      // // eslint-disable-next-line prefer-const
-      // let parentIssues = await api.createIssuesInBulk(
-      //   projects[i],
-      //   projectStyle,
-      //   noOfParents,
-      //   parentIssueTypeNames,
-      //   storyPointsFieldKey,
-      //   versionIds,
-      //   shouldSetStoryPointsEstimate
-      // );
-      // if (parentIssues.length > 0) {
-      //   issues = issues.concat(parentIssues);
-      // }
+      // creating parents
+      const noOfParents = Util.getRandomPositiveNumber(
+        parentIssueNumberRNG,
+        numberOfIssuesPerType
+      );
+      // eslint-disable-next-line prefer-const
+      let parentIssues = await api.createIssuesInBulk(
+        projects[i],
+        projectStyle,
+        noOfParents,
+        parentIssueTypeNames,
+        storyPointsFieldKey,
+        versionIds,
+        shouldSetStoryPointsEstimate
+      );
+      if (parentIssues.length > 0) {
+        issues = issues.concat(parentIssues);
+      }
+      // adding epic issues
+      const noOfEpics = Util.getRandomPositiveNumber(
+        epicIssueNumberRNG,
+        numberOfIssuesPerType
+      );
+      const epicIssues = await module.generateEpics(
+        projects[i],
+        noOfEpics,
+        "my-epic",
+        "Epic",
+        projectStyle,
+        fields,
+        versionIds,
+        storyPointsFieldKey,
+        false
+      );
+      if (epicIssues.length > 0) {
+        issues = issues.concat(epicIssues);
+      }
+      // add child issues for epics
 
-      // // // adding epic issues
-      // const noOfEpics = Util.getRandomPositiveNumber(
-      //   epicIssueNumberRNG,
-      //   numberOfIssuesPerType
-      // );
-      // const epicIssues = await module.generateEpics(
-      //   projects[i],
-      //   noOfEpics,
-      //   "my-epic",
-      //   "Epic",
-      //   projectStyle,
-      //   fields,
-      //   versionIds,
-      //   storyPointsFieldKey,
-      //   false
-      // );
-      // if (epicIssues.length > 0) {
-      //   issues = issues.concat(epicIssues);
-      // }
-      // // add child issues for epics
+      const childIssueTypeNames = issueTypeNames.filter(
+        (type) => !type.includes("Sub") && !(type === "Epic")
+      );
+      const childIssues = await module.generateChildIssues(
+        projects[i],
+        numberOfIssuesPerType,
+        childIssueTypeNames,
+        epicIssues,
+        projectStyle,
+        fields,
+        versionIds,
+        storyPointsFieldKey,
+        shouldSetStoryPointsEstimate
+      );
+      if (childIssues.length > 0) {
+        issues = issues.concat(childIssues);
+      }
 
-      // const childIssueTypeNames = issueTypeNames.filter(
-      //   (type) => !type.includes("Sub") && !(type === "Epic")
-      // );
-      // const childIssues = await module.generateChildIssues(
-      //   projects[i],
-      //   numberOfIssuesPerType,
-      //   childIssueTypeNames,
-      //   epicIssues,
-      //   projectStyle,
-      //   fields,
-      //   versionIds,
-      //   storyPointsFieldKey,
-      //   shouldSetStoryPointsEstimate
-      // );
-      // if (childIssues.length > 0) {
-      //   issues = issues.concat(childIssues);
-      // }
+      // add subtasks to parents
+      const subtaskIssueTypeName = issueTypeNames.find((type) =>
+        type.includes("Sub")
+      );
+      parentIssues = parentIssues.concat(childIssues);
+      const subtasks = await module.generateSubtasks(
+        projects[i].key,
+        numberOfIssuesPerType,
+        subtaskIssueTypeName,
+        parentIssues,
+        projectStyle,
+        versionIds
+      );
+      if (subtasks.length > 0) {
+        issues = issues.concat(subtasks);
+      }
 
-      // // add subtasks to parents
-      // const subtaskIssueTypeName = issueTypeNames.find((type) =>
-      //   type.includes("Sub")
-      // );
-      // parentIssues = parentIssues.concat(childIssues);
-      // const subtasks = await module.generateSubtasks(
-      //   projects[i].key,
-      //   numberOfIssuesPerType,
-      //   subtaskIssueTypeName,
-      //   parentIssues,
-      //   projectStyle,
-      //   versionIds
-      // );
-      // if (subtasks.length > 0) {
-      //   issues = issues.concat(subtasks);
-      // }
+      const otherIssueTypeNames = issueTypeNames.filter(
+        (type) => !type.includes("Sub") && !(type === "Epic")
+      );
+      // other issues
+      const otherIssues = await api.createIssuesInBulk(
+        projects[i],
+        projectStyle,
+        numberOfIssuesPerType,
+        otherIssueTypeNames,
+        storyPointsFieldKey,
+        versionIds,
+        shouldSetStoryPointsEstimate
+      );
 
-      // const otherIssueTypeNames = issueTypeNames.filter(
-      //   (type) => !type.includes("Sub") && !(type === "Epic")
-      // );
-      // // other issues
-      // const otherIssues = await api.createIssuesInBulk(
-      //   projects[i],
-      //   projectStyle,
-      //   numberOfIssuesPerType,
-      //   otherIssueTypeNames,
-      //   storyPointsFieldKey,
-      //   versionIds,
-      //   shouldSetStoryPointsEstimate
-      // );
-
-      // if (otherIssues.length > 0) {
-      //   issues = issues.concat(otherIssues);
-      // }
-      // const addStatusPromises = issues.map((issue) => api.addStatusInfo(issue));
-      // await Promise.all(addStatusPromises);
+      if (otherIssues.length > 0) {
+        issues = issues.concat(otherIssues);
+      }
+      const addStatusPromises = issues.map(
+        async (issue) => await api.addStatusInfo(issue)
+      );
+      await Promise.all(addStatusPromises);
     }
 
     return issues;
@@ -293,19 +293,18 @@ const generateData = async (
   console.log("generating projects");
   const projects: any[] = await module.generateProjects(mockProjectsData);
   console.log("successfully fetched projects ✨✨✨");
-  console.log(projects);
   const noOfIssues = noOfRecords / projects.length;
 
   if (projects.length > 0) {
     console.log("generating issues");
     const issues: any[] = await module.generateIssues(projects, noOfIssues);
-    // if (issues.length > 0) {
-    //   console.log("generating links");
-    //   const response = await module.generateLinks(issues);
-    //   if (response === undefined) {
-    //     console.log("done ✨");
-    //   }
-    // }
+    if (issues.length > 0) {
+      console.log("generating links");
+      const response = await module.generateLinks(issues);
+      if (response === undefined) {
+        console.log("done ✨");
+      }
+    }
   }
 };;
 
