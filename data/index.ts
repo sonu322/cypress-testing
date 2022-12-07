@@ -2,11 +2,8 @@ import config from "./config";
 import API from "./api";
 import * as Util from "./util";
 import { mockProjectsData } from "./mockProjectsData";
-const noOfRecords = config.noOfRecords;
-
+const { noOfRecords, maxLinks, maxProjectVersions } = config;
 const api = new API(config.baseURL, config.username, config.password);
-const maxLinks = 5;
-const maxVersions = 5;
 
 // Random number generators
 const linksRNG = Util.getRNG("linksRNG");
@@ -17,7 +14,6 @@ const epicIssueNumberRNG = Util.getRNG("epic-issues");
 const versionsNumberRNG = Util.getRNG("versions-number");
 const module = {
   // generate projects
-
   async generateProjects(
     mockProjectsData: Array<{
       description: string;
@@ -42,6 +38,8 @@ const module = {
     const projects = await Promise.all(promises);
     return projects;
   },
+
+  // generate epic issues
   async generateEpics(
     project: any,
     numberOfIssues: number,
@@ -69,7 +67,8 @@ const module = {
     return epicIssues;
   },
 
-  async generateChildIssues(
+  // generate epic child issues
+  async generateEpicChildIssues(
     project: any,
     numberOfIssues: number,
     childIssueTypeNames: string[],
@@ -97,6 +96,7 @@ const module = {
     return childIssues;
   },
 
+  // generate Subtasks
   async generateSubtasks(
     projectKey: string,
     noOfIssues: number,
@@ -117,8 +117,13 @@ const module = {
     );
     return childIssues;
   },
-  async generateIssues(projects: any, numberOfIssues: number): Promise<any[]> {
+
+  async generateAllIssues(
+    projects: any,
+    numberOfIssues: number
+  ): Promise<any[]> {
     let issues: any[] = [];
+    // loop through projects
     for (let i = 0; i < projects.length; i++) {
       const fullProject = await api.getFullProject(projects[i]);
       const issueTypeNames = fullProject.issueTypes.map(
@@ -132,12 +137,23 @@ const module = {
         projectType === "software" &&
         fullProject.issueTypes.length > 3;
 
+      // get issue fields -> used for finding ids of custom fields like story points
       const fields = await api.getFields();
+
+      // get story points field name
+      const storyPointsField = fields.find((field) =>
+        projectStyle === "classic"
+          ? field.name === "Story Points"
+          : field.name === "Story point estimate"
+      );
+      const storyPointsFieldKey = storyPointsField.key;
+
+      // create project versions
       const versionIds = [];
       if (projectStyle === "classic") {
         const numberOfVersions = Util.getRandomWholeNumber(
           versionsNumberRNG,
-          maxVersions
+          maxProjectVersions
         );
         if (numberOfVersions > 0) {
           for (let i = 0; i < numberOfVersions; i++) {
@@ -146,17 +162,13 @@ const module = {
           }
         }
       }
-      const storyPointsField = fields.find((field) =>
-        projectStyle === "classic"
-          ? field.name === "Story Points"
-          : field.name === "Story point estimate"
-      );
-      const storyPointsFieldKey = storyPointsField.key;
+
+      // get issue types that can be parent issues
       const parentIssueTypeNames = issueTypeNames.filter(
         (type) => !type.includes("Sub") && !(type === "Epic")
       );
 
-      // creating parents
+      // create parents
       const noOfParents = Util.getRandomPositiveNumber(
         parentIssueNumberRNG,
         numberOfIssuesPerType
@@ -175,7 +187,7 @@ const module = {
         issues = issues.concat(parentIssues);
       }
 
-      // // adding epic issues
+      // create epic issues
       const noOfEpics = Util.getRandomPositiveNumber(
         epicIssueNumberRNG,
         numberOfIssuesPerType
@@ -194,12 +206,12 @@ const module = {
       if (epicIssues.length > 0) {
         issues = issues.concat(epicIssues);
       }
-      // add child issues for epics
 
+      // create child issues for epics
       const childIssueTypeNames = issueTypeNames.filter(
         (type) => !type.includes("Sub") && !(type === "Epic")
       );
-      const childIssues = await module.generateChildIssues(
+      const childIssues = await module.generateEpicChildIssues(
         projects[i],
         numberOfIssuesPerType,
         childIssueTypeNames,
@@ -231,10 +243,12 @@ const module = {
         issues = issues.concat(subtasks);
       }
 
+      // get issue types that are not subtasks or epics
       const otherIssueTypeNames = issueTypeNames.filter(
         (type) => !type.includes("Sub") && !(type === "Epic")
       );
-      // other issues
+
+      // create other issues
       const otherIssues = await api.createIssuesInBulk(
         projects[i],
         projectStyle,
@@ -244,17 +258,21 @@ const module = {
         versionIds,
         shouldSetStoryPointsEstimate
       );
-
       if (otherIssues.length > 0) {
         issues = issues.concat(otherIssues);
       }
-      const addStatusPromises = issues.map((issue) => api.addStatusInfo(issue));
+
+      // add issue statuses
+      const addStatusPromises = issues.map(
+        async (issue) => await api.addStatusInfo(issue)
+      );
       await Promise.all(addStatusPromises);
     }
 
     return issues;
   },
 
+  // generate issue links
   async generateLinks(issues: any[]) {
     const linkTypeNames: any[] = await api.getIssueLinkTypeNames(); // TODO: fetch all the link types available
 
@@ -294,12 +312,15 @@ const generateData = async (
   const noOfIssues = noOfRecords / projects.length;
 
   if (projects.length > 0) {
+    console.log("created projects");
     console.log("generating issues");
-    const issues: any[] = await module.generateIssues(projects, noOfIssues);
+    const issues: any[] = await module.generateAllIssues(projects, noOfIssues);
     if (issues.length > 0) {
+      console.log("created issues");
       console.log("generating links");
       const response = await module.generateLinks(issues);
       if (response === undefined) {
+        console.log("created links");
         console.log("done ✨");
       }
     }

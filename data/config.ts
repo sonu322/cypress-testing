@@ -3,4 +3,6 @@ export default {
   username: "username. ex:bob@bingo.com",
   password: "atlassian api token",
   noOfRecords: 100,
+  maxLinks: 10,
+  maxProjectVersions: 5,
 };
