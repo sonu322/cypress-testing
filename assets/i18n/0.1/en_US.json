@@ -12,9 +12,9 @@
   "lxp.common.loading": "Loading data...",
   //new
   "lxp.common.please-wait": "Please wait...",
-  "lxp.common.none": "None",
 
   "lxp.common.loading-error": "Error Loading Issue",
+  "lxp.common.none": "None",
   "lxp.common.issue.unresolved": "Unresolved",
   "lxp.common.issue.detail": "Detail",
   "lxp.common.issue.type": "Type",
