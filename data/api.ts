@@ -79,72 +79,9 @@ export default class LXPAPI {
     }
   }
 
-  async createIssue(
-    projectKey: string,
-    summary: string,
-    issueTypeName: string
-  ): Promise<any> {
-    const bodyData = JSON.stringify({
-      fields: {
-        project: {
-          key: projectKey,
-        },
-        summary,
-        issuetype: {
-          name: issueTypeName,
-        },
-      },
-    });
-    try {
-      const res = await fetch(`${this.baseURL}/issue/`, {
-        method: "POST",
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          Authorization: `Basic ${base64.encode(
-            `${this.username}:${this.password}`
-          )}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: bodyData,
-      });
-      const data = await res.json();
-      if (res.ok) {
-        return data;
-      } else {
-        console.log("res not ok");
-        throw new Error("error fetchingissue");
-      }
-    } catch (error) {
-      console.log("caught error");
-      console.log(error);
-    }
-  }
-
   async getFullProject(project: any): Promise<any> {
     const data = await this._makeFetchRequest(`project/${project.key}`);
     return data;
-  }
-
-  async getProjectIssueTypeNames(project: any): Promise<string[]> {
-    try {
-      const res = await fetch(project.self, {
-        method: "GET",
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          Authorization: `Basic ${base64.encode(
-            `${this.username}:${this.password}`
-          )}`,
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await res.json();
-
-      return data.issueTypes.map((issueType) => issueType.name);
-    } catch (error) {
-      console.log("get issue types error");
-      console.log(error);
-    }
   }
 
   async getIssueLinkTypeNames(): Promise<string[]> {
@@ -566,25 +503,6 @@ export default class LXPAPI {
       const bodyData = {
         issueUpdates: issueDataList,
       };
-      // const res = await fetch(`${this.baseURL}/issue/bulk`, {
-      //   method: "POST",
-      //   headers: {
-      //     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      //     Authorization: `Basic ${base64.encode(
-      //       `${this.username}:${this.password}`
-      //     )}`,
-      //     "Content-Type": "application/json",
-      //     Accept: "application/json",
-      //   },
-      //   body: bodyData,
-      // });
-      // const data = await res.json();
-      // if (res.ok) {
-      //   return data.issues;
-      // } else {
-      //   const err = await data;
-      //   throw new Error(err.message);
-      // }
       const data = await this._makeFetchRequest("issue/bulk", "POST", bodyData);
       return data.issues;
     } catch (error) {
@@ -801,25 +719,7 @@ export default class LXPAPI {
         },
       };
       try {
-        // const res = await fetch(`${this.baseURL}/issueLink/`, {
-        //   method: "POST",
-        //   headers: {
-        //     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        //     Authorization: `Basic ${base64.encode(
-        //       `${this.username}:${this.password}`
-        //     )}`,
-        //     "Content-Type": "application/json",
-        //     Accept: "application/json",
-        //   },
-        //   body: bodyData,
-        // });
-        // // NOTE: returns invalid json. res.json() gives error
-        // // console.log(await res.json());
-        // if (!res.ok) {
-        //   console.log("res not ok");
-        //   throw new Error("error fetchingissue");
-        // }
-        const res = await this._makeFetchRequest(
+        await this._makeFetchRequest(
           "issueLink",
           "POST",
           bodyData,
@@ -835,20 +735,6 @@ export default class LXPAPI {
 
   async addStatusInfo(issue): Promise<void> {
     try {
-      // let transitionsData = await fetch(
-      //   `${this.baseURL}/issue/${issue.key}/transitions`,
-      //   {
-      //     method: "GET",
-      //     headers: {
-      //       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      //       Authorization: `Basic ${base64.encode(
-      //         `${this.username}:${this.password}`
-      //       )}`,
-      //       "Content-Type": "application/json",
-      //       Accept: "application/json",
-      //     },
-      //   }
-      // );
       const transitionsData = await this._makeFetchRequest(
         `issue/${issue.key}/transitions`
       );
@@ -863,29 +749,7 @@ export default class LXPAPI {
           id: transitionId,
         },
       };
-      // const res = await fetch(
-      //   `${this.baseURL}/issue/${issue.key}/transitions`,
-      //   {
-      //     method: "POST",
-      //     headers: {
-      //       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      //       Authorization: `Basic ${base64.encode(
-      //         `${this.username}:${this.password}`
-      //       )}`,
-      //       "Content-Type": "application/json",
-      //       Accept: "application/json",
-      //     },
-      //     body: bodyData,
-      //   }
-      // );
-      // if (!res.ok) {
-      //   console.log(res.statusText);
-      //   console.log("res not ok");
-      //   const data = await res.json();
-      //   console.log(data);
-      //   throw new Error("error setting status");
-      // }
-      const res = await this._makeFetchRequest(
+      await this._makeFetchRequest(
         `issue/${issue.key}/transitions`,
         "POST",
         bodyData,
