@@ -7,7 +7,8 @@ const labels = [
   "trial",
   "limited",
   "special",
-  "prototype",
+  "dataNeeded",
+  "enhancement",
 ];
 
 export default labels;
