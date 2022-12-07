@@ -7,7 +7,10 @@
       href="https://unpkg.com/@atlaskit/css-reset/dist/bundle.css"
       media="all"
     />
-    <script src="https://connect-cdn.atl-paas.net/all.js" data-options="sizeToParent:true;"></script>
+    <script
+      src="https://connect-cdn.atl-paas.net/all.js"
+      data-options="sizeToParent:true;"
+    ></script>
   </head>
   <style>
     #app {
@@ -22,11 +25,18 @@
         transform: rotate(360deg);
       }
     }
+    .spinner-container {
+      height: 100%;
+      width: 100%;
+      margin-left: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
     .spinner {
+
       box-sizing: border-box;
       position: relative;
-      width: 100%;
-      height: 100%;
       color: "#42526E";
     }
     .spinner > svg {
@@ -50,16 +60,18 @@
   <body>
     <div class="ac-content full">
       <div id="app">
-        <div class="spinner">
-          <svg
-            focusable="false"
-            size="50"
-            height="50"
-            width="50"
-            viewBox="0 0 50 50"
-          >
-            <circle cx="25" cy="25" r="22.5"></circle>
-          </svg>
+        <div class="spinner-container">
+          <div class="spinner">
+            <svg
+              focusable="false"
+              size="50"
+              height="50"
+              width="50"
+              viewBox="0 0 50 50"
+            >
+              <circle cx="25" cy="25" r="22.5"></circle>
+            </svg>
+          </div>
         </div>
       </div>
     </div>
