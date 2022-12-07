@@ -1,4 +1,5 @@
-{vorgänge finden
+{
+  // copies= have only old, normal - have only new
   // check the german term for issue in atalssian. issue: v
   "lxp.common.get-help": "Holen Sie sich Hilfe",
   "lxp.common.loading": "Daten werden geladen...",
