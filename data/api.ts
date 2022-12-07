@@ -3,6 +3,7 @@ import { getRandomPositiveNumber, getRandomWholeNumber, getRNG } from "./util";
 import mockIssueData from "./mockIssueData";
 import labels from "./labels";
 import versions from "./versions";
+import type { RequestHeaders } from "./types";
 const base64 = require("base-64");
 const rngIssueData = getRNG("mockissuedata");
 const rngParentKey = getRNG("parent");
@@ -27,189 +28,88 @@ export default class LXPAPI {
     this.password = password;
   }
 
-  // private readonly _AP: any = AP;
-  async createIssue(
-    projectKey: string,
-    summary: string,
-    issueTypeName: string
+  _getHeaders(): RequestHeaders {
+    const headers: RequestHeaders = {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      Authorization: `Basic ${base64.encode(
+        `${this.username}:${this.password}`
+      )}`,
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    };
+    return headers;
+  }
+
+  async _makeFetchRequest(
+    apiEndpoint: string,
+    requestMethod?: string,
+    bodyData?: object,
+    requestHeaders?: RequestHeaders,
+    shouldNotReturnResponse?: boolean
   ): Promise<any> {
-    const bodyData = JSON.stringify({
-      fields: {
-        project: {
-          key: projectKey,
-        },
-        summary,
-        issuetype: {
-          name: issueTypeName,
-        },
-      },
-    });
     try {
-      const res = await fetch(`${this.baseURL}/issue/`, {
-        method: "POST",
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          Authorization: `Basic ${base64.encode(
-            `${this.username}:${this.password}`
-          )}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: bodyData,
+      let headers = requestHeaders;
+      let body;
+      if (bodyData !== undefined) {
+        body = JSON.stringify(bodyData);
+      }
+      if (headers === undefined) {
+        headers = this._getHeaders();
+      }
+      const method = requestMethod ?? "GET";
+      const res = await fetch(`${this.baseURL}/${apiEndpoint}`, {
+        method,
+        headers,
+        body,
       });
-      const data = await res.json();
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       if (res.ok) {
-        return data;
+        if (!shouldNotReturnResponse) {
+          const data = await res.json();
+          return data;
+        }
       } else {
-        console.log("res not ok");
-        throw new Error("error fetchingissue");
+        throw new Error(
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          `Error fetching url: ${this.baseURL}/${apiEndpoint}. Status: ${res.status}: ${res.statusText}`
+        );
       }
     } catch (error) {
-      console.log("caught error");
       console.log(error);
     }
   }
 
   async getFullProject(project: any): Promise<any> {
-    try {
-      const res = await fetch(project.self, {
-        method: "GET",
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          Authorization: `Basic ${base64.encode(
-            `${this.username}:${this.password}`
-          )}`,
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await res.json();
-
-      return data;
-    } catch (error) {
-      console.log("get full project error");
-      console.log(error);
-    }
-  }
-
-  async getProjectIssueTypeNames(project: any): Promise<string[]> {
-    try {
-      const res = await fetch(project.self, {
-        method: "GET",
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          Authorization: `Basic ${base64.encode(
-            `${this.username}:${this.password}`
-          )}`,
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await res.json();
-
-      return data.issueTypes.map((issueType) => issueType.name);
-    } catch (error) {
-      console.log("get issue types error");
-      console.log(error);
-    }
+    const data = await this._makeFetchRequest(`project/${project.key}`);
+    return data;
   }
 
   async getIssueLinkTypeNames(): Promise<string[]> {
     try {
-      const res = await fetch(`${this.baseURL}/issueLinkType/`, {
-        method: "GET",
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          Authorization: `Basic ${base64.encode(
-            `${this.username}:${this.password}`
-          )}`,
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await res.json();
-
+      const data = await this._makeFetchRequest("issueLinkType");
       return data.issueLinkTypes.map((issueLinkType) => issueLinkType.name);
     } catch (error) {
-      console.log("get issue link types error");
+      console.log("Some error occured fetching link type names");
       console.log(error);
     }
   }
 
   async getFields(): Promise<any[]> {
-    try {
-      const res = await fetch(`${this.baseURL}/field`, {
-        method: "GET",
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          Authorization: `Basic ${base64.encode(
-            `${this.username}:${this.password}`
-          )}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
-      const data = await res.json();
-      if (res.ok) {
-        return data;
-      } else {
-        throw new Error("some error occurred fetching fields");
-      }
-    } catch (error) {
-      console.log("get fields error");
-      console.log(error);
-    }
+    const data = await this._makeFetchRequest("field");
+    return data;
   }
 
   async getPriorities(): Promise<any[]> {
-    try {
-      const res = await fetch(`${this.baseURL}/priority`, {
-        method: "GET",
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          Authorization: `Basic ${base64.encode(
-            `${this.username}:${this.password}`
-          )}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
-      const data = await res.json();
-      if (res.ok) {
-        return data;
-      } else {
-        throw new Error("some error occurred fetching priorities");
-      }
-    } catch (error) {
-      console.log("get priorities error");
-      console.log(error);
-    }
+    const data = await this._makeFetchRequest("priority");
+    return data;
   }
 
   async getAssignableUsers(projectKeys: string[]): Promise<any[]> {
     const projectKeyString = projectKeys.toString();
-    try {
-      const res = await fetch(
-        `${this.baseURL}/user/assignable/multiProjectSearch?projectKeys=${projectKeyString}`,
-        {
-          method: "GET",
-          headers: {
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            Authorization: `Basic ${base64.encode(
-              `${this.username}:${this.password}`
-            )}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      );
-      const data = await res.json();
-      if (res.ok) {
-        return data;
-      } else {
-        throw new Error("some error occurred fetching users");
-      }
-    } catch (error) {
-      console.log("error fetching users");
-      console.log(error);
-    }
+    const data = await this._makeFetchRequest(
+      `user/assignable/multiProjectSearch?projectKeys=${projectKeyString}`
+    );
+    return data;
   }
 
   _createIssueBodyData(
@@ -362,7 +262,7 @@ export default class LXPAPI {
   ): Promise<any[]> {
     try {
       if (issueTypeNames === undefined) {
-        throw new Error("no issue types from proje");
+        throw new Error("no issue types from project");
       }
       const issueDataList = await this._createIssueDataList(
         project.key,
@@ -382,29 +282,11 @@ export default class LXPAPI {
       if (issueDataList.length === 0) {
         throw new Error("no data list");
       }
-      const bodyData = JSON.stringify({
+      const bodyData = {
         issueUpdates: issueDataList,
-      });
-      const res = await fetch(`${this.baseURL}/issue/bulk`, {
-        method: "POST",
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          Authorization: `Basic ${base64.encode(
-            `${this.username}:${this.password}`
-          )}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: bodyData,
-      });
-      const data = await res.json();
-      if (res.ok) {
-        return data.issues;
-      } else {
-        console.log("res not ok");
-        const err = await data;
-        throw new Error(err.message);
-      }
+      };
+      const data = await this._makeFetchRequest("issue/bulk", "POST", bodyData);
+      return data.issues;
     } catch (error) {
       console.log("caught create bulk issues error");
       console.log(error);
@@ -528,28 +410,11 @@ export default class LXPAPI {
           }
         }
       );
-      const bodyData = JSON.stringify({
+      const bodyData = {
         issueUpdates: issueDataList,
-      });
-      const res = await fetch(`${this.baseURL}/issue/bulk`, {
-        method: "POST",
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          Authorization: `Basic ${base64.encode(
-            `${this.username}:${this.password}`
-          )}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: bodyData,
-      });
-      const data = await res.json();
-      if (res.ok) {
-        return data.issues;
-      } else {
-        const err = await data;
-        throw new Error(err.message);
-      }
+      };
+      const data = await this._makeFetchRequest("issue/bulk", "POST", bodyData);
+      return data.issues;
     } catch (error) {
       console.log("caught error");
       console.log(error);
@@ -635,28 +500,11 @@ export default class LXPAPI {
             config
           )
       );
-      const bodyData = JSON.stringify({
+      const bodyData = {
         issueUpdates: issueDataList,
-      });
-      const res = await fetch(`${this.baseURL}/issue/bulk`, {
-        method: "POST",
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          Authorization: `Basic ${base64.encode(
-            `${this.username}:${this.password}`
-          )}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: bodyData,
-      });
-      const data = await res.json();
-      if (res.ok) {
-        return data.issues;
-      } else {
-        const err = await data;
-        throw new Error(err.message);
-      }
+      };
+      const data = await this._makeFetchRequest("issue/bulk", "POST", bodyData);
+      return data.issues;
     } catch (error) {
       console.log("caught error");
       console.log(error);
@@ -799,29 +647,11 @@ export default class LXPAPI {
         }
       );
 
-      const bodyData = JSON.stringify({
+      const bodyData = {
         issueUpdates: issueDataList,
-      });
-      const res = await fetch(`${this.baseURL}/issue/bulk`, {
-        method: "POST",
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          Authorization: `Basic ${base64.encode(
-            `${this.username}:${this.password}`
-          )}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: bodyData,
-      });
-      const data = await res.json();
-      if (res.ok) {
-        return data.issues;
-      } else {
-        console.log("res not ok");
-        const err = await data;
-        throw new Error(err.message);
-      }
+      };
+      const data = await this._makeFetchRequest("issue/bulk", "POST", bodyData);
+      return data.issues;
     } catch (error) {
       console.log("caught error");
       console.log(error);
@@ -830,23 +660,8 @@ export default class LXPAPI {
 
   // fetch current user
   async getMyself(): Promise<any> {
-    try {
-      const res = await fetch(`${this.baseURL}/myself`, {
-        method: "GET",
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          Authorization: `Basic ${base64.encode(
-            `${this.username}:${this.password}`
-          )}`,
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.log("error getting self");
-      console.log(error);
-    }
+    const myself = await this._makeFetchRequest("myself");
+    return myself;
   }
 
   async createProject(
@@ -856,32 +671,19 @@ export default class LXPAPI {
     name: string,
     key: string
   ): Promise<any> {
-    const bodyData = JSON.stringify({
+    const bodyData = {
       description,
       leadAccountId,
       projectTemplateKey,
       name,
       key,
-    });
-    try {
-      const res = await fetch(`${this.baseURL}/project`, {
-        method: "POST",
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          Authorization: `Basic ${base64.encode(
-            `${this.username}:${this.password}`
-          )}`,
-          "Content-Type": "application/json",
-        },
-        body: bodyData,
-      });
-
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.log("error from create project");
-      console.log(error);
-    }
+    };
+    const projectData = await this._makeFetchRequest(
+      "project",
+      "POST",
+      bodyData
+    );
+    return projectData;
   }
 
   async createProjectVersion(projectId): Promise<any> {
@@ -891,31 +693,12 @@ export default class LXPAPI {
     );
     const selectedProjectVersion = versions[selectedProjectVersionIndex];
     selectedProjectVersion.projectId = projectId;
-    const bodyData = JSON.stringify(selectedProjectVersion);
-    try {
-      const res = await fetch(`${this.baseURL}/version/`, {
-        method: "POST",
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          Authorization: `Basic ${base64.encode(
-            `${this.username}:${this.password}`
-          )}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: bodyData,
-      });
-      const data = await res.json();
-      if (res.ok) {
-        return data;
-      } else {
-        console.log("res not ok");
-        throw new Error("error fetchingissue");
-      }
-    } catch (error) {
-      console.log("caught error");
-      console.log(error);
-    }
+    const data = await this._makeFetchRequest(
+      "version",
+      "POST",
+      selectedProjectVersion
+    );
+    return data;
   }
 
   async createLink(
@@ -924,7 +707,7 @@ export default class LXPAPI {
     linkTypeName: string
   ): Promise<void> {
     if (inwardIssueKey !== outwardIssueKey) {
-      const bodyData = JSON.stringify({
+      const bodyData = {
         outwardIssue: {
           key: outwardIssueKey,
         },
@@ -934,28 +717,17 @@ export default class LXPAPI {
         type: {
           name: linkTypeName,
         },
-      });
+      };
       try {
-        const res = await fetch(`${this.baseURL}/issueLink/`, {
-          method: "POST",
-          headers: {
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            Authorization: `Basic ${base64.encode(
-              `${this.username}:${this.password}`
-            )}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: bodyData,
-        });
-        // NOTE: returns invalid json. res.json() gives error
-        // console.log(await res.json());
-        if (!res.ok) {
-          console.log("res not ok");
-          throw new Error("error fetchingissue");
-        }
+        await this._makeFetchRequest(
+          "issueLink",
+          "POST",
+          bodyData,
+          undefined,
+          true
+        );
       } catch (error) {
-        console.log("caught error");
+        console.log("caught create link error");
         console.log(error);
       }
     }
@@ -963,54 +735,27 @@ export default class LXPAPI {
 
   async addStatusInfo(issue): Promise<void> {
     try {
-      let transitionsData = await fetch(
-        `${this.baseURL}/issue/${issue.key}/transitions`,
-        {
-          method: "GET",
-          headers: {
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            Authorization: `Basic ${base64.encode(
-              `${this.username}:${this.password}`
-            )}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
+      const transitionsData = await this._makeFetchRequest(
+        `issue/${issue.key}/transitions`
       );
-      transitionsData = await transitionsData.json();
       const transitions = transitionsData.transitions;
       const selectedTransitionIndex = getRandomWholeNumber(
         rngTransition,
         transitions.length
       );
       const transitionId = transitions[selectedTransitionIndex].id;
-      const bodyData = JSON.stringify({
+      const bodyData = {
         transition: {
           id: transitionId,
         },
-      });
-      const res = await fetch(
-        `${this.baseURL}/issue/${issue.key}/transitions`,
-        {
-          method: "POST",
-          headers: {
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            Authorization: `Basic ${base64.encode(
-              `${this.username}:${this.password}`
-            )}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: bodyData,
-        }
+      };
+      await this._makeFetchRequest(
+        `issue/${issue.key}/transitions`,
+        "POST",
+        bodyData,
+        undefined,
+        true
       );
-      if (!res.ok) {
-        console.log(res.statusText);
-        console.log("res not ok");
-        const data = await res.json();
-        console.log(data);
-        throw new Error("error setting status");
-      }
     } catch (error) {
       console.log("caught status error");
       console.log(error);
