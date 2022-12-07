@@ -1,16 +1,17 @@
-{
+{vorgänge finden
+  // check the german term for issue in atalssian. issue: v
   "lxp.common.get-help": "Holen Sie sich Hilfe",
   "lxp.common.loading": "Daten werden geladen...",
   "lxp.common.please-wait": "Bitte warten...",
-  "lxp.toolbar.issue-card-fields": "Felder für die Ausstellungskarte",
-  "traceability-report.issuetype-view.name": "Problemtypansicht",
-  "traceability-report.issuetype-view.description": "Anzeigen verwandter Probleme nach ihren Typen",
+  "lxp.toolbar.issue-card-fields": "Kartenfelder Vorgänge", // check in others
+  "traceability-report.issuetype-view.name": "Vorgangsansicht", // check in others
+  "traceability-report.issuetype-view.description": "Anzeigen verwandter vorgänge nach ihren Typen", // check grammar
   "traceability-report.linktype-view.name": "Linktypansicht",
-  "traceability-report.linktype-view.description": "Anzeigen verwandter Probleme nach Linktypen",
+  "traceability-report.linktype-view.description": "Verwandte Vorgänge nach Verknüpfungstyp anzeigen",
   "traceability-report.toolbar.or": "ODER",
   "traceability-report.toolbar.filterdropdown.name": "Filter auswählen",
-  "traceability-report.toolbar.jqlDialogOptions.header": "Filterprobleme mit JQL-Abfragen",
-  "traceability-report.toolbar.jqlDialogOptions.descriptionText": "Verwenden einer neuen JQL-Abfrage zum Suchen von Problemen",
+  "traceability-report.toolbar.jqlDialogOptions.header": "Filter vorgänge mit JQL-Abfragen", // check grammar near vorgänge
+  "traceability-report.toolbar.jqlDialogOptions.descriptionText": "Verwenden Sie eine neue JQL-Abfrage, um vorgänge zu finden",
   "traceability-report.toolbar.jqlDialogOptions.submitText": "Filter verwenden",
   "traceability-report.toolbar.jqlDialogOptions.cancelText": "Abbrechen",
   "traceability-report.toolbar.jqlDialogOptions.jql": "Reihenfolge nach Status ASC",
