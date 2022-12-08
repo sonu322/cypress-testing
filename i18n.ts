@@ -48,8 +48,8 @@ i18n
   // for all options read: https://www.i18next.com/overview/configuration-options
   .init({
     resources,
-    lng: "en-US",
-    fallbackLng: "en",
+    lng: "de-DE", // remove before commiting
+    // fallbackLng: "en-US", // uncomment before commiting
     debug: true,
 
     interpolation: {
