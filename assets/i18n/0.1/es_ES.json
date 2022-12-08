@@ -38,11 +38,11 @@
   "lxp.common.get-help": "Consigue ayuda",
   // new
   "lxp.common.loading": "Cargando datos...",
-  "lxp.common.no-issues-text": "No hay problemas resultantes",
+  "lxp.common.no-issues-text": "No hay incidencias resultantes",
   // new
-  "lxp.toolbar.link-type.text": "Problema tipo de enlace",
+  "lxp.toolbar.link-type.text": "incidencia tipo de enlace",
   "lxp.toolbar.link-type.title": "Seleccione Edición tipo de enlace para mostrar",
-  "lxp.toolbar.issue-type.text": "Tipo de problema",
+  "lxp.toolbar.issue-type.text": "Tipo de incidencia",
   "lxp.toolbar.export-csv.title": "Haga clic aquí para exportar un archivo CSV",
   "lxp.license.do-not-have": "No se han encontrado licencia",
   "traceability-report.name": "Enlaces Explorer - Informe de trazabilidad",
