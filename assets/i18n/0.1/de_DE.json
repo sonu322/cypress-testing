@@ -25,7 +25,7 @@
   "lxp.api.issue-type-error-prefix": "Fehler beim Abrufen der vorgängstypen - ",
   "lxp.api.link-type-error-main": "Linktypen nicht gefunden.",
   "lxp.api.link-type-error-prefix": "Fehler beim Abrufen der Linktypen - ",
-  "lxp.api.issue-field-error-main": "Vorgängefelder nicht gefunden.", // check again
+  "lxp.api.issue-field-error-main": "Vorgang Felder nicht gefunden.", // check again
   "lxp.api.issue-field-error-prefix": "Fehler beim Abrufen der Vorgängefelder - ",
   "lxp.api.issue-by-id-error-main": "Fehler beim Laden",
   "lxp.api.issue-by-id-error-prefix": "Fehler beim Abrufen des Vorgänge", //make plural
@@ -35,7 +35,7 @@
   "lxp.jira.current-issuekey-error": "Fehler beim Abrufen des aktuellen vorgangschlüssels.",
 
   // new - to not change atlassian connect
-  "issue.tab.name": "Verkn\u00fcpfungs-Explorer",
+  "issue.tab.name": "Verknüpfungs-Explorer",
   "general.page.name": "Verknüpfungs-Explorer",
   // new -end
   "link-issue-tab-panel.label": "Verknüpfungs-Explorer",
