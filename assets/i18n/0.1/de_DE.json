@@ -4,7 +4,7 @@
   "lxp.common.get-help": "Hilfe bekommen",
   "lxp.common.loading": "lade Daten...",
   "lxp.toolbar.issue-card-fields": "Kartenfelder Vorgänge", // check in others
-  "traceability-report.issuetype-view.name": "Vorgangsansicht", // check in others
+  "traceability-report.issuetype-view.name": "Vorgangstyp Ansicht", // check in others
   "traceability-report.issuetype-view.description": "Anzeigen verwandter vorgänge nach ihren Typen", // check grammar
   "traceability-report.linktype-view.name": "Linktypansicht",
   "traceability-report.linktype-view.description": "Verwandte Vorgänge nach Verknüpfungstyp anzeigen",
