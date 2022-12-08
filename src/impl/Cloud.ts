@@ -432,6 +432,9 @@ export default class APIImpl implements LXPAPI {
     } else if (issue.fields[storyPointEstimateFieldId] !== undefined) {
       storyPoints = issue.fields[storyPointEstimateFieldId];
     }
+    console.log("******************");
+    console.log(issue);
+    console.log("******************");
     return {
       id: issue.id,
       issueKey: issue.key,
