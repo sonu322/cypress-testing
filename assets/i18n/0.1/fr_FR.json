@@ -1,7 +1,6 @@
 {
   "lxp.common.get-help": "Obtenir de l’aide",
   "lxp.common.loading": "Chargement des données...",
-  "lxp.common.please-wait": "Veuillez patienter...",
   "lxp.toolbar.issue-card-fields": "Champs de la carte d’émission",
   "traceability-report.issuetype-view.name": "Vue du type de problème",
   "traceability-report.issuetype-view.description": "Afficher les problèmes connexes par type",
@@ -29,5 +28,22 @@
   "lxp.api.search-issues-error": "Erreur dans les problèmes de recherche",
   "lxp.api.filters-error": "Erreur lors de la récupération des filtres de problème",
   "lxp.api.project-error": "Projet introuvable.",
-  "lxp.jira.current-issuekey-error": "Erreur lors de la récupération de la clé d’émission actuelle."
+  "lxp.jira.current-issuekey-error": "Erreur lors de la récupération de la clé d’émission actuelle.",
+
+  // old
+  "issue.tab.name": "liens Explorateur",
+  "general.page.name": "liens Explorateur",
+  "link-issue-tab-panel.label": "liens Explorateur",
+  "link-issue-tab-panel.description": "La question du lien Panel Tab Plugin",
+  "lxp.common.no-issues-text": "Il n'y a pas de problèmes résultants",
+  "lxp.toolbar.link-type.text": "Problème Type de lien",
+  "lxp.toolbar.link-type.title": "Sélectionnez le type de lien d'émission pour montrer",
+  "lxp.toolbar.issue-type.text": "type de probleme",
+  "lxp.toolbar.export-csv.title": "Cliquez ici pour exporter un fichier CSV",
+  "lxp.license.do-not-have": "Aucune licence trouvé",
+  "traceability-report.name": "Liens Explorer - Rapport de traçabilité",
+  "traceability-report.description": "Liens Rapport Explorateur Traçabilité",
+  "lxp.common.issue.assignee": "Cessionnaire",
+  "lxp.common.issue.priority": "Priorité",
+  "traceability-report.toolbar.usejqlbutton.name": "Use JQL Editor"
 }

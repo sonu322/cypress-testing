@@ -1,7 +1,6 @@
 {
   "lxp.common.get-help": "获取帮助",
   "lxp.common.loading": "正在加载数据...",
-  "lxp.common.please-wait": "请稍候。。。",
   "lxp.toolbar.issue-card-fields": "发行卡字段",
   "traceability-report.issuetype-view.name": "问题类型视图",
   "traceability-report.issuetype-view.description": "按类型查看相关问题",
@@ -29,5 +28,10 @@
   "lxp.api.search-issues-error": "搜索问题时出错",
   "lxp.api.filters-error": "获取问题筛选器时出错",
   "lxp.api.project-error": "未找到项目。",
-  "lxp.jira.current-issuekey-error": "获取当前问题密钥时出错。"
+  "lxp.jira.current-issuekey-error": "获取当前问题密钥时出错。",
+
+  // old
+  "issue.tab.name": "链接浏览器",
+  "general.page.name": "链接浏览器",
+  "traceability-report.toolbar.usejqlbutton.name": "Use JQL Editor"
 }
