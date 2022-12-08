@@ -4,25 +4,24 @@
   "general.page.name": "Links Explorer",
   // new -end
   "link-issue-tab-panel.label": "Links Explorer",
-  "link-issue-tab-panel.name": "Linked Issues",
-  "link-issue-tab-panel.description": "The Link Issue Tab Panel Plugin",
+  "link-issue-tab-panel.description": "The Link Issue Tab Panel Plugin", // use or remove
   // new
   "lxp.common.get-help": "Get Help",
   // new
   "lxp.common.loading": "Loading data...",
   //new
-  "lxp.common.please-wait": "Please wait...",
+  "lxp.common.please-wait": "Please wait...", // remove
 
-  "lxp.common.loading-error": "Error Loading Issue",
-  "lxp.common.none": "None",
-  "lxp.common.issue.unresolved": "Unresolved",
-  "lxp.common.issue.detail": "Detail",
-  "lxp.common.issue.type": "Type",
-  "lxp.common.issue.status": "Status",
-  "lxp.common.issue.priority": "Priority",
-  "lxp.common.issue.resolution": "Resolution",
-  "lxp.common.issue.description": "Description",
-  "lxp.common.issue.fix-version": "Fix Versions",
+  "lxp.common.loading-error": "Error Loading Issue", // remove
+  "lxp.common.none": "None", // remove
+  "lxp.common.issue.unresolved": "Unresolved", // remove
+  "lxp.common.issue.detail": "Detail", // remove
+  "lxp.common.issue.type": "Type", // remove
+  "lxp.common.issue.status": "Status", //
+  "lxp.common.issue.priority": "Priority", // get from atlassian
+  "lxp.common.issue.resolution": "Resolution", //
+  "lxp.common.issue.description": "Description", //
+  "lxp.common.issue.fix-version": "Fix Versions", //
   "lxp.common.issue.affect-version": "Affect Versions",
   "lxp.common.issue.assignee": "Assignee",
   "lxp.common.issue.reporter": "Reporter",

@@ -5,7 +5,6 @@ import Backend from "i18next-http-backend";
 import LanguageDetector from "i18next-browser-languagedetector";
 
 import translationEN from "./assets/i18n/0.1/en_US.json";
-import translationENUS from "./assets/i18n/0.1/en_US.json";
 import translationDE from "./assets/i18n/0.1/de_DE.json";
 import translationES from "./assets/i18n/0.1/es_ES.json";
 import translationFR from "./assets/i18n/0.1/fr_FR.json";
@@ -19,7 +18,7 @@ const resources = {
     translation: translationEN,
   },
   "en-US": {
-    translation: translationENUS,
+    translation: translationEN,
   },
   "de-DE": {
     translation: translationDE,
@@ -49,8 +48,8 @@ i18n
   // for all options read: https://www.i18next.com/overview/configuration-options
   .init({
     resources,
-    lng: "de-DE",
-    fallbackLng: "de-DE",
+    lng: "en-US",
+    fallbackLng: "en",
     debug: true,
 
     interpolation: {

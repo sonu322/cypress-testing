@@ -222,10 +222,34 @@ export default class APIImpl implements LXPAPI {
     return null;
   }
 
+  async addLanguageTranslatedNames(
+    issueFields: IssueField[],
+    fields?: JiraIssueField[]
+  ): Promise<any> {
+    console.log("called");
+    fields = fields || (await this.getAllIssueFields());
+    console.log(fields);
+    issueFields = issueFields.map((issueField) => {
+      const jiraIssueField = fields.find(
+        (jiraField) => jiraField.id === issueField.jiraId
+      );
+      console.log("found field", jiraIssueField);
+      if (jiraIssueField === undefined) {
+        throwError("lxp.api.issue-field-error-main");
+      }
+      return {
+        ...issueField,
+        name: jiraIssueField.name,
+      };
+    });
+
+    return issueFields;
+  }
+
   async getIssueFields(): Promise<IssueField[]> {
     try {
       const result: IssueField[] = [];
-      const issueFields: IssueField[] = [
+      let issueFields: IssueField[] = [
         {
           id: "summary",
           name: "Summary",
@@ -255,6 +279,7 @@ export default class APIImpl implements LXPAPI {
 
       const fields = await this.getAllIssueFields();
       await this.addCustomFields(issueFields, fields);
+      issueFields = await this.addLanguageTranslatedNames(issueFields, fields);
       const fieldMap = {};
       issueFields.forEach((issueField) => {
         fieldMap[issueField.jiraId] = issueField;

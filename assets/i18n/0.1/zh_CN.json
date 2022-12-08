@@ -13,7 +13,7 @@
   "traceability-report.toolbar.jqlDialogOptions.descriptionText": "使用新的 JQL 查询搜索问题",
   "traceability-report.toolbar.jqlDialogOptions.submitText": "使用过滤器",
   "traceability-report.toolbar.jqlDialogOptions.cancelText": "取消",
-  "traceability-report.toolbar.jqlDialogOptions.jql": "按状态 ASC 排序",
+  "traceability-report.load-more-issues-button.name": "Load more issues",
   "traceability-report.toolbar.tableFields.name": "表字段",
   "traceability-report.select-filter.text": "请选择筛选条件查看报告",
   "lxp.api.priority-error-main": "未找到问题优先级。",
