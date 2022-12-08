@@ -1,6 +1,7 @@
 import React from "react";
 import Button from "@atlaskit/button";
 import { jqlDialogOptions } from "../constants/traceabilityReport";
+import { useTranslation } from "react-i18next";
 // @ts-expect-error
 const _AP: any = AP;
 
@@ -13,6 +14,7 @@ export const JQLEditor = ({
   selectedFilterId,
   setSelectedFilterId,
 }: Props): JSX.Element => {
+  const { t } = useTranslation();
   const options = { ...jqlDialogOptions };
   if (Boolean(selectedFilterId) && selectedFilterId !== null) {
     options.jql = selectedFilterId;
@@ -25,7 +27,7 @@ export const JQLEditor = ({
   };
   return (
     <Button appearance="default" onClick={openJQLEditor}>
-      Use JQL Editor
+      {t("traceability-report.toolbar.usejqlbutton.name")}
     </Button>
   );
 };
