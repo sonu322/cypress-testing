@@ -147,6 +147,9 @@
   "traceability-report.linktype-view.name": "Link Type View",
   "traceability-report.linktype-view.description": "View related issues by their link types",
   // new
+  "traceability-report.tree-view.name": "Tree View",
+  "traceability-report.tree-view.description": "View related issues in tree hierarchy format",
+  // new
   "traceability-report.toolbar.or": "OR",
   // new
   "traceability-report.toolbar.filterdropdown.name": "Select filter",
