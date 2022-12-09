@@ -33,5 +33,17 @@
   // old
   "issue.tab.name": "链接浏览器",
   "general.page.name": "链接浏览器",
-  "traceability-report.toolbar.usejqlbutton.name": "Use JQL Editor"
+  "traceability-report.toolbar.usejqlbutton.name": "Use JQL Editor",
+  "link-issue-tab-panel.label": "链接浏览器",
+  "link-issue-tab-panel.description": "链路问题Tab平板插件",
+  "lxp.common.no-issues-text": "没有结果的问题",
+  "lxp.toolbar.link-type.text": "问题链接类型",
+  "lxp.toolbar.link-type.title": "选择问题链接类型显示",
+  "lxp.toolbar.issue-type.text": "问题类型",
+  "lxp.toolbar.export-csv.title": "点击这里导出CSV文件",
+  "lxp.license.do-not-have": "找不到许可证",
+  "traceability-report.name": "链接浏览器 - 可追溯性报告",
+  "traceability-report.description": "链接浏览器的溯源报告",
+  "lxp.common.issue.assignee": "代理人",
+  "lxp.common.issue.priority": "优先"
 }
