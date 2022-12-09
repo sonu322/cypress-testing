@@ -406,7 +406,10 @@ export default class APIImpl implements LXPAPI {
     }
 
     let storyPoints: number = null;
-    if (issue.fields[storyPointsFieldId] !== undefined) {
+    if (
+      issue.fields[storyPointsFieldId] !== undefined &&
+      issue.fields[storyPointsFieldId] !== null
+    ) {
       storyPoints = issue.fields[storyPointsFieldId];
     } else if (issue.fields[storyPointEstimateFieldId] !== undefined) {
       storyPoints = issue.fields[storyPointEstimateFieldId];
