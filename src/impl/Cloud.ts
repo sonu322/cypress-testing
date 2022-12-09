@@ -106,6 +106,17 @@ export default class APIImpl implements LXPAPI {
     }
   }
 
+  async getLocale(): Promise<string> {
+    try {
+      const myself = await this.api.getMyself();
+      return myself.locale;
+    } catch (error) {
+      console.error(error);
+      const msg = i18n.t("lxp.api.locale-error");
+      throw new Error(msg);
+    }
+  }
+
   private _convertIssueType(issueType: JiraIssueType): IssueType {
     if (issueType) {
       const name = issueType.name.toLowerCase().replace(/-/g, "");

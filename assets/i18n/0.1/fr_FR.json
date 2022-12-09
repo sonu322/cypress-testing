@@ -46,5 +46,6 @@
   "lxp.common.issue.assignee": "Responsable",
   "lxp.common.issue.priority": "Priorité",
   "traceability-report.toolbar.usejqlbutton.name": "Utiliser l'éditeur JQL",
-  "lxp.common.unassigned": "Non assigné"
+  "lxp.common.unassigned": "Non assigné",
+  "lxp.api.locale-error": "Erreur lors de l'obtention des paramètres régionaux"
 }

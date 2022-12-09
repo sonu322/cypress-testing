@@ -49,5 +49,6 @@
   "traceability-report.description": "Liens Rapport Explorateur Traçabilité",
   "lxp.common.issue.assignee": "Zugewiesene Person",
   "lxp.common.issue.priority": "Priorität",
-  "lxp.common.unassigned": "nicht zugewiesen"
+  "lxp.common.unassigned": "nicht zugewiesen",
+  "lxp.api.locale-error": "Fehler beim Abrufen des Gebietsschemas"
 }
