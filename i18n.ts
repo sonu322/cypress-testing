@@ -48,7 +48,7 @@ i18n
   // for all options read: https://www.i18next.com/overview/configuration-options
   .init({
     resources,
-    lng: "fr-FR", // remove before commiting
+    lng: "zh-CN", // remove before commiting
     // fallbackLng: "en-US", // uncomment before commiting
     debug: true,
 
