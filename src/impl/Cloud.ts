@@ -237,14 +237,11 @@ export default class APIImpl implements LXPAPI {
     issueFields: IssueField[],
     fields?: JiraIssueField[]
   ): Promise<any> {
-    console.log("called");
     fields = fields || (await this.getAllIssueFields());
-    console.log(fields);
     issueFields = issueFields.map((issueField) => {
       const jiraIssueField = fields.find(
         (jiraField) => jiraField.id === issueField.jiraId
       );
-      console.log("found field", jiraIssueField);
       if (jiraIssueField === undefined) {
         throwError("lxp.api.issue-field-error-main");
       }
@@ -253,7 +250,6 @@ export default class APIImpl implements LXPAPI {
         name: jiraIssueField.name,
       };
     });
-
     return issueFields;
   }
 
@@ -443,9 +439,6 @@ export default class APIImpl implements LXPAPI {
     } else if (issue.fields[storyPointEstimateFieldId] !== undefined) {
       storyPoints = issue.fields[storyPointEstimateFieldId];
     }
-    console.log("******************");
-    console.log(issue);
-    console.log("******************");
     return {
       id: issue.id,
       issueKey: issue.key,
