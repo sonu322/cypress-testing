@@ -7,7 +7,7 @@
   "traceability-report.linktype-view.name": "链接类型视图",
   "traceability-report.linktype-view.description": "按连接类型查看相关事务",
   "traceability-report.toolbar.or": "或",
-  "traceability-report.toolbar.filterdropdown.name": "选择过滤器", // not able to translate to atlassian term
+  "traceability-report.toolbar.filterdropdown.name": "选择过滤器", // not able to translate to atlassian term for filter: 筛选器
   "traceability-report.toolbar.jqlDialogOptions.header": "JQL 查询",
   "traceability-report.toolbar.jqlDialogOptions.descriptionText": "使用新的 JQL 查询搜索事务",
   "traceability-report.toolbar.jqlDialogOptions.submitText": "使用过滤器",
@@ -29,8 +29,6 @@
   "lxp.api.filters-error": "获取事务筛选器时出错",
   "lxp.api.project-error": "未找到项目。",
   "lxp.jira.current-issuekey-error": "获取当前事务密钥时出错。",
-
-  // old
   "issue.tab.name": "链接浏览器",
   "general.page.name": "链接浏览器",
   "traceability-report.toolbar.usejqlbutton.name": "使用 JQL 编辑器",
@@ -44,7 +42,7 @@
   "lxp.license.do-not-have": "找不到许可证",
   "traceability-report.name": "链接浏览器 - 可追溯性报告",
   "traceability-report.description": "链接浏览器的溯源报告",
-  "lxp.common.issue.assignee": "代理人",
+  "lxp.common.issue.assignee": "经办人",
   "lxp.common.issue.priority": "优先",
   "lxp.common.unassigned": "未分配",
   "lxp.api.locale-error": "获取语言环境时出错"
