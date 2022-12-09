@@ -17,19 +17,19 @@ const resources = {
   en: {
     translation: translationEN,
   },
-  "en-US": {
+  en_US: {
     translation: translationEN,
   },
-  "de-DE": {
+  de_DE: {
     translation: translationDE,
   },
-  "fr-FR": {
+  fr_FR: {
     translation: translationFR,
   },
-  "es-ES": {
+  es_ES: {
     translation: translationES,
   },
-  "zh-CN": {
+  zh_CN: {
     translation: translationCN,
   },
 };
@@ -48,8 +48,8 @@ i18n
   // for all options read: https://www.i18next.com/overview/configuration-options
   .init({
     resources,
-    lng: "zh-CN", // remove before commiting
-    // fallbackLng: "en-US", // uncomment before commiting
+    // lng: "zh_CN", // remove before commiting
+    fallbackLng: "en_US", // uncomment before commiting
     debug: true,
 
     interpolation: {

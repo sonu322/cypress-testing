@@ -201,5 +201,6 @@
   "lxp.api.project-error": "Project not found.",
 
   // new
-  "lxp.jira.current-issuekey-error": "Error in fetching the current issue key."
+  "lxp.jira.current-issuekey-error": "Error in fetching the current issue key.",
+  "lxp.api.locale-error": "Error getting locale"
 }

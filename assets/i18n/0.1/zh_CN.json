@@ -46,5 +46,6 @@
   "traceability-report.description": "链接浏览器的溯源报告",
   "lxp.common.issue.assignee": "代理人",
   "lxp.common.issue.priority": "优先",
-  "lxp.common.unassigned": "未分配"
+  "lxp.common.unassigned": "未分配",
+  "lxp.api.locale-error": "获取语言环境时出错"
 }
