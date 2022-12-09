@@ -45,5 +45,6 @@
   "traceability-report.name": "链接浏览器 - 可追溯性报告",
   "traceability-report.description": "链接浏览器的溯源报告",
   "lxp.common.issue.assignee": "代理人",
-  "lxp.common.issue.priority": "优先"
+  "lxp.common.issue.priority": "优先",
+  "lxp.common.unassigned": "未分配"
 }

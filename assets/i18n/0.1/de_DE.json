@@ -48,5 +48,6 @@
   "traceability-report.name": "Liens Explorer - Rapport de Traçabilité",
   "traceability-report.description": "Liens Rapport Explorateur Traçabilité",
   "lxp.common.issue.assignee": "Zugewiesene Person",
-  "lxp.common.issue.priority": "Priorität"
+  "lxp.common.issue.priority": "Priorität",
+  "lxp.common.unassigned": "nicht zugewiesen"
 }
