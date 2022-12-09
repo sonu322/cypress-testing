@@ -9,7 +9,7 @@ interface Props {
   selectedOptionId: string;
   dropdownName: string;
   setSelectedOptionId: React.Dispatch<React.SetStateAction<string>>;
-  options: Filter[];
+  options: Array<{name: string | number, id: string}>;
 }
 
 export const DropdownSingleSelect = ({

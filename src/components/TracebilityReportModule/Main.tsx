@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { LoadingButton } from "@atlaskit/button";
+import { IssueLimitDropdown } from "./IssueLimitDropdown";
 import Spinner from "@atlaskit/spinner";
 import { APIContext } from "../../context/api";
 import styled from "styled-components";
@@ -24,7 +25,12 @@ const MarginAddedContainer = styled.div`
 `;
 const DEFAULT_ROWS_PER_PAGE = 20;
 const START_INDEX = 0;
-
+  const options = [
+    { id: "10", name: 10 },
+    { id: "20", name: 20 },
+    { id: "50", name: 50 },
+    { id: "100", name: 100 },
+  ];
 interface Props {
   jqlString: string;
   handleNewError: (err: unknown) => void;
@@ -60,6 +66,7 @@ export const Main = ({
 }: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
+  const [selectedOptionId, setSelectedOptionId] = useState("");
   const api = useContext(APIContext);
   const addMoreIssues = (issues: IssueWithSortedLinks[]): void => {
     const newIssues = filteredIssues ?? [];
@@ -87,12 +94,22 @@ export const Main = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jqlString]);
 
-  const fetchMoreIssues = (): void => {
+  useEffect(() => {
+    if (selectedOptionId !== "") {
+    fetchMoreIssues();
+    }
+  } , [selectedOptionId]);
+  
+    const fetchMoreIssues = (): void => {
+    const selectedLimitInfo = options.find(
+      (option) => option.id === selectedOptionId
+    );
+    const selectedLimit = selectedLimitInfo?.name ?? DEFAULT_ROWS_PER_PAGE,
     void tracebilityReportUtils.populateIssues(
       jqlString,
       issueFields,
       filteredIssues.length,
-      DEFAULT_ROWS_PER_PAGE,
+      selectedLimit,
       addMoreIssues,
       setAreMoreIssuesLoading,
       null,
@@ -115,7 +132,6 @@ export const Main = ({
         </FullHeightContainer>
       );
     }
-
     return (
       <Container>
         <TableContainer>
@@ -129,6 +145,11 @@ export const Main = ({
           />
         </TableContainer>
         <MarginAddedContainer>
+          <IssueLimitDropdown 
+            options = {options}
+            selectedOptionId = {selectedOptionId}
+            setSelectedOptionId={setSelectedOptionId}
+          />
           <LoadingButton
             isLoading={areMoreIssuesLoading}
             isDisabled={filteredIssues.length >= totalNumberOfIssues}
