@@ -29,8 +29,6 @@
   "lxp.api.filters-error": "Erreur lors de la récupération des filtres de ticket",
   "lxp.api.project-error": "Projet introuvable.",
   "lxp.jira.current-issuekey-error": "Erreur lors de la récupération de la clé d’émission actuelle.",
-
-  // old
   "issue.tab.name": "Liens Explorateur",
   "general.page.name": "Liens Explorateur",
   "link-issue-tab-panel.label": "Liens Explorateur",
