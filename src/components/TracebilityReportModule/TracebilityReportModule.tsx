@@ -32,8 +32,7 @@ const GrowContainer = styled.div`
 `;
 
 export const TracebilityReportModule = (): JSX.Element => {
-  const { t, i18n } = useTranslation();
-  console.log(i18n.language);
+  const { t } = useTranslation();
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
   const [filteredIssues, setFilteredIssues] = useState<
     IssueWithSortedLinks[] | null

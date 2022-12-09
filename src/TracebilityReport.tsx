@@ -8,18 +8,16 @@ const TracebilityReport = () => {
   const { i18n } = useTranslation();
   const api = useContext(APIContext);
   useEffect(() => {
-    const handleLocale = async () => {
-      const locale = await api.getLocale();
-      console.log("LOCALe");
-      console.log(locale);
-      if (locale !== i18n.language) {
-        console.log("i18", i18n.language, "locale", locale);
-        await i18n.changeLanguage(locale);
-      }
-    };
-    console.log("called use eff");
-    handleLocale();
-  }, []);
+    if (api !== undefined && i18n?.language !== undefined) {
+      const handleLocale = async (): Promise<void> => {
+        const locale = await api.getLocale();
+        if (locale !== i18n.language) {
+          await i18n.changeLanguage(locale);
+        }
+      };
+      void handleLocale();
+    }
+  }, [api, i18n]);
   if (api.hasValidLicense()) {
     return <TracebilityReportModule></TracebilityReportModule>;
   }

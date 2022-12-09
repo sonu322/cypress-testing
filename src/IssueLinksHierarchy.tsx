@@ -9,16 +9,16 @@ const IssueLinksHierarchy = () => {
   const api = useContext(APIContext);
   const { i18n, t } = useTranslation();
   useEffect(() => {
-    const handleLocale = async () => {
-      const locale = await api.getLocale();
-      if (locale !== i18n.language) {
-        console.log(i18n.language, locale);
-        await i18n.changeLanguage(locale);
-      }
-    };
-    console.log("called use eff");
-    handleLocale();
-  }, []);
+    if (api !== undefined && i18n?.language !== undefined) {
+      const handleLocale = async (): Promise<void> => {
+        const locale = await api.getLocale();
+        if (locale !== i18n.language) {
+          await i18n.changeLanguage(locale);
+        }
+      };
+      void handleLocale();
+    }
+  }, [api, i18n]);
   return (
     <Suspense fallback={t("lxp.common.loading")}>
       {api.hasValidLicense() ? <IssueTreeModule /> : <LicenseContainer />}

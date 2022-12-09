@@ -84,8 +84,6 @@ export default class JiraCloudImpl implements JiraAPI {
   getCurrentIssueId(): Promise<string> {
     return new Promise((resolve, reject) => {
       this._AP.context.getContext((res) => {
-        console.log("CONTEXT!!!!");
-        console.log(res);
         let issueId = res?.jira?.issue?.id;
         if (issueId) {
           return resolve(issueId);
