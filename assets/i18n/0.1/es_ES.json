@@ -49,5 +49,6 @@
   "traceability-report.description": "Enlaces Trazabilidad Explorador de Informe",
   "traceability-report.toolbar.usejqlbutton.name": "Usar editor JQL",
   "lxp.common.issue.assignee": "Responsable",
-  "lxp.common.issue.priority": "Prioridad"
+  "lxp.common.issue.priority": "Prioridad",
+  "lxp.common.unassigned": "sin asignar"
 }

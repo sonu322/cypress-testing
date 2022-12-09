@@ -10,7 +10,7 @@ export const AssigneeInfo = ({ content }) => {
     message = `${t("lxp.common.issue.assignee")}: ${content.displayName}`;
     imgSrc = content.avatarUrl;
   } else {
-    message = "Unassigned";
+    message = t("lxp.common.unassigned");
     imgSrc = null;
   }
 
