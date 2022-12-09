@@ -7,7 +7,10 @@
       href="https://unpkg.com/@atlaskit/css-reset/dist/bundle.css"
       media="all"
     />
-    <script src="https://connect-cdn.atl-paas.net/all.js" data-options="sizeToParent:true;"></script>
+    <script
+      src="https://connect-cdn.atl-paas.net/all.js"
+      data-options="sizeToParent:true;"
+    ></script>
   </head>
   <style>
     #app {
@@ -17,11 +20,60 @@
     .full {
       height: 100%;
     }
+    @keyframes spinnerRotateAnimation {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    .spinner-container {
+      height: 100%;
+      width: 100%;
+      margin-left: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .spinner {
+
+      box-sizing: border-box;
+      position: relative;
+      color: "#42526E";
+    }
+    .spinner > svg {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      animation: 0.86s cubic-bezier(0.4, 0.15, 0.6, 0.85) infinite
+        spinnerRotateAnimation;
+      fill: none;
+      stroke: currentColor;
+      stroke-dasharray: calc(50px * 2.8);
+      stroke-dashoffset: calc(50px * 2.25);
+      stroke-linecap: round;
+      stroke-width: calc(50px / 10);
+      transform-origin: center;
+    }
   </style>
 
   <body>
     <div class="ac-content full">
-      <div id="app">Please wait...</div>
+      <div id="app">
+        <div class="spinner-container">
+          <div class="spinner">
+            <svg
+              focusable="false"
+              size="50"
+              height="50"
+              width="50"
+              viewBox="0 0 50 50"
+            >
+              <circle cx="25" cy="25" r="22.5"></circle>
+            </svg>
+          </div>
+        </div>
+      </div>
     </div>
     <script>
       AP.jira.initJQLEditor();
