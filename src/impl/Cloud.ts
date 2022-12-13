@@ -555,8 +555,16 @@ export default class APIImpl implements LXPAPI {
         }
       });
     });
+
     const jqlComponents = ids.map((id) => `id=${id}`);
+    const epicIssues = issues.filter((issue) => issue.type.name === "Epic");
+    epicIssues.forEach((epic) => {
+      jqlComponents.push(
+        `parent = ${epic.issueKey} OR "Epic Link" = ${epic.issueKey}`
+      );
+    });
     const jqlString = jqlComponents.join(" OR ");
+    console.log("linked issues jql string", jqlString);
     const total = ids.length;
     return { jqlString, total };
   };
@@ -569,7 +577,9 @@ export default class APIImpl implements LXPAPI {
     issues.forEach((issue) => {
       const sortedLinks = {};
       const item = { ...issue, sortedLinks };
+      console.log("issssueeeee", issue);
       issue.links.forEach((link) => {
+        // add child issues at subtasks
         if (sortedLinks[link.linkTypeId] === undefined) {
           sortedLinks[link.linkTypeId] = [];
         }
@@ -582,6 +592,22 @@ export default class APIImpl implements LXPAPI {
           throwError(`search could not fetch linked issues of ${link.issueId}`);
         }
       });
+      if (issue.type.name === "Epic") {
+        console.log("is an epic");
+        console.log(linkedIssues);
+        sortedLinks[CustomLinkType.SUBTASK_OR_EPIC_CHILD] = linkedIssues.filter(
+          (linkedIssue) => {
+            const parent = linkedIssue.links?.find(
+              (issue) => issue.linkTypeId === "PARENT"
+            );
+            if (parent?.issueId === issue.id) {
+              return true;
+            } else {
+              return false;
+            }
+          }
+        );
+      }
       populatedIssues.push(item);
     });
     return populatedIssues;
@@ -603,11 +629,11 @@ export default class APIImpl implements LXPAPI {
       const linkedIssuesResult = await this.searchIssues(
         linkedIssuesJQL,
         fields,
-        0,
-        total
+        0
       );
       linkedIssues = linkedIssuesResult.data;
       const totalLinkedIssues = linkedIssuesResult.total;
+      console.log(linkedIssues);
       // danger - while loop may lead to infinite looping
       while (linkedIssues.length < totalLinkedIssues) {
         const moreLinkedIssuesData = await this.searchIssues(
