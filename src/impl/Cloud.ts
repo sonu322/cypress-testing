@@ -305,7 +305,8 @@ export default class APIImpl implements LXPAPI {
     fields: IssueField[],
     issueId?: string
   ): Promise<IssueWithLinkedIssues> {
-    issueId = issueId || (await this.getCurrentIssueId());
+    try {
+      issueId = issueId || (await this.getCurrentIssueId());
     const issue: Issue = await this.getIssueById(fields, issueId);
     const linkedIds = issue.links.map((link) => link.issueId);
     let linkedIssues: Issue[] = [];
@@ -321,6 +322,10 @@ export default class APIImpl implements LXPAPI {
     }
 
     return { ...issue, linkedIssues };
+    } catch (error) {
+      console.log(error);
+      throwError(`Error fetching issue ${issueId}`);
+    }
   }
 
   getCurrentIssueId(): Promise<string> {
@@ -471,12 +476,17 @@ export default class APIImpl implements LXPAPI {
     issue: Issue,
     fields: IssueField[]
   ): Promise<{ data: Issue[]; total: number }> {
-    const childIssuesData = await this.searchIssues(
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `parent = ${issue.issueKey} OR "Epic Link" = ${issue.issueKey}`,
-      fields
-    );
-    return childIssuesData;
+    try {
+      const childIssuesData = await this.searchIssues(
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        `parent = ${issue.issueKey} OR "Epic Link" = ${issue.issueKey}`,
+        fields
+      );
+      return childIssuesData;
+    } catch(error) {
+      console.log(error);
+      throwError(`Error getting child issues of epic ${issue.issueKey}`);
+    }
   }
 
   async getIssueById(fields: IssueField[], issueId?: string): Promise<Issue> {
