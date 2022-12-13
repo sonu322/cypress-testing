@@ -484,7 +484,7 @@ export default class APIImpl implements LXPAPI {
     console.log(`"Epic Link" = ${issue.issueKey}`);
     const childIssuesData = await this.searchIssues(
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `parent = ${issue.issueKey}`,
+      `parent = ${issue.issueKey} OR "Epic Link" = ${issue.issueKey}`,
       fields
     );
     console.log("childissues", childIssuesData);
