@@ -153,6 +153,8 @@ export default class TreeUtils {
     issueMap: any
   ): IssueLink[] {
     let result = [];
+    console.log("issue.links");
+    console.log(issue);
     for (const link of issue.links) {
       const linkedIssue = issueMap[link.issueId];
       if (
