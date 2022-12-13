@@ -104,7 +104,7 @@ export interface IssueTreeFilter {
 }
 
 export enum CustomLinkType {
-  SUBTASK = "SUBTASK",
+  SUBTASK_OR_EPIC_CHILD = "SUBTASK_OR_EPIC_CHILD",
   PARENT = "PARENT",
 }
 
