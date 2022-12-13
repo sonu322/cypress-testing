@@ -278,7 +278,6 @@ export default class APIImpl implements LXPAPI {
       throw new Error("Error in fetching the issue types - " + error.message);
     }
   }
-  h;
 
   async getAllIssueFields(): Promise<JiraIssueField[]> {
     try {
@@ -309,24 +308,16 @@ export default class APIImpl implements LXPAPI {
     issueId = issueId || (await this.getCurrentIssueId());
     const issue: Issue = await this.getIssueById(fields, issueId);
     const linkedIds = issue.links.map((link) => link.issueId);
-    console.log("ISSUE!!!!!");
-    console.log(issue);
     let linkedIssues: Issue[] = [];
+    // add epic children to issue
     if (issue.type.id === "epic") {
-      console.log("epic issue");
       const childIssuesData = await this.getEpicChildIssues(issue, fields);
-      // add epic children to issue
-      console.log(issue.links);
       this._addEpicChildrenToLinks(issue, childIssuesData.data);
       linkedIssues = childIssuesData.data;
     }
     if (linkedIds && linkedIds.length) {
-      console.log("LINKED ISSUES");
-      console.log(linkedIssues);
       const result = await this.searchIssues(`id in (${linkedIds})`, fields);
-      console.log("linked issues serch result", result);
       linkedIssues = linkedIssues.concat(result.data);
-      console.log("after adding linked issues", linkedIssues);
     }
 
     return { ...issue, linkedIssues };
@@ -449,7 +440,7 @@ export default class APIImpl implements LXPAPI {
       status: this._convertIssueStatus(issue.fields?.status),
       links: this._convertLinks(
         issue.fields?.issuelinks || [],
-        issue.fields?.subtasks || [], // add or child issues
+        issue.fields?.subtasks || [],
         issue.fields.parent
       ),
       assignee: this._convertIssueAssignee(issue.fields.assignee),
@@ -480,14 +471,11 @@ export default class APIImpl implements LXPAPI {
     issue: Issue,
     fields: IssueField[]
   ): Promise<{ data: Issue[]; total: number }> {
-    console.log("called populate epic children");
-    console.log(`"Epic Link" = ${issue.issueKey}`);
     const childIssuesData = await this.searchIssues(
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       `parent = ${issue.issueKey} OR "Epic Link" = ${issue.issueKey}`,
       fields
     );
-    console.log("childissues", childIssuesData);
     return childIssuesData;
   }
 
@@ -495,18 +483,10 @@ export default class APIImpl implements LXPAPI {
     try {
       issueId = issueId || (await this.getCurrentIssueId());
       const fieldIds = this._getFieldIds(fields);
-
       const query = "?fields=" + fieldIds.join(",");
       const issue: JiraIssueFull = await this.api.getIssueById(issueId, query);
-
       issue || throwError("Issue not found.");
-      console.log(issue.fields.issuetype);
-      if (issue.fields.issuetype.name === "Epic") {
-        console.log("jira issue full is an epic");
-        return this._convertIssue(issue, fields);
-      } else {
-        return this._convertIssue(issue, fields);
-      }
+      return this._convertIssue(issue, fields);
     } catch (error) {
       console.error(error);
       throw new Error(
@@ -543,9 +523,7 @@ export default class APIImpl implements LXPAPI {
     }
   }
 
-  private readonly _getLinkedIssueJQL = (
-    issues: Issue[]
-  ): { jqlString: string; total: number } => {
+  private readonly _getLinkedIssueJQL = (issues: Issue[]): string => {
     const ids: string[] = [];
     issues.forEach((issue) => {
       issue.links.forEach((link) => {
@@ -564,9 +542,7 @@ export default class APIImpl implements LXPAPI {
       );
     });
     const jqlString = jqlComponents.join(" OR ");
-    console.log("linked issues jql string", jqlString);
-    const total = ids.length;
-    return { jqlString, total };
+    return jqlString;
   };
 
   private readonly _populateIssueLinks = (
@@ -577,7 +553,6 @@ export default class APIImpl implements LXPAPI {
     issues.forEach((issue) => {
       const sortedLinks = {};
       const item = { ...issue, sortedLinks };
-      console.log("issssueeeee", issue);
       issue.links.forEach((link) => {
         // add child issues at subtasks
         if (sortedLinks[link.linkTypeId] === undefined) {
@@ -593,8 +568,6 @@ export default class APIImpl implements LXPAPI {
         }
       });
       if (issue.type.name === "Epic") {
-        console.log("is an epic");
-        console.log(linkedIssues);
         sortedLinks[CustomLinkType.SUBTASK_OR_EPIC_CHILD] = linkedIssues.filter(
           (linkedIssue) => {
             const parent = linkedIssue.links?.find(
@@ -622,8 +595,7 @@ export default class APIImpl implements LXPAPI {
     const searchResult = await this.searchIssues(jql, fields, start, max);
     const issues: Issue[] = searchResult.data;
 
-    const { jqlString: linkedIssuesJQL, total } =
-      this._getLinkedIssueJQL(issues);
+    const linkedIssuesJQL = this._getLinkedIssueJQL(issues);
     let linkedIssues = [];
     if (linkedIssuesJQL !== undefined && linkedIssuesJQL.length > 0) {
       const linkedIssuesResult = await this.searchIssues(
@@ -633,7 +605,6 @@ export default class APIImpl implements LXPAPI {
       );
       linkedIssues = linkedIssuesResult.data;
       const totalLinkedIssues = linkedIssuesResult.total;
-      console.log(linkedIssues);
       // danger - while loop may lead to infinite looping
       while (linkedIssues.length < totalLinkedIssues) {
         const moreLinkedIssuesData = await this.searchIssues(
