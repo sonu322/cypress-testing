@@ -152,7 +152,7 @@ export default class APIImpl implements LXPAPI {
         name: "Parent",
       });
       result.push({
-        id: CustomLinkType.SUBTASK,
+        id: CustomLinkType.SUBTASK_OR_EPIC_CHILD,
         name: "Subtasks / Epic Child Issues",
       });
 
@@ -294,7 +294,7 @@ export default class APIImpl implements LXPAPI {
   _addEpicChildrenToLinks(issue: Issue, childIssues: Issue[]): void {
     childIssues.forEach((child) => {
       issue.links.push({
-        linkTypeId: "SUBTASK",
+        linkTypeId: CustomLinkType.SUBTASK_OR_EPIC_CHILD,
         name: "Subtasks / Epic Child Issues",
         isInward: false,
         issueId: child.id,
@@ -312,15 +312,15 @@ export default class APIImpl implements LXPAPI {
     console.log("ISSUE!!!!!");
     console.log(issue);
     let linkedIssues: Issue[] = [];
+    if (issue.type.id === "epic") {
+      console.log("epic issue");
+      const childIssuesData = await this.getEpicChildIssues(issue, fields);
+      // add epic children to issue
+      console.log(issue.links);
+      this._addEpicChildrenToLinks(issue, childIssuesData.data);
+      linkedIssues = childIssuesData.data;
+    }
     if (linkedIds && linkedIds.length) {
-      if (issue.type.id === "epic") {
-        console.log("epic issue");
-        const childIssuesData = await this.getEpicChildIssues(issue, fields);
-        // add epic children to issue
-        console.log(issue.links);
-        this._addEpicChildrenToLinks(issue, childIssuesData.data);
-        linkedIssues = childIssuesData.data;
-      }
       console.log("LINKED ISSUES");
       console.log(linkedIssues);
       const result = await this.searchIssues(`id in (${linkedIds})`, fields);
@@ -366,7 +366,7 @@ export default class APIImpl implements LXPAPI {
     }
     for (const subTask of subTasks) {
       result.push({
-        linkTypeId: CustomLinkType.SUBTASK,
+        linkTypeId: CustomLinkType.SUBTASK_OR_EPIC_CHILD,
         name: "Subtasks / Epic Child Issues",
         isInward: false,
         issueId: subTask.id,
@@ -488,8 +488,6 @@ export default class APIImpl implements LXPAPI {
       fields
     );
     console.log("childissues", childIssuesData);
-    // issue.fields.subtasks = childIssues.data;
-    // console.log("child issues as subtasks", issue.fields.subtasks);
     return childIssuesData;
   }
 
