@@ -554,7 +554,6 @@ export default class APIImpl implements LXPAPI {
       const sortedLinks = {};
       const item = { ...issue, sortedLinks };
       issue.links.forEach((link) => {
-        // add child issues at subtasks
         if (sortedLinks[link.linkTypeId] === undefined) {
           sortedLinks[link.linkTypeId] = [];
         }
@@ -567,6 +566,7 @@ export default class APIImpl implements LXPAPI {
           throwError(`search could not fetch linked issues of ${link.issueId}`);
         }
       });
+      // add epic child issues
       if (issue.type.name === "Epic") {
         sortedLinks[CustomLinkType.SUBTASK_OR_EPIC_CHILD] = linkedIssues.filter(
           (linkedIssue) => {
