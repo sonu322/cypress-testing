@@ -282,6 +282,11 @@ export default class APIImpl implements LXPAPI {
           name: "Assignee",
           jiraId: "assignee",
         },
+        {
+          id: "fixVersions",
+          name:"Fix versions",
+          jiraId: "fixVersions",
+        }
       ];
 
       const fields = await this.getAllIssueFields();
@@ -434,7 +439,10 @@ export default class APIImpl implements LXPAPI {
     }
 
     let storyPoints: number = null;
-    if (issue.fields[storyPointsFieldId] !== undefined) {
+    if (
+      issue.fields[storyPointsFieldId] !== undefined &&
+      issue.fields[storyPointsFieldId] !== null
+    ) {
       storyPoints = issue.fields[storyPointsFieldId];
     } else if (issue.fields[storyPointEstimateFieldId] !== undefined) {
       storyPoints = issue.fields[storyPointEstimateFieldId];
