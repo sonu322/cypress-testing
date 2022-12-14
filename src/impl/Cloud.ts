@@ -165,8 +165,8 @@ export default class APIImpl implements LXPAPI {
         name: "Parent",
       });
       result.push({
-        id: CustomLinkType.SUBTASK,
-        name: "Subtasks",
+        id: CustomLinkType.SUBTASK_OR_EPIC_CHILD,
+        name: "Subtasks / Epic Child Issues",
       });
 
       items.forEach((item) => {
@@ -284,9 +284,9 @@ export default class APIImpl implements LXPAPI {
         },
         {
           id: "fixVersions",
-          name:"Fix versions",
+          name: "Fix versions",
           jiraId: "fixVersions",
-        }
+        },
       ];
 
       const fields = await this.getAllIssueFields();
@@ -323,20 +323,42 @@ export default class APIImpl implements LXPAPI {
     }
   }
 
+  _addEpicChildrenToLinks(issue: Issue, childIssues: Issue[]): void {
+    childIssues.forEach((child) => {
+      issue.links.push({
+        linkTypeId: CustomLinkType.SUBTASK_OR_EPIC_CHILD,
+        name: "Subtasks / Epic Child Issues",
+        isInward: false,
+        issueId: child.id,
+      });
+    });
+  }
+
   async getIssueWithLinks(
     fields: IssueField[],
     issueId?: string
   ): Promise<IssueWithLinkedIssues> {
-    issueId = issueId || (await this.getCurrentIssueId());
-    const issue: Issue = await this.getIssueById(fields, issueId);
-    const linkedIds = issue.links.map((link) => link.issueId);
-    let linkedIssues: Issue[] = [];
-    if (linkedIds && linkedIds.length) {
-      const result = await this.searchIssues(`id in (${linkedIds})`, fields);
-      linkedIssues = result.data;
-    }
+    try {
+      issueId = issueId || (await this.getCurrentIssueId());
+      const issue: Issue = await this.getIssueById(fields, issueId);
+      const linkedIds = issue.links.map((link) => link.issueId);
+      let linkedIssues: Issue[] = [];
+      // add epic children to issue
+      if (issue.type.id === "epic") {
+        const childIssuesData = await this.getEpicChildIssues(issue, fields);
+        this._addEpicChildrenToLinks(issue, childIssuesData.data);
+        linkedIssues = childIssuesData.data;
+      }
+      if (linkedIds && linkedIds.length) {
+        const result = await this.searchIssues(`id in (${linkedIds})`, fields);
+        linkedIssues = linkedIssues.concat(result.data);
+      }
 
-    return { ...issue, linkedIssues };
+      return { ...issue, linkedIssues };
+    } catch (error) {
+      console.log(error);
+      throwError(`Error fetching issue ${issueId}`);
+    }
   }
 
   getCurrentIssueId(): Promise<string> {
@@ -373,8 +395,8 @@ export default class APIImpl implements LXPAPI {
     }
     for (const subTask of subTasks) {
       result.push({
-        linkTypeId: CustomLinkType.SUBTASK,
-        name: "Subtasks",
+        linkTypeId: CustomLinkType.SUBTASK_OR_EPIC_CHILD,
+        name: "Subtasks / Epic Child Issues",
         isInward: false,
         issueId: subTask.id,
       });
@@ -483,11 +505,27 @@ export default class APIImpl implements LXPAPI {
     return fieldIds;
   }
 
+  async getEpicChildIssues(
+    issue: Issue,
+    fields: IssueField[]
+  ): Promise<{ data: Issue[]; total: number }> {
+    try {
+      const childIssuesData = await this.searchIssues(
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        `parent = ${issue.issueKey} OR "Epic Link" = ${issue.issueKey}`,
+        fields
+      );
+      return childIssuesData;
+    } catch (error) {
+      console.log(error);
+      throwError(`Error getting child issues of epic ${issue.issueKey}`);
+    }
+  }
+
   async getIssueById(fields: IssueField[], issueId?: string): Promise<Issue> {
     try {
       issueId = issueId || (await this.getCurrentIssueId());
       const fieldIds = this._getFieldIds(fields);
-
       const query = "?fields=" + fieldIds.join(",");
       const issue: JiraIssueFull = await this.api.getIssueById(issueId, query);
 
@@ -538,9 +576,7 @@ export default class APIImpl implements LXPAPI {
     }
   }
 
-  private readonly _getLinkedIssueJQL = (
-    issues: Issue[]
-  ): { jqlString: string; total: number } => {
+  private readonly _getLinkedIssueJQL = (issues: Issue[]): string => {
     const ids: string[] = [];
     issues.forEach((issue) => {
       issue.links.forEach((link) => {
@@ -550,10 +586,16 @@ export default class APIImpl implements LXPAPI {
         }
       });
     });
+
     const jqlComponents = ids.map((id) => `id=${id}`);
+    const epicIssues = issues.filter((issue) => issue.type.name === "Epic");
+    epicIssues.forEach((epic) => {
+      jqlComponents.push(
+        `parent = ${epic.issueKey} OR "Epic Link" = ${epic.issueKey}`
+      );
+    });
     const jqlString = jqlComponents.join(" OR ");
-    const total = ids.length;
-    return { jqlString, total };
+    return jqlString;
   };
 
   private readonly _populateIssueLinks = (
@@ -577,6 +619,21 @@ export default class APIImpl implements LXPAPI {
           throwError(`search could not fetch linked issues of ${link.issueId}`);
         }
       });
+      // add epic child issues
+      if (issue.type.name === "Epic") {
+        sortedLinks[CustomLinkType.SUBTASK_OR_EPIC_CHILD] = linkedIssues.filter(
+          (linkedIssue) => {
+            const parent = linkedIssue.links?.find(
+              (issue) => issue.linkTypeId === "PARENT"
+            );
+            if (parent?.issueId === issue.id) {
+              return true;
+            } else {
+              return false;
+            }
+          }
+        );
+      }
       populatedIssues.push(item);
     });
     return populatedIssues;
@@ -591,15 +648,13 @@ export default class APIImpl implements LXPAPI {
     const searchResult = await this.searchIssues(jql, fields, start, max);
     const issues: Issue[] = searchResult.data;
 
-    const { jqlString: linkedIssuesJQL, total } =
-      this._getLinkedIssueJQL(issues);
+    const linkedIssuesJQL = this._getLinkedIssueJQL(issues);
     let linkedIssues = [];
     if (linkedIssuesJQL !== undefined && linkedIssuesJQL.length > 0) {
       const linkedIssuesResult = await this.searchIssues(
         linkedIssuesJQL,
         fields,
-        0,
-        total
+        0
       );
       linkedIssues = linkedIssuesResult.data;
       const totalLinkedIssues = linkedIssuesResult.total;
