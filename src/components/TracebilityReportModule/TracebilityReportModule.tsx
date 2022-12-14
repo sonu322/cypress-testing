@@ -204,4 +204,4 @@ export const TracebilityReportModule = (): JSX.Element => {
       </GrowContainer>
     </FullWidthContainer>
   );
-};;
+};
