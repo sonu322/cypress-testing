@@ -64,12 +64,13 @@ export interface IssueWithSortedLinks extends Issue {
   };
 }
 
-export interface IssueVersion {
+export interface IssueVersion { 
   id: ID;
   name: string;
   archived: boolean;
   released: boolean;
   releaseDate: string;
+  versionsColor: string;
 }
 
 export interface IssueStatus extends IssueOption {
@@ -103,7 +104,7 @@ export interface IssueTreeFilter {
 }
 
 export enum CustomLinkType {
-  SUBTASK = "SUBTASK",
+  SUBTASK_OR_EPIC_CHILD = "SUBTASK_OR_EPIC_CHILD",
   PARENT = "PARENT",
 }
 
@@ -145,4 +146,4 @@ export default interface LXPAPI {
   getFilters: () => Promise<Filter[]>;
 
   getCurrentProject: (projectKey?: string) => Promise<Project>;
-}
+};

@@ -206,12 +206,40 @@ export interface JiraFilter {
   name: string;
 }
 
+export interface JiraMyself {
+  self: string;
+  accountId: string;
+  emailAddress: string;
+  avatarUrls: AvatarUrls;
+  displayName: string;
+  active: boolean;
+  timeZone: string;
+  locale: string;
+  groups: Groups;
+  applicationRoles: Groups;
+  expand: string;
+}
+
+interface Groups {
+  size: number;
+  items: any[];
+}
+
+interface AvatarUrls {
+  "48x48": string;
+  "24x24": string;
+  "16x16": string;
+  "32x32": string;
+}
+
 export interface JiraAPI {
   hasValidLicense(): boolean;
 
   getJiraBaseURL(): string;
 
   getPriorities(): Promise<JiraIssuePriorityFull[]>;
+
+  getMyself(): Promise<JiraMyself>;
 
   getIssueTypes(): Promise<JiraIssueType[]>;
 
