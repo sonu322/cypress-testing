@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { LoadingButton } from "@atlaskit/button";
-import { IssueLimitDropdown } from "./IssueLimitDropdown";
 import Spinner from "@atlaskit/spinner";
 import { APIContext } from "../../context/api";
 import styled from "styled-components";
@@ -12,6 +11,7 @@ import {
   IssueType,
   IssueWithSortedLinks,
 } from "../../types/api";
+import { DropdownSingleSelect } from "../common/DropdownSingleSelect";
 const Container = styled.div`
   width: 100%;
 `;
@@ -26,10 +26,10 @@ const MarginAddedContainer = styled.div`
 const DEFAULT_ROWS_PER_PAGE = 20;
 const START_INDEX = 0;
   const options = [
-    { id: "10", name: 10 },
-    { id: "20", name: 20 },
-    { id: "50", name: 50 },
-    { id: "100", name: 100 },
+    { id: 10, name: "10"},
+    { id: 20, name: "20"},
+    { id: 50, name: "50"},
+    { id: 100, name: "100"},
   ];
 interface Props {
   jqlString: string;
@@ -66,7 +66,7 @@ export const Main = ({
 }: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
-  const [selectedOptionId, setSelectedOptionId] = useState("");
+  const [selectedOptionId, setSelectedOptionId] = useState(0);
   const api = useContext(APIContext);
   const addMoreIssues = (issues: IssueWithSortedLinks[]): void => {
     const newIssues = filteredIssues ?? [];
@@ -95,16 +95,13 @@ export const Main = ({
   }, [jqlString]);
 
   useEffect(() => {
-    if (selectedOptionId !== "") {
+    if (selectedOptionId !== 0) {
     fetchMoreIssues();
     }
   } , [selectedOptionId]);
   
     const fetchMoreIssues = (): void => {
-    const selectedLimitInfo = options.find(
-      (option) => option.id === selectedOptionId
-    );
-    const selectedLimit = selectedLimitInfo?.name ?? DEFAULT_ROWS_PER_PAGE,
+    const selectedLimit = selectedOptionId ?? DEFAULT_ROWS_PER_PAGE ;
     void tracebilityReportUtils.populateIssues(
       jqlString,
       issueFields,
@@ -145,11 +142,12 @@ export const Main = ({
           />
         </TableContainer>
         <MarginAddedContainer>
-          <IssueLimitDropdown 
-            options = {options}
-            selectedOptionId = {selectedOptionId}
-            setSelectedOptionId={setSelectedOptionId}
-          />
+          <DropdownSingleSelect 
+             options = {options}
+             dropdownName="Issue Limit"
+             selectedOptionId={selectedOptionId}
+             setSelectedOptionId={setSelectedOptionId}
+           />
           <LoadingButton
             isLoading={areMoreIssuesLoading}
             isDisabled={filteredIssues.length >= totalNumberOfIssues}

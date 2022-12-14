@@ -6,10 +6,10 @@ import DropdownMenu, {
 import { Filter } from "../../types/api";
 
 interface Props {
-  selectedOptionId: string;
+  selectedOptionId: string | number;
   dropdownName: string;
-  setSelectedOptionId: React.Dispatch<React.SetStateAction<string>>;
-  options: Array<{name: string | number, id: string}>;
+  setSelectedOptionId: React.Dispatch<React.SetStateAction<string | number>>;
+  options: Array<{name: string | number, id: string | number}>;
 }
 
 export const DropdownSingleSelect = ({
