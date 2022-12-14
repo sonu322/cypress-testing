@@ -84,7 +84,8 @@ export interface IssueType extends IssueOption {
   iconUrl: string;
 }
 
-export interface IssueLinkType extends IssueOption {}
+export interface IssueLinkType extends IssueOption {
+}
 
 export interface Filter {
   expand: string;
