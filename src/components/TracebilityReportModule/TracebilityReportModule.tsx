@@ -153,7 +153,6 @@ export const TracebilityReportModule = (): JSX.Element => {
 
   const emptyEqualsAllTableIds =
     selectedTableFieldIds.length > 0 ? selectedTableFieldIds : allTableFieldIds;
-
   return (
     <FullWidthContainer>
       <PageHeader
@@ -201,9 +200,9 @@ export const TracebilityReportModule = (): JSX.Element => {
           areIssuesLoading={areIssuesLoading}
           setAreIssuesLoading={setAreIssuesLoading}
           isIssueTypeReport={selectedTabIndex === 0}
-          errors={errors}
-        />
+          errors={errors} 
+          />
       </GrowContainer>
     </FullWidthContainer>
   );
-};;
+};
