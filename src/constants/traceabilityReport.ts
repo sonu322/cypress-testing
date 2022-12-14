@@ -8,5 +8,5 @@ export const jqlDialogOptions = {
   ),
   submitText: t("traceability-report.toolbar.jqlDialogOptions.submitText"),
   cancelText: t("traceability-report.toolbar.jqlDialogOptions.cancelText"),
-  jql: t("traceability-report.toolbar.jqlDialogOptions.jql"),
+  jql: "order by status ASC",
 };

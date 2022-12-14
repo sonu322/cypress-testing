@@ -8,6 +8,7 @@ import {
   JiraIssueSearchResult,
   JiraIssueType,
   JiraLinkType,
+  JiraMyself,
   JiraProject,
 } from "../../types/jira";
 
@@ -24,6 +25,11 @@ export default class JiraCloudImpl implements JiraAPI {
 
   getJiraBaseURL(): string {
     return getQueryParam("xdm_e") as string;
+  }
+
+  async getMyself(): Promise<JiraMyself> {
+    let response = await this._AP.request("/rest/api/3/myself");
+    return response.body && JSON.parse(response.body);
   }
 
   async getPriorities(): Promise<JiraIssuePriorityFull[]> {
@@ -73,7 +79,6 @@ export default class JiraCloudImpl implements JiraAPI {
       data: JSON.stringify(data),
     });
     return response.body && JSON.parse(response.body);
-
   }
 
   getCurrentIssueId(): Promise<string> {
