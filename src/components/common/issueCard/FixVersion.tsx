@@ -2,8 +2,11 @@ import React from "react";
 import { IssueVersion } from "../../../types/api";
 import Lozenge from "@atlaskit/lozenge";
 import { TooltipContainer } from "../TooltipContainer";
-import { version } from "react-dom";
+import styled, { css } from "styled-components";
 
+const StyledFixVersion = styled.div`
+white-space: nowrap;
+`;
 interface Props { 
   versionInfo: IssueVersion[];
 }
@@ -24,10 +27,12 @@ let versionNames = versionInfo.map((versionInfo) => {
 const tooltipContent = versionNames.join(", ");
     return (
       <TooltipContainer content={tooltipContent} position="bottom">
+        <StyledFixVersion>
         <Lozenge>
           {totalversions}  
         </Lozenge>
         {num}
+        </StyledFixVersion>
       </TooltipContainer>
     );
 };
