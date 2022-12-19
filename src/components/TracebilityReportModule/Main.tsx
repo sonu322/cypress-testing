@@ -48,6 +48,7 @@ interface Props {
   >;
   isIssueTypeReport: boolean;
   errors: any[];
+  selectedViewTab: string;
 }
 
 export const Main = ({
@@ -64,6 +65,7 @@ export const Main = ({
   setFilteredIssues,
   isIssueTypeReport,
   errors,
+  selectedViewTab,
 }: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
@@ -116,7 +118,7 @@ export const Main = ({
       undefined
     );
   };
-
+  console.log(selectedViewTab);
   if (areIssuesLoading) {
     return (
       <FullHeightContainer>

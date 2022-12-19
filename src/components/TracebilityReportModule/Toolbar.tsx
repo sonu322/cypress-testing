@@ -14,6 +14,7 @@ import { IssueField, IssueLinkType, IssueType } from "../../types/api";
 import { TabGroup } from "./TabGroup";
 import { SelectedType } from "@atlaskit/tabs/types";
 import { useTranslation } from "react-i18next";
+import { viewTabs } from "../../constants/traceabilityReport";
 const MainBar = styled.div`
   padding: 8px;
   border-radius: 3px;
@@ -39,8 +40,8 @@ interface Props {
   handleNewError: (err: unknown) => void;
   isExportDisabled: boolean;
   issueCardOptions: IssueField[];
-  viewTabs: Array<{ name: string; description: string }>;
-  viewTabsId: string;
+  // viewTabs: Array<{ name: string; description: string }>;
+  // viewTabsId: string;
   handleTabOptionSelect: (tabIndex: SelectedType) => void;
   selectedTabIndex: SelectedType;
 }
@@ -57,8 +58,8 @@ export const Toolbar = ({
   handleNewError,
   isExportDisabled,
   issueCardOptions,
-  viewTabs,
-  viewTabsId,
+  // viewTabs,
+  // viewTabsId,
   handleTabOptionSelect,
   selectedTabIndex,
 }: Props): JSX.Element => {
@@ -67,8 +68,8 @@ export const Toolbar = ({
     <div style={{ marginTop: "-16px", marginBottom: "-8px" }}>
       <TabGroup
         handleOptionSelect={handleTabOptionSelect}
-        id={viewTabsId}
-        options={viewTabs}
+        id={viewTabs.id}
+        options={viewTabs.tabs}
         selectedTabIndex={selectedTabIndex}
       />
       <MainBar>
