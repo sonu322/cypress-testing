@@ -13,6 +13,7 @@ import {
 } from "../../types/api";
 import { useTranslation } from "react-i18next";
 import { DropdownSingleSelect } from "../common/DropdownSingleSelect";
+import { CellLimit } from "./SettingDropdown";
 const Container = styled.div`
   width: 100%;
 `;
@@ -40,6 +41,7 @@ interface Props {
   selectedIssueFieldIds: string[];
   selectedTableFieldIds: string[];
   tableFields: IssueType[] | IssueLinkType[];
+  selectedIssueInCellIds: string[];
   filteredIssues: IssueWithSortedLinks[];
   areIssuesLoading: boolean;
   setAreIssuesLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -58,6 +60,7 @@ export const Main = ({
   selectedIssueFieldIds,
   selectedTableFieldIds,
   tableFields,
+  selectedIssueInCellIds,
   filteredIssues,
   areIssuesLoading,
   setAreIssuesLoading,
@@ -139,6 +142,7 @@ export const Main = ({
             issueFieldIds={selectedIssueFieldIds}
             tableFields={tableFields}
             selectedTableFieldIds={selectedTableFieldIds}
+            selectedIssueInCellIds={selectedIssueInCellIds}
             isIssueTypeReport={isIssueTypeReport}
             errors={errors}
           />

@@ -10,6 +10,7 @@ import {
 import { getUniqueValues } from "../../util/common";
 import { IssueCard } from "../common/issueCard/IssueCard";
 import { EmptyCell } from "./EmptyCell";
+import { CellLimit } from "./SettingDropdown";
 
 export const Td = styled.td`
   border: 1px solid ${colors.N40};
@@ -30,6 +31,8 @@ export const MaxWidthContainer = styled.div`
 export interface Props {
   tableFields: IssueType[] | IssueLinkType[];
   selectedTableFieldIds: string[];
+  issueInCell: CellLimit[];
+  selectedIssueInCellIds: string[];
   issueFieldIds: string[];
   issue: IssueWithSortedLinks;
   rowSno: number;
@@ -40,9 +43,10 @@ export const IssueTypeRow = ({
   issue,
   rowSno,
   selectedTableFieldIds,
+  selectedIssueInCellIds
 }: Props): JSX.Element[] => {
   const cells = [];
-
+  console.log(issue);
   // push issue cell into row
   const issueCell = (
     <IssueTd key="issue">
@@ -89,8 +93,7 @@ export const IssueTypeRow = ({
           <MaxWidthContainer>{issueCards}</MaxWidthContainer>
         </Td>
       );
-    }
-    // push cells into row
+    }   
     cells.push(issueCell);
   });
   return cells;

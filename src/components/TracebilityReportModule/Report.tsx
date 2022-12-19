@@ -10,6 +10,7 @@ import {
 } from "../../types/api";
 import { IssueTypeRow } from "./IssueTypeRow";
 import { getScreenHeight } from "../../util/common";
+import { CellLimit } from "./SettingDropdown";
 const Container = styled.div`
   width: 100%;
   // height: 100%;
@@ -30,6 +31,7 @@ interface Props {
   filteredIssues: IssueWithSortedLinks[];
   tableFields: IssueType[] | IssueLinkType[];
   selectedTableFieldIds: string[];
+  selectedIssueInCellIds: string[];
   issueFieldIds: string[];
   isIssueTypeReport: boolean;
   errors: any[];
@@ -38,6 +40,7 @@ export const Report = ({
   filteredIssues,
   tableFields,
   selectedTableFieldIds,
+  selectedIssueInCellIds,
   issueFieldIds,
   isIssueTypeReport,
   errors
@@ -80,6 +83,7 @@ export const Report = ({
             <BorderTr key={`${issue.issueKey}`}>
               {isIssueTypeReport ? (
                 <IssueTypeRow
+                  selectedIssueInCellIds={selectedIssueInCellIds}
                   selectedTableFieldIds={selectedTableFieldIds}
                   issueFieldIds={issueFieldIds}
                   issue={issue}

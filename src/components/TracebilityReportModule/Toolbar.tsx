@@ -14,7 +14,7 @@ import { IssueField, IssueLinkType, IssueType } from "../../types/api";
 import { TabGroup } from "./TabGroup";
 import { SelectedType } from "@atlaskit/tabs/types";
 import { useTranslation } from "react-i18next";
-import { SettingsDropdown } from "./SettingDropdown";
+import { CellLimit, SettingsDropdown } from "./SettingDropdown";
 const MainBar = styled.div`
   padding: 8px;
   border-radius: 3px;
@@ -36,7 +36,7 @@ interface Props {
   selectedTableFieldIds: string[];
   updateSelectedTableFieldIds: (fieldIds: string[]) => void;
   tableFields: IssueType[] | IssueLinkType[];
-  issueInCell: IssueType[];
+  issueInCell: CellLimit[];
   selectedIssueInCellIds: string[];
   updateSelectedIssueInCellIds: React.Dispatch<React.SetStateAction<string[]>>;
   exportReport: () => void;
@@ -110,7 +110,7 @@ export const Toolbar = ({
             <SettingsDropdown 
               selectedOptions={selectedIssueInCellIds}
               updateSelectedOptionIds={updateSelectedIssueInCellIds}
-              options={issueInCell}
+              options={issueInCell} 
             />
             <ExportContent
               description={t("lxp.toolbar.export-csv.title")}
