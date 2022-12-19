@@ -18,6 +18,7 @@ import {
   orderSelectedIds,
 } from "../../util/tracebilityReportsUtils";
 import { getKeyValues } from "../../util/common";
+import { viewTabs } from "../../constants/traceabilityReport";
 
 const FullWidthContainer = styled.div`
   width: 100%;
@@ -54,20 +55,7 @@ export const TracebilityReportModule = (): JSX.Element => {
   const [areIssuesLoading, setAreIssuesLoading] = useState(false);
   const [errors, setErrors] = useState<unknown[]>([]);
   const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>(0);
-  const viewTabs = [
-    {
-      name: t("traceability-report.issuetype-view.name"),
-      description: t("traceability-report.issuetype-view.description"),
-    },
-    {
-      name: t("traceability-report.linktype-view.name"),
-      description: t("traceability-report.linktype-view.description"),
-    },
-    {
-      name: t("traceability-report.tree-view.name"),
-      description: t("traceability-report.tree-view.description"),
-    },
-  ];
+
   const handleTabOptionSelect = (tabIndex: SelectedType): void => {
     setSelectedTabIndex(tabIndex);
   };
@@ -175,8 +163,8 @@ export const TracebilityReportModule = (): JSX.Element => {
             }
             isExportDisabled={isExportDisabled}
             handleNewError={handleNewError}
-            viewTabs={viewTabs}
-            viewTabsId={"view-tabs"}
+            // viewTabs={viewTabs}
+            // viewTabsId={"view-tabs"}
             handleTabOptionSelect={handleTabOptionSelect}
             selectedTabIndex={selectedTabIndex}
           />
@@ -199,6 +187,7 @@ export const TracebilityReportModule = (): JSX.Element => {
           areIssuesLoading={areIssuesLoading}
           setAreIssuesLoading={setAreIssuesLoading}
           isIssueTypeReport={selectedTabIndex === 0}
+          selectedViewTab={viewTabs.tabs[selectedTabIndex].id}
           errors={errors}
         />
       </GrowContainer>
