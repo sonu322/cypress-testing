@@ -82,7 +82,6 @@ export interface IssueStatus extends IssueOption {
 export interface IssueType extends IssueOption {
   description: string;
   iconUrl: string;
-  name: string;
 }
 
 export interface IssueLinkType extends IssueOption {

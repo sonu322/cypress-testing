@@ -86,6 +86,5 @@ export const getStatusAppearance = (status: IssueStatus): ThemeAppearance => {
       type = "moved";
     }
   }
-
   return type;
 };

@@ -30,10 +30,18 @@ const GrowContainer = styled.div`
   flex-grow: 1;
   display: flex;
 `;
+const CellOptions = [
+  { id: "hello",
+    name: "Hello",
+  },
+]
 
 export const TracebilityReportModule = (): JSX.Element => {
   const { t } = useTranslation();
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
+  const [selectedIssueInCellIds, updateSelectedIssueInCellIds] = useState<string[]>(
+    []
+  );
   const [filteredIssues, setFilteredIssues] = useState<
     IssueWithSortedLinks[] | null
   >(null);
@@ -153,6 +161,9 @@ export const TracebilityReportModule = (): JSX.Element => {
       <PageHeader
         bottomBar={
           <Toolbar
+            selectedIssueInCellIds={selectedIssueInCellIds}
+            updateSelectedIssueInCellIds={updateSelectedIssueInCellIds}
+            issueInCell={CellOptions}
             selectedJQLString={selectedJQLString}
             setSelectedJQLString={setSelectedJQLString}
             issueCardOptions={issueFields}
@@ -188,6 +199,8 @@ export const TracebilityReportModule = (): JSX.Element => {
           clearAllErrors={clearAllErrors}
           issueFields={issueFields}
           selectedIssueFieldIds={selectedIssueFieldIds}
+          selectedIssueInCellIds={selectedIssueInCellIds}
+          // CellOptions={CellOptions}
           tableFields={tableFields}
           selectedTableFieldIds={emptyEqualsAllTableIds}
           filteredIssues={filteredIssues}
