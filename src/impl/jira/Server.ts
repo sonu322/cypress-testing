@@ -8,6 +8,7 @@ import {
   JiraIssueType,
   JiraLinkType,
   JiraProject,
+  HelpLinks,
 } from "../../types/jira";
 
 export default class JiraServerImpl implements JiraAPI {
@@ -102,5 +103,12 @@ export default class JiraServerImpl implements JiraAPI {
     return await this._AJS.$.getJSON(
       this.contextPath + `/rest/api/2/project/${projectKey}`
     );
+  }
+
+  getHelpLinks(): HelpLinks {
+    return {
+      issueTree: "https://optimizory.atlassian.net/l/cp/gdv35UvD",
+      traceability: "https://optimizory.atlassian.net/l/cp/1KpzZ3z4"
+    };
   }
 }

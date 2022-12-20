@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import { JQLSelectDropdown } from "../JQLSelectDropdown";
 import { ButtonGroup } from "@atlaskit/button";
 import { Dropdown } from "../common/Dropdown";
-import { helpLinkUrl } from "../../constants/common";
 import { HelpLink } from "../common/HelpLink";
 import { ExportContent } from "../common/ExportContent";
 import { JQLEditor } from "../JQLEditor";
@@ -14,6 +13,8 @@ import { IssueField, IssueLinkType, IssueType } from "../../types/api";
 import { TabGroup } from "./TabGroup";
 import { SelectedType } from "@atlaskit/tabs/types";
 import { useTranslation } from "react-i18next";
+import { APIContext } from "../../context/api";
+
 const MainBar = styled.div`
   padding: 8px;
   border-radius: 3px;
@@ -63,6 +64,8 @@ export const Toolbar = ({
   selectedTabIndex,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
+  const api = useContext(APIContext);
+  const helpLinkUrl = api.getHelpLinks().traceability;
   return (
     <div style={{ marginTop: "-16px", marginBottom: "-8px" }}>
       <TabGroup
