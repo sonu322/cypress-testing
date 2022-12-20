@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Dropdown } from "../common/Dropdown";
 import { ButtonGroup } from "@atlaskit/button";
 import styled from "styled-components";
 import { IssueOptionsDropdown } from "./IssueOptionsDropdown";
-import { helpLinkUrl } from "../../constants/common";
 import { ExportContent } from "../common/ExportContent";
 import { HelpLink } from "../common/HelpLink";
 import { useTranslation } from "react-i18next";
+import { APIContext } from "../../context/api";
+
 export const Container = styled.div`
   display: flex;
   justify-content: space-between;
@@ -25,6 +26,8 @@ export const Toolbar = ({
   isExportDisabled,
 }) => {
   const { t } = useTranslation();
+  const api = useContext(APIContext);
+  const helpLinkUrl = api.getHelpLinks().issueTree;
   return (
     <Container>
       <ButtonGroup>

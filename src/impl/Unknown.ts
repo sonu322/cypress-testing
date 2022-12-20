@@ -9,6 +9,7 @@ import LXPAPI, {
   IssueWithSortedLinks,
   Project,
 } from "../types/api";
+import { HelpLinks } from "../types/jira";
 
 export default class UnknownImpl implements LXPAPI {
   hasValidLicense(): boolean {
@@ -77,6 +78,10 @@ export default class UnknownImpl implements LXPAPI {
     start?: number,
     max?: number
   ): Promise<{ data: IssueWithSortedLinks[]; total: number }> {
+    throw new Error("Method not implemented.");
+  }
+
+  getHelpLinks(): HelpLinks {
     throw new Error("Method not implemented.");
   }
 }

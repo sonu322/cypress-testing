@@ -10,6 +10,7 @@ import {
   JiraLinkType,
   JiraMyself,
   JiraProject,
+  HelpLinks,
 } from "../../types/jira";
 
 import { getQueryParam } from "../../util/index";
@@ -115,5 +116,12 @@ export default class JiraCloudImpl implements JiraAPI {
   async getProject(projectKey?: string): Promise<JiraProject> {
     let response = await this._AP.request(`/rest/api/3/project/${projectKey}`);
     return response.body && JSON.parse(response.body);
+  }
+
+  getHelpLinks(): HelpLinks {
+    return {
+      issueTree: "https://optimizory.atlassian.net/l/cp/xj7rXies",
+      traceability: "https://optimizory.atlassian.net/l/cp/77caidqE"
+    };
   }
 }

@@ -33,6 +33,7 @@ import {
   JiraAssignee,
   JiraVersion,
   JiraAPI,
+  HelpLinks,
 } from "../types/jira";
 
 function throwError(msg: string) {
@@ -720,5 +721,9 @@ export default class APIImpl implements LXPAPI {
       }
       throw new Error(message);
     }
+  }
+
+  getHelpLinks(): HelpLinks {
+    return this.api.getHelpLinks();
   }
 }

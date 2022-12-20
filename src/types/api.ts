@@ -1,3 +1,4 @@
+import { HelpLinks } from "./jira";
 export type ID = string;
 
 export interface IssueOption {
@@ -64,7 +65,7 @@ export interface IssueWithSortedLinks extends Issue {
   };
 }
 
-export interface IssueVersion { 
+export interface IssueVersion {
   id: ID;
   name: string;
   archived: boolean;
@@ -147,4 +148,6 @@ export default interface LXPAPI {
   getFilters: () => Promise<Filter[]>;
 
   getCurrentProject: (projectKey?: string) => Promise<Project>;
+
+  getHelpLinks: () => HelpLinks;
 };

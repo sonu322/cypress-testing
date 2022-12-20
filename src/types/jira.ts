@@ -145,7 +145,7 @@ export interface JiraProject {
   properties: JiraProjectProperties;
 }
 
-export interface JiraProjectProperties {}
+export interface JiraProjectProperties { }
 
 export interface JiraRoles {
   [roleName: string]: string;
@@ -232,6 +232,11 @@ interface AvatarUrls {
   "32x32": string;
 }
 
+export interface HelpLinks {
+  issueTree: string;
+  traceability: string;
+}
+
 export interface JiraAPI {
   hasValidLicense(): boolean;
 
@@ -263,4 +268,6 @@ export interface JiraAPI {
   getProject(projectKey: string): Promise<JiraProject>;
 
   getCurrentProjectKey(): Promise<string>;
+
+  getHelpLinks(): HelpLinks;
 }
