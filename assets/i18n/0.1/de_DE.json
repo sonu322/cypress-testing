@@ -38,6 +38,8 @@
   "lxp.toolbar.link-type.text": "Verknüpfungsart",
   "lxp.toolbar.link-type.title": "Bitte anzuzeigende Verknüpfungsart auswählen",
   "lxp.toolbar.issue-type.text": "Vorgangstyp",
+  "lxp.toolbar.expand-all.title": "Klicken Sie hier, um alle Baumknoten bis zu einer maximalen Tiefe von 3 zu erweitern",
+  "lxp.toolbar.collapse-all.title": "Bitte hier klicken um gesamten Baum einzuklappen",
   "lxp.toolbar.export-csv.title": "Klicken Sie hier, um die CSV-Datei zu exportieren",
   "lxp.license.do-not-have": "Keine Lizenz vorhanden",
   "traceability-report.name": "Links Explorer - Rückverfolgbarkeitsbericht",

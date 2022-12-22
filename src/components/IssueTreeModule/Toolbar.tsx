@@ -1,12 +1,15 @@
 import React, { useContext } from "react";
 import { Dropdown } from "../common/Dropdown";
-import { ButtonGroup } from "@atlaskit/button";
+import Button, { ButtonGroup, LoadingButton } from "@atlaskit/button";
 import styled from "styled-components";
 import { IssueOptionsDropdown } from "./IssueOptionsDropdown";
 import { ExportContent } from "../common/ExportContent";
 import { HelpLink } from "../common/HelpLink";
 import { useTranslation } from "react-i18next";
 import { APIContext } from "../../context/api";
+import ExpandIcon from "@atlaskit/icon/glyph/hipchat/chevron-double-down";
+import CollapseIcon from "@atlaskit/icon/glyph/hipchat/chevron-double-up";
+import { TooltipContainer } from "../common/TooltipContainer";
 
 export const Container = styled.div`
   display: flex;
@@ -23,7 +26,10 @@ export const Toolbar = ({
   setSelectedIssueFieldIds,
   issueCardOptions,
   exportTree,
+  collapseAll,
+  expandAll,
   isExportDisabled,
+  isExpandAllLoading
 }) => {
   const { t } = useTranslation();
   const api = useContext(APIContext);
@@ -43,6 +49,23 @@ export const Toolbar = ({
               updateSelectedOptions={updateFilteredKeyOptions}
             />
           ))}
+        <TooltipContainer content={t("lxp.toolbar.expand-all.title")}>
+          <LoadingButton
+            appearance="default"
+            iconBefore={<ExpandIcon label={""} />}
+            onClick={expandAll}
+            isLoading={isExpandAllLoading}
+            isDisabled={isExpandAllLoading}
+          />
+        </TooltipContainer>
+        <TooltipContainer content={t("lxp.toolbar.collapse-all.title")}>
+          <Button
+            appearance="default"
+            iconBefore={<CollapseIcon label={""} />}
+            onClick={collapseAll}
+          />
+        </TooltipContainer>
+
       </ButtonGroup>
       <div>
         <ButtonGroup>

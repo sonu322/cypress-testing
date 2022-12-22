@@ -38,6 +38,8 @@
   "lxp.toolbar.link-type.text": "事务链接类型",
   "lxp.toolbar.link-type.title": "选择事务链接类型显示",
   "lxp.toolbar.issue-type.text": "事务类型",
+  "lxp.toolbar.expand-all.title": "单击此处展开所有树节点，最大深度为 3",
+  "lxp.toolbar.collapse-all.title": "点击这里折叠所有树节点",
   "lxp.toolbar.export-csv.title": "点击这里导出CSV文件",
   "lxp.license.do-not-have": "找不到许可证",
   "traceability-report.name": "链接浏览器 - 可追溯性报告",
