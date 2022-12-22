@@ -17,6 +17,8 @@
   "lxp.toolbar.issue-card-fields": "Issue Card Fields",
   "lxp.toolbar.link-type.text": "Issue Link Type",
   "lxp.toolbar.issue-type.text": "Issue Type",
+  "lxp.toolbar.expand-all.title": "Click here to expand all tree nodes upto maximum depth of 3",
+  "lxp.toolbar.collapse-all.title": "Click here to collapse all tree nodes",
   "lxp.toolbar.export-csv.title": "Click here to export CSV file",
   "lxp.license.do-not-have": "No license found",
   "traceability-report.name": "Links Explorer - Traceability Report",

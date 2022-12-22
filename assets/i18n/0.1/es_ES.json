@@ -37,6 +37,8 @@
   "lxp.toolbar.link-type.text": "incidencia tipo de enlace",
   "lxp.toolbar.link-type.title": "Seleccione Edición tipo de enlace para mostrar",
   "lxp.toolbar.issue-type.text": "Tipo de incidencia",
+  "lxp.toolbar.expand-all.title": "Haga clic aquí para expandir todos los nodos del árbol hasta una profundidad máxima de 3",
+  "lxp.toolbar.collapse-all.title": "Haga clic aquí para contraer todos los nodos del árbol",
   "lxp.toolbar.export-csv.title": "Haga clic aquí para exportar un archivo CSV",
   "lxp.license.do-not-have": "No se han encontrado licencia",
   "traceability-report.name": "Explorer de Enlaces - Informe de trazabilidad",

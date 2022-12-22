@@ -37,6 +37,8 @@
   "lxp.toolbar.link-type.text": "ticket Type de lien",
   "lxp.toolbar.link-type.title": "Sélectionnez le type de lien d'émission pour montrer",
   "lxp.toolbar.issue-type.text": "type de ticket",
+  "lxp.toolbar.expand-all.title": "Cliquez ici pour étendre tous les nœuds de l'arbre jusqu'à une profondeur maximale de 3",
+  "lxp.toolbar.collapse-all.title": "Cliquez ici pour replier tous les nœuds d'arbre",
   "lxp.toolbar.export-csv.title": "Cliquez ici pour exporter un fichier CSV",
   "lxp.license.do-not-have": "Aucune licence trouvé",
   "traceability-report.name": "Liens Explorer - Rapport de traçabilité",

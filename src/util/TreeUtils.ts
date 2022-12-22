@@ -236,12 +236,12 @@ export default class TreeUtils {
     });
   }
 
-  async applyFilter(setTree, tree, filter, fields, nodeId, isFirstCall) {
+  async applyFilter(setTree, tree, filter, fields, nodeId, isFirstCall: boolean) {
     let node = tree.items[nodeId];
     tree = await this.addChildren(nodeId, tree, fields, node.data, filter);
     node = tree.items[nodeId];
     for (let typeNodeId of node.children) {
-      //type nodes
+      // type nodes
       const typeNode = tree.items[typeNodeId];
       for (let childNodeId of typeNode.children) {
         const child = tree.items[childNodeId];
@@ -340,6 +340,92 @@ export default class TreeUtils {
       this.updateTreeNode(setTree, nodeId, { isChildrenLoading: false });
       handleError(error);
     }
+  }
+
+  async expandTreeNode(
+    tree: AtlasTree,
+    nodeId: string,
+    filter: IssueTreeFilter,
+    fields: IssueField[]
+  ): Promise<void> {
+    const item = tree.items[nodeId];
+    if (item.hasChildrenLoaded) {
+      item.isExpanded = true;
+      return;
+    }
+    const issue = await this.api.getIssueWithLinks(
+      fields,
+      (item.data as IssueWithLinkedIssues).id
+    );
+    item.isExpanded = true;
+    await this.addChildren(nodeId, tree, fields, issue, filter);
+  }
+
+  async expandAll(
+    filter: IssueTreeFilter,
+    fields: IssueField[],
+    setTree,
+    handleError,
+    clearAllErrors,
+    setIsExpandAllLoading
+  ): Promise<void> {
+    const expandNode = async (tree: AtlasTree, nodeId: string, level: number): Promise<void> => {
+      if (level >= 3) return;
+      await this.expandTreeNode(tree, nodeId, filter, fields);
+      const node = tree?.items[nodeId];
+      node.isExpanded = true;
+      for (const typeNodeId of node.children) {
+        const typeNode = tree?.items[typeNodeId];
+        typeNode.isExpanded = true;
+        for (const childNodeId of typeNode.children) {
+          await expandNode(tree, childNodeId, level + 1);
+        }
+      }
+    };
+
+    const expandRootNodes = async (tree: AtlasTree): Promise<void> => {
+      clearAllErrors();
+      try {
+        const rootNode = tree?.items[this.ROOT_ID];
+        for (const childNodeId of rootNode.children) {
+          await expandNode(tree, childNodeId, 0);
+        }
+        setIsExpandAllLoading(false);
+        setTree(() => tree);
+      } catch (err) {
+        setIsExpandAllLoading(false);
+        console.error(err);
+        handleError(err);
+      }
+    }
+
+    setTree((prevTree) => {
+      const tree = this.cloneTree(prevTree);
+      setIsExpandAllLoading(true);
+      expandRootNodes(tree);
+      return prevTree;
+    });
+  }
+
+  collapseAll(setTree) {
+    const collapseNode = (tree: AtlasTree, nodeId): void => {
+      let node = tree?.items[nodeId];
+      if (node) {
+        node.isExpanded = false;
+        const children = node.children;
+        if (children.length > 0) {
+          for (const childNodeId of children) {
+            collapseNode(tree, childNodeId);
+          }
+        }
+      }
+    };
+
+    setTree((prevTree) => {
+      const tree = this.cloneTree(prevTree);
+      collapseNode(tree, tree.rootId);
+      return tree;
+    });
   }
 
   exportTree(tree: AtlasTree) {
