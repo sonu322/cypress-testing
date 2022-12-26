@@ -15,6 +15,7 @@
   "traceability-report.toolbar.jqlDialogOptions.cancelText": "Abbrechen",
   "traceability-report.toolbar.tableFields.name": "Tabellenfelder",
   "traceability-report.select-filter.text": "Bitte wählen Sie Filter, um den Bericht anzuzeigen",
+  "traceability-report.fetch-limit-dropdown.name": "Fetch Limit",
   "traceability-report.load-more-issues-button.name": "mehr vorgänge laden",
   "lxp.api.priority-error-main": "Prioritäten nicht gefunden",
   "lxp.api.priority-error-prefix": "Fehler beim Abrufen der prioritäten",
