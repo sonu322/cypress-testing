@@ -3,13 +3,12 @@ import DropdownMenu, {
   DropdownItemGroup,
   DropdownItem,
 } from "@atlaskit/dropdown-menu";
-import { Filter } from "../../types/api";
 
 interface Props {
   selectedOptionId: string | number;
   dropdownName: string;
   setSelectedOptionId: React.Dispatch<React.SetStateAction<string | number>>;
-  options: Array<{name: string | number, id: string | number}>;
+  options: Array<{ name: string | number, id: string | number }>;
 }
 
 export const DropdownSingleSelect = ({

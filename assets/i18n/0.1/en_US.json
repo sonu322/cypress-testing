@@ -34,6 +34,7 @@
   "traceability-report.toolbar.jqlDialogOptions.submitText": "Use filter",
   "traceability-report.toolbar.jqlDialogOptions.cancelText": "Cancel",
   "traceability-report.toolbar.tableFields.name": "Table Fields",
+  "traceability-report.fetch-limit-dropdown.name": "Fetch Limit",
   "traceability-report.load-more-issues-button.name": "Load more issues",
   "traceability-report.select-filter.text": "Please select filter to view report",
   "lxp.api.priority-error-main": "Issue priorities not found.",

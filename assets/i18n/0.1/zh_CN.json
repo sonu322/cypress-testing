@@ -12,6 +12,7 @@
   "traceability-report.toolbar.jqlDialogOptions.descriptionText": "使用新的 JQL 查询搜索事务",
   "traceability-report.toolbar.jqlDialogOptions.submitText": "使用过滤器",
   "traceability-report.toolbar.jqlDialogOptions.cancelText": "取消",
+  "traceability-report.fetch-limit-dropdown.name": "Fetch Limit",
   "traceability-report.load-more-issues-button.name": "加载更多事务",
   "traceability-report.toolbar.tableFields.name": "表字段",
   "traceability-report.select-filter.text": "请选择筛选条件查看报告",

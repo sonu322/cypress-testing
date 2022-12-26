@@ -13,6 +13,7 @@
   "traceability-report.toolbar.jqlDialogOptions.submitText": "Utiliser le filtre",
   "traceability-report.toolbar.jqlDialogOptions.cancelText": "Annuler",
   "traceability-report.toolbar.tableFields.name": "Champs de table",
+  "traceability-report.fetch-limit-dropdown.name": "Fetch Limit",
   "traceability-report.load-more-issues-button.name": "Charger d'autres tickets",
   "traceability-report.select-filter.text": "Sélectionnez le filtre pour afficher le rapport",
   "lxp.api.priority-error-main": "Priorités d’ticket introuvables.",
