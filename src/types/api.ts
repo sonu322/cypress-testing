@@ -110,6 +110,11 @@ export enum CustomLinkType {
   PARENT = "PARENT",
 }
 
+export enum Labels {
+  SUBTASK_OR_EPIC_CHILD = "Subtasks / Child Issues",
+  PARENT = "Parent"
+}
+
 export default interface LXPAPI {
   hasValidLicense: () => boolean;
 

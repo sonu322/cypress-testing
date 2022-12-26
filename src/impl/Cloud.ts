@@ -13,6 +13,7 @@ import LXPAPI, {
   IssueVersion,
   IssueWithLinkedIssues,
   IssueWithSortedLinks,
+  Labels,
   Project,
 } from "../types/api";
 
@@ -163,11 +164,11 @@ export default class APIImpl implements LXPAPI {
       const result = [];
       result.push({
         id: CustomLinkType.PARENT,
-        name: "Parent",
+        name: Labels.PARENT,
       });
       result.push({
         id: CustomLinkType.SUBTASK_OR_EPIC_CHILD,
-        name: "Subtasks / Epic Child Issues",
+        name: Labels.SUBTASK_OR_EPIC_CHILD,
       });
 
       items.forEach((item) => {
@@ -328,7 +329,7 @@ export default class APIImpl implements LXPAPI {
     childIssues.forEach((child) => {
       issue.links.push({
         linkTypeId: CustomLinkType.SUBTASK_OR_EPIC_CHILD,
-        name: "Subtasks / Epic Child Issues",
+        name: Labels.SUBTASK_OR_EPIC_CHILD,
         isInward: false,
         issueId: child.id,
       });
@@ -389,7 +390,7 @@ export default class APIImpl implements LXPAPI {
     if (parent) {
       result.push({
         linkTypeId: CustomLinkType.PARENT,
-        name: "Parent",
+        name: Labels.PARENT,
         isInward: true,
         issueId: parent.id,
       });
@@ -397,7 +398,7 @@ export default class APIImpl implements LXPAPI {
     for (const subTask of subTasks) {
       result.push({
         linkTypeId: CustomLinkType.SUBTASK_OR_EPIC_CHILD,
-        name: "Subtasks / Epic Child Issues",
+        name: Labels.SUBTASK_OR_EPIC_CHILD,
         isInward: false,
         issueId: subTask.id,
       });
@@ -625,7 +626,7 @@ export default class APIImpl implements LXPAPI {
         sortedLinks[CustomLinkType.SUBTASK_OR_EPIC_CHILD] = linkedIssues.filter(
           (linkedIssue) => {
             const parent = linkedIssue.links?.find(
-              (issue) => issue.linkTypeId === "PARENT"
+              (issue) => issue.linkTypeId === CustomLinkType.PARENT
             );
             if (parent?.issueId === issue.id) {
               return true;
