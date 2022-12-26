@@ -363,8 +363,54 @@ export default class APIImpl implements LXPAPI {
     }
   }
 
-  getCurrentIssueId(): Promise<string> {
-    return this.api.getCurrentIssueId();
+  async getIssuesWithLinks(
+    fields: IssueField[],
+    issueIds: string[]
+  ): Promise<IssueWithLinkedIssues[]> {
+    try {
+      const issues: Issue[] = await this.searchIssuesByIds(issueIds, fields);
+      const issueIdLinksMap = {};
+      let allLinkIds = [];
+      for (const issue of issues) {
+        const linkedIds = issue.links.map((link) => link.issueId);
+        issueIdLinksMap[issue.id] = linkedIds;
+        allLinkIds = allLinkIds.concat(linkedIds);
+      }
+      const linkedIssuesMap = {};
+      if (allLinkIds.length > 0) {
+        const allLinkedIssues = await this.searchIssuesByIds(allLinkIds, fields);
+        for (const linkedIssue of allLinkedIssues) {
+          linkedIssuesMap[linkedIssue.id] = linkedIssue;
+        }
+      }
+
+      const result: IssueWithLinkedIssues[] = [];
+      for (const issue of issues) {
+        const linkedIds = issueIdLinksMap[issue.id];
+        let linkedIssues: Issue[] = [];
+        for (const linkedId of linkedIds) {
+          if (linkedIssuesMap[linkedId] !== undefined) {
+            linkedIssues.push(linkedIssuesMap[linkedId]);
+          }
+        }
+        // add epic children to issue
+        if (issue.type.id === "epic") {
+          const childIssuesData = await this.getEpicChildIssues(issue, fields);
+          this._addEpicChildrenToLinks(issue, childIssuesData.data);
+          linkedIssues = linkedIssues.concat(childIssuesData.data);
+        }
+        result.push({ ...issue, linkedIssues });
+      }
+
+      return result;
+    } catch (error) {
+      console.log(error);
+      throwError(`Error fetching issues ${issueIds.join(",")}`);
+    }
+  }
+
+  async getCurrentIssueId(): Promise<string> {
+    return await this.api.getCurrentIssueId();
   }
 
   private _convertIssueStatus(status: JiraIssueStatus): IssueStatus {
@@ -544,6 +590,23 @@ export default class APIImpl implements LXPAPI {
       }
       throw new Error(finalMessage);
     }
+  }
+
+  async searchIssuesByIds(
+    ids: string[],
+    fields: IssueField[]
+  ): Promise<Issue[]> {
+    const jql = `id in (${ids.join(",")})`;
+    let result = await this.searchIssues(jql, fields);
+    let allIssues = result.data;
+    const maxIterations = 100; // to eliminate the infinite looping danger
+    let iteration = 0;
+    while (allIssues.length < result.total && iteration < maxIterations) {
+      result = await this.searchIssues(jql, fields, allIssues.length);
+      allIssues = allIssues.concat(result.data);
+      iteration++;
+    }
+    return allIssues;
   }
 
   async searchIssues(

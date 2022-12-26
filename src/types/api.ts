@@ -133,6 +133,11 @@ export default interface LXPAPI {
     issueId?: string
   ) => Promise<IssueWithLinkedIssues>;
 
+  getIssuesWithLinks: (
+    fields: IssueField[],
+    issueIds: string[]
+  ) => Promise<IssueWithLinkedIssues[]>;
+
   getCurrentIssueId: () => Promise<string>;
 
   getIssueById: (fields: IssueField[], issueId?: string) => Promise<Issue>;
