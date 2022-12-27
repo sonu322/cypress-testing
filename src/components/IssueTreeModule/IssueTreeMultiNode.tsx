@@ -1,6 +1,11 @@
 import React, { useEffect } from "react";
 import TreeUtils from "../../util/TreeUtils";
-import { ID, IssueField, IssueTreeFilter } from "../../types/api";
+import {
+  ID,
+  IssueField,
+  IssueTreeFilter,
+  IssueWithSortedLinks,
+} from "../../types/api";
 import { AtlasTree } from "../../types/app";
 import { IssueTree } from "./IssueTree";
 
@@ -13,6 +18,7 @@ export interface Props {
   selectedIssueFieldIds: ID[];
   handleError: any;
   clearAllErrors: () => void;
+  filteredIssues: IssueWithSortedLinks[];
 }
 
 export const IssueTreeMultiNode = ({
@@ -23,6 +29,7 @@ export const IssueTreeMultiNode = ({
   issueFields,
   selectedIssueFieldIds,
   handleError,
+  filteredIssues,
   clearAllErrors,
 }: Props): JSX.Element => {
   const fieldMap = {};
@@ -32,11 +39,12 @@ export const IssueTreeMultiNode = ({
 
   useEffect(() => {
     const initTree = async (): Promise<void> => {
-      await treeUtils.initTreeHook(
+      await treeUtils.initMultiNodeTree(
         filter,
-        treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds),
+        issueFields,
         setTree,
-        handleError
+        handleError,
+        filteredIssues
       );
     };
     void initTree();

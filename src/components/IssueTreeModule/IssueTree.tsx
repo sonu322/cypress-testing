@@ -36,14 +36,14 @@ export const IssueTree = ({
     fieldMap[field.id] = field;
   });
 
-  useEffect(() => {
-    console.log("from use eff", tree);
-    treeUtils.applyFilterHook(
-      setTree,
-      filter,
-      treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds)
-    );
-  }, [filter, selectedIssueFieldIds]);
+  // useEffect(() => {
+  //   console.log("from use eff", tree);
+  //   treeUtils.applyFilterHook(
+  //     setTree,
+  //     filter,
+  //     treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds)
+  //   );
+  // }, [filter, selectedIssueFieldIds]);
 
   const onExpand = (itemId) => {
     treeUtils.expandTreeHook(
@@ -67,19 +67,19 @@ export const IssueTree = ({
     );
   };
 
-if (tree !== undefined && tree.items !== undefined) {
-  return (
-    <Container>
-      <Tree
-        tree={tree}
-        renderItem={renderItem}
-        onExpand={onExpand}
-        onCollapse={onCollapse}
-        isDragEnabled={false}
-      />
-    </Container>
-  );
-} else {
-  return <em>Loading Tree...</em>;
-}
+  if (tree !== undefined && tree.items !== undefined) {
+    return (
+      <Container>
+        <Tree
+          tree={tree}
+          renderItem={renderItem}
+          onExpand={onExpand}
+          onCollapse={onCollapse}
+          isDragEnabled={false}
+        />
+      </Container>
+    );
+  } else {
+    return <em>Loading Tree...</em>;
+  }
 };

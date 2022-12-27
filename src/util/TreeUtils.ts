@@ -6,6 +6,7 @@ import LXPAPI, {
   IssueLink,
   IssueTreeFilter,
   IssueWithLinkedIssues,
+  IssueWithSortedLinks,
 } from "../types/api";
 import { csv, download } from "./index";
 import { AtlasTree, AtlasTreeNode, LinkTypeTreeNode } from "../types/app";
@@ -116,6 +117,56 @@ export default class TreeUtils {
       await this.addChildren(nodeId, tree, fields, issue, filter);
       console.log("TREE FROM INIT TREE", tree);
       setTree(tree);
+    } catch (err) {
+      console.error(err);
+      handleError(err);
+    }
+  }
+
+  async initMultiNodeTree(
+    // prevTree,
+    filter: IssueTreeFilter,
+    fields: IssueField[],
+    setTree,
+    handleError,
+    filteredIssues: IssueWithSortedLinks[]
+  ): Promise<void> {
+    console.log("multi init tree called");
+    console.log(fields);
+    try {
+      const prevTree = this.getRootTree();
+      const tree = this.cloneTree(prevTree);
+      const allPromises = filteredIssues.map(
+        async (issue) => await this.api.getIssueWithLinks(fields, issue.id)
+      );
+
+      const result = await Promise.all(allPromises);
+      console.log("CALLING ALL ISSUE WITH LINKS", result);
+      tree.items[this.ROOT_ID].children = [];
+      // const populateChildrenPromises = result.map(async (issueWithLinks) => {
+      //   const node = this.createTreeNode(tree, "", issueWithLinks, null, true);
+      //   const nodeId = node.id;
+      //   // make actual root a child of fake(hidden) root node
+      //   tree.items[this.ROOT_ID].children.push(nodeId);
+      //   await this.addChildren(nodeId, tree, fields, issueWithLinks, filter);
+      // });
+      result.forEach((issueWithLinks) => {
+        const node = this.createTreeNode(tree, "", issueWithLinks, null, true);
+        const nodeId = node.id;
+        // make actual root a child of fake(hidden) root node
+        tree.items[this.ROOT_ID].children.push(nodeId);
+      });
+      console.log("TREE FROM MULTI INIT TREE", tree);
+
+      // const issue = await this.api.getIssueWithLinks(fields);
+      // const mainNode = this.createTreeNode(tree, "", issue, null, true);
+      // const nodeId = mainNode.id;
+      // // make actual root a child of fake(hidden) root node
+      // tree.items[this.ROOT_ID].children = [nodeId];
+      // await this.addChildren(nodeId, tree, fields, issue, filter);
+      // console.log("TREE FROM INIT TREE", tree);
+      setTree(tree);
+      // issuekey=ST-5
     } catch (err) {
       console.error(err);
       handleError(err);
