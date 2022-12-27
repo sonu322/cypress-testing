@@ -150,6 +150,7 @@ export const TracebilityReportModule = (): JSX.Element => {
             issueCardOptions={issueFields}
             selectedIssueFieldIds={selectedIssueFieldIds}
             setSelectedIssueFieldIds={setSelectedIssueFieldIds}
+            selectedViewTab={viewTabs.tabs[selectedTabIndex].id}
             selectedTableFieldIds={selectedTableFieldIds}
             updateSelectedTableFieldIds={updateSelectedTableFieldIds}
             tableFields={tableFields}

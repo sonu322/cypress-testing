@@ -44,6 +44,7 @@ interface Props {
   // viewTabsId: string;
   handleTabOptionSelect: (tabIndex: SelectedType) => void;
   selectedTabIndex: SelectedType;
+  selectedViewTab: string;
 }
 
 export const Toolbar = ({
@@ -62,8 +63,10 @@ export const Toolbar = ({
   // viewTabsId,
   handleTabOptionSelect,
   selectedTabIndex,
+  selectedViewTab,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
+  const isTreeReport = selectedViewTab === "tree-view";
   return (
     <div style={{ marginTop: "-16px", marginBottom: "-8px" }}>
       <TabGroup
@@ -88,7 +91,7 @@ export const Toolbar = ({
 
         <div>
           <ButtonGroup>
-            {Boolean(tableFields) && (
+            {!isTreeReport && Boolean(tableFields) && (
               <TableFieldsDropdown
                 selectedOptions={selectedTableFieldIds}
                 updateSelectedOptionIds={updateSelectedTableFieldIds}
