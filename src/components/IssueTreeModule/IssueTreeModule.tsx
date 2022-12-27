@@ -90,7 +90,9 @@ export const IssueTreeModule = () => {
 
       <Toolbar
         exportTree={() => treeUtils.exportTree(tree)}
-        isExportDisabled={Object.keys(tree.items).length <= 1}
+        isExportDisabled={
+          tree?.items !== undefined && Object.keys(tree.items).length <= 1
+        }
         options={options}
         filter={filter}
         updateFilteredKeyOptions={updateFilteredKeyOptions}

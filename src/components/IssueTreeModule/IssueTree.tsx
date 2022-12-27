@@ -66,6 +66,7 @@ export const IssueTree = ({
     );
   };
 
+if (tree !== undefined && tree.items !== undefined) {
   return (
     <Container>
       <Tree
@@ -77,4 +78,7 @@ export const IssueTree = ({
       />
     </Container>
   );
+} else {
+  return <em>Loading Tree...</em>;
+}
 };

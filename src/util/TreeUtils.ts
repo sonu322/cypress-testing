@@ -33,8 +33,8 @@ const root: AtlasTree = {
 };
 
 export default class TreeUtils {
-  private ROOT_ID = "0";
-  private api: LXPAPI;
+  private readonly ROOT_ID = "0";
+  private readonly api: LXPAPI;
 
   constructor(api: LXPAPI) {
     this.api = api;
@@ -83,8 +83,8 @@ export default class TreeUtils {
     setTree,
     handleError
   ) {
-    setTree((tree) => {
-      this.initTree(tree, filter, fields, setTree, handleError);
+    setTree(async (tree) => {
+      await this.initTree(tree, filter, fields, setTree, handleError);
       return tree;
     });
   }
@@ -101,10 +101,10 @@ export default class TreeUtils {
     handleError
   ) {
     try {
-      let tree = this.cloneTree(prevTree);
+      const tree = this.cloneTree(prevTree);
       const issue = await this.api.getIssueWithLinks(fields);
-      let mainNode = this.createTreeNode(tree, "", issue, null, true);
-      let nodeId = mainNode.id;
+      const mainNode = this.createTreeNode(tree, "", issue, null, true);
+      const nodeId = mainNode.id;
       // make actual root a child of fake(hidden) root node
       tree.items[this.ROOT_ID].children = [nodeId];
       await this.addChildren(nodeId, tree, fields, issue, filter);
@@ -152,7 +152,7 @@ export default class TreeUtils {
     mainNode: AtlasTreeNode,
     issueMap: any
   ): IssueLink[] {
-    let result = [];
+    const result = [];
     for (const link of issue.links) {
       const linkedIssue = issueMap[link.issueId];
       if (
@@ -177,7 +177,7 @@ export default class TreeUtils {
     fields: IssueField[],
     issue?: IssueWithLinkedIssues
   ): Promise<AtlasTreeNode[]> {
-    let prefix = mainNode.id;
+    const prefix = mainNode.id;
     issue =
       issue ||
       (await this.api.getIssueWithLinks(
@@ -193,7 +193,7 @@ export default class TreeUtils {
     const filteredLinks = this.filterLinks(issue, filter, mainNode, issueMap);
 
     for (const link of filteredLinks) {
-      let linkedIssue = issueMap[link.issueId];
+      const linkedIssue = issueMap[link.issueId];
       const node = this.createTreeNode(
         tree,
         prefix + "/" + link.name,
@@ -205,9 +205,9 @@ export default class TreeUtils {
       }
       typeMap[link.name].push(node.id);
     }
-    let result = [];
-    let types = Object.keys(typeMap);
-    if (types.length) {
+    const result = [];
+    const types = Object.keys(typeMap);
+    if (types.length > 0) {
       for (const type of types) {
         const typeNode = this.createTypeNode(tree, prefix, type);
         typeNode.children = typeMap[type];
@@ -222,7 +222,7 @@ export default class TreeUtils {
       const firstNodeId = tree.items[this.ROOT_ID].children[0];
       if (firstNodeId) {
         const newTree = this.cloneTree(tree);
-        let result = this.applyFilter(
+        const result = this.applyFilter(
           setTree,
           newTree,
           filter,
@@ -240,10 +240,10 @@ export default class TreeUtils {
     let node = tree.items[nodeId];
     tree = await this.addChildren(nodeId, tree, fields, node.data, filter);
     node = tree.items[nodeId];
-    for (let typeNodeId of node.children) {
-      //type nodes
+    for (const typeNodeId of node.children) {
+      // type nodes
       const typeNode = tree.items[typeNodeId];
-      for (let childNodeId of typeNode.children) {
+      for (const childNodeId of typeNode.children) {
         const child = tree.items[childNodeId];
         if (child.hasChildrenLoaded) {
           await this.applyFilter(
@@ -271,21 +271,25 @@ export default class TreeUtils {
   }
 
   async addChildren(nodeId, tree, fields, issue, filter) {
-    let mainNode = tree.items[nodeId];
-    let children = await this.getChildren(
-      tree,
-      filter,
-      mainNode,
-      fields,
-      issue
-    );
-    let childIds = children.map((item) => item.id);
-    mainNode.children = childIds;
-    mainNode.isExpanded = true;
-    mainNode.isChildrenLoading = false;
-    mainNode.hasChildrenLoaded = true;
-    mainNode.hasChildren = childIds.length > 0;
-    return tree;
+    try {
+      const mainNode = tree.items[nodeId];
+      const children = await this.getChildren(
+        tree,
+        filter,
+        mainNode,
+        fields,
+        issue
+      );
+      const childIds = children.map((item) => item.id);
+      mainNode.children = childIds;
+      mainNode.isExpanded = true;
+      mainNode.isChildrenLoading = false;
+      mainNode.hasChildrenLoaded = true;
+      mainNode.hasChildren = childIds.length > 0;
+      return tree;
+    } catch (error) {
+      throw new Error("Error occured while adding children");
+    }
   }
 
   expandTreeHook(
@@ -301,7 +305,7 @@ export default class TreeUtils {
       if (item.hasChildrenLoaded) {
         return mutateTree(tree, nodeId, { isExpanded: true });
       }
-      let result = this.expandTree(
+      const result = this.expandTree(
         tree,
         nodeId,
         filter,
@@ -323,18 +327,19 @@ export default class TreeUtils {
     handleError,
     clearAllErrors
   ) {
-    const tree = this.cloneTree(prevTree);
-    const item = tree.items[nodeId];
-    // clear all errors
-    clearAllErrors();
-    this.updateTreeNode(setTree, nodeId, { isChildrenLoading: true });
     try {
+      const tree = this.cloneTree(prevTree);
+      const item = tree.items[nodeId];
+      // clear all errors
+      clearAllErrors();
+      this.updateTreeNode(setTree, nodeId, { isChildrenLoading: true });
+
       const issue = await this.api.getIssueWithLinks(
         fields,
         (item.data as IssueWithLinkedIssues).id
       );
       await this.addChildren(nodeId, tree, fields, issue, filter);
-      setTree(() => tree);
+      setTree(tree);
     } catch (error) {
       console.error(error);
       this.updateTreeNode(setTree, nodeId, { isChildrenLoading: false });
@@ -352,7 +357,7 @@ export default class TreeUtils {
     const process = (item: AtlasTreeNode, indent) => {
       if (!item) return;
       const content = {
-        indent: indent,
+        indent,
         key: "",
         link: "",
         summary: "",
@@ -407,5 +412,5 @@ export default class TreeUtils {
       result.push(fieldMap[fieldId] as IssueField);
     }
     return result;
-  };
+  }
 }
