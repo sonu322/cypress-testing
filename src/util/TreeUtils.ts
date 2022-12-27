@@ -282,7 +282,7 @@ export default class TreeUtils {
     return result;
   }
 
-  applyFilterHook(setTree, filter, fields) {
+  applyFilterHook(setTree, filter, fields, shouldNotExpandTree?: boolean) {
     setTree((tree) => {
       console.log("from apply filter hook");
       console.log(tree);
@@ -298,7 +298,8 @@ export default class TreeUtils {
           filter,
           fields,
           firstNodeId,
-          true
+          true,
+          shouldNotExpandTree
         );
         return isPromise(result) ? tree : result;
       }
@@ -306,9 +307,24 @@ export default class TreeUtils {
     });
   }
 
-  async applyFilter(setTree, tree, filter, fields, nodeId, isFirstCall) {
+  async applyFilter(
+    setTree,
+    tree,
+    filter,
+    fields,
+    nodeId,
+    isFirstCall,
+    shouldNotExpandTree?: boolean
+  ): Promise<any> {
     let node = tree.items[nodeId];
-    tree = await this.addChildren(nodeId, tree, fields, node.data, filter);
+    tree = await this.addChildren(
+      nodeId,
+      tree,
+      fields,
+      node.data,
+      filter,
+      shouldNotExpandTree
+    );
     node = tree.items[nodeId];
     for (const typeNodeId of node.children) {
       // type nodes
@@ -328,7 +344,7 @@ export default class TreeUtils {
       }
     }
     if (isFirstCall) {
-      setTree(() => tree);
+      setTree(tree);
     }
     return tree;
   }
@@ -340,7 +356,14 @@ export default class TreeUtils {
     });
   }
 
-  async addChildren(nodeId, tree, fields, issue, filter) {
+  async addChildren(
+    nodeId,
+    tree,
+    fields,
+    issue,
+    filter,
+    shouldNotExpandTree?: boolean
+  ): Promise<void> {
     try {
       const mainNode = tree.items[nodeId];
       const children = await this.getChildren(
@@ -352,7 +375,7 @@ export default class TreeUtils {
       );
       const childIds = children.map((item) => item.id);
       mainNode.children = childIds;
-      mainNode.isExpanded = true;
+      mainNode.isExpanded = !shouldNotExpandTree;
       mainNode.isChildrenLoading = false;
       mainNode.hasChildrenLoaded = true;
       mainNode.hasChildren = childIds.length > 0;
