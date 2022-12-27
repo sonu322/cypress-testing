@@ -142,12 +142,14 @@ export const Main = ({
           {isTreeReport ? (
             <TreeReport
               filteredIssues={filteredIssues}
-              issueFieldIds={selectedIssueFieldIds}
+              selectedIssueFieldIds={selectedIssueFieldIds}
               tableFields={tableFields}
               selectedTableFieldIds={selectedTableFieldIds}
               isIssueTypeReport={isIssueTypeReport}
               errors={errors}
               issueFields={issueFields}
+              handleError={handleNewError}
+              clearAllErrors={clearAllErrors}
             />
           ) : (
             <Report

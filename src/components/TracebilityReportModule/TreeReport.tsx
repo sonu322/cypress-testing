@@ -22,31 +22,26 @@ const Container = styled.div`
   border: 1px solid ${colors.N40};
   border-radius: 10px;
 `;
-const BorderTr = styled.tr`
-  border-bottom: 1px solid ${colors.N40};
-  &:hover {
-    background-color: #091e420a;
-  }
-`;
-const Table = styled.table`
-  border: 1px solid ${colors.N40};
-`;
 interface Props {
   filteredIssues: IssueWithSortedLinks[];
   tableFields: IssueType[] | IssueLinkType[];
   selectedTableFieldIds: string[];
-  issueFieldIds: string[];
+  selectedIssueFieldIds: string[];
   isIssueTypeReport: boolean;
   errors: any[];
   issueFields: IssueField[];
+  clearAllErrors: () => void;
+  handleError: (err: unknown) => void;
 }
 export const TreeReport = ({
   filteredIssues,
   tableFields,
   selectedTableFieldIds,
-  issueFieldIds,
+  selectedIssueFieldIds,
   issueFields,
   isIssueTypeReport,
+  clearAllErrors,
+  handleError,
   errors,
 }: Props): JSX.Element => {
   // TODO: probably we may improve this calculation
@@ -93,9 +88,9 @@ export const TreeReport = ({
         filter={DEFAULT_FILTER}
         treeUtils={treeUtils}
         issueFields={issueFields}
-        selectedIssueFieldIds={issueFieldIds}
-        handleError={() => {}}
-        clearAllErrors={() => {}}
+        selectedIssueFieldIds={selectedIssueFieldIds}
+        handleError={handleError}
+        clearAllErrors={clearAllErrors}
         filteredIssues={filteredIssues}
       />
     </Container>
