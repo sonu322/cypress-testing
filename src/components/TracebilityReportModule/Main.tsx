@@ -13,6 +13,7 @@ import {
 } from "../../types/api";
 import { useTranslation } from "react-i18next";
 import { DropdownSingleSelect } from "../common/DropdownSingleSelect";
+import { TreeReport } from "./TreeReport";
 const Container = styled.div`
   width: 100%;
 `;
@@ -46,7 +47,7 @@ interface Props {
   setFilteredIssues: React.Dispatch<
     React.SetStateAction<IssueWithSortedLinks[]>
   >;
-  isIssueTypeReport: boolean;
+  // isIssueTypeReport: boolean;
   errors: any[];
   selectedViewTab: string;
 }
@@ -63,7 +64,7 @@ export const Main = ({
   areIssuesLoading,
   setAreIssuesLoading,
   setFilteredIssues,
-  isIssueTypeReport,
+  // isIssueTypeReport,
   errors,
   selectedViewTab,
 }: Props): JSX.Element => {
@@ -119,6 +120,8 @@ export const Main = ({
     );
   };
   console.log(selectedViewTab);
+  const isIssueTypeReport = selectedViewTab === "issuetype-view";
+  const isTreeReport = selectedViewTab === "tree-view";
   if (areIssuesLoading) {
     return (
       <FullHeightContainer>
@@ -136,14 +139,25 @@ export const Main = ({
     return (
       <Container>
         <TableContainer>
-          <Report
-            filteredIssues={filteredIssues}
-            issueFieldIds={selectedIssueFieldIds}
-            tableFields={tableFields}
-            selectedTableFieldIds={selectedTableFieldIds}
-            isIssueTypeReport={isIssueTypeReport}
-            errors={errors}
-          />
+          {isTreeReport ? (
+            <TreeReport
+              filteredIssues={filteredIssues}
+              issueFieldIds={selectedIssueFieldIds}
+              tableFields={tableFields}
+              selectedTableFieldIds={selectedTableFieldIds}
+              isIssueTypeReport={isIssueTypeReport}
+              errors={errors}
+            />
+          ) : (
+            <Report
+              filteredIssues={filteredIssues}
+              issueFieldIds={selectedIssueFieldIds}
+              tableFields={tableFields}
+              selectedTableFieldIds={selectedTableFieldIds}
+              isIssueTypeReport={isIssueTypeReport}
+              errors={errors}
+            />
+          )}
         </TableContainer>
         <MarginAddedContainer>
           <DropdownSingleSelect

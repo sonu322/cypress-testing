@@ -186,7 +186,7 @@ export const TracebilityReportModule = (): JSX.Element => {
           setFilteredIssues={setFilteredIssues}
           areIssuesLoading={areIssuesLoading}
           setAreIssuesLoading={setAreIssuesLoading}
-          isIssueTypeReport={selectedTabIndex === 0}
+          // isIssueTypeReport={selectedTabIndex === 0}
           selectedViewTab={viewTabs.tabs[selectedTabIndex].id}
           errors={errors}
         />
