@@ -1,14 +1,16 @@
 import React from "react";
 import { TooltipContainer } from "../TooltipContainer";
 import Avatar from "@atlaskit/avatar";
+import { useTranslation } from "react-i18next";
 export const AssigneeInfo = ({ content }) => {
+  const { t } = useTranslation();
   let message;
   let imgSrc;
   if (content) {
-    message = "Assignee: " + content.displayName;
+    message = `${t("lxp.common.issue.assignee")}: ${content.displayName}`;
     imgSrc = content.avatarUrl;
   } else {
-    message = "Unassigned";
+    message = t("lxp.common.unassigned");
     imgSrc = null;
   }
 

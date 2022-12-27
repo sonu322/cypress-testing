@@ -1,4 +1,6 @@
 dist/*
+data/*.js
+data/config.ts
 node_modules/*
 yarn-error.log
 yarn.lock

@@ -8,6 +8,8 @@ import {
   JiraIssueType,
   JiraLinkType,
   JiraProject,
+  HelpLinks,
+  JiraMyself,
 } from "../../types/jira";
 
 export default class JiraServerImpl implements JiraAPI {
@@ -18,7 +20,7 @@ export default class JiraServerImpl implements JiraAPI {
   private readonly contextPath: string = "";
   private readonly isValidLicense: boolean = false;
 
-  constructor(rootElement: HTMLElement){
+  constructor(rootElement: HTMLElement) {
     this.isValidLicense = rootElement.dataset.license === "true";
     this.contextPath = rootElement.dataset.contextpath;
   }
@@ -93,6 +95,8 @@ export default class JiraServerImpl implements JiraAPI {
   }
 
   async getFilters(): Promise<JiraFiltersResponse> {
+    // @ts-expect-error
+    console.log(filters);
     const res = await this._AJS.$.getJSON("/rest/api/2/filter/favourite");
     return {
       self: null,
@@ -118,5 +122,16 @@ export default class JiraServerImpl implements JiraAPI {
     return await this._AJS.$.getJSON(
       this.contextPath + `/rest/api/2/project/${projectKey}`
     );
+  }
+
+  getHelpLinks(): HelpLinks {
+    return {
+      issueTree: "https://optimizory.atlassian.net/l/cp/gdv35UvD",
+      traceability: "https://optimizory.atlassian.net/l/cp/1KpzZ3z4"
+    };
+  }
+
+  async getMyself(): Promise<JiraMyself> {
+    return await this._AJS.$.getJSON(this.contextPath + "/rest/api/2/myself");
   }
 }

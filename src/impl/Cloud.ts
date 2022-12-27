@@ -1,3 +1,4 @@
+import i18n from "../../i18n";
 import LXPAPI, {
   CustomLinkType,
   Filter,
@@ -12,6 +13,7 @@ import LXPAPI, {
   IssueVersion,
   IssueWithLinkedIssues,
   IssueWithSortedLinks,
+  Labels,
   Project,
 } from "../types/api";
 
@@ -32,10 +34,11 @@ import {
   JiraAssignee,
   JiraVersion,
   JiraAPI,
+  HelpLinks,
 } from "../types/jira";
 
 function throwError(msg: string) {
-  throw new Error(msg);
+  throw new Error(i18n.t(msg));
 }
 // use secondary id field
 export default class APIImpl implements LXPAPI {
@@ -94,14 +97,24 @@ export default class APIImpl implements LXPAPI {
   async getPriorities(): Promise<IssuePriority[]> {
     try {
       const items: JiraIssuePriorityFull[] = await this.api.getPriorities();
-
-      items || throwError("Issue priorities not found.");
+      items || throwError("lxp.api.priority-error-main");
 
       return items.map((item) => this._convertPriority(item));
     } catch (error) {
       console.error(error);
-      let msg = "Error in fetching the issue priorities";
+      let msg = i18n.t("lxp.api.priority-error-prefix");
       msg += error.message ? " - " + error.message : ".";
+      throw new Error(msg);
+    }
+  }
+
+  async getLocale(): Promise<string> {
+    try {
+      const myself = await this.api.getMyself();
+      return myself.locale;
+    } catch (error) {
+      console.error(error);
+      const msg = i18n.t("lxp.api.locale-error");
       throw new Error(msg);
     }
   }
@@ -123,7 +136,7 @@ export default class APIImpl implements LXPAPI {
     try {
       const items: JiraIssueType[] = await this.api.getIssueTypes();
 
-      items || throwError("Issue types not found.");
+      items || throwError("lxp.api.issue-type-error");
       const uniqueIssueTypes: IssueType[] = [];
       items.forEach((issueType) => {
         const name = issueType.name.toLowerCase().replace(/-/g, "");
@@ -137,7 +150,8 @@ export default class APIImpl implements LXPAPI {
       return uniqueIssueTypes;
     } catch (error) {
       console.error(error);
-      throw new Error("Error in fetching the issue types - " + error.message);
+      const prefix = i18n.t("lxp.api.issue-type-error-prefix");
+      throw new Error(prefix + error.message);
     }
   }
 
@@ -145,16 +159,16 @@ export default class APIImpl implements LXPAPI {
     try {
       const items: JiraLinkType[] = await this.api.getIssueLinkTypes();
 
-      items || throwError("Issue link types not found.");
+      items || throwError("lxp.api.link-type-error-main");
 
       const result = [];
       result.push({
         id: CustomLinkType.PARENT,
-        name: "Parent",
+        name: Labels.PARENT,
       });
       result.push({
-        id: CustomLinkType.SUBTASK,
-        name: "Subtasks",
+        id: CustomLinkType.SUBTASK_OR_EPIC_CHILD,
+        name: Labels.SUBTASK_OR_EPIC_CHILD,
       });
 
       items.forEach((item) => {
@@ -173,9 +187,7 @@ export default class APIImpl implements LXPAPI {
       return result;
     } catch (error) {
       console.error(error);
-      throw new Error(
-        "Error in fetching the issue link types - " + error.message
-      );
+      throw new Error("lxp.api.link-type-error-prefix" + error.message);
     }
   }
 
@@ -223,10 +235,30 @@ export default class APIImpl implements LXPAPI {
     return null;
   }
 
+  async addLanguageTranslatedNames(
+    issueFields: IssueField[],
+    fields?: JiraIssueField[]
+  ): Promise<any> {
+    fields = fields || (await this.getAllIssueFields());
+    issueFields = issueFields.map((issueField) => {
+      const jiraIssueField = fields.find(
+        (jiraField) => jiraField.id === issueField.jiraId
+      );
+      if (jiraIssueField === undefined) {
+        throwError("lxp.api.issue-field-error-main");
+      }
+      return {
+        ...issueField,
+        name: jiraIssueField.name,
+      };
+    });
+    return issueFields;
+  }
+
   async getIssueFields(): Promise<IssueField[]> {
     try {
       const result: IssueField[] = [];
-      const issueFields: IssueField[] = [
+      let issueFields: IssueField[] = [
         {
           id: "summary",
           name: "Summary",
@@ -252,10 +284,16 @@ export default class APIImpl implements LXPAPI {
           name: "Assignee",
           jiraId: "assignee",
         },
+        {
+          id: "fixVersions",
+          name: "Fix versions",
+          jiraId: "fixVersions",
+        },
       ];
 
       const fields = await this.getAllIssueFields();
       await this.addCustomFields(issueFields, fields);
+      issueFields = await this.addLanguageTranslatedNames(issueFields, fields);
       const fieldMap = {};
       issueFields.forEach((issueField) => {
         fieldMap[issueField.jiraId] = issueField;
@@ -271,39 +309,108 @@ export default class APIImpl implements LXPAPI {
       return result;
     } catch (error) {
       console.error(error);
-      throw new Error("Error in fetching the issue types - " + error.message);
+      const prefix = i18n.t("lxp.api.issue-field-error-prefix");
+      throw new Error(prefix + error.message);
     }
   }
 
   async getAllIssueFields(): Promise<JiraIssueField[]> {
     try {
       const fields = await this.api.getIssueFields();
-      fields || throwError("Issue fields not found.");
+      fields || throwError("lxp.api.issue-field-error-main");
       return fields;
     } catch (error) {
       console.error(error);
-      throw new Error("Error in fetching the issue types - " + error.message);
+      throw new Error(error.message);
     }
+  }
+
+  _addEpicChildrenToLinks(issue: Issue, childIssues: Issue[]): void {
+    childIssues.forEach((child) => {
+      issue.links.push({
+        linkTypeId: CustomLinkType.SUBTASK_OR_EPIC_CHILD,
+        name: Labels.SUBTASK_OR_EPIC_CHILD,
+        isInward: false,
+        issueId: child.id,
+      });
+    });
   }
 
   async getIssueWithLinks(
     fields: IssueField[],
     issueId?: string
   ): Promise<IssueWithLinkedIssues> {
-    issueId = issueId || (await this.getCurrentIssueId());
-    const issue: Issue = await this.getIssueById(fields, issueId);
-    const linkedIds = issue.links.map((link) => link.issueId);
-    let linkedIssues: Issue[] = [];
-    if (linkedIds && linkedIds.length) {
-      const result = await this.searchIssues(`id in (${linkedIds})`, fields);
-      linkedIssues = result.data;
-    }
+    try {
+      issueId = issueId || (await this.getCurrentIssueId());
+      const issue: Issue = await this.getIssueById(fields, issueId);
+      const linkedIds = issue.links.map((link) => link.issueId);
+      let linkedIssues: Issue[] = [];
+      // add epic children to issue
+      if (issue.type.id === "epic") {
+        const childIssuesData = await this.getEpicChildIssues(issue, fields);
+        this._addEpicChildrenToLinks(issue, childIssuesData.data);
+        linkedIssues = childIssuesData.data;
+      }
+      if (linkedIds && linkedIds.length) {
+        const result = await this.searchIssues(`id in (${linkedIds})`, fields);
+        linkedIssues = linkedIssues.concat(result.data);
+      }
 
-    return { ...issue, linkedIssues };
+      return { ...issue, linkedIssues };
+    } catch (error) {
+      console.log(error);
+      throwError(`Error fetching issue ${issueId}`);
+    }
   }
 
-  getCurrentIssueId(): Promise<string> {
-    return this.api.getCurrentIssueId();
+  async getIssuesWithLinks(
+    fields: IssueField[],
+    issueIds: string[]
+  ): Promise<IssueWithLinkedIssues[]> {
+    try {
+      const issues: Issue[] = await this.searchIssuesByIds(issueIds, fields);
+      const issueIdLinksMap = {};
+      let allLinkIds = [];
+      for (const issue of issues) {
+        const linkedIds = issue.links.map((link) => link.issueId);
+        issueIdLinksMap[issue.id] = linkedIds;
+        allLinkIds = allLinkIds.concat(linkedIds);
+      }
+      const linkedIssuesMap = {};
+      if (allLinkIds.length > 0) {
+        const allLinkedIssues = await this.searchIssuesByIds(allLinkIds, fields);
+        for (const linkedIssue of allLinkedIssues) {
+          linkedIssuesMap[linkedIssue.id] = linkedIssue;
+        }
+      }
+
+      const result: IssueWithLinkedIssues[] = [];
+      for (const issue of issues) {
+        const linkedIds = issueIdLinksMap[issue.id];
+        let linkedIssues: Issue[] = [];
+        for (const linkedId of linkedIds) {
+          if (linkedIssuesMap[linkedId] !== undefined) {
+            linkedIssues.push(linkedIssuesMap[linkedId]);
+          }
+        }
+        // add epic children to issue
+        if (issue.type.id === "epic") {
+          const childIssuesData = await this.getEpicChildIssues(issue, fields);
+          this._addEpicChildrenToLinks(issue, childIssuesData.data);
+          linkedIssues = linkedIssues.concat(childIssuesData.data);
+        }
+        result.push({ ...issue, linkedIssues });
+      }
+
+      return result;
+    } catch (error) {
+      console.log(error);
+      throwError(`Error fetching issues ${issueIds.join(",")}`);
+    }
+  }
+
+  async getCurrentIssueId(): Promise<string> {
+    return await this.api.getCurrentIssueId();
   }
 
   private _convertIssueStatus(status: JiraIssueStatus): IssueStatus {
@@ -329,15 +436,15 @@ export default class APIImpl implements LXPAPI {
     if (parent) {
       result.push({
         linkTypeId: CustomLinkType.PARENT,
-        name: "Parent",
+        name: Labels.PARENT,
         isInward: true,
         issueId: parent.id,
       });
     }
     for (const subTask of subTasks) {
       result.push({
-        linkTypeId: CustomLinkType.SUBTASK,
-        name: "Subtasks",
+        linkTypeId: CustomLinkType.SUBTASK_OR_EPIC_CHILD,
+        name: Labels.SUBTASK_OR_EPIC_CHILD,
         isInward: false,
         issueId: subTask.id,
       });
@@ -402,7 +509,10 @@ export default class APIImpl implements LXPAPI {
     }
 
     let storyPoints: number = null;
-    if (issue.fields[storyPointsFieldId] !== undefined) {
+    if (
+      issue.fields[storyPointsFieldId] !== undefined &&
+      issue.fields[storyPointsFieldId] !== null
+    ) {
       storyPoints = issue.fields[storyPointsFieldId];
     } else if (issue.fields[storyPointEstimateFieldId] !== undefined) {
       storyPoints = issue.fields[storyPointEstimateFieldId];
@@ -443,23 +553,60 @@ export default class APIImpl implements LXPAPI {
     return fieldIds;
   }
 
+  async getEpicChildIssues(
+    issue: Issue,
+    fields: IssueField[]
+  ): Promise<{ data: Issue[]; total: number }> {
+    try {
+      const childIssuesData = await this.searchIssues(
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        `parent = ${issue.issueKey} OR "Epic Link" = ${issue.issueKey}`,
+        fields
+      );
+      return childIssuesData;
+    } catch (error) {
+      console.log(error);
+      throwError(`Error getting child issues of epic ${issue.issueKey}`);
+    }
+  }
+
   async getIssueById(fields: IssueField[], issueId?: string): Promise<Issue> {
     try {
       issueId = issueId || (await this.getCurrentIssueId());
       const fieldIds = this._getFieldIds(fields);
-
       const query = "?fields=" + fieldIds.join(",");
       const issue: JiraIssueFull = await this.api.getIssueById(issueId, query);
 
-      issue || throwError("Issue not found.");
+      issue || throwError("lxp.api.issue-by-id-error-main");
 
       return this._convertIssue(issue, fields);
     } catch (error) {
       console.error(error);
-      throw new Error(
-        `Error in fetching the issue ${issueId} - ${error.message}`
-      );
+      const prefix = i18n.t("lxp.api.issue-by-id-error-prefix");
+
+      let finalMessage = `${prefix} ${issueId}`;
+      if (error.message) {
+        finalMessage = finalMessage.concat(`- ${error.message}`);
+      }
+      throw new Error(finalMessage);
     }
+  }
+
+  async searchIssuesByIds(
+    ids: string[],
+    fields: IssueField[]
+  ): Promise<Issue[]> {
+    const jql = `id in (${ids.join(",")})`;
+    let result = await this.searchIssues(jql, fields);
+    let allIssues = result.data;
+    const maxIterations = 100; // to eliminate the infinite looping danger
+    let iteration = 0;
+    while (allIssues.length < result.total && iteration < maxIterations) {
+      result = await this.searchIssues(jql, fields, allIssues.length);
+      allIssues = allIssues.concat(result.data);
+      iteration++;
+    }
+    return allIssues;
   }
 
   async searchIssues(
@@ -486,13 +633,15 @@ export default class APIImpl implements LXPAPI {
       return { data: result, total };
     } catch (error) {
       console.error(error);
-      throw new Error("Error in searching issues: " + error.message);
+      let finalMessage = i18n.t("lxp.api.search-issues-error");
+      if (error.message) {
+        finalMessage = finalMessage.concat(`: + ${error.message}`);
+      }
+      throw new Error(finalMessage);
     }
   }
 
-  private readonly _getLinkedIssueJQL = (
-    issues: Issue[]
-  ): { jqlString: string; total: number } => {
+  private readonly _getLinkedIssueJQL = (issues: Issue[]): string => {
     const ids: string[] = [];
     issues.forEach((issue) => {
       issue.links.forEach((link) => {
@@ -502,10 +651,16 @@ export default class APIImpl implements LXPAPI {
         }
       });
     });
+
     const jqlComponents = ids.map((id) => `id=${id}`);
+    const epicIssues = issues.filter((issue) => issue.type.name === "Epic");
+    epicIssues.forEach((epic) => {
+      jqlComponents.push(
+        `parent = ${epic.issueKey} OR "Epic Link" = ${epic.issueKey}`
+      );
+    });
     const jqlString = jqlComponents.join(" OR ");
-    const total = ids.length;
-    return { jqlString, total };
+    return jqlString;
   };
 
   private readonly _populateIssueLinks = (
@@ -523,8 +678,27 @@ export default class APIImpl implements LXPAPI {
         const linkedIssue = linkedIssues.find(
           (linkedIssue) => linkedIssue.id === link.issueId
         );
-        sortedLinks[link.linkTypeId].push(linkedIssue);
+        if (linkedIssue !== undefined) {
+          sortedLinks[link.linkTypeId].push(linkedIssue);
+        } else {
+          throwError(`search could not fetch linked issues of ${link.issueId}`);
+        }
       });
+      // add epic child issues
+      if (issue.type.name === "Epic") {
+        sortedLinks[CustomLinkType.SUBTASK_OR_EPIC_CHILD] = linkedIssues.filter(
+          (linkedIssue) => {
+            const parent = linkedIssue.links?.find(
+              (issue) => issue.linkTypeId === CustomLinkType.PARENT
+            );
+            if (parent?.issueId === issue.id) {
+              return true;
+            } else {
+              return false;
+            }
+          }
+        );
+      }
       populatedIssues.push(item);
     });
     return populatedIssues;
@@ -538,15 +712,30 @@ export default class APIImpl implements LXPAPI {
   ): Promise<{ data: IssueWithSortedLinks[]; total: number }> {
     const searchResult = await this.searchIssues(jql, fields, start, max);
     const issues: Issue[] = searchResult.data;
-    const { jqlString: linkedIssuesJQL, total } =
-      this._getLinkedIssueJQL(issues);
-    const linkedIssuesResult = await this.searchIssues(
-      linkedIssuesJQL,
-      fields,
-      0,
-      total
-    );
-    const linkedIssues = linkedIssuesResult.data;
+
+    const linkedIssuesJQL = this._getLinkedIssueJQL(issues);
+    let linkedIssues = [];
+    if (linkedIssuesJQL !== undefined && linkedIssuesJQL.length > 0) {
+      const linkedIssuesResult = await this.searchIssues(
+        linkedIssuesJQL,
+        fields,
+        0
+      );
+      linkedIssues = linkedIssuesResult.data;
+      const totalLinkedIssues = linkedIssuesResult.total;
+      // danger - while loop may lead to infinite looping
+      while (linkedIssues.length < totalLinkedIssues) {
+        const moreLinkedIssuesData = await this.searchIssues(
+          linkedIssuesJQL,
+          fields,
+          linkedIssues.length,
+          totalLinkedIssues
+        );
+        linkedIssues = linkedIssues.concat(moreLinkedIssuesData.data);
+      }
+      // danger end
+    }
+
     const populatedIssues = this._populateIssueLinks(issues, linkedIssues);
     return { data: populatedIssues, total: searchResult.total };
   }
@@ -568,7 +757,7 @@ export default class APIImpl implements LXPAPI {
       );
     } catch (error) {
       console.error(error);
-      let message = "Error in fetching the issue filters ";
+      let message = i18n.t("lxp.api.filters-error");
       if (error.message) {
         message += " - " + error.message;
       }
@@ -586,11 +775,19 @@ export default class APIImpl implements LXPAPI {
     try {
       projectKey = projectKey || (await this.api.getCurrentProjectKey());
       const project: JiraProject = await this.api.getProject(projectKey);
-      project || throwError("Project not found.");
+      project || throwError("lxp.api.project-error");
       return this._convertProject(project);
     } catch (error) {
       console.error(error);
-      throw new Error("Error in fetching project: " + error.message);
+      let message = i18n.t("lxp.api.project-error");
+      if (error.message && error.message !== message) {
+        message = message.concat(`: ${error.message}`);
+      }
+      throw new Error(message);
     }
+  }
+
+  getHelpLinks(): HelpLinks {
+    return this.api.getHelpLinks();
   }
 }

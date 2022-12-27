@@ -18,6 +18,7 @@ export interface Props {
   issueFields: IssueField[];
   selectedIssueFieldIds: ID[];
   handleError: any;
+  clearAllErrors: () => void;
 }
 
 export const IssueTree = ({
@@ -28,7 +29,8 @@ export const IssueTree = ({
   issueFields,
   selectedIssueFieldIds,
   handleError,
-}: Props) => {
+  clearAllErrors,
+}: Props): JSX.Element => {
   let fieldMap = {};
   issueFields.forEach((field) => {
     fieldMap[field.id] = field;
@@ -54,10 +56,10 @@ export const IssueTree = ({
 
   useEffect(() => {
     treeUtils.applyFilterHook(
-      setTree, 
+      setTree,
       filter,
       findJiraFields(selectedIssueFieldIds)
-    )
+    );
   }, [filter, selectedIssueFieldIds]);
 
   const onExpand = (itemId) => {
@@ -66,7 +68,8 @@ export const IssueTree = ({
       filter,
       findJiraFields(selectedIssueFieldIds),
       setTree,
-      handleError
+      handleError,
+      clearAllErrors
     );
   };
 

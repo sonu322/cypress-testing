@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { IssueLinkType, IssueType } from "../../types/api";
 import { Dropdown } from "../common/Dropdown";
 
@@ -12,10 +13,11 @@ export const TableFieldsDropdown = ({
   selectedOptions,
   updateSelectedOptionIds,
 }: Props): JSX.Element => {
+  const { t } = useTranslation();
   return (
     <Dropdown
       useTitleCaseOptions
-      dropdownName="Table Fields"
+      dropdownName={t("traceability-report.toolbar.tableFields.name")}
       options={options}
       selectedOptions={selectedOptions}
       updateSelectedOptions={updateSelectedOptionIds}

@@ -1,14 +1,10 @@
 import React from "react";
 import Button from "@atlaskit/button";
+import { jqlDialogOptions } from "../constants/traceabilityReport";
+import { useTranslation } from "react-i18next";
 // @ts-expect-error
-const _AP: any = typeof AP !== "undefined" ? AP: null;
-const options = {
-  header: "Filter Issues with JQL Query",
-  descriptionText: "Use a new JQL query to search issues",
-  submitText: "Use filter",
-  cancelText: "Cancel",
-  jql: "order by status ASC",
-};
+const _AP: any = typeof AP !== "undefined" ? AP : null;
+
 interface Props {
   selectedFilterId: string;
   setSelectedFilterId: React.Dispatch<React.SetStateAction<string>>;
@@ -18,6 +14,8 @@ export const JQLEditor = ({
   selectedFilterId,
   setSelectedFilterId,
 }: Props): JSX.Element => {
+  const { t } = useTranslation();
+  const options = { ...jqlDialogOptions };
   if (Boolean(selectedFilterId) && selectedFilterId !== null) {
     options.jql = selectedFilterId;
   }
@@ -25,13 +23,13 @@ export const JQLEditor = ({
     setSelectedFilterId(jql);
   };
   const openJQLEditor = (): void => {
-    if(_AP){
+    if (_AP !== null) {
       _AP.jira.showJQLEditor(options, callback);
     }
   };
   return (
     <Button appearance="default" onClick={openJQLEditor}>
-      Use JQL Editor
+      {t("traceability-report.toolbar.usejqlbutton.name")}
     </Button>
   );
 };

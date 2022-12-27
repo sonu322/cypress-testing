@@ -1,3 +1,4 @@
+import i18n from "../../../i18n";
 import {
   JiraAPI,
   JiraFiltersResponse,
@@ -7,7 +8,9 @@ import {
   JiraIssueSearchResult,
   JiraIssueType,
   JiraLinkType,
+  JiraMyself,
   JiraProject,
+  HelpLinks,
 } from "../../types/jira";
 
 import { getQueryParam } from "../../util/index";
@@ -27,6 +30,11 @@ export default class JiraCloudImpl implements JiraAPI {
 
   getJiraBaseURL(): string {
     return getQueryParam("xdm_e") as string;
+  }
+
+  async getMyself(): Promise<JiraMyself> {
+    let response = await this._AP.request("/rest/api/3/myself");
+    return response.body && JSON.parse(response.body);
   }
 
   async getPriorities(): Promise<JiraIssuePriorityFull[]> {
@@ -85,7 +93,8 @@ export default class JiraCloudImpl implements JiraAPI {
         if (issueId) {
           return resolve(issueId);
         }
-        reject(new Error("Error in fetching the current issue key."));
+        const message = i18n.t("lxp.jira.current-issuekey-error");
+        reject(new Error(message));
       });
     });
   }
@@ -101,7 +110,8 @@ export default class JiraCloudImpl implements JiraAPI {
         if (res && res.jira) {
           resolve(res.jira.project?.key);
         } else {
-          reject("Project key not found in context.");
+          const message = i18n.t("lxp.api.project-error");
+          reject(message);
         }
       });
     });
@@ -110,5 +120,12 @@ export default class JiraCloudImpl implements JiraAPI {
   async getProject(projectKey?: string): Promise<JiraProject> {
     let response = await this._AP.request(`/rest/api/3/project/${projectKey}`);
     return response.body && JSON.parse(response.body);
+  }
+
+  getHelpLinks(): HelpLinks {
+    return {
+      issueTree: "https://optimizory.atlassian.net/l/cp/xj7rXies",
+      traceability: "https://optimizory.atlassian.net/l/cp/77caidqE"
+    };
   }
 }

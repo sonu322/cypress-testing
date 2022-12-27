@@ -145,7 +145,7 @@ export interface JiraProject {
   properties: JiraProjectProperties;
 }
 
-export interface JiraProjectProperties {}
+export interface JiraProjectProperties { }
 
 export interface JiraRoles {
   [roleName: string]: string;
@@ -206,6 +206,37 @@ export interface JiraFilter {
   name: string;
 }
 
+export interface JiraMyself {
+  self: string;
+  accountId: string;
+  emailAddress: string;
+  avatarUrls: AvatarUrls;
+  displayName: string;
+  active: boolean;
+  timeZone: string;
+  locale: string;
+  groups: Groups;
+  applicationRoles: Groups;
+  expand: string;
+}
+
+interface Groups {
+  size: number;
+  items: any[];
+}
+
+interface AvatarUrls {
+  "48x48": string;
+  "24x24": string;
+  "16x16": string;
+  "32x32": string;
+}
+
+export interface HelpLinks {
+  issueTree: string;
+  traceability: string;
+}
+
 export interface JiraAPI {
   
   isJiraCloud(): boolean;
@@ -215,6 +246,8 @@ export interface JiraAPI {
   getJiraBaseURL(): string;
 
   getPriorities(): Promise<JiraIssuePriorityFull[]>;
+
+  getMyself(): Promise<JiraMyself>;
 
   getIssueTypes(): Promise<JiraIssueType[]>;
 
@@ -238,4 +271,6 @@ export interface JiraAPI {
   getProject(projectKey: string): Promise<JiraProject>;
 
   getCurrentProjectKey(): Promise<string>;
+
+  getHelpLinks(): HelpLinks;
 }

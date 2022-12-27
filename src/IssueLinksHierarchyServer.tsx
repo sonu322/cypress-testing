@@ -9,7 +9,7 @@ import { getAppRoot } from "./util/common";
 const render = async (): Promise<void> => {
   // eslint-disable-next-line no-undef
   const App = await getAppRoot();
-  if(App){
+  if (App !== null) {
     const jiraServer = new JiraServerImpl(App);
     const api = new APIImpl(jiraServer);
     ReactDOM.render(
@@ -25,7 +25,7 @@ const render = async (): Promise<void> => {
  * JIRA function to initialize LXP - Links Explorer tab content
  */
 // @ts-expect-error
-JIRA.ViewIssueTabs.onTabReady(function (event, eee) {
+JIRA.ViewIssueTabs?.onTabReady(function () {
   render();
 });
 

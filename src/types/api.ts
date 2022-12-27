@@ -1,3 +1,4 @@
+import { HelpLinks } from "./jira";
 export type ID = string;
 
 export interface IssueOption {
@@ -70,6 +71,7 @@ export interface IssueVersion {
   archived: boolean;
   released: boolean;
   releaseDate: string;
+  versionsColor: string;
 }
 
 export interface IssueStatus extends IssueOption {
@@ -83,7 +85,8 @@ export interface IssueType extends IssueOption {
   iconUrl: string;
 }
 
-export interface IssueLinkType extends IssueOption {}
+export interface IssueLinkType extends IssueOption {
+}
 
 export interface Filter {
   expand: string;
@@ -103,8 +106,13 @@ export interface IssueTreeFilter {
 }
 
 export enum CustomLinkType {
-  SUBTASK = "SUBTASK",
+  SUBTASK_OR_EPIC_CHILD = "SUBTASK_OR_EPIC_CHILD",
   PARENT = "PARENT",
+}
+
+export enum Labels {
+  SUBTASK_OR_EPIC_CHILD = "Subtasks / Child Issues",
+  PARENT = "Parent"
 }
 
 export default interface LXPAPI {
@@ -124,6 +132,11 @@ export default interface LXPAPI {
     fields: IssueField[],
     issueId?: string
   ) => Promise<IssueWithLinkedIssues>;
+
+  getIssuesWithLinks: (
+    fields: IssueField[],
+    issueIds: string[]
+  ) => Promise<IssueWithLinkedIssues[]>;
 
   getCurrentIssueId: () => Promise<string>;
 
@@ -145,4 +158,6 @@ export default interface LXPAPI {
   getFilters: () => Promise<Filter[]>;
 
   getCurrentProject: (projectKey?: string) => Promise<Project>;
-}
+
+  getHelpLinks: () => HelpLinks;
+};

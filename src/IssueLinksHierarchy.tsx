@@ -1,19 +1,28 @@
-import React from "react";
+import React, { Suspense, useEffect, useContext } from "react";
 import LicenseContainer from "./components/common/LicenseContainer";
 import { IssueTreeModule } from "./components/IssueTreeModule/IssueTreeModule";
 import { APIContext } from "./context/api";
+import { useTranslation } from "react-i18next";
+import "../i18n";
 
 const IssueLinksHierarchy = () => {
+  const api = useContext(APIContext);
+  const { i18n, t } = useTranslation();
+  useEffect(() => {
+    if (api !== undefined && i18n?.language !== undefined) {
+      const handleLocale = async (): Promise<void> => {
+        const locale = await api.getLocale();
+        if (locale !== i18n.language) {
+          await i18n.changeLanguage(locale);
+        }
+      };
+      void handleLocale();
+    }
+  }, [api, i18n]);
   return (
-    <APIContext.Consumer>
-      {(api) => {
-        return api.hasValidLicense() ? (
-          <IssueTreeModule />
-        ) : (
-          <LicenseContainer />
-        );
-      }}
-    </APIContext.Consumer>
+    <Suspense fallback={t("lxp.common.loading")}>
+      {api.hasValidLicense() ? <IssueTreeModule /> : <LicenseContainer />}
+    </Suspense>
   );
 };
 

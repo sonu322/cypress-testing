@@ -5,12 +5,14 @@ import { ErrorsList } from "../common/ErrorsList";
 import TreeUtils from "../../util/TreeUtils";
 import { APIContext } from "../../context/api";
 import { IssueField, IssueTreeFilter } from "../../types/api";
-
+import { useTranslation } from "react-i18next";
 export const IssueTreeModule = () => {
+  const { t, i18n } = useTranslation();
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isExpandAllLoading, setIsExpandAllLoading] = useState(false);
   const [errors, setErrors] = useState([]);
   const [options, setOptions] = useState({});
   const [filter, setFilter] = useState<IssueTreeFilter>({
@@ -26,6 +28,9 @@ export const IssueTreeModule = () => {
 
   const handleNewError = (error) => {
     setErrors((prevErrors) => [...prevErrors, error] as any);
+  };
+  const clearAllErrors = (): void => {
+    setErrors([]);
   };
 
   useEffect(() => {
@@ -73,19 +78,20 @@ export const IssueTreeModule = () => {
   };
 
   const filterDropdowns = [
-    { key: "priorities", label: "Priority" },
-    { key: "linkTypes", label: "Link type" },
-    { key: "issueTypes", label: "Issue type" },
+    { key: "priorities", label: t("lxp.common.issue.priority") },
+    { key: "linkTypes", label: t("lxp.toolbar.link-type.text") },
+    { key: "issueTypes", label: t("lxp.toolbar.issue-type.text") },
   ];
 
   return isLoading ? (
-    <div>Loading data ...</div>
+    <div>{t("lxp.common.loading")}.</div>
   ) : (
     <div>
       {errors && errors.length > 0 && <ErrorsList errors={errors} />}
 
       <Toolbar
         exportTree={() => treeUtils.exportTree(tree)}
+        isExportDisabled={Object.keys(tree.items).length <= 1}
         options={options}
         filter={filter}
         updateFilteredKeyOptions={updateFilteredKeyOptions}
@@ -93,6 +99,9 @@ export const IssueTreeModule = () => {
         issueCardOptions={issueFields}
         selectedIssueFieldIds={selectedIssueFieldIds}
         setSelectedIssueFieldIds={setSelectedIssueFieldIds}
+        collapseAll={() => treeUtils.collapseAll(setTree)}
+        isExpandAllLoading={isExpandAllLoading}
+        expandAll={() => treeUtils.expandAll(filter, issueFields, setTree, handleNewError, clearAllErrors, setIsExpandAllLoading)}
       />
       <IssueTree
         tree={tree}
@@ -102,6 +111,7 @@ export const IssueTreeModule = () => {
         issueFields={issueFields}
         selectedIssueFieldIds={selectedIssueFieldIds}
         handleError={handleNewError}
+        clearAllErrors={clearAllErrors}
       />
     </div>
   );
