@@ -1,13 +1,17 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { IssueWithSortedLinks } from "../../types/api";
 import { IssueCard } from "../common/issueCard/IssueCard";
 import { EmptyCell } from "./EmptyCell";
 import { IssueTd, MaxWidthContainer, Td } from "./IssueTypeRow";
+import { CellLimit } from "./SettingDropdown";
+import Button from "@atlaskit/button";
 
 export interface Props {
   selectedTableFieldIds;
   issueFieldIds: string[];
   issue: IssueWithSortedLinks;
+  issueInCell: CellLimit[];
+  selectedIssueInCellIds: string[];
   rowSno: number;
 }
 
@@ -16,7 +20,9 @@ export const LinkTypeRow = ({
   issue,
   rowSno,
   selectedTableFieldIds,
+  selectedIssueInCellIds,
 }: Props): JSX.Element[] => {
+  const [areAllIssuesVisible, setAreAllIssuesVisible] = useState(false);
   const cells = [];
 
   // push issue cell into row
@@ -55,10 +61,39 @@ export const LinkTypeRow = ({
           allIssues.push(singleIssue);
         }
       });
+      useEffect(() => {
+        if(selectedIssueInCellIds.length > 0){
+          handleClick();
+        }
+      },[selectedIssueInCellIds]);
+
+    let issueCardsToShow = [];
+    if(allIssues.length > 3) {
+      if(!areAllIssuesVisible) {
+      issueCardsToShow = allIssues.slice(0, 3);
+      }
+      else {
+        issueCardsToShow = allIssues;
+      }
+    }
+    else {
+      issueCardsToShow = allIssues;
+    }
+
+    const handleClick = () => {
+      if(allIssues.length > 3) {
+        setAreAllIssuesVisible(!areAllIssuesVisible);
+      }
+    };
+  
       if (allIssues.length > 0) {
         issueCell = (
           <Td key={linkId}>
-            <MaxWidthContainer>{allIssues}</MaxWidthContainer>
+            <MaxWidthContainer>{issueCardsToShow}</MaxWidthContainer>
+            {allIssues.length > 3 && 
+            <Button onClick={handleClick} style={{cursor: 'pointer'}} isDisabled={areAllIssuesVisible} >
+              More
+            </Button>} 
           </Td>
         );
       }

@@ -1,5 +1,5 @@
 import { colors } from "@atlaskit/theme";
-import React from "react";
+import React, {useEffect, useState } from "react";
 import styled from "styled-components";
 import {
   Issue,
@@ -7,6 +7,7 @@ import {
   IssueType,
   IssueWithSortedLinks,
 } from "../../types/api";
+import Button from '@atlaskit/button';
 import { getUniqueValues } from "../../util/common";
 import { IssueCard } from "../common/issueCard/IssueCard";
 import { EmptyCell } from "./EmptyCell";
@@ -45,6 +46,7 @@ export const IssueTypeRow = ({
   selectedTableFieldIds,
   selectedIssueInCellIds
 }: Props): JSX.Element[] => {
+  const [areAllIssuesVisible, setAreAllIssuesVisible] = useState(false);
   const cells = [];
   console.log(issue);
   // push issue cell into row
@@ -88,13 +90,40 @@ export const IssueTypeRow = ({
         );
         issueCards.push(issueCard);
       });
+    useEffect(() => {
+      if(selectedIssueInCellIds.length > 0){
+       handleClick();
+      }
+    },[selectedIssueInCellIds]);
+
+    let issueCardsToShow = [];
+    if(issueCards.length > 3) {
+      if(!areAllIssuesVisible) {
+      issueCardsToShow = issueCards.slice(0, 3);
+      }
+      else {
+        issueCardsToShow = issueCards;
+      }
+    }
+    else {
+      issueCardsToShow = issueCards;
+    }
+    const handleClick = () => {
+      if(issueCards.length > 3) {
+        setAreAllIssuesVisible(!areAllIssuesVisible);
+      }
+    };
       issueCell = (
         <Td key={typeId}>
-          <MaxWidthContainer>{issueCards}</MaxWidthContainer>
+          <MaxWidthContainer>{issueCardsToShow}</MaxWidthContainer>
+          {issueCards.length > 3 &&
+          <Button onClick={handleClick} style={{cursor: 'pointer'}} isDisabled={areAllIssuesVisible}>
+          More
+          </Button>} 
         </Td>
-      );
-    }   
+      ); 
+    }  
     cells.push(issueCell);
-  });
+  }); 
   return cells;
 };

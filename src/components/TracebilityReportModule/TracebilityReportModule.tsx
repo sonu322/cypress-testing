@@ -30,9 +30,9 @@ const GrowContainer = styled.div`
   flex-grow: 1;
   display: flex;
 `;
-const CellOptions = [
-  { id: "hello",
-    name: "Hello",
+const cellOptions = [
+  { id: "Display All issue cards",
+    name: "Display All issue cards",
   },
 ]
 
@@ -98,7 +98,6 @@ export const TracebilityReportModule = (): JSX.Element => {
 
         // setting state - fields for issue card
         setIssueFields(fields);
-
         // setting state - selected field ids
         const selectedFieldIds = getKeyValues(fields, "id");
         setSelectedIssueFieldIds(selectedFieldIds);
@@ -163,7 +162,7 @@ export const TracebilityReportModule = (): JSX.Element => {
           <Toolbar
             selectedIssueInCellIds={selectedIssueInCellIds}
             updateSelectedIssueInCellIds={updateSelectedIssueInCellIds}
-            issueInCell={CellOptions}
+            issueInCell={cellOptions}
             selectedJQLString={selectedJQLString}
             setSelectedJQLString={setSelectedJQLString}
             issueCardOptions={issueFields}
@@ -200,7 +199,6 @@ export const TracebilityReportModule = (): JSX.Element => {
           issueFields={issueFields}
           selectedIssueFieldIds={selectedIssueFieldIds}
           selectedIssueInCellIds={selectedIssueInCellIds}
-          // CellOptions={CellOptions}
           tableFields={tableFields}
           selectedTableFieldIds={emptyEqualsAllTableIds}
           filteredIssues={filteredIssues}
