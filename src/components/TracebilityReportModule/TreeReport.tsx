@@ -14,6 +14,8 @@ import { getScreenHeight } from "../../util/common";
 import { IssueTreeMultiNode } from "../IssueTreeModule/IssueTreeMultiNode";
 import { APIContext } from "../../context/api";
 import TreeUtils from "../../util/TreeUtils";
+
+const DEFAULT_FILTER = { priorities: [], issueTypes: [], linkTypes: [] };
 const Container = styled.div`
   width: 100%;
   overflow: scroll;
@@ -36,12 +38,14 @@ interface Props {
   issueFieldIds: string[];
   isIssueTypeReport: boolean;
   errors: any[];
+  issueFields: IssueField[];
 }
 export const TreeReport = ({
   filteredIssues,
   tableFields,
   selectedTableFieldIds,
   issueFieldIds,
+  issueFields,
   isIssueTypeReport,
   errors,
 }: Props): JSX.Element => {
@@ -66,7 +70,7 @@ export const TreeReport = ({
 
   const [tableHeight, setTableHeight] = useState(calculateTableHeight(errors));
   const [tree, setTree] = useState(treeUtils.getRootTree());
-  const [issueFields, setIssueFields] = useState<IssueField[]>([]);
+  // const [issueFields, setIssueFields] = useState<IssueField[]>([]);
   useEffect(() => {
     const resizeHandler = () => {
       setTableHeight((prevHeight) => {
@@ -80,24 +84,24 @@ export const TreeReport = ({
     return () => window.removeEventListener("resize", resizeHandler);
   }, [errors]);
 
-  useEffect(() => {
-    const fetchFields = async (): Promise<void> => {
-      try {
-        const fields = await api.getIssueFields();
-        setIssueFields(fields);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    void fetchFields();
-  }, []);
+  // useEffect(() => {
+  //   const fetchFields = async (): Promise<void> => {
+  //     try {
+  //       const fields = await api.getIssueFields();
+  //       setIssueFields(fields);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   void fetchFields();
+  // }, []);
   console.log(tree);
   return (
     <Container style={{ maxHeight: tableHeight }}>
       <IssueTreeMultiNode
         tree={tree}
         setTree={setTree}
-        filter={{ priorities: [], issueTypes: [], linkTypes: [] }}
+        filter={DEFAULT_FILTER}
         treeUtils={treeUtils}
         issueFields={issueFields}
         selectedIssueFieldIds={issueFieldIds}

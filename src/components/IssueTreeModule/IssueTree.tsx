@@ -36,14 +36,11 @@ export const IssueTree = ({
     fieldMap[field.id] = field;
   });
 
-  // useEffect(() => {
-  //   console.log("from use eff", tree);
-  //   treeUtils.applyFilterHook(
-  //     setTree,
-  //     filter,
-  //     treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds)
-  //   );
-  // }, [filter, selectedIssueFieldIds]);
+  useEffect(() => {
+    console.log("from use eff");
+    treeUtils.applyFilterHook(setTree, filter, issueFields);
+    console.log(filter, selectedIssueFieldIds);
+  }, [filter, selectedIssueFieldIds]);
 
   const onExpand = (itemId) => {
     treeUtils.expandTreeHook(

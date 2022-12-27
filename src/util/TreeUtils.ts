@@ -64,6 +64,7 @@ export default class TreeUtils {
     isExpanded = false,
     hasChildrenLoaded = false
   ) {
+    console.log("TREE NODE DATA", data);
     const node: AtlasTreeNode = {
       id: prefix + "/" + data.id,
       children: [],
@@ -136,9 +137,10 @@ export default class TreeUtils {
     try {
       const prevTree = this.getRootTree();
       const tree = this.cloneTree(prevTree);
-      const allPromises = filteredIssues.map(
-        async (issue) => await this.api.getIssueWithLinks(fields, issue.id)
-      );
+      const allPromises = filteredIssues.map(async (issue) => {
+        console.log("FEILDS FROM MULTI INIT TREE", fields);
+        return await this.api.getIssueWithLinks(fields, issue.id);
+      });
 
       const result = await Promise.all(allPromises);
       console.log("CALLING ALL ISSUE WITH LINKS", result);
