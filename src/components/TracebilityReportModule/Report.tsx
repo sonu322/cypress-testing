@@ -91,6 +91,7 @@ export const Report = ({
                 />
               ) : (
                 <LinkTypeRow
+                  selectedIssueInCellIds={selectedIssueInCellIds}
                   selectedTableFieldIds={selectedTableFieldIds}
                   issueFieldIds={issueFieldIds}
                   issue={issue}
