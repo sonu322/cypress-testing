@@ -153,7 +153,14 @@ export default class TreeUtils {
       //   await this.addChildren(nodeId, tree, fields, issueWithLinks, filter);
       // });
       result.forEach((issueWithLinks) => {
-        const node = this.createTreeNode(tree, "", issueWithLinks, null, true);
+        const node = this.createTreeNode(
+          tree,
+          "",
+          issueWithLinks,
+          null,
+          false,
+          false
+        );
         const nodeId = node.id;
         // make actual root a child of fake(hidden) root node
         tree.items[this.ROOT_ID].children.push(nodeId);

@@ -84,17 +84,6 @@ export const TreeReport = ({
     return () => window.removeEventListener("resize", resizeHandler);
   }, [errors]);
 
-  // useEffect(() => {
-  //   const fetchFields = async (): Promise<void> => {
-  //     try {
-  //       const fields = await api.getIssueFields();
-  //       setIssueFields(fields);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  //   void fetchFields();
-  // }, []);
   console.log(tree);
   return (
     <Container style={{ maxHeight: tableHeight }}>
