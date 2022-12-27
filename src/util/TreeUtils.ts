@@ -77,19 +77,24 @@ export default class TreeUtils {
     return node;
   }
 
-  initTreeHook(
+  async initTreeHook(
     filter: IssueTreeFilter,
     fields: IssueField[],
     setTree,
     handleError
-  ) {
-    setTree(async (tree) => {
+  ): Promise<void> {
+    console.log("init tree hook called");
+    try {
+      const tree = this.getRootTree();
       await this.initTree(tree, filter, fields, setTree, handleError);
-      return tree;
-    });
+      // setTree(newTree);
+    } catch (error) {
+      console.log(error);
+      handleError(error);
+    }
   }
 
-  cloneTree(tree) {
+  cloneTree(tree): any {
     return JSON.parse(JSON.stringify(tree));
   }
 
@@ -99,7 +104,8 @@ export default class TreeUtils {
     fields: IssueField[],
     setTree,
     handleError
-  ) {
+  ): Promise<void> {
+    console.log("init tree called");
     try {
       const tree = this.cloneTree(prevTree);
       const issue = await this.api.getIssueWithLinks(fields);
@@ -108,9 +114,8 @@ export default class TreeUtils {
       // make actual root a child of fake(hidden) root node
       tree.items[this.ROOT_ID].children = [nodeId];
       await this.addChildren(nodeId, tree, fields, issue, filter);
-      setTree(() => {
-        return tree;
-      });
+      console.log("TREE FROM INIT TREE", tree);
+      setTree(tree);
     } catch (err) {
       console.error(err);
       handleError(err);
@@ -219,8 +224,13 @@ export default class TreeUtils {
 
   applyFilterHook(setTree, filter, fields) {
     setTree((tree) => {
-      const firstNodeId = tree.items[this.ROOT_ID].children[0];
-      if (firstNodeId) {
+      console.log("from apply filter hook");
+      console.log(tree);
+      let firstNodeId;
+      if (tree.items !== undefined) {
+        firstNodeId = tree.items[this.ROOT_ID].children[0];
+      }
+      if (firstNodeId !== undefined) {
         const newTree = this.cloneTree(tree);
         const result = this.applyFilter(
           setTree,

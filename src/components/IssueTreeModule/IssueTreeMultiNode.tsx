@@ -31,12 +31,15 @@ export const IssueTreeMultiNode = ({
   });
 
   useEffect(() => {
-    treeUtils.initTreeHook(
-      filter,
-      treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds),
-      setTree,
-      handleError
-    );
+    const initTree = async (): Promise<void> => {
+      await treeUtils.initTreeHook(
+        filter,
+        treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds),
+        setTree,
+        handleError
+      );
+    };
+    void initTree();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

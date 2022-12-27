@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import { LinkTypeRow } from "./LinkTypeRow";
 import { ReportHeader } from "./ReportHeader";
 import {
+  IssueField,
   IssueLinkType,
   IssueType,
   IssueWithSortedLinks,
 } from "../../types/api";
 import { IssueTypeRow } from "./IssueTypeRow";
 import { getScreenHeight } from "../../util/common";
+import { IssueTreeMultiNode } from "../IssueTreeModule/IssueTreeMultiNode";
+import { APIContext } from "../../context/api";
+import TreeUtils from "../../util/TreeUtils";
 const Container = styled.div`
   width: 100%;
-  // height: 100%;
   overflow: scroll;
   border: 1px solid ${colors.N40};
   border-radius: 10px;
@@ -58,9 +61,12 @@ export const TreeReport = ({
       2;
     return finalHeight < 200 ? 200 : finalHeight;
   };
+  const api = useContext(APIContext);
+  const treeUtils = new TreeUtils(api);
 
   const [tableHeight, setTableHeight] = useState(calculateTableHeight(errors));
-
+  const [tree, setTree] = useState(treeUtils.getRootTree());
+  const [issueFields, setIssueFields] = useState<IssueField[]>([]);
   useEffect(() => {
     const resizeHandler = () => {
       setTableHeight((prevHeight) => {
@@ -74,9 +80,30 @@ export const TreeReport = ({
     return () => window.removeEventListener("resize", resizeHandler);
   }, [errors]);
 
+  useEffect(() => {
+    const fetchFields = async (): Promise<void> => {
+      try {
+        const fields = await api.getIssueFields();
+        setIssueFields(fields);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    void fetchFields();
+  }, []);
+  console.log(tree);
   return (
     <Container style={{ maxHeight: tableHeight }}>
-      <em>Tree Report</em>
+      <IssueTreeMultiNode
+        tree={tree}
+        setTree={setTree}
+        filter={{ priorities: [], issueTypes: [], linkTypes: [] }}
+        treeUtils={treeUtils}
+        issueFields={issueFields}
+        selectedIssueFieldIds={issueFieldIds}
+        handleError={() => {}}
+        clearAllErrors={() => {}}
+      />
     </Container>
   );
 };
