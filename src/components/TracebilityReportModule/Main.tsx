@@ -147,6 +147,7 @@ export const Main = ({
               selectedTableFieldIds={selectedTableFieldIds}
               isIssueTypeReport={isIssueTypeReport}
               errors={errors}
+              issueFields={issueFields}
             />
           ) : (
             <Report
