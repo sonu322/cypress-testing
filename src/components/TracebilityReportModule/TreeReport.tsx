@@ -103,6 +103,7 @@ export const TreeReport = ({
         selectedIssueFieldIds={issueFieldIds}
         handleError={() => {}}
         clearAllErrors={() => {}}
+        filteredIssues={filteredIssues}
       />
     </Container>
   );
