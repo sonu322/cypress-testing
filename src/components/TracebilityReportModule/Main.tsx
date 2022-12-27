@@ -11,12 +11,12 @@ import {
   IssueType,
   IssueWithSortedLinks,
 } from "../../types/api";
+import { useTranslation } from "react-i18next";
+import { DropdownSingleSelect } from "../common/DropdownSingleSelect";
 const Container = styled.div`
   width: 100%;
 `;
-const FullHeightContainer = styled.div`
-  
-`;
+const FullHeightContainer = styled.div``;
 const TableContainer = styled.div`
   display: flex;
 `;
@@ -26,10 +26,16 @@ const MarginAddedContainer = styled.div`
 `;
 const DEFAULT_ROWS_PER_PAGE = 20;
 const START_INDEX = 0;
-
+const options = [
+  { id: 10, name: "10" },
+  { id: 20, name: "20" },
+  { id: 50, name: "50" },
+  { id: 100, name: "100" },
+];
 interface Props {
   jqlString: string;
   handleNewError: (err: unknown) => void;
+  clearAllErrors: () => void;
   issueFields: IssueField[];
   selectedIssueFieldIds: string[];
   selectedTableFieldIds: string[];
@@ -47,6 +53,7 @@ interface Props {
 export const Main = ({
   jqlString,
   handleNewError,
+  clearAllErrors,
   issueFields,
   selectedIssueFieldIds,
   selectedTableFieldIds,
@@ -56,17 +63,19 @@ export const Main = ({
   setAreIssuesLoading,
   setFilteredIssues,
   isIssueTypeReport,
-  errors
+  errors,
 }: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
+  const [selectedOptionId, setSelectedOptionId] = useState(DEFAULT_ROWS_PER_PAGE);
+  const { t } = useTranslation();
   const api = useContext(APIContext);
-  const addMoreIssues = (issues): void => {
+  const addMoreIssues = (issues: IssueWithSortedLinks[]): void => {
     const newIssues = filteredIssues ?? [];
     const updatedIssues = newIssues.concat(issues);
     setFilteredIssues(updatedIssues);
   };
-  const updateIssues = (issues): void => {
+  const updateIssues = (issues: IssueWithSortedLinks[]): void => {
     setFilteredIssues(issues);
   };
   const tracebilityReportUtils = new TracebilityReportUtils(api);
@@ -80,22 +89,31 @@ export const Main = ({
         updateIssues,
         setAreIssuesLoading,
         setTotalNumberOfIssues,
-        handleNewError
+        handleNewError,
+        clearAllErrors
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jqlString]);
 
+  // useEffect(() => {
+  //   if (selectedOptionId !== 0) {
+  //     fetchMoreIssues();
+  //   }
+  // }, [selectedOptionId]);
+
   const fetchMoreIssues = (): void => {
+    const selectedLimit = selectedOptionId ?? DEFAULT_ROWS_PER_PAGE;
     void tracebilityReportUtils.populateIssues(
       jqlString,
       issueFields,
       filteredIssues.length,
-      totalNumberOfIssues,
+      selectedLimit,
       addMoreIssues,
       setAreMoreIssuesLoading,
       null,
-      handleNewError
+      handleNewError,
+      undefined
     );
   };
 
@@ -105,15 +123,14 @@ export const Main = ({
         <Spinner size="medium" />
       </FullHeightContainer>
     );
-  } else if (Boolean(jqlString) && filteredIssues != null) {
+  } else if (jqlString !== null && filteredIssues != null) {
     if (filteredIssues.length === 0) {
       return (
         <FullHeightContainer>
-          <em>No matching issues</em>
+          <em>{t("lxp.common.no-issues-text")}</em>
         </FullHeightContainer>
       );
     }
-
     return (
       <Container>
         <TableContainer>
@@ -127,12 +144,18 @@ export const Main = ({
           />
         </TableContainer>
         <MarginAddedContainer>
+          <DropdownSingleSelect
+            options={options}
+            dropdownName={t("traceability-report.fetch-limit-dropdown.name") + ` (${selectedOptionId})`}
+            selectedOptionId={selectedOptionId}
+            setSelectedOptionId={setSelectedOptionId}
+          /> &nbsp;
           <LoadingButton
             isLoading={areMoreIssuesLoading}
             isDisabled={filteredIssues.length >= totalNumberOfIssues}
             onClick={fetchMoreIssues}
           >
-            More
+            {t("traceability-report.load-more-issues-button.name")}
           </LoadingButton>
         </MarginAddedContainer>
       </Container>
@@ -140,7 +163,7 @@ export const Main = ({
   } else {
     return (
       <FullHeightContainer>
-        <em>Please select filter to view report</em>
+        <em>{t("traceability-report.select-filter.text")}</em>
       </FullHeightContainer>
     );
   }

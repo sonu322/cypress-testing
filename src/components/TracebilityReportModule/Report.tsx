@@ -28,7 +28,7 @@ const Table = styled.table`
 `;
 
 // @ts-expect-error
-const _AP: any = typeof AP !== "undefined" ? AP: null;
+const _AP: any = typeof AP !== "undefined" ? AP : null;
 
 interface Props {
   filteredIssues: IssueWithSortedLinks[];
@@ -46,27 +46,26 @@ export const Report = ({
   isIssueTypeReport,
   errors
 }: Props): JSX.Element => {
-  
-  //TODO: probably we may improve this calculation
-  const calculateTableHeight = (errors) => {
-    const headingHeight = 40 + 8, //8: margin top
-      toolbarHeight = 94 + 8, //8: table top margin
-      footerHeight = 32 + 8 + 8,//more button 8: margin top and bottom
-      errorsHeight = errors && errors.length ? ((52 + 8) * errors.length) : 0;
+
+  // TODO: probably we may improve this calculation
+  const calculateTableHeight = (errors): number => {
+    const headingHeight = 40 + 8; // 8: margin top
+    const toolbarHeight = 94 + 8; // 8: table top margin
+    const footerHeight = 32 + 8 + 8; const // more button 8: margin top and bottom
+      errorsHeight = errors?.length > 0 ? ((52 + 8) * errors.length) : 0;
     const finalHeight = getScreenHeight() - headingHeight - toolbarHeight - footerHeight - errorsHeight - 2;
     return finalHeight < 200 ? 200 : finalHeight;
   };
 
   const [tableHeight, setTableHeight] = useState(calculateTableHeight(errors));
-  
+
   useEffect(() => {
-    const resizeHandler = () => {
-      setTableHeight((prevHeight) => {
-        if(_AP){
-          //@ts-ignore
+    const resizeHandler = (): void => {
+      setTableHeight(() => {
+        if (_AP !== null) {
           _AP.sizeToParent();
         }
-        
+
         return calculateTableHeight(errors);
       });
     };
@@ -76,7 +75,7 @@ export const Report = ({
   }, [errors]);
 
   return (
-    <Container style={{maxHeight: tableHeight}}>
+    <Container style={{ maxHeight: tableHeight }}>
       <Table>
         <ReportHeader
           selectedFieldIds={selectedTableFieldIds}

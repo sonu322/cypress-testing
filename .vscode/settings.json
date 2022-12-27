@@ -3,5 +3,6 @@
   "typescript.format.enable": false,
   "javascript.validate.enable": false,
   "javascript.format.enable": false,
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "editor.formatOnSave": true
 }

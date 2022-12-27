@@ -4,6 +4,7 @@ import { APIContext } from "../../context/api";
 import PageHeader from "@atlaskit/page-header";
 import { SelectedType } from "@atlaskit/tabs/types";
 import { Toolbar } from "./Toolbar";
+import { useTranslation } from "react-i18next";
 import {
   IssueField,
   IssueLinkType,
@@ -31,6 +32,7 @@ const GrowContainer = styled.div`
 `;
 
 export const TracebilityReportModule = (): JSX.Element => {
+  const { t } = useTranslation();
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
   const [filteredIssues, setFilteredIssues] = useState<
     IssueWithSortedLinks[] | null
@@ -54,12 +56,12 @@ export const TracebilityReportModule = (): JSX.Element => {
   const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>(0);
   const viewTabs = [
     {
-      name: "Issue Type View",
-      description: "View related issues by their types",
+      name: t("traceability-report.issuetype-view.name"),
+      description: t("traceability-report.issuetype-view.description"),
     },
     {
-      name: "Link Type View",
-      description: "View related issues by their link types",
+      name: t("traceability-report.linktype-view.name"),
+      description: t("traceability-report.linktype-view.description"),
     },
   ];
   const handleTabOptionSelect = (tabIndex: SelectedType): void => {
@@ -67,8 +69,11 @@ export const TracebilityReportModule = (): JSX.Element => {
   };
   const api = useContext(APIContext);
   const handleNewError = (err: unknown): void => {
-    console.log(err);
+    console.error(err);
     setErrors((prevErrors) => [...prevErrors, err]);
+  };
+  const clearAllErrors = (): void => {
+    setErrors([]);
   };
   useEffect(() => {
     const loadData = async (): Promise<void> => {
@@ -91,15 +96,7 @@ export const TracebilityReportModule = (): JSX.Element => {
         setSelectedIssueFieldIds(selectedFieldIds);
 
         // setting state - table field options
-        const fieldsMap = new Map<string, { name: string; values: any[] }>();
-        fieldsMap.set("issueTypes", {
-          name: "Issue Types",
-          values: issueTypes,
-        });
-        fieldsMap.set("linkTypes", {
-          name: "Issue Link Types",
-          values: linkTypes,
-        });
+
         setIssueTypes(issueTypes);
         setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
         setLinkTypes(linkTypes);
@@ -121,7 +118,7 @@ export const TracebilityReportModule = (): JSX.Element => {
     filteredIssues == null || filteredIssues.length === 0;
 
   if (areOptionsLoading) {
-    return <div>Loading data ...</div>;
+    return <div>{t("lxp.common.loading")}</div>;
   }
   const updateSelectedIssueTypeIds = (fieldIds: string[]): void => {
     const newSelectedIds = orderSelectedIds(fieldIds, issueTypes);
@@ -150,7 +147,7 @@ export const TracebilityReportModule = (): JSX.Element => {
 
   const emptyEqualsAllTableIds =
     selectedTableFieldIds.length > 0 ? selectedTableFieldIds : allTableFieldIds;
-
+  const title = t("traceability-report.name");
   return (
     <FullWidthContainer>
       <PageHeader
@@ -181,13 +178,14 @@ export const TracebilityReportModule = (): JSX.Element => {
           />
         }
       >
-        Links Explorer Traceability and Reports
+        {title}
       </PageHeader>
       {errors.length > 0 && <ErrorsList errors={errors} />}
       <GrowContainer>
         <Main
           jqlString={selectedJQLString}
           handleNewError={handleNewError}
+          clearAllErrors={clearAllErrors}
           issueFields={issueFields}
           selectedIssueFieldIds={selectedIssueFieldIds}
           tableFields={tableFields}
@@ -202,4 +200,4 @@ export const TracebilityReportModule = (): JSX.Element => {
       </GrowContainer>
     </FullWidthContainer>
   );
-};;
+};
