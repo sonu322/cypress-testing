@@ -19,6 +19,7 @@ export interface Props {
   selectedIssueFieldIds: ID[];
   handleError: any;
   clearAllErrors: () => void;
+  shouldNotExpandByDefault?: boolean;
 }
 
 export const IssueTree = ({
@@ -30,6 +31,7 @@ export const IssueTree = ({
   selectedIssueFieldIds,
   handleError,
   clearAllErrors,
+  shouldNotExpandByDefault,
 }: Props): JSX.Element => {
   const fieldMap = {};
   issueFields.forEach((field) => {
@@ -38,7 +40,12 @@ export const IssueTree = ({
 
   useEffect(() => {
     console.log("from use eff");
-    treeUtils.applyFilterHook(setTree, filter, issueFields);
+    treeUtils.applyFilterHook(
+      setTree,
+      filter,
+      issueFields,
+      shouldNotExpandByDefault
+    );
     console.log(filter, selectedIssueFieldIds);
   }, [filter, selectedIssueFieldIds]);
 
@@ -59,7 +66,7 @@ export const IssueTree = ({
 
   const renderItem = ({ ...props }) => {
     return (
-      //@ts-ignore
+      // @ts-expect-error
       <IssueItem {...props} selectedIssueFieldIds={selectedIssueFieldIds} />
     );
   };
