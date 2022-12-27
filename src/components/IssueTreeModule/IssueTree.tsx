@@ -37,6 +37,7 @@ export const IssueTree = ({
   });
 
   useEffect(() => {
+    console.log("from use eff", tree);
     treeUtils.applyFilterHook(
       setTree,
       filter,
