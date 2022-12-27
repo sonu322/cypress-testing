@@ -9,6 +9,7 @@ import {
   JiraLinkType,
   JiraProject,
   HelpLinks,
+  JiraMyself,
 } from "../../types/jira";
 
 export default class JiraServerImpl implements JiraAPI {
@@ -85,7 +86,9 @@ export default class JiraServerImpl implements JiraAPI {
   }
 
   async getFilters(): Promise<JiraFiltersResponse> {
-    let response = await this._AJS.getJSON("/rest/api/2/filter/search");
+    // @ts-expect-error
+    console.log(filters);
+    let response = await this._AJS.$.getJSON("/rest/api/2/filter/search");
     return response.body && JSON.parse(response.body);
   }
 
@@ -110,5 +113,9 @@ export default class JiraServerImpl implements JiraAPI {
       issueTree: "https://optimizory.atlassian.net/l/cp/gdv35UvD",
       traceability: "https://optimizory.atlassian.net/l/cp/1KpzZ3z4"
     };
+  }
+
+  async getMyself(): Promise<JiraMyself> {
+    return await this._AJS.$.getJSON(this.contextPath + "/rest/api/2/myself");
   }
 }
