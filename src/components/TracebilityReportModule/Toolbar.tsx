@@ -15,6 +15,8 @@ import { TabGroup } from "./TabGroup";
 import { SelectedType } from "@atlaskit/tabs/types";
 import { useTranslation } from "react-i18next";
 import { viewTabs } from "../../constants/traceabilityReport";
+
+import { Toolbar as TreeToolbar } from "../IssueTreeModule/Toolbar";
 const MainBar = styled.div`
   padding: 8px;
   border-radius: 3px;
@@ -45,6 +47,7 @@ interface Props {
   handleTabOptionSelect: (tabIndex: SelectedType) => void;
   selectedTabIndex: SelectedType;
   selectedViewTab: string;
+  // treeToolbarProps: any;
 }
 
 export const Toolbar = ({
@@ -64,7 +67,8 @@ export const Toolbar = ({
   handleTabOptionSelect,
   selectedTabIndex,
   selectedViewTab,
-}: Props): JSX.Element => {
+}: // treeToolbarProps,
+Props): JSX.Element => {
   const { t } = useTranslation();
   const isTreeReport = selectedViewTab === "tree-view";
   return (
@@ -118,6 +122,7 @@ export const Toolbar = ({
           </ButtonGroup>
         </div>
       </MainBar>
+      {/* {isTreeReport && <TreeToolbar {...treeToolbarProps} />} */}
     </div>
   );
 };

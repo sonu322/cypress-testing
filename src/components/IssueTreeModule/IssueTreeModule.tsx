@@ -24,8 +24,36 @@ export const IssueTreeModule = () => {
   const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState<string[]>(
     []
   );
+  const updateFilter = (filter: {
+    priorities: string[];
+    issueTypes: string[];
+    linkTypes: string[];
+  }): void => {
+    setFilter(filter);
+  };
 
-  const handleNewError = (error) => {
+  const updateOptions = (options: {
+    priorities: IssuePriority[];
+    issueTypes: IssueType[];
+    linkTypes: IssueLinkType[];
+  }): void => {
+    setOptions(options);
+  };
+
+  const updateSelectedIssueFieldIds = (
+    selectedIssueFieldIds: string[]
+  ): void => {
+    setSelectedIssueFieldIds(selectedIssueFieldIds);
+  };
+
+  const updateIssueFields = (issueFields: IssueField[]): void => {
+    setIssueFields(issueFields);
+  };
+
+  const updateIsLoading = (isLoading: boolean): void => {
+    setIsLoading(isLoading);
+  };
+  const handleNewError = (error: unknown): void => {
     setErrors((prevErrors) => [...prevErrors, error] as any);
   };
   const clearAllErrors = (): void => {
@@ -33,38 +61,45 @@ export const IssueTreeModule = () => {
   };
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const result = await Promise.all([
-          api.getPriorities(),
-          api.getIssueTypes(),
-          api.getIssueLinkTypes(),
-          api.getIssueFields(),
-        ]);
+    // const loadToolbarData = async () => {
+    //   try {
+    //     const result = await Promise.all([
+    //       api.getPriorities(),
+    //       api.getIssueTypes(),
+    //       api.getIssueLinkTypes(),
+    //       api.getIssueFields(),
+    //     ]);
 
-        const priorities = result[0],
-          issueTypes = result[1],
-          linkTypes = result[2],
-          fields = result[3];
+    //     const priorities = result[0],
+    //       issueTypes = result[1],
+    //       linkTypes = result[2],
+    //       fields = result[3];
 
-        const filterObj = {
-          priorities: priorities.map((option) => option.id),
-          issueTypes: issueTypes.map((option) => option.id),
-          linkTypes: linkTypes.map((option) => option.id),
-        };
-        setFilter(filterObj);
-        setOptions({ priorities, issueTypes, linkTypes });
+    //     const filterObj = {
+    //       priorities: priorities.map((option) => option.id),
+    //       issueTypes: issueTypes.map((option) => option.id),
+    //       linkTypes: linkTypes.map((option) => option.id),
+    //     };
+    //     setFilter(filterObj);
+    //     setOptions({ priorities, issueTypes, linkTypes });
 
-        const selectedFieldIds = fields.map((field) => field.id);
-        setSelectedIssueFieldIds(selectedFieldIds);
-        setIssueFields(fields);
-        setIsLoading(false);
-      } catch (error) {
-        setIsLoading(false);
-        handleNewError(error);
-      }
-    };
-    loadData();
+    //     const selectedFieldIds = fields.map((field) => field.id);
+    //     setSelectedIssueFieldIds(selectedFieldIds);
+    //     setIssueFields(fields);
+    //     setIsLoading(false);
+    //   } catch (error) {
+    //     setIsLoading(false);
+    //     handleNewError(error);
+    //   }
+    // };
+    void treeUtils.loadToolbarData(
+      updateFilter,
+      updateOptions,
+      updateSelectedIssueFieldIds,
+      updateIssueFields,
+      updateIsLoading,
+      handleNewError
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

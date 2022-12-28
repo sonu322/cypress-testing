@@ -7,6 +7,7 @@ import { helpLinkUrl } from "../../constants/common";
 import { ExportContent } from "../common/ExportContent";
 import { HelpLink } from "../common/HelpLink";
 import { useTranslation } from "react-i18next";
+import { TreeFilterDropdowns } from "./TreeFilterDropdowns";
 export const Container = styled.div`
   display: flex;
   justify-content: space-between;
@@ -27,20 +28,14 @@ export const Toolbar = ({
   const { t } = useTranslation();
   return (
     <Container>
-      <ButtonGroup>
-        {options &&
-          filter &&
-          filterDropdowns.map((fd) => (
-            <IssueOptionsDropdown
-              key={fd.key}
-              keyName={fd.key}
-              dropdownName={fd.label}
-              options={options[fd.key]}
-              selectedOptions={filter[fd.key]}
-              updateSelectedOptions={updateFilteredKeyOptions}
-            />
-          ))}
-      </ButtonGroup>
+      {options !== undefined && filter !== undefined && (
+        <TreeFilterDropdowns
+          filter={filter}
+          options={options}
+          filterDropdowns={filterDropdowns}
+          updateFilteredKeyOptions={updateFilteredKeyOptions}
+        />
+      )}
       <div>
         <ButtonGroup>
           <Dropdown

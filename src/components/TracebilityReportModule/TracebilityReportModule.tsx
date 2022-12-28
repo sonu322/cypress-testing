@@ -5,6 +5,7 @@ import PageHeader from "@atlaskit/page-header";
 import { SelectedType } from "@atlaskit/tabs/types";
 import { Toolbar } from "./Toolbar";
 import { useTranslation } from "react-i18next";
+import { Toolbar as TreeToolbar } from "../IssueTreeModule/Toolbar";
 import {
   IssueField,
   IssueLinkType,
@@ -140,35 +141,40 @@ export const TracebilityReportModule = (): JSX.Element => {
   const emptyEqualsAllTableIds =
     selectedTableFieldIds.length > 0 ? selectedTableFieldIds : allTableFieldIds;
   const title = t("traceability-report.name");
+  const selectedViewTab = viewTabs.tabs[selectedTabIndex].id;
+  const isTreeReport = selectedViewTab === "tree-view";
   return (
     <FullWidthContainer>
       <PageHeader
         bottomBar={
-          <Toolbar
-            selectedJQLString={selectedJQLString}
-            setSelectedJQLString={setSelectedJQLString}
-            issueCardOptions={issueFields}
-            selectedIssueFieldIds={selectedIssueFieldIds}
-            setSelectedIssueFieldIds={setSelectedIssueFieldIds}
-            selectedViewTab={viewTabs.tabs[selectedTabIndex].id}
-            selectedTableFieldIds={selectedTableFieldIds}
-            updateSelectedTableFieldIds={updateSelectedTableFieldIds}
-            tableFields={tableFields}
-            exportReport={() =>
-              exportReport(
-                tableFields,
-                emptyEqualsAllTableIds,
-                filteredIssues,
-                isIssueTypeReport
-              )
-            }
-            isExportDisabled={isExportDisabled}
-            handleNewError={handleNewError}
-            // viewTabs={viewTabs}
-            // viewTabsId={"view-tabs"}
-            handleTabOptionSelect={handleTabOptionSelect}
-            selectedTabIndex={selectedTabIndex}
-          />
+          <>
+            <Toolbar
+              selectedJQLString={selectedJQLString}
+              setSelectedJQLString={setSelectedJQLString}
+              issueCardOptions={issueFields}
+              selectedIssueFieldIds={selectedIssueFieldIds}
+              setSelectedIssueFieldIds={setSelectedIssueFieldIds}
+              selectedViewTab={selectedViewTab}
+              selectedTableFieldIds={selectedTableFieldIds}
+              updateSelectedTableFieldIds={updateSelectedTableFieldIds}
+              tableFields={tableFields}
+              exportReport={() =>
+                exportReport(
+                  tableFields,
+                  emptyEqualsAllTableIds,
+                  filteredIssues,
+                  isIssueTypeReport
+                )
+              }
+              isExportDisabled={isExportDisabled}
+              handleNewError={handleNewError}
+              // viewTabs={viewTabs}
+              // viewTabsId={"view-tabs"}
+              handleTabOptionSelect={handleTabOptionSelect}
+              selectedTabIndex={selectedTabIndex}
+            />
+            {isTreeReport && <TreeToolbar />}
+          </>
         }
       >
         {title}
