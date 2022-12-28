@@ -60,6 +60,43 @@ export default class TreeUtils {
   };
 
   loadToolbarData = async (
+    // updateFilter: (filter: {
+    //   priorities: string[];
+    //   issueTypes: string[];
+    //   linkTypes: string[];
+    // }) => void,
+    // updateOptions: (options: {
+    //   priorities: IssuePriority[];
+    //   issueTypes: IssueType[];
+    //   linkTypes: IssueLinkType[];
+    // }) => void,
+    updateSelectedIssueFieldIds: (selectedIssueFieldIds: string[]) => void,
+    updateIssueFields: (issueFields: IssueField[]) => void,
+    updateIsLoading: (isLoading: boolean) => void,
+    handleError: (error: unknown) => void
+  ): Promise<void> => {
+    try {
+      const fields = await this.api.getIssueFields();
+
+      // const filterObj = {
+      //   priorities: priorities.map((option) => option.id),
+      //   issueTypes: issueTypes.map((option) => option.id),
+      //   linkTypes: linkTypes.map((option) => option.id),
+      // };
+      // updateFilter(filterObj);
+      // updateOptions({ priorities, issueTypes, linkTypes });
+
+      const selectedFieldIds = fields.map((field) => field.id);
+      updateSelectedIssueFieldIds(selectedFieldIds);
+      updateIssueFields(fields);
+      updateIsLoading(false);
+    } catch (error) {
+      updateIsLoading(false);
+      handleError(error);
+    }
+  };
+
+  loadTreeFilterDropdownsData = async (
     updateFilter: (filter: {
       priorities: string[];
       issueTypes: string[];
@@ -70,8 +107,6 @@ export default class TreeUtils {
       issueTypes: IssueType[];
       linkTypes: IssueLinkType[];
     }) => void,
-    updateSelectedIssueFieldIds: (selectedIssueFieldIds: string[]) => void,
-    updateIssueFields: (issueFields: IssueField[]) => void,
     updateIsLoading: (isLoading: boolean) => void,
     handleError: (error: unknown) => void
   ): Promise<void> => {
@@ -80,13 +115,13 @@ export default class TreeUtils {
         this.api.getPriorities(),
         this.api.getIssueTypes(),
         this.api.getIssueLinkTypes(),
-        this.api.getIssueFields(),
+        // this.api.getIssueFields(),
       ]);
 
       const priorities = result[0];
       const issueTypes = result[1];
       const linkTypes = result[2];
-      const fields = result[3];
+      // const fields = result[3];
 
       const filterObj = {
         priorities: priorities.map((option) => option.id),
@@ -96,9 +131,9 @@ export default class TreeUtils {
       updateFilter(filterObj);
       updateOptions({ priorities, issueTypes, linkTypes });
 
-      const selectedFieldIds = fields.map((field) => field.id);
-      updateSelectedIssueFieldIds(selectedFieldIds);
-      updateIssueFields(fields);
+      // const selectedFieldIds = fields.map((field) => field.id);
+      // updateSelectedIssueFieldIds(selectedFieldIds);
+      // updateIssueFields(fields);
       updateIsLoading(false);
     } catch (error) {
       updateIsLoading(false);
@@ -412,6 +447,36 @@ export default class TreeUtils {
       setTree(tree);
     }
     return tree;
+  }
+
+  applyMultiNodeTreeFilter(
+    setTree,
+    filter,
+    fields,
+    shouldNotExpandTree?: boolean
+  ) {
+    setTree((tree) => {
+      console.log("from apply filter hook");
+      console.log(tree);
+      let firstNodeId;
+      if (tree.items !== undefined) {
+        firstNodeId = tree.items[this.ROOT_ID].children[0];
+      }
+      if (firstNodeId !== undefined) {
+        const newTree = this.cloneTree(tree);
+        const result = this.applyFilter(
+          setTree,
+          newTree,
+          filter,
+          fields,
+          firstNodeId,
+          true,
+          shouldNotExpandTree
+        );
+        return isPromise(result) ? tree : result;
+      }
+      return tree;
+    });
   }
 
   updateTreeNode(setTree, nodeId, data) {

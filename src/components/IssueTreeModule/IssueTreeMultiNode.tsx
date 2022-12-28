@@ -61,7 +61,7 @@ export const IssueTreeMultiNode = ({
       selectedIssueFieldIds={selectedIssueFieldIds}
       handleError={handleError}
       clearAllErrors={clearAllErrors}
-      shouldNotExpandByDefault={true}
+      isMultiNodeTree={true}
     />
   );
 };

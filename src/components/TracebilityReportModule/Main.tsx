@@ -8,6 +8,7 @@ import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
 import {
   IssueField,
   IssueLinkType,
+  IssueTreeFilter,
   IssueType,
   IssueWithSortedLinks,
 } from "../../types/api";
@@ -50,6 +51,7 @@ interface Props {
   // isIssueTypeReport: boolean;
   errors: any[];
   selectedViewTab: string;
+  issueTreeFilter: IssueTreeFilter;
 }
 
 export const Main = ({
@@ -64,6 +66,7 @@ export const Main = ({
   areIssuesLoading,
   setAreIssuesLoading,
   setFilteredIssues,
+  issueTreeFilter,
   // isIssueTypeReport,
   errors,
   selectedViewTab,
@@ -150,6 +153,7 @@ export const Main = ({
               issueFields={issueFields}
               handleError={handleNewError}
               clearAllErrors={clearAllErrors}
+              issueTreeFilter={issueTreeFilter}
             />
           ) : (
             <Report
