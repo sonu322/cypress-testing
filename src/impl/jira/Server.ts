@@ -96,8 +96,7 @@ export default class JiraServerImpl implements JiraAPI {
 
   async getFilters(): Promise<JiraFiltersResponse> {
     // @ts-expect-error
-    console.log(filters);
-    const res = await this._AJS.$.getJSON("/rest/api/2/filter/favourite");
+    const res = filters; // This variable is handled through lxp-server repo in velocity template
     return {
       self: null,
       maxResults: res.length,
