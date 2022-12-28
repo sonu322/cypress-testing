@@ -44,8 +44,8 @@ export const IssueTree = ({
       treeUtils.applyMultiNodeTreeFilter(
         setTree,
         filter,
-        issueFields,
-        isMultiNodeTree
+        issueFields
+        // isMultiNodeTree
       );
     } else {
       treeUtils.applyFilterHook(setTree, filter, issueFields, isMultiNodeTree);
