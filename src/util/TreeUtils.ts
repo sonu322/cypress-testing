@@ -449,34 +449,84 @@ export default class TreeUtils {
     return tree;
   }
 
-  applyMultiNodeTreeFilter(
+  async handleApplyMultiNodeTreeFilter(
     setTree,
+    tree,
     filter,
     fields,
-    shouldNotExpandTree?: boolean
-  ) {
-    setTree((tree) => {
-      console.log("from apply filter hook");
-      console.log(tree);
-      let firstNodeId;
-      if (tree.items !== undefined) {
-        firstNodeId = tree.items[this.ROOT_ID].children[0];
+    nodeId,
+    isFirstCall
+  ): Promise<any> {
+    try {
+      console.log("called handleApplyMultiNodeTreeFilter");
+      let node = tree.items[nodeId];
+      tree = await this.addChildren(
+        nodeId,
+        tree,
+        fields,
+        node.data,
+        filter,
+        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+        !node.isExpanded
+      );
+      node = tree.items[nodeId];
+      for (const typeNodeId of node.children) {
+        // type nodes
+        const typeNode = tree.items[typeNodeId];
+        for (const childNodeId of typeNode.children) {
+          const child = tree.items[childNodeId];
+          if (child.hasChildrenLoaded) {
+            await this.applyFilter(
+              setTree,
+              tree,
+              filter,
+              fields,
+              child.id,
+              true
+            );
+          }
+        }
       }
-      if (firstNodeId !== undefined) {
-        const newTree = this.cloneTree(tree);
-        const result = this.applyFilter(
-          setTree,
-          newTree,
-          filter,
-          fields,
-          firstNodeId,
-          true,
-          shouldNotExpandTree
-        );
-        return isPromise(result) ? tree : result;
+      if (isFirstCall) {
+        setTree(tree);
       }
       return tree;
-    });
+    } catch (error) {
+      console.log("from handle filter multi error");
+      console.log(error);
+    }
+  }
+
+  applyMultiNodeTreeFilter(setTree, filter, fields): any {
+    try {
+      setTree((tree) => {
+        console.log("from apply filter hook multi");
+        console.log(tree);
+        // let firstNodeId;
+        // if (tree.items !== undefined) {
+        //   firstNodeId = tree.items[this.ROOT_ID].children[0];
+        // }
+        if (tree.items !== undefined) {
+          let newTree = this.cloneTree(tree);
+
+          tree.items[this.ROOT_ID].children.forEach((nodeId) => {
+            const result = this.handleApplyMultiNodeTreeFilter(
+              setTree,
+              newTree,
+              filter,
+              fields,
+              nodeId,
+              true
+            );
+            newTree = isPromise(result) ? tree : result;
+          });
+        }
+        return tree;
+      });
+    } catch (error) {
+      console.log("from apply multi filter ");
+      console.log(error);
+    }
   }
 
   updateTreeNode(setTree, nodeId, data) {
@@ -496,6 +546,7 @@ export default class TreeUtils {
   ): Promise<void> {
     try {
       const mainNode = tree.items[nodeId];
+      console.log(mainNode);
       const children = await this.getChildren(
         tree,
         filter,
@@ -503,6 +554,7 @@ export default class TreeUtils {
         fields,
         issue
       );
+      console.log(children);
       const childIds = children.map((item) => item.id);
       mainNode.children = childIds;
       mainNode.isExpanded = !shouldNotExpandTree;
@@ -511,6 +563,7 @@ export default class TreeUtils {
       mainNode.hasChildren = childIds.length > 0;
       return tree;
     } catch (error) {
+      console.log(error);
       throw new Error("Error occured while adding children");
     }
   }

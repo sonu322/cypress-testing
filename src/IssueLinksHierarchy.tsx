@@ -27,7 +27,9 @@ const IssueLinksHierarchy = () => {
           <IssueTreeModule />
         </TreeFilterContextProvider>
       ) : (
-        <LicenseContainer />
+        <TreeFilterContextProvider>
+          <IssueTreeModule />
+        </TreeFilterContextProvider>
       )}
     </Suspense>
   );
