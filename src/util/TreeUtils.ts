@@ -36,6 +36,8 @@ const root: AtlasTree = {
   },
 };
 
+
+
 export default class TreeUtils {
   private readonly ROOT_ID = "0";
   private readonly api: LXPAPI;
@@ -43,6 +45,19 @@ export default class TreeUtils {
   constructor(api: LXPAPI) {
     this.api = api;
   }
+
+  createIssueTreeFilter = (
+    priorities: IssuePriority[],
+    issueTypes: IssueType[],
+    linkTypes: IssueLinkType[]
+  ): IssueTreeFilter => {
+    const filterObj = {
+      priorities: priorities.map((option) => option.id),
+      issueTypes: issueTypes.map((option) => option.id),
+      linkTypes: linkTypes.map((option) => option.id),
+    };
+    return filterObj;
+  };
 
   loadToolbarData = async (
     updateFilter: (filter: {

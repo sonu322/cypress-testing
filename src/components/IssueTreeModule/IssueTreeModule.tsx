@@ -4,8 +4,15 @@ import { IssueTreeSingleNode } from "./IssueTreeSingleNode";
 import { ErrorsList } from "../common/ErrorsList";
 import TreeUtils from "../../util/TreeUtils";
 import { APIContext } from "../../context/api";
-import { IssueField, IssueTreeFilter } from "../../types/api";
+import {
+  IssueField,
+  IssueLinkType,
+  IssuePriority,
+  IssueTreeFilter,
+  IssueType,
+} from "../../types/api";
 import { useTranslation } from "react-i18next";
+import { treeFilterDropdowns } from "../../constants/common";
 export const IssueTreeModule = () => {
   const { t } = useTranslation();
   const api = useContext(APIContext);
@@ -13,7 +20,11 @@ export const IssueTreeModule = () => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [errors, setErrors] = useState([]);
-  const [options, setOptions] = useState({});
+  const [options, setOptions] = useState<{
+    priorities: IssuePriority[];
+    issueTypes: IssueType[];
+    linkTypes: IssueLinkType[];
+  }>({ priorities: [], issueTypes: [], linkTypes: [] });
   const [filter, setFilter] = useState<IssueTreeFilter>({
     priorities: [],
     issueTypes: [],
@@ -61,37 +72,6 @@ export const IssueTreeModule = () => {
   };
 
   useEffect(() => {
-    // const loadToolbarData = async () => {
-    //   try {
-    //     const result = await Promise.all([
-    //       api.getPriorities(),
-    //       api.getIssueTypes(),
-    //       api.getIssueLinkTypes(),
-    //       api.getIssueFields(),
-    //     ]);
-
-    //     const priorities = result[0],
-    //       issueTypes = result[1],
-    //       linkTypes = result[2],
-    //       fields = result[3];
-
-    //     const filterObj = {
-    //       priorities: priorities.map((option) => option.id),
-    //       issueTypes: issueTypes.map((option) => option.id),
-    //       linkTypes: linkTypes.map((option) => option.id),
-    //     };
-    //     setFilter(filterObj);
-    //     setOptions({ priorities, issueTypes, linkTypes });
-
-    //     const selectedFieldIds = fields.map((field) => field.id);
-    //     setSelectedIssueFieldIds(selectedFieldIds);
-    //     setIssueFields(fields);
-    //     setIsLoading(false);
-    //   } catch (error) {
-    //     setIsLoading(false);
-    //     handleNewError(error);
-    //   }
-    // };
     void treeUtils.loadToolbarData(
       updateFilter,
       updateOptions,
@@ -111,12 +91,6 @@ export const IssueTreeModule = () => {
     });
   };
 
-  const filterDropdowns = [
-    { key: "priorities", label: t("lxp.common.issue.priority") },
-    { key: "linkTypes", label: t("lxp.toolbar.link-type.text") },
-    { key: "issueTypes", label: t("lxp.toolbar.issue-type.text") },
-  ];
-
   return isLoading ? (
     <div>{t("lxp.common.loading")}.</div>
   ) : (
@@ -131,7 +105,7 @@ export const IssueTreeModule = () => {
         options={options}
         filter={filter}
         updateFilteredKeyOptions={updateFilteredKeyOptions}
-        filterDropdowns={filterDropdowns}
+        filterDropdowns={treeFilterDropdowns}
         issueCardOptions={issueFields}
         selectedIssueFieldIds={selectedIssueFieldIds}
         setSelectedIssueFieldIds={setSelectedIssueFieldIds}

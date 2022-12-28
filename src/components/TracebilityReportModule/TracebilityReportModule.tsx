@@ -9,6 +9,8 @@ import { Toolbar as TreeToolbar } from "../IssueTreeModule/Toolbar";
 import {
   IssueField,
   IssueLinkType,
+  IssuePriority,
+  IssueTreeFilter,
   IssueType,
   IssueWithSortedLinks,
 } from "../../types/api";
@@ -20,6 +22,8 @@ import {
 } from "../../util/tracebilityReportsUtils";
 import { getKeyValues } from "../../util/common";
 import { viewTabs } from "../../constants/traceabilityReport";
+import { TreeReportToolbar } from "./TreeReportToolbar";
+import TreeUtils from "../../util/TreeUtils";
 
 const FullWidthContainer = styled.div`
   width: 100%;
@@ -52,15 +56,30 @@ export const TracebilityReportModule = (): JSX.Element => {
   );
   const [linkTypes, setLinkTypes] = useState<IssueLinkType[]>([]);
   const [selectedLinkTypeIds, setSelectedLinkTypeIds] = useState<string[]>([]);
-
+  const [priorities, setPriorities] = useState<IssuePriority[]>([]);
   const [areIssuesLoading, setAreIssuesLoading] = useState(false);
   const [errors, setErrors] = useState<unknown[]>([]);
   const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>(0);
-
+  const [filter, setFilter] = useState<IssueTreeFilter>({
+    issueTypes: [],
+    linkTypes: [],
+    priorities: [],
+  });
+  const api = useContext(APIContext);
+  const treeUtils = new TreeUtils(api);
+  const updateFilteredKeyOptions = (
+    key: string,
+    keyOptions: string[]
+  ): void => {
+    setFilter((prevFilter) => {
+      const newFilter = { ...prevFilter };
+      newFilter[key] = keyOptions;
+      return newFilter;
+    });
+  };
   const handleTabOptionSelect = (tabIndex: SelectedType): void => {
     setSelectedTabIndex(tabIndex);
   };
-  const api = useContext(APIContext);
   const handleNewError = (err: unknown): void => {
     console.error(err);
     setErrors((prevErrors) => [...prevErrors, err]);
@@ -75,12 +94,20 @@ export const TracebilityReportModule = (): JSX.Element => {
           api.getIssueTypes(),
           api.getIssueLinkTypes(),
           api.getIssueFields(),
+          api.getPriorities(),
         ]);
 
         const issueTypes = result[0];
         const linkTypes = result[1];
         const fields = result[2];
-
+        const priorities = result[3];
+        const initialFilter = treeUtils.createIssueTreeFilter(
+          priorities,
+          issueTypes,
+          linkTypes
+        );
+        setFilter(initialFilter);
+        setPriorities(priorities);
         // setting state - fields for issue card
         setIssueFields(fields);
 
@@ -173,7 +200,15 @@ export const TracebilityReportModule = (): JSX.Element => {
               handleTabOptionSelect={handleTabOptionSelect}
               selectedTabIndex={selectedTabIndex}
             />
-            {isTreeReport && <TreeToolbar />}
+            {isTreeReport && (
+              <TreeReportToolbar
+                priorities={priorities}
+                issueTypes={issueTypes}
+                linkTypes={linkTypes}
+                filter={filter}
+                updateFilteredKeyOptions={updateFilteredKeyOptions}
+              />
+            )}
           </>
         }
       >
