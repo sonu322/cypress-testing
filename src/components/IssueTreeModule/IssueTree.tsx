@@ -19,7 +19,7 @@ export interface Props {
   selectedIssueFieldIds: ID[];
   handleError: any;
   clearAllErrors: () => void;
-  shouldNotExpandByDefault?: boolean;
+  isMultiNodeTree?: boolean;
 }
 
 export const IssueTree = ({
@@ -31,7 +31,7 @@ export const IssueTree = ({
   selectedIssueFieldIds,
   handleError,
   clearAllErrors,
-  shouldNotExpandByDefault,
+  isMultiNodeTree,
 }: Props): JSX.Element => {
   const fieldMap = {};
   issueFields.forEach((field) => {
@@ -40,12 +40,16 @@ export const IssueTree = ({
 
   useEffect(() => {
     console.log("from use eff");
-    treeUtils.applyFilterHook(
-      setTree,
-      filter,
-      issueFields,
-      shouldNotExpandByDefault
-    );
+    if (isMultiNodeTree) {
+      treeUtils.applyMultiNodeTreeFilter(
+        setTree,
+        filter,
+        issueFields,
+        isMultiNodeTree
+      );
+    } else {
+      treeUtils.applyFilterHook(setTree, filter, issueFields, isMultiNodeTree);
+    }
     console.log(filter, selectedIssueFieldIds);
   }, [filter, selectedIssueFieldIds]);
 

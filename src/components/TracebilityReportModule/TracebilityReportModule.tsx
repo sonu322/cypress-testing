@@ -60,7 +60,7 @@ export const TracebilityReportModule = (): JSX.Element => {
   const [areIssuesLoading, setAreIssuesLoading] = useState(false);
   const [errors, setErrors] = useState<unknown[]>([]);
   const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>(0);
-  const [filter, setFilter] = useState<IssueTreeFilter>({
+  const [issueTreeFilter, setIssueTreeFilter] = useState<IssueTreeFilter>({
     issueTypes: [],
     linkTypes: [],
     priorities: [],
@@ -71,7 +71,7 @@ export const TracebilityReportModule = (): JSX.Element => {
     key: string,
     keyOptions: string[]
   ): void => {
-    setFilter((prevFilter) => {
+    setIssueTreeFilter((prevFilter) => {
       const newFilter = { ...prevFilter };
       newFilter[key] = keyOptions;
       return newFilter;
@@ -106,7 +106,7 @@ export const TracebilityReportModule = (): JSX.Element => {
           issueTypes,
           linkTypes
         );
-        setFilter(initialFilter);
+        setIssueTreeFilter(initialFilter);
         setPriorities(priorities);
         // setting state - fields for issue card
         setIssueFields(fields);
@@ -205,7 +205,7 @@ export const TracebilityReportModule = (): JSX.Element => {
                 priorities={priorities}
                 issueTypes={issueTypes}
                 linkTypes={linkTypes}
-                filter={filter}
+                filter={issueTreeFilter}
                 updateFilteredKeyOptions={updateFilteredKeyOptions}
               />
             )}
@@ -231,6 +231,7 @@ export const TracebilityReportModule = (): JSX.Element => {
           // isIssueTypeReport={selectedTabIndex === 0}
           selectedViewTab={viewTabs.tabs[selectedTabIndex].id}
           errors={errors}
+          issueTreeFilter={issueTreeFilter}
         />
       </GrowContainer>
     </FullWidthContainer>

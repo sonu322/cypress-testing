@@ -13,43 +13,45 @@ import {
 } from "../../types/api";
 import { useTranslation } from "react-i18next";
 import { treeFilterDropdowns } from "../../constants/common";
+import { TreeFilterContext } from "../../context/treeFilterContext";
 export const IssueTreeModule = () => {
+  const treeFilterContext = useContext(TreeFilterContext);
   const { t } = useTranslation();
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
 
   const [isLoading, setIsLoading] = useState(true);
   const [errors, setErrors] = useState([]);
-  const [options, setOptions] = useState<{
-    priorities: IssuePriority[];
-    issueTypes: IssueType[];
-    linkTypes: IssueLinkType[];
-  }>({ priorities: [], issueTypes: [], linkTypes: [] });
-  const [filter, setFilter] = useState<IssueTreeFilter>({
-    priorities: [],
-    issueTypes: [],
-    linkTypes: [],
-  });
+  // const [options, setOptions] = useState<{
+  //   priorities: IssuePriority[];
+  //   issueTypes: IssueType[];
+  //   linkTypes: IssueLinkType[];
+  // }>({ priorities: [], issueTypes: [], linkTypes: [] });
+  // const [filter, setFilter] = useState<IssueTreeFilter>({
+  //   priorities: [],
+  //   issueTypes: [],
+  //   linkTypes: [],
+  // });
   const [tree, setTree] = useState(treeUtils.getRootTree());
   const [issueFields, setIssueFields] = useState<IssueField[]>([]);
   const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState<string[]>(
     []
   );
-  const updateFilter = (filter: {
-    priorities: string[];
-    issueTypes: string[];
-    linkTypes: string[];
-  }): void => {
-    setFilter(filter);
-  };
+  // const updateFilter = (filter: {
+  //   priorities: string[];
+  //   issueTypes: string[];
+  //   linkTypes: string[];
+  // }): void => {
+  //   setFilter(filter);
+  // };
 
-  const updateOptions = (options: {
-    priorities: IssuePriority[];
-    issueTypes: IssueType[];
-    linkTypes: IssueLinkType[];
-  }): void => {
-    setOptions(options);
-  };
+  // const updateOptions = (options: {
+  //   priorities: IssuePriority[];
+  //   issueTypes: IssueType[];
+  //   linkTypes: IssueLinkType[];
+  // }): void => {
+  //   setOptions(options);
+  // };
 
   const updateSelectedIssueFieldIds = (
     selectedIssueFieldIds: string[]
@@ -73,8 +75,8 @@ export const IssueTreeModule = () => {
 
   useEffect(() => {
     void treeUtils.loadToolbarData(
-      updateFilter,
-      updateOptions,
+      // updateFilter,
+      // updateOptions,
       updateSelectedIssueFieldIds,
       updateIssueFields,
       updateIsLoading,
@@ -83,29 +85,34 @@ export const IssueTreeModule = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const updateFilteredKeyOptions = (key, keyOptions) => {
-    setFilter((prevFilter) => {
-      let newFilter = { ...prevFilter };
+  const updateFilteredKeyOptions = (
+    key: string,
+    keyOptions: string[]
+  ): void => {
+    treeFilterContext.updateFilter((prevFilter) => {
+      const newFilter = { ...prevFilter };
       newFilter[key] = keyOptions;
       return newFilter;
     });
   };
-
+  const allErrors = errors.concat(treeFilterContext.errors);
   return isLoading ? (
     <div>{t("lxp.common.loading")}.</div>
   ) : (
     <div>
-      {errors && errors.length > 0 && <ErrorsList errors={errors} />}
+      {allErrors !== undefined && allErrors.length > 0 && (
+        <ErrorsList errors={errors} />
+      )}
 
       <Toolbar
         exportTree={() => treeUtils.exportTree(tree)}
         isExportDisabled={
           tree?.items !== undefined && Object.keys(tree.items).length <= 1
         }
-        options={options}
-        filter={filter}
+        options={treeFilterContext.options}
+        filter={treeFilterContext.filter}
         updateFilteredKeyOptions={updateFilteredKeyOptions}
-        filterDropdowns={treeFilterDropdowns}
+        filterDropdowns={treeFilterContext.labels}
         issueCardOptions={issueFields}
         selectedIssueFieldIds={selectedIssueFieldIds}
         setSelectedIssueFieldIds={setSelectedIssueFieldIds}
@@ -114,7 +121,7 @@ export const IssueTreeModule = () => {
         tree={tree}
         treeUtils={treeUtils}
         setTree={setTree}
-        filter={filter}
+        filter={treeFilterContext.filter}
         issueFields={issueFields}
         selectedIssueFieldIds={selectedIssueFieldIds}
         handleError={handleNewError}

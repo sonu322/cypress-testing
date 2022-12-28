@@ -6,6 +6,7 @@ import { ReportHeader } from "./ReportHeader";
 import {
   IssueField,
   IssueLinkType,
+  IssueTreeFilter,
   IssueType,
   IssueWithSortedLinks,
 } from "../../types/api";
@@ -32,6 +33,7 @@ interface Props {
   issueFields: IssueField[];
   clearAllErrors: () => void;
   handleError: (err: unknown) => void;
+  issueTreeFilter: IssueTreeFilter;
 }
 export const TreeReport = ({
   filteredIssues,
@@ -43,6 +45,7 @@ export const TreeReport = ({
   clearAllErrors,
   handleError,
   errors,
+  issueTreeFilter,
 }: Props): JSX.Element => {
   // TODO: probably we may improve this calculation
   const calculateTableHeight = (errors) => {
@@ -85,7 +88,7 @@ export const TreeReport = ({
       <IssueTreeMultiNode
         tree={tree}
         setTree={setTree}
-        filter={DEFAULT_FILTER}
+        filter={issueTreeFilter}
         treeUtils={treeUtils}
         issueFields={issueFields}
         selectedIssueFieldIds={selectedIssueFieldIds}
