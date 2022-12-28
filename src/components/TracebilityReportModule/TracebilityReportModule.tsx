@@ -24,6 +24,7 @@ import { getKeyValues } from "../../util/common";
 import { viewTabs } from "../../constants/traceabilityReport";
 import { TreeReportToolbar } from "./TreeReportToolbar";
 import TreeUtils from "../../util/TreeUtils";
+import { TreeFilterContext } from "../../context/treeFilterContext";
 
 const FullWidthContainer = styled.div`
   width: 100%;
@@ -39,6 +40,7 @@ const GrowContainer = styled.div`
 
 export const TracebilityReportModule = (): JSX.Element => {
   const { t } = useTranslation();
+  const treeFilterContext = useContext(TreeFilterContext);
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
   const [filteredIssues, setFilteredIssues] = useState<
     IssueWithSortedLinks[] | null
@@ -71,7 +73,7 @@ export const TracebilityReportModule = (): JSX.Element => {
     key: string,
     keyOptions: string[]
   ): void => {
-    setIssueTreeFilter((prevFilter) => {
+    treeFilterContext.updateFilter((prevFilter) => {
       const newFilter = { ...prevFilter };
       newFilter[key] = keyOptions;
       return newFilter;
@@ -170,6 +172,7 @@ export const TracebilityReportModule = (): JSX.Element => {
   const title = t("traceability-report.name");
   const selectedViewTab = viewTabs.tabs[selectedTabIndex].id;
   const isTreeReport = selectedViewTab === "tree-view";
+  const allErrors = errors.concat(treeFilterContext.errors);
   return (
     <FullWidthContainer>
       <PageHeader
@@ -202,10 +205,11 @@ export const TracebilityReportModule = (): JSX.Element => {
             />
             {isTreeReport && (
               <TreeReportToolbar
-                priorities={priorities}
-                issueTypes={issueTypes}
-                linkTypes={linkTypes}
-                filter={issueTreeFilter}
+                // priorities={treeFilterContext.}
+                // issueTypes={issueTypes}
+                // linkTypes={linkTypes}
+                options={treeFilterContext.options}
+                filter={treeFilterContext.filter}
                 updateFilteredKeyOptions={updateFilteredKeyOptions}
               />
             )}
@@ -214,7 +218,7 @@ export const TracebilityReportModule = (): JSX.Element => {
       >
         {title}
       </PageHeader>
-      {errors.length > 0 && <ErrorsList errors={errors} />}
+      {allErrors.length > 0 && <ErrorsList errors={errors} />}
       <GrowContainer>
         <Main
           jqlString={selectedJQLString}
