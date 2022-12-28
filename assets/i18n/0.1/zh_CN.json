@@ -7,7 +7,7 @@
   "traceability-report.linktype-view.name": "链接类型视图",
   "traceability-report.linktype-view.description": "按连接类型查看相关事务",
   "traceability-report.toolbar.or": "或",
-  "traceability-report.toolbar.filterdropdown.name": "选择过滤器", // not able to translate to atlassian term for filter: 筛选器
+  "traceability-report.toolbar.filterdropdown.name": "选择过滤器",
   "traceability-report.toolbar.jqlDialogOptions.header": "JQL 查询",
   "traceability-report.toolbar.jqlDialogOptions.descriptionText": "使用新的 JQL 查询搜索事务",
   "traceability-report.toolbar.jqlDialogOptions.submitText": "使用过滤器",
