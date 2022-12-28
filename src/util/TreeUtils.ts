@@ -4,7 +4,10 @@ import LXPAPI, {
   Issue,
   IssueField,
   IssueLink,
+  IssueLinkType,
+  IssuePriority,
   IssueTreeFilter,
+  IssueType,
   IssueWithLinkedIssues,
   IssueWithSortedLinks,
 } from "../types/api";
@@ -40,6 +43,53 @@ export default class TreeUtils {
   constructor(api: LXPAPI) {
     this.api = api;
   }
+
+  loadToolbarData = async (
+    updateFilter: (filter: {
+      priorities: string[];
+      issueTypes: string[];
+      linkTypes: string[];
+    }) => void,
+    updateOptions: (options: {
+      priorities: IssuePriority[];
+      issueTypes: IssueType[];
+      linkTypes: IssueLinkType[];
+    }) => void,
+    updateSelectedIssueFieldIds: (selectedIssueFieldIds: string[]) => void,
+    updateIssueFields: (issueFields: IssueField[]) => void,
+    updateIsLoading: (isLoading: boolean) => void,
+    handleError: (error: unknown) => void
+  ): Promise<void> => {
+    try {
+      const result = await Promise.all([
+        this.api.getPriorities(),
+        this.api.getIssueTypes(),
+        this.api.getIssueLinkTypes(),
+        this.api.getIssueFields(),
+      ]);
+
+      const priorities = result[0];
+      const issueTypes = result[1];
+      const linkTypes = result[2];
+      const fields = result[3];
+
+      const filterObj = {
+        priorities: priorities.map((option) => option.id),
+        issueTypes: issueTypes.map((option) => option.id),
+        linkTypes: linkTypes.map((option) => option.id),
+      };
+      updateFilter(filterObj);
+      updateOptions({ priorities, issueTypes, linkTypes });
+
+      const selectedFieldIds = fields.map((field) => field.id);
+      updateSelectedIssueFieldIds(selectedFieldIds);
+      updateIssueFields(fields);
+      updateIsLoading(false);
+    } catch (error) {
+      updateIsLoading(false);
+      handleError(error);
+    }
+  };
 
   getRootTree(): AtlasTree {
     return root;
