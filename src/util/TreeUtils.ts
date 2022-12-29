@@ -430,13 +430,7 @@ export default class TreeUtils {
     return result;
   }
 
-  applyFilterHook(
-    tree,
-    setTree,
-    filter,
-    fields,
-    shouldNotExpandTree?: boolean
-  ) {
+  applyFilterHook(tree, setTree, filter, fields) {
     console.log("from apply filter hook");
     console.log(tree);
     let firstNodeId;
@@ -654,7 +648,8 @@ export default class TreeUtils {
       console.log(children);
       const childIds = children.map((item) => item.id);
       mainNode.children = childIds;
-      mainNode.isExpanded = !shouldNotExpandTree;
+      // mainNode.isExpanded = !shouldNotExpandTree;
+      mainNode.isExpanded = true;
       mainNode.isChildrenLoading = false;
       mainNode.hasChildrenLoaded = true;
       mainNode.hasChildren = childIds.length > 0;
@@ -686,7 +681,8 @@ export default class TreeUtils {
       console.log(children);
       const childIds = children.map((item) => item.id);
       mainNode.children = childIds;
-      mainNode.isExpanded = !shouldNotExpandTree;
+      // mainNode.isExpanded = !shouldNotExpandTree;
+      mainNode.isExpanded = true;
       mainNode.isChildrenLoading = false;
       mainNode.hasChildrenLoaded = true;
       mainNode.hasChildren = childIds.length > 0;
