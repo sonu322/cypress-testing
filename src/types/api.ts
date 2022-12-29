@@ -18,6 +18,11 @@ export interface IssueField {
   secondaryJiraId?: ID;
 }
 
+export interface CellLimit {
+    id: string;
+    name: string;
+}
+
 export interface Issue {
   id: ID;
   priority: IssuePriority;

@@ -31,17 +31,15 @@ const GrowContainer = styled.div`
   display: flex;
 `;
 const cellOptions = [
-  { id: "Display All issue cards",
-    name: "Display All issue cards",
-  },
-]
+  { id: "Display All issue cards", name: "Display All issue cards" },
+];
 
 export const TracebilityReportModule = (): JSX.Element => {
   const { t } = useTranslation();
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
-  const [selectedIssueInCellIds, updateSelectedIssueInCellIds] = useState<string[]>(
-    []
-  );
+  const [selectedIssueInCellIds, updateSelectedIssueInCellIds] = useState<
+    string[]
+  >([]);
   const [filteredIssues, setFilteredIssues] = useState<
     IssueWithSortedLinks[] | null
   >(null);
@@ -120,7 +118,6 @@ export const TracebilityReportModule = (): JSX.Element => {
     void loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   const isExportDisabled =
     filteredIssues == null || filteredIssues.length === 0;
 

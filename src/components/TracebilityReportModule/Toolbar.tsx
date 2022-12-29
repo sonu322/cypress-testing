@@ -7,14 +7,19 @@ import { Dropdown } from "../common/Dropdown";
 import { helpLinkUrl } from "../../constants/common";
 import { HelpLink } from "../common/HelpLink";
 import { ExportContent } from "../common/ExportContent";
+import SettingsIcon from "@atlaskit/icon/glyph/settings";
 import { JQLEditor } from "../JQLEditor";
 import { TableFieldsDropdown } from "./TableFieldsDropdown";
-import { IssueField, IssueLinkType, IssueType } from "../../types/api";
+import {
+  CellLimit,
+  IssueField,
+  IssueLinkType,
+  IssueType,
+} from "../../types/api";
 
 import { TabGroup } from "./TabGroup";
 import { SelectedType } from "@atlaskit/tabs/types";
 import { useTranslation } from "react-i18next";
-import { CellLimit, SettingsDropdown } from "./SettingDropdown";
 const MainBar = styled.div`
   padding: 8px;
   border-radius: 3px;
@@ -107,10 +112,11 @@ export const Toolbar = ({
               selectedOptions={selectedIssueFieldIds}
               updateSelectedOptions={setSelectedIssueFieldIds}
             />
-            <SettingsDropdown 
+            <Dropdown
+              dropdownName={<SettingsIcon />}
+              options={issueInCell}
               selectedOptions={selectedIssueInCellIds}
-              updateSelectedOptionIds={updateSelectedIssueInCellIds}
-              options={issueInCell} 
+              updateSelectedOptions={updateSelectedIssueInCellIds}
             />
             <ExportContent
               description={t("lxp.toolbar.export-csv.title")}

@@ -1,5 +1,5 @@
 import { colors } from "@atlaskit/theme";
-import React, {useEffect, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import {
   Issue,
@@ -7,11 +7,10 @@ import {
   IssueType,
   IssueWithSortedLinks,
 } from "../../types/api";
-import Button from '@atlaskit/button';
+import Button from "@atlaskit/button";
 import { getUniqueValues } from "../../util/common";
 import { IssueCard } from "../common/issueCard/IssueCard";
 import { EmptyCell } from "./EmptyCell";
-import { CellLimit } from "./SettingDropdown";
 
 export const Td = styled.td`
   border: 1px solid ${colors.N40};
@@ -32,7 +31,6 @@ export const MaxWidthContainer = styled.div`
 export interface Props {
   tableFields: IssueType[] | IssueLinkType[];
   selectedTableFieldIds: string[];
-  issueInCell: CellLimit[];
   selectedIssueInCellIds: string[];
   issueFieldIds: string[];
   issue: IssueWithSortedLinks;
@@ -44,11 +42,10 @@ export const IssueTypeRow = ({
   issue,
   rowSno,
   selectedTableFieldIds,
-  selectedIssueInCellIds
+  selectedIssueInCellIds,
 }: Props): JSX.Element[] => {
   const [areAllIssuesVisible, setAreAllIssuesVisible] = useState(false);
   const cells = [];
-  console.log(issue);
   // push issue cell into row
   const issueCell = (
     <IssueTd key="issue">
@@ -90,40 +87,37 @@ export const IssueTypeRow = ({
         );
         issueCards.push(issueCard);
       });
-    useEffect(() => {
-      if(selectedIssueInCellIds.length > 0){
-       handleClick();
-      }
-    },[selectedIssueInCellIds]);
-
-    let issueCardsToShow = [];
-    if(issueCards.length > 3) {
-      if(!areAllIssuesVisible) {
-      issueCardsToShow = issueCards.slice(0, 3);
-      }
-      else {
+      let issueCardsToShow = [];
+      if (issueCards.length > 3) {
+        if (!areAllIssuesVisible) {
+          issueCardsToShow = issueCards.slice(0, 3);
+        } else {
+          issueCardsToShow = issueCards;
+        }
+      } else {
         issueCardsToShow = issueCards;
       }
-    }
-    else {
-      issueCardsToShow = issueCards;
-    }
-    const handleClick = () => {
-      if(issueCards.length > 3) {
-        setAreAllIssuesVisible(!areAllIssuesVisible);
+      const handleClick = () => {
+        if (issueCards.length > 3) {
+          setAreAllIssuesVisible(!areAllIssuesVisible);
+        }
+      };
+      if (selectedIssueInCellIds[0] == "Display All issue cards") {
+        issueCardsToShow = issueCards;
       }
-    };
       issueCell = (
         <Td key={typeId}>
           <MaxWidthContainer>{issueCardsToShow}</MaxWidthContainer>
-          {issueCards.length > 3 &&
-          <Button onClick={handleClick} style={{cursor: 'pointer'}} isDisabled={areAllIssuesVisible}>
-          More
-          </Button>} 
+
+          {issueCardsToShow.length <= 3 && (
+            <Button onClick={handleClick} style={{ cursor: "pointer" }}>
+              More
+            </Button>
+          )}
         </Td>
-      ); 
-    }  
+      );
+    }
     cells.push(issueCell);
-  }); 
+  });
   return cells;
 };
