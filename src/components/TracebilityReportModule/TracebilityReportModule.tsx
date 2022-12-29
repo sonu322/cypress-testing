@@ -242,6 +242,7 @@ export const TracebilityReportModule = (): JSX.Element => {
           selectedViewTab={viewTabs.tabs[selectedTabIndex].id}
           errors={errors}
           issueTreeFilter={treeFilterContext.filter}
+          treeHasOnlyOrphans={treeHasOnlyOrphans}
         />
       </GrowContainer>
     </FullWidthContainer>

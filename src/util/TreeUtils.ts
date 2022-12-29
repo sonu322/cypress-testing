@@ -230,7 +230,8 @@ export default class TreeUtils {
     fields: IssueField[],
     setTree,
     handleError,
-    filteredIssues: IssueWithSortedLinks[]
+    filteredIssues: IssueWithSortedLinks[],
+    treeHasOnlyOrphans: boolean
   ): Promise<void> {
     console.log("multi init tree called");
     console.log(fields);
