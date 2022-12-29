@@ -290,6 +290,12 @@ export default class TreeUtils {
     filter: IssueTreeFilter,
     parentIssueId: ID
   ): boolean {
+    console.log("called _shouldIncludeNode");
+    console.log(mainIssue, linkedIssue, issueLink, filter, parentIssueId);
+    console.log(
+      "filter.issueTypes.includes(linkedIssue.type?.id)",
+      filter.issueTypes.includes(linkedIssue.type?.id)
+    );
     if (
       filter.issueTypes.length > 0 &&
       !filter.issueTypes.includes(linkedIssue.type?.id)
@@ -317,6 +323,7 @@ export default class TreeUtils {
     mainNode: AtlasTreeNode,
     issueMap: any
   ): IssueLink[] {
+    console.log("called filter links for issue", issue, filter, mainNode);
     const result = [];
     for (const link of issue.links) {
       const linkedIssue = issueMap[link.issueId];
@@ -382,29 +389,31 @@ export default class TreeUtils {
     return result;
   }
 
-  applyFilterHook(setTree, filter, fields, shouldNotExpandTree?: boolean) {
-    setTree((tree) => {
-      console.log("from apply filter hook");
-      console.log(tree);
-      let firstNodeId;
-      if (tree.items !== undefined) {
-        firstNodeId = tree.items[this.ROOT_ID].children[0];
-      }
-      if (firstNodeId !== undefined) {
-        const newTree = this.cloneTree(tree);
-        const result = this.applyFilter(
-          setTree,
-          newTree,
-          filter,
-          fields,
-          firstNodeId,
-          true,
-          shouldNotExpandTree
-        );
-        return isPromise(result) ? tree : result;
-      }
-      return tree;
-    });
+  applyFilterHook(
+    tree,
+    setTree,
+    filter,
+    fields,
+    shouldNotExpandTree?: boolean
+  ) {
+    console.log("from apply filter hook");
+    console.log(tree);
+    let firstNodeId;
+    if (tree.items !== undefined) {
+      firstNodeId = tree.items[this.ROOT_ID].children[0];
+    }
+    if (firstNodeId !== undefined) {
+      const newTree = this.cloneTree(tree);
+      const result = this.applyFilter(
+        setTree,
+        newTree,
+        filter,
+        fields,
+        firstNodeId,
+        true,
+        !tree.items[firstNodeId].isExpanded
+      );
+    }
   }
 
   async applyFilter(
@@ -432,7 +441,7 @@ export default class TreeUtils {
       for (const childNodeId of typeNode.children) {
         const child = tree.items[childNodeId];
         if (child.hasChildrenLoaded) {
-          await this.applyFilter(
+          tree = await this.applyFilter(
             setTree,
             tree,
             filter,
@@ -456,7 +465,7 @@ export default class TreeUtils {
     fields,
     nodeId,
     isFirstCall
-  ): Promise<any> {
+  ): Promise<void> {
     try {
       console.log("called handleApplyMultiNodeTreeFilter");
       let node = tree.items[nodeId];
@@ -482,7 +491,7 @@ export default class TreeUtils {
               filter,
               fields,
               child.id,
-              true
+              !child.isExpanded
             );
           }
         }
@@ -497,36 +506,34 @@ export default class TreeUtils {
     }
   }
 
-  applyMultiNodeTreeFilter(setTree, filter, fields): any {
-    try {
-      setTree((tree) => {
-        console.log("from apply filter hook multi");
-        console.log(tree);
-        // let firstNodeId;
-        // if (tree.items !== undefined) {
-        //   firstNodeId = tree.items[this.ROOT_ID].children[0];
-        // }
-        if (tree.items !== undefined) {
-          let newTree = this.cloneTree(tree);
-
-          tree.items[this.ROOT_ID].children.forEach((nodeId) => {
-            const result = this.handleApplyMultiNodeTreeFilter(
-              setTree,
-              newTree,
-              filter,
-              fields,
-              nodeId,
-              true
-            );
-            newTree = isPromise(result) ? tree : result;
-          });
-        }
-        return tree;
-      });
-    } catch (error) {
-      console.log("from apply multi filter ");
-      console.log(error);
-    }
+  applyMultiNodeTreeFilter(
+    setTree,
+    filter,
+    fields,
+    shouldNotExpandTree?: boolean
+  ) {
+    setTree((tree) => {
+      console.log("from apply filter hook");
+      console.log(tree);
+      let firstNodeId;
+      if (tree.items !== undefined) {
+        firstNodeId = tree.items[this.ROOT_ID].children[0];
+      }
+      if (firstNodeId !== undefined) {
+        const newTree = this.cloneTree(tree);
+        const result = this.applyFilter(
+          setTree,
+          newTree,
+          filter,
+          fields,
+          firstNodeId,
+          false,
+          !tree.items[firstNodeId].isExpanded
+        );
+        return isPromise(result) ? this.cloneTree(tree) : result;
+      }
+      return tree;
+    });
   }
 
   updateTreeNode(setTree, nodeId, data) {
