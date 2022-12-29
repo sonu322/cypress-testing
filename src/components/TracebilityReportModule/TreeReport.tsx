@@ -34,6 +34,7 @@ interface Props {
   clearAllErrors: () => void;
   handleError: (err: unknown) => void;
   issueTreeFilter: IssueTreeFilter;
+  treeHasOnlyOrphans: boolean;
 }
 export const TreeReport = ({
   filteredIssues,
@@ -46,6 +47,7 @@ export const TreeReport = ({
   handleError,
   errors,
   issueTreeFilter,
+  treeHasOnlyOrphans,
 }: Props): JSX.Element => {
   // TODO: probably we may improve this calculation
   const calculateTableHeight = (errors) => {
@@ -95,6 +97,7 @@ export const TreeReport = ({
         handleError={handleError}
         clearAllErrors={clearAllErrors}
         filteredIssues={filteredIssues}
+        treeHasOnlyOrphans={treeHasOnlyOrphans}
       />
     </Container>
   );

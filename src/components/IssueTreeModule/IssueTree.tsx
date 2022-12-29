@@ -20,6 +20,7 @@ export interface Props {
   handleError: any;
   clearAllErrors: () => void;
   isMultiNodeTree?: boolean;
+  treeHasOnlyOrphans?: boolean;
 }
 
 export const IssueTree = ({
@@ -32,6 +33,7 @@ export const IssueTree = ({
   handleError,
   clearAllErrors,
   isMultiNodeTree,
+  treeHasOnlyOrphans,
 }: Props): JSX.Element => {
   const fieldMap = {};
   issueFields.forEach((field) => {

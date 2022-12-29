@@ -52,6 +52,7 @@ interface Props {
   errors: any[];
   selectedViewTab: string;
   issueTreeFilter: IssueTreeFilter;
+  treeHasOnlyOrphans: boolean;
 }
 
 export const Main = ({
@@ -68,8 +69,10 @@ export const Main = ({
   setFilteredIssues,
   issueTreeFilter,
   // isIssueTypeReport,
+
   errors,
   selectedViewTab,
+  treeHasOnlyOrphans,
 }: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
@@ -154,6 +157,7 @@ export const Main = ({
               handleError={handleNewError}
               clearAllErrors={clearAllErrors}
               issueTreeFilter={issueTreeFilter}
+              treeHasOnlyOrphans={treeHasOnlyOrphans}
             />
           ) : (
             <Report
