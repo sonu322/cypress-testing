@@ -41,6 +41,7 @@ const GrowContainer = styled.div`
 export const TracebilityReportModule = (): JSX.Element => {
   const { t } = useTranslation();
   const treeFilterContext = useContext(TreeFilterContext);
+  const [treeHasOnlyOrphans, setTreeHasOnlyOrphans] = useState(false);
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
   const [filteredIssues, setFilteredIssues] = useState<
     IssueWithSortedLinks[] | null
@@ -69,6 +70,9 @@ export const TracebilityReportModule = (): JSX.Element => {
   });
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
+  const updateTreeHasOnlyOrphans = (treeHasOnlyOrphans: boolean): void => {
+    setTreeHasOnlyOrphans(treeHasOnlyOrphans);
+  };
   const updateFilteredKeyOptions = (
     key: string,
     keyOptions: string[]
@@ -211,6 +215,8 @@ export const TracebilityReportModule = (): JSX.Element => {
                 options={treeFilterContext.options}
                 filter={treeFilterContext.filter}
                 updateFilteredKeyOptions={updateFilteredKeyOptions}
+                treeHasOnlyOrphans={treeHasOnlyOrphans}
+                updateTreeHasOnlyOrphans={updateTreeHasOnlyOrphans}
               />
             )}
           </>
