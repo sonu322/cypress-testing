@@ -342,6 +342,47 @@ export default class TreeUtils {
     return result;
   }
 
+  getMultiSyncChildren(
+    tree: AtlasTree,
+    filter: IssueTreeFilter,
+    mainNode: AtlasTreeNode,
+    fields: IssueField[],
+    issue?: IssueWithLinkedIssues
+  ): AtlasTreeNode[] {
+    const prefix = mainNode.id;
+
+    const typeMap = {};
+    const issueMap = {};
+    issue.linkedIssues.forEach((linkedIssue: Issue) => {
+      issueMap[linkedIssue.id] = linkedIssue;
+    });
+    const filteredLinks = this.filterLinks(issue, filter, mainNode, issueMap);
+
+    for (const link of filteredLinks) {
+      const linkedIssue = issueMap[link.issueId];
+      const node = this.createTreeNode(
+        tree,
+        prefix + "/" + link.name,
+        linkedIssue,
+        issue.id
+      );
+      if (typeMap[link.name] === undefined) {
+        typeMap[link.name] = [];
+      }
+      typeMap[link.name].push(node.id);
+    }
+    const result = [];
+    const types = Object.keys(typeMap);
+    if (types.length > 0) {
+      for (const type of types) {
+        const typeNode = this.createTypeNode(tree, prefix, type);
+        typeNode.children = typeMap[type];
+        result.push(typeNode);
+      }
+    }
+    return result;
+  }
+
   async getChildren(
     tree: AtlasTree,
     filter: IssueTreeFilter,
@@ -458,6 +499,50 @@ export default class TreeUtils {
     return tree;
   }
 
+  applyMultiFilter(
+    setTree,
+    tree,
+    filter,
+    fields,
+    nodeId,
+    isFirstCall,
+    shouldNotExpandTree?: boolean
+  ): Promise<any> {
+    let node = tree.items[nodeId];
+    tree = this.addMultiSyncChildren(
+      nodeId,
+      tree,
+      fields,
+      node.data,
+      filter,
+      shouldNotExpandTree
+    );
+    node = tree.items[nodeId];
+    for (const typeNodeId of node.children) {
+      // type nodes
+      const typeNode = tree.items[typeNodeId];
+      for (const childNodeId of typeNode.children) {
+        const child = tree.items[childNodeId];
+        if (child.hasChildrenLoaded) {
+          tree = this.applyMultiFilter(
+            setTree,
+            tree,
+            filter,
+            fields,
+            child.id,
+            !child.isExpanded
+          );
+        }
+      }
+    }
+    if (isFirstCall) {
+      console.log("IS FIRST CALL!!!!!!!!!", isFirstCall);
+      console.log(tree);
+      return tree;
+    }
+    return tree;
+  }
+
   async handleApplyMultiNodeTreeFilter(
     setTree,
     tree,
@@ -515,22 +600,30 @@ export default class TreeUtils {
   ) {
     console.log("from apply filter hook");
     console.log(tree);
-    let firstNodeId;
-    if (tree.items !== undefined) {
-      firstNodeId = tree.items[this.ROOT_ID].children[0];
+    let newTree = this.cloneTree(tree);
+    let firstNodeIds;
+    if (newTree.items !== undefined) {
+      firstNodeIds = newTree.items[this.ROOT_ID].children;
     }
-    if (firstNodeId !== undefined) {
-      const newTree = this.cloneTree(tree);
-      const result = this.applyFilter(
-        setTree,
-        newTree,
-        filter,
-        fields,
-        firstNodeId,
-        true,
-        !tree.items[firstNodeId].isExpanded
-      );
+
+    if (firstNodeIds !== undefined) {
+      firstNodeIds.forEach(async (firstNodeId) => {
+        newTree = await this.applyMultiFilter(
+          (param) => {
+            "called !!!!!";
+          },
+          newTree,
+          filter,
+          fields,
+          firstNodeId,
+          true,
+          !tree.items[firstNodeId].isExpanded
+        );
+      });
     }
+    console.log("new tree at end");
+    console.log(newTree);
+    setTree((tree) => newTree);
   }
 
   updateTreeNode(setTree, nodeId, data) {
@@ -552,6 +645,38 @@ export default class TreeUtils {
       const mainNode = tree.items[nodeId];
       console.log(mainNode);
       const children = await this.getChildren(
+        tree,
+        filter,
+        mainNode,
+        fields,
+        issue
+      );
+      console.log(children);
+      const childIds = children.map((item) => item.id);
+      mainNode.children = childIds;
+      mainNode.isExpanded = !shouldNotExpandTree;
+      mainNode.isChildrenLoading = false;
+      mainNode.hasChildrenLoaded = true;
+      mainNode.hasChildren = childIds.length > 0;
+      return tree;
+    } catch (error) {
+      console.log(error);
+      throw new Error("Error occured while adding children");
+    }
+  }
+
+  addMultiSyncChildren(
+    nodeId,
+    tree,
+    fields,
+    issue,
+    filter,
+    shouldNotExpandTree?: boolean
+  ) {
+    try {
+      const mainNode = tree.items[nodeId];
+      console.log(mainNode);
+      const children = this.getMultiSyncChildren(
         tree,
         filter,
         mainNode,
