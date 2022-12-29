@@ -447,7 +447,7 @@ export default class TreeUtils {
             filter,
             fields,
             child.id,
-            false
+            !child.isExpanded
           );
         }
       }
@@ -507,33 +507,30 @@ export default class TreeUtils {
   }
 
   applyMultiNodeTreeFilter(
+    tree,
     setTree,
     filter,
     fields,
     shouldNotExpandTree?: boolean
   ) {
-    setTree((tree) => {
-      console.log("from apply filter hook");
-      console.log(tree);
-      let firstNodeId;
-      if (tree.items !== undefined) {
-        firstNodeId = tree.items[this.ROOT_ID].children[0];
-      }
-      if (firstNodeId !== undefined) {
-        const newTree = this.cloneTree(tree);
-        const result = this.applyFilter(
-          setTree,
-          newTree,
-          filter,
-          fields,
-          firstNodeId,
-          false,
-          !tree.items[firstNodeId].isExpanded
-        );
-        return isPromise(result) ? this.cloneTree(tree) : result;
-      }
-      return tree;
-    });
+    console.log("from apply filter hook");
+    console.log(tree);
+    let firstNodeId;
+    if (tree.items !== undefined) {
+      firstNodeId = tree.items[this.ROOT_ID].children[0];
+    }
+    if (firstNodeId !== undefined) {
+      const newTree = this.cloneTree(tree);
+      const result = this.applyFilter(
+        setTree,
+        newTree,
+        filter,
+        fields,
+        firstNodeId,
+        true,
+        !tree.items[firstNodeId].isExpanded
+      );
+    }
   }
 
   updateTreeNode(setTree, nodeId, data) {
