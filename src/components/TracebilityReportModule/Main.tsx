@@ -13,7 +13,6 @@ import {
 } from "../../types/api";
 import { useTranslation } from "react-i18next";
 import { DropdownSingleSelect } from "../common/DropdownSingleSelect";
-import { CellLimit } from "./SettingDropdown";
 const Container = styled.div`
   width: 100%;
 `;

@@ -3,14 +3,12 @@ import { IssueWithSortedLinks } from "../../types/api";
 import { IssueCard } from "../common/issueCard/IssueCard";
 import { EmptyCell } from "./EmptyCell";
 import { IssueTd, MaxWidthContainer, Td } from "./IssueTypeRow";
-import { CellLimit } from "./SettingDropdown";
 import Button from "@atlaskit/button";
 
 export interface Props {
   selectedTableFieldIds;
   issueFieldIds: string[];
   issue: IssueWithSortedLinks;
-  issueInCell: CellLimit[];
   selectedIssueInCellIds: string[];
   rowSno: number;
 }
@@ -61,39 +59,33 @@ export const LinkTypeRow = ({
           allIssues.push(singleIssue);
         }
       });
-      useEffect(() => {
-        if(selectedIssueInCellIds.length > 0){
-          handleClick();
+      let issueCardsToShow = [];
+      if (allIssues.length > 3) {
+        if (!areAllIssuesVisible) {
+          issueCardsToShow = allIssues.slice(0, 3);
+        } else {
+          issueCardsToShow = allIssues;
         }
-      },[selectedIssueInCellIds]);
-
-    let issueCardsToShow = [];
-    if(allIssues.length > 3) {
-      if(!areAllIssuesVisible) {
-      issueCardsToShow = allIssues.slice(0, 3);
-      }
-      else {
+      } else {
         issueCardsToShow = allIssues;
       }
-    }
-    else {
-      issueCardsToShow = allIssues;
-    }
-
-    const handleClick = () => {
-      if(allIssues.length > 3) {
-        setAreAllIssuesVisible(!areAllIssuesVisible);
+      const handleClick = () => {
+        if (allIssues.length > 3) {
+          setAreAllIssuesVisible(!areAllIssuesVisible);
+        }
+      };
+      if (selectedIssueInCellIds[0] == "Display All issue cards") {
+        issueCardsToShow = allIssues;
       }
-    };
-  
       if (allIssues.length > 0) {
         issueCell = (
           <Td key={linkId}>
             <MaxWidthContainer>{issueCardsToShow}</MaxWidthContainer>
-            {allIssues.length > 3 && 
-            <Button onClick={handleClick} style={{cursor: 'pointer'}} isDisabled={areAllIssuesVisible} >
-              More
-            </Button>} 
+            {issueCardsToShow.length <= 3 && (
+              <Button onClick={handleClick} style={{ cursor: "pointer" }}>
+                More
+              </Button>
+            )}
           </Td>
         );
       }
