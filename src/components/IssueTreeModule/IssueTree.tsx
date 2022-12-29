@@ -42,10 +42,11 @@ export const IssueTree = ({
     console.log("from use eff");
     if (isMultiNodeTree) {
       treeUtils.applyMultiNodeTreeFilter(
+        tree,
         setTree,
         filter,
-        issueFields
-        // isMultiNodeTree
+        issueFields,
+        isMultiNodeTree
       );
     } else {
       treeUtils.applyFilterHook(
