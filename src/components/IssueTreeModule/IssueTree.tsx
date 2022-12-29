@@ -48,7 +48,13 @@ export const IssueTree = ({
         // isMultiNodeTree
       );
     } else {
-      treeUtils.applyFilterHook(setTree, filter, issueFields, isMultiNodeTree);
+      treeUtils.applyFilterHook(
+        tree,
+        setTree,
+        filter,
+        issueFields,
+        isMultiNodeTree
+      );
     }
     console.log(filter, selectedIssueFieldIds);
   }, [filter, selectedIssueFieldIds]);
