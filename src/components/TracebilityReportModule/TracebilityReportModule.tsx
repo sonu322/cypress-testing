@@ -88,7 +88,6 @@ export const TracebilityReportModule = (): JSX.Element => {
           api.getIssueTypes(),
           api.getIssueLinkTypes(),
           api.getIssueFields(),
-          api.getPriorities(),
         ]);
 
         const issueTypes = result[0];
