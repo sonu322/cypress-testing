@@ -48,7 +48,6 @@ interface Props {
   setFilteredIssues: React.Dispatch<
     React.SetStateAction<IssueWithSortedLinks[]>
   >;
-  // isIssueTypeReport: boolean;
   errors: any[];
   selectedViewTab: string;
   issueTreeFilter: IssueTreeFilter;
@@ -68,8 +67,6 @@ export const Main = ({
   setAreIssuesLoading,
   setFilteredIssues,
   issueTreeFilter,
-  // isIssueTypeReport,
-
   errors,
   selectedViewTab,
   treeHasOnlyOrphans,

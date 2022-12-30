@@ -2,7 +2,6 @@ import React from "react";
 import { Dropdown } from "../common/Dropdown";
 import { ButtonGroup } from "@atlaskit/button";
 import styled from "styled-components";
-import { IssueOptionsDropdown } from "./IssueOptionsDropdown";
 import { helpLinkUrl } from "../../constants/common";
 import { ExportContent } from "../common/ExportContent";
 import { HelpLink } from "../common/HelpLink";
