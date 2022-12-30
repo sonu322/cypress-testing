@@ -46,19 +46,6 @@ export default class TreeUtils {
     this.api = api;
   }
 
-  createIssueTreeFilter = (
-    priorities: IssuePriority[],
-    issueTypes: IssueType[],
-    linkTypes: IssueLinkType[]
-  ): IssueTreeFilter => {
-    const filterObj = {
-      priorities: priorities.map((option) => option.id),
-      issueTypes: issueTypes.map((option) => option.id),
-      linkTypes: linkTypes.map((option) => option.id),
-    };
-    return filterObj;
-  };
-
   loadToolbarData = async (
     updateSelectedIssueFieldIds: (selectedIssueFieldIds: string[]) => void,
     updateIssueFields: (issueFields: IssueField[]) => void,
@@ -96,13 +83,11 @@ export default class TreeUtils {
         this.api.getPriorities(),
         this.api.getIssueTypes(),
         this.api.getIssueLinkTypes(),
-        // this.api.getIssueFields(),
       ]);
 
       const priorities = result[0];
       const issueTypes = result[1];
       const linkTypes = result[2];
-      // const fields = result[3];
 
       const filterObj = {
         priorities: priorities.map((option) => option.id),
@@ -164,7 +149,6 @@ export default class TreeUtils {
     try {
       const tree = this.getRootTree();
       await this.initTree(tree, filter, fields, setTree, handleError);
-      // setTree(newTree);
     } catch (error) {
       console.log(error);
       handleError(error);
@@ -198,8 +182,7 @@ export default class TreeUtils {
   }
 
   async initMultiNodeTree(
-    // prevTree,
-    filter: IssueTreeFilter,
+    filter: IssueTreeFilter, // TODO: add show/hiding of children based on tree filter
     fields: IssueField[],
     handleError,
     filteredIssues: IssueWithSortedLinks[]
@@ -208,8 +191,9 @@ export default class TreeUtils {
       const prevTree = this.getRootTree();
       const tree = this.cloneTree(prevTree);
       const allPromises = filteredIssues.map(async (issue) => {
-        return await this.api.getIssueWithLinks(fields, issue.id);
-      });
+        return await this.api.getIssueWithLinks(fields, issue.id); // TODO: convert IssueWithSortedLinks into IssueWithLinkedIssues
+        // by transforming issue object instead of making an api call
+      };);
 
       const result = await Promise.all(allPromises);
       tree.items[this.ROOT_ID].children = [];
@@ -232,7 +216,6 @@ export default class TreeUtils {
     }
   }
 
-  // Tree filter
   _shouldIncludeNode(
     mainIssue: Issue,
     linkedIssue: Issue,
@@ -373,6 +356,7 @@ export default class TreeUtils {
   }
 
   applyFilterHook(tree, setTree, filter, fields) {
+    // TODO: use setState(func) to make the filter apply on to previous tree
     let firstNodeId;
     if (tree.items !== undefined) {
       firstNodeId = tree.items[this.ROOT_ID].children[0];
@@ -468,6 +452,7 @@ export default class TreeUtils {
   }
 
   async addChildren(nodeId, tree, fields, issue, filter): Promise<void> {
+    // TODO: use setState(func) to make the filter apply on to previous tree
     try {
       const mainNode = tree.items[nodeId];
       const children = await this.getChildren(

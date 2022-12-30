@@ -1,8 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
-import { LinkTypeRow } from "./LinkTypeRow";
-import { ReportHeader } from "./ReportHeader";
 import {
   IssueField,
   IssueLinkType,
@@ -10,13 +8,11 @@ import {
   IssueType,
   IssueWithSortedLinks,
 } from "../../types/api";
-import { IssueTypeRow } from "./IssueTypeRow";
 import { getScreenHeight } from "../../util/common";
 import { IssueTreeMultiNode } from "../IssueTreeModule/IssueTreeMultiNode";
 import { APIContext } from "../../context/api";
 import TreeUtils from "../../util/TreeUtils";
 
-const DEFAULT_FILTER = { priorities: [], issueTypes: [], linkTypes: [] };
 const Container = styled.div`
   width: 100%;
   overflow: scroll;
