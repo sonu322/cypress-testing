@@ -125,7 +125,6 @@ export const Main = ({
       undefined
     );
   };
-  console.log(selectedViewTab);
   const isIssueTypeReport = selectedViewTab === "issuetype-view";
   const isTreeReport = selectedViewTab === "tree-view";
   if (areIssuesLoading) {

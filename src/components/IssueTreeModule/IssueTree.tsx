@@ -41,16 +41,7 @@ export const IssueTree = ({
   });
 
   useEffect(() => {
-    console.log("from use eff");
     if (isMultiNodeTree) {
-      // treeUtils.applyMultiNodeTreeFilter(
-      //   tree,
-      //   setTree,
-      //   filter,
-      //   issueFields,
-      //   isMultiNodeTree
-      // );
-
       setTree((tree) => {
         const newTree = treeUtils.applyMultiNodeTreeFilter(
           tree,
@@ -62,7 +53,6 @@ export const IssueTree = ({
     } else {
       treeUtils.applyFilterHook(tree, setTree, filter, issueFields);
     }
-    console.log(filter, selectedIssueFieldIds);
   }, [filter, selectedIssueFieldIds]);
 
   const onExpand = (itemId) => {

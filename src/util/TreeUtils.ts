@@ -141,7 +141,6 @@ export default class TreeUtils {
     isExpanded = false,
     hasChildrenLoaded = false
   ) {
-    console.log("TREE NODE DATA", data);
     const node: AtlasTreeNode = {
       id: prefix + "/" + data.id,
       children: [],
@@ -162,7 +161,6 @@ export default class TreeUtils {
     setTree,
     handleError
   ): Promise<void> {
-    console.log("init tree hook called");
     try {
       const tree = this.getRootTree();
       await this.initTree(tree, filter, fields, setTree, handleError);
@@ -184,7 +182,6 @@ export default class TreeUtils {
     setTree,
     handleError
   ): Promise<void> {
-    console.log("init tree called");
     try {
       const tree = this.cloneTree(prevTree);
       const issue = await this.api.getIssueWithLinks(fields);
@@ -193,7 +190,6 @@ export default class TreeUtils {
       // make actual root a child of fake(hidden) root node
       tree.items[this.ROOT_ID].children = [nodeId];
       await this.addChildren(nodeId, tree, fields, issue, filter);
-      console.log("TREE FROM INIT TREE", tree);
       setTree(tree);
     } catch (err) {
       console.error(err);
@@ -208,18 +204,14 @@ export default class TreeUtils {
     handleError,
     filteredIssues: IssueWithSortedLinks[]
   ): Promise<AtlasTree> {
-    console.log("multi init tree called");
-    console.log(fields);
     try {
       const prevTree = this.getRootTree();
       const tree = this.cloneTree(prevTree);
       const allPromises = filteredIssues.map(async (issue) => {
-        console.log("FEILDS FROM MULTI INIT TREE", fields);
         return await this.api.getIssueWithLinks(fields, issue.id);
       });
 
       const result = await Promise.all(allPromises);
-      console.log("CALLING ALL ISSUE WITH LINKS", result);
       tree.items[this.ROOT_ID].children = [];
       result.forEach((issueWithLinks) => {
         const node = this.createTreeNode(
@@ -233,7 +225,6 @@ export default class TreeUtils {
         const nodeId = node.id;
         tree.items[this.ROOT_ID].children.push(nodeId);
       });
-      console.log("TREE FROM MULTI INIT TREE", tree);
       return tree;
     } catch (err) {
       console.error(err);
@@ -249,12 +240,6 @@ export default class TreeUtils {
     filter: IssueTreeFilter,
     parentIssueId: ID
   ): boolean {
-    console.log("called _shouldIncludeNode");
-    console.log(mainIssue, linkedIssue, issueLink, filter, parentIssueId);
-    console.log(
-      "filter.issueTypes.includes(linkedIssue.type?.id)",
-      filter.issueTypes.includes(linkedIssue.type?.id)
-    );
     if (
       filter.issueTypes.length > 0 &&
       !filter.issueTypes.includes(linkedIssue.type?.id)
@@ -282,7 +267,6 @@ export default class TreeUtils {
     mainNode: AtlasTreeNode,
     issueMap: any
   ): IssueLink[] {
-    console.log("called filter links for issue", issue, filter, mainNode);
     const result = [];
     for (const link of issue.links) {
       const linkedIssue = issueMap[link.issueId];
@@ -389,8 +373,6 @@ export default class TreeUtils {
   }
 
   applyFilterHook(tree, setTree, filter, fields) {
-    console.log("from apply filter hook");
-    console.log(tree);
     let firstNodeId;
     if (tree.items !== undefined) {
       firstNodeId = tree.items[this.ROOT_ID].children[0];
@@ -464,8 +446,6 @@ export default class TreeUtils {
     filter: IssueTreeFilter,
     fields: IssueField[]
   ): AtlasTree {
-    console.log("from apply filter hook");
-    console.log(tree);
     let newTree = this.cloneTree(tree);
     let firstNodeIds;
     if (newTree.items !== undefined) {
@@ -477,8 +457,6 @@ export default class TreeUtils {
         newTree = this.applyMultiFilter(newTree, filter, fields, firstNodeId);
       });
     }
-    console.log("new tree at end");
-    console.log(newTree);
     return newTree;
   }
 
@@ -492,7 +470,6 @@ export default class TreeUtils {
   async addChildren(nodeId, tree, fields, issue, filter): Promise<void> {
     try {
       const mainNode = tree.items[nodeId];
-      console.log(mainNode);
       const children = await this.getChildren(
         tree,
         filter,
@@ -500,7 +477,6 @@ export default class TreeUtils {
         fields,
         issue
       );
-      console.log(children);
       const childIds = children.map((item) => item.id);
       mainNode.children = childIds;
       mainNode.isExpanded = true;
@@ -517,17 +493,13 @@ export default class TreeUtils {
   addMultiSyncChildren(nodeId, tree, fields, issue, filter): AtlasTree {
     try {
       const mainNode = tree.items[nodeId];
-      console.log(mainNode);
       const children = this.getMultiSyncChildren(tree, filter, mainNode, issue);
-      console.log(children);
       const childIds = children.map((item) => item.id);
       mainNode.children = childIds;
       mainNode.isExpanded = true;
       mainNode.isChildrenLoading = false;
       mainNode.hasChildrenLoaded = true;
       mainNode.hasChildren = childIds.length > 0;
-      console.log("TREE RETURNED BY ALLMULTISYNC CHILDREN!!!!!!!");
-      console.log(tree);
       return tree;
     } catch (error) {
       console.log(error);
