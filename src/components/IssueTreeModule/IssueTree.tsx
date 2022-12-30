@@ -43,21 +43,27 @@ export const IssueTree = ({
   useEffect(() => {
     console.log("from use eff");
     if (isMultiNodeTree) {
-      treeUtils.applyMultiNodeTreeFilter(
-        tree,
-        setTree,
-        filter,
-        issueFields,
-        isMultiNodeTree
-      );
+      // treeUtils.applyMultiNodeTreeFilter(
+      //   tree,
+      //   setTree,
+      //   filter,
+      //   issueFields,
+      //   isMultiNodeTree
+      // );
+
+      setTree((tree) => {
+        const newTree = treeUtils.applyMultiNodeTreeFilter(
+          tree,
+          () => {
+            "set tree called by apply multinodetree filter";
+          },
+          filter,
+          issueFields
+        );
+        return newTree;
+      });
     } else {
-      treeUtils.applyFilterHook(
-        tree,
-        setTree,
-        filter,
-        issueFields,
-        isMultiNodeTree
-      );
+      treeUtils.applyFilterHook(tree, setTree, filter, issueFields);
     }
     console.log(filter, selectedIssueFieldIds);
   }, [filter, selectedIssueFieldIds]);
