@@ -43,7 +43,6 @@ export const IssueTreeMultiNode = ({
   });
 
   useEffect(() => {
-    // if (tree.items["0"].children.length === 0) {
     const initTree = async (): Promise<void> => {
       const newTree = await treeUtils.initMultiNodeTree(
         filter,
@@ -54,38 +53,6 @@ export const IssueTreeMultiNode = ({
       setTree(newTree);
     };
     void initTree();
-    // } else {
-    //   let childrenIssueIds;
-    //   const orphanIssues = filteredIssues.filter((issue) => {
-    //     console.log(issue);
-    //     const foundPopulatedList = Object.values(issue.sortedLinks).find(
-    //       (sortedLinks) => sortedLinks.length > 0
-    //     );
-    //     if (foundPopulatedList === undefined) {
-    //       return true;
-    //     } else {
-    //       return false;
-    //     }
-    //   });
-    //   if (treeHasOnlyOrphans) {
-    //     const onlyOrphanIds = orphanIssues.map(
-    //       (orphanIssue) => `/${orphanIssue.id}`
-    //     );
-    //     // const onlyOrphansTree = mutateTree(tree, "0", { children: ids });
-    //     // setTree(onlyOrphansTree);
-    //     childrenIssueIds = onlyOrphanIds;
-    //   } else {
-    //     const allIds = filteredIssues.map((issue) => `/${issue.id}`);
-    //     childrenIssueIds = allIds;
-    //   }
-    //   // change condition later
-    //   if (tree.items["0"].children.length !== childrenIssueIds.length) {
-    //     setTree((tree) => {
-    //       const newTree = mutateTree(tree, "0", { children: childrenIssueIds });
-    //       return newTree;
-    //     });
-    //   }
-    // }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -84,7 +84,6 @@ export const TreeReport = ({
     return () => window.removeEventListener("resize", resizeHandler);
   }, [errors]);
 
-  console.log(tree);
   return (
     <Container style={{ maxHeight: tableHeight }}>
       <IssueTreeMultiNode
