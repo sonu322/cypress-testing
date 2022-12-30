@@ -453,23 +453,15 @@ export default class TreeUtils {
   }
 
   applyMultiFilter(
-    setTree,
     tree,
     filter,
     fields,
     nodeId,
     isFirstCall,
     shouldNotExpandTree?: boolean
-  ): Promise<any> {
+  ): AtlasTree {
     let node = tree.items[nodeId];
-    tree = this.addMultiSyncChildren(
-      nodeId,
-      tree,
-      fields,
-      node.data,
-      filter,
-      shouldNotExpandTree
-    );
+    tree = this.addMultiSyncChildren(nodeId, tree, fields, node.data, filter);
     node = tree.items[nodeId];
     for (const typeNodeId of node.children) {
       // type nodes
@@ -478,7 +470,6 @@ export default class TreeUtils {
         const child = tree.items[childNodeId];
         if (child.hasChildrenLoaded) {
           tree = this.applyMultiFilter(
-            setTree,
             tree,
             filter,
             fields,
@@ -545,12 +536,11 @@ export default class TreeUtils {
   }
 
   applyMultiNodeTreeFilter(
-    tree,
-    setTree,
-    filter,
-    fields,
-    shouldNotExpandTree?: boolean
-  ) {
+    tree: AtlasTree,
+    setTree: Function,
+    filter: IssueTreeFilter,
+    fields: IssueField[]
+  ): AtlasTree {
     console.log("from apply filter hook");
     console.log(tree);
     let newTree = this.cloneTree(tree);
@@ -560,11 +550,8 @@ export default class TreeUtils {
     }
 
     if (firstNodeIds !== undefined) {
-      firstNodeIds.forEach(async (firstNodeId) => {
-        newTree = await this.applyMultiFilter(
-          (param) => {
-            "called !!!!!";
-          },
+      firstNodeIds.forEach((firstNodeId) => {
+        newTree = this.applyMultiFilter(
           newTree,
           filter,
           fields,
@@ -576,7 +563,7 @@ export default class TreeUtils {
     }
     console.log("new tree at end");
     console.log(newTree);
-    setTree((tree) => newTree);
+    return newTree;
   }
 
   updateTreeNode(setTree, nodeId, data) {
@@ -619,14 +606,7 @@ export default class TreeUtils {
     }
   }
 
-  addMultiSyncChildren(
-    nodeId,
-    tree,
-    fields,
-    issue,
-    filter,
-    shouldNotExpandTree?: boolean
-  ) {
+  addMultiSyncChildren(nodeId, tree, fields, issue, filter): AtlasTree {
     try {
       const mainNode = tree.items[nodeId];
       console.log(mainNode);
@@ -645,6 +625,8 @@ export default class TreeUtils {
       mainNode.isChildrenLoading = false;
       mainNode.hasChildrenLoaded = true;
       mainNode.hasChildren = childIds.length > 0;
+      console.log("TREE RETURNED BY ALLMULTISYNC CHILDREN!!!!!!!");
+      console.log(tree);
       return tree;
     } catch (error) {
       console.log(error);
