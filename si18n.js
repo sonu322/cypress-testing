@@ -40,4 +40,4 @@ async function convert2ascii(){
 
 setTimeout(function(){
   convert2ascii();
-}, 3000);
+}, 5000);

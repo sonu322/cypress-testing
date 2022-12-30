@@ -33,6 +33,7 @@
   "lxp.jira.current-issuekey-error": "Fehler beim Abrufen des aktuellen vorgangschlüssels.",
   "issue.tab.name": "Verknüpfungs-Explorer",
   "general.page.name": "Verknüpfungs-Explorer",
+  "link-issue-tab-panel.name": "Verknüpfte Vorgänge",
   "link-issue-tab-panel.label": "Verknüpfungs-Explorer",
   "link-issue-tab-panel.description": "Verknüpfte Vorgänge Reiter",
   "lxp.common.no-issues-text": "Es gibt keine entsprechenden Vorgänge",
@@ -43,10 +44,14 @@
   "lxp.toolbar.collapse-all.title": "Bitte hier klicken um gesamten Baum einzuklappen",
   "lxp.toolbar.export-csv.title": "Klicken Sie hier, um die CSV-Datei zu exportieren",
   "lxp.license.do-not-have": "Keine Lizenz vorhanden",
-  "traceability-report.name": "Links Explorer - Rückverfolgbarkeitsbericht",
-  "traceability-report.description": "Links Explorer - Rückverfolgbarkeitsbericht",
+  "traceability-report.name": "Links Explorer - Rückverfolgbarkeitsberichte",
+  "traceability-report.label": "Links Explorer - Rückverfolgbarkeitsberichte",
+  "traceability-report.description": "Links Explorer - Rückverfolgbarkeitsberichte",
   "lxp.common.issue.assignee": "Zugewiesene Person",
   "lxp.common.issue.priority": "Priorität",
   "lxp.common.unassigned": "nicht zugewiesen",
-  "lxp.api.locale-error": "Fehler beim Abrufen des Gebietsschemas"
+  "lxp.api.locale-error": "Fehler beim Abrufen des Gebietsschemas",
+  "gh-link-issue-tab": "Verknüpfte Vorgänge",
+  "gh-link-issue-tab.label": "Verknüpfungs-Explorer",
+  "gh-link-issue-tab.tooltip": "Verknüpfungs-Explorer"
 }

@@ -30,6 +30,7 @@
   "lxp.jira.current-issuekey-error": "Error al obtener la clave de incidencia actual.",
   "issue.tab.name": "Explorador de Enlaces",
   "general.page.name": "Explorador de Enlaces",
+  "link-issue-tab-panel.name": "Los temas relacionados",
   "link-issue-tab-panel.label": "Explorador de Enlaces",
   "link-issue-tab-panel.description": "El Enlace de Emisión pestaña del panel Plugin",
   "lxp.common.get-help": "Consigue ayuda",
@@ -43,10 +44,14 @@
   "lxp.toolbar.export-csv.title": "Haga clic aquí para exportar un archivo CSV",
   "lxp.license.do-not-have": "No se han encontrado licencia",
   "traceability-report.name": "Explorer de Enlaces - Informe de trazabilidad",
+  "traceability-report.label": "Explorer de Enlaces - Informe de trazabilidad",
   "traceability-report.description": "Enlaces Trazabilidad Explorador de Informe",
   "traceability-report.toolbar.usejqlbutton.name": "Usar editor JQL",
   "lxp.common.issue.assignee": "Responsable",
   "lxp.common.issue.priority": "Prioridad",
   "lxp.common.unassigned": "sin asignar",
-  "lxp.api.locale-error": "Error al obtener la configuración regional"
+  "lxp.api.locale-error": "Error al obtener la configuración regional",
+  "gh-link-issue-tab": "cuestiones vinculadas",
+  "gh-link-issue-tab.label": "enlaces Explorador",
+  "gh-link-issue-tab.tooltip": "enlaces Explorador"
 }
