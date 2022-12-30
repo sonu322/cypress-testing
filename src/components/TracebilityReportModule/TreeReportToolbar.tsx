@@ -9,6 +9,7 @@ import {
   IssueTreeFilter,
   IssueType,
 } from "../../types/api";
+import { useTranslation } from "react-i18next";
 const FlexContainer = styled.div`
   display: flex;
   gap: 4px;
@@ -38,9 +39,13 @@ export const TreeReportToolbar = ({
   treeHasOnlyOrphans,
   updateTreeHasOnlyOrphans,
 }: Props): JSX.Element => {
+  const { t } = useTranslation();
+  const hideOrphanText = t("traceability-report.tree-view.hide-orphan-issues");
+  const showOrphanText = t("traceability-report.tree-view.show-orphan-issues");
   const toggleOrphans = (): void => {
     updateTreeHasOnlyOrphans(!treeHasOnlyOrphans);
   };
+
   return (
     <FlexContainer>
       <TreeFilterDropdowns
@@ -50,7 +55,7 @@ export const TreeReportToolbar = ({
         updateFilteredKeyOptions={updateFilteredKeyOptions}
       />
       <Button onClick={toggleOrphans}>
-        {treeHasOnlyOrphans ? "Hide Orphan Issues" : "Show Orphan Issues"}
+        {treeHasOnlyOrphans ? hideOrphanText : showOrphanText}
       </Button>
     </FlexContainer>
   );

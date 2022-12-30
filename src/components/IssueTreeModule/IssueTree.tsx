@@ -5,6 +5,7 @@ import Tree from "@atlaskit/tree";
 import { IssueItem } from "./IssueItem";
 import { ID, IssueField, IssueTreeFilter } from "../../types/api";
 import { AtlasTree } from "../../types/app";
+import { useTranslation } from "react-i18next";
 
 const Container = styled.div`
   display: flex;
@@ -35,6 +36,8 @@ export const IssueTree = ({
   isMultiNodeTree,
   treeHasOnlyOrphans,
 }: Props): JSX.Element => {
+  const { t } = useTranslation();
+  const loadingText = t("lxp.common.loading");
   const fieldMap = {};
   issueFields.forEach((field) => {
     fieldMap[field.id] = field;
@@ -90,6 +93,6 @@ export const IssueTree = ({
       </Container>
     );
   } else {
-    return <em>Loading Tree...</em>;
+    return <em>{loadingText}</em>;
   }
 };
