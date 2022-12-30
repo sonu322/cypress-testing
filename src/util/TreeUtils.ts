@@ -60,16 +60,6 @@ export default class TreeUtils {
   };
 
   loadToolbarData = async (
-    // updateFilter: (filter: {
-    //   priorities: string[];
-    //   issueTypes: string[];
-    //   linkTypes: string[];
-    // }) => void,
-    // updateOptions: (options: {
-    //   priorities: IssuePriority[];
-    //   issueTypes: IssueType[];
-    //   linkTypes: IssueLinkType[];
-    // }) => void,
     updateSelectedIssueFieldIds: (selectedIssueFieldIds: string[]) => void,
     updateIssueFields: (issueFields: IssueField[]) => void,
     updateIsLoading: (isLoading: boolean) => void,
@@ -77,15 +67,6 @@ export default class TreeUtils {
   ): Promise<void> => {
     try {
       const fields = await this.api.getIssueFields();
-
-      // const filterObj = {
-      //   priorities: priorities.map((option) => option.id),
-      //   issueTypes: issueTypes.map((option) => option.id),
-      //   linkTypes: linkTypes.map((option) => option.id),
-      // };
-      // updateFilter(filterObj);
-      // updateOptions({ priorities, issueTypes, linkTypes });
-
       const selectedFieldIds = fields.map((field) => field.id);
       updateSelectedIssueFieldIds(selectedFieldIds);
       updateIssueFields(fields);
@@ -130,10 +111,6 @@ export default class TreeUtils {
       };
       updateFilter(filterObj);
       updateOptions({ priorities, issueTypes, linkTypes });
-
-      // const selectedFieldIds = fields.map((field) => field.id);
-      // updateSelectedIssueFieldIds(selectedFieldIds);
-      // updateIssueFields(fields);
       updateIsLoading(false);
     } catch (error) {
       updateIsLoading(false);
@@ -228,11 +205,9 @@ export default class TreeUtils {
     // prevTree,
     filter: IssueTreeFilter,
     fields: IssueField[],
-    setTree,
     handleError,
-    filteredIssues: IssueWithSortedLinks[],
-    treeHasOnlyOrphans: boolean
-  ): Promise<void> {
+    filteredIssues: IssueWithSortedLinks[]
+  ): Promise<AtlasTree> {
     console.log("multi init tree called");
     console.log(fields);
     try {
@@ -246,13 +221,6 @@ export default class TreeUtils {
       const result = await Promise.all(allPromises);
       console.log("CALLING ALL ISSUE WITH LINKS", result);
       tree.items[this.ROOT_ID].children = [];
-      // const populateChildrenPromises = result.map(async (issueWithLinks) => {
-      //   const node = this.createTreeNode(tree, "", issueWithLinks, null, true);
-      //   const nodeId = node.id;
-      //   // make actual root a child of fake(hidden) root node
-      //   tree.items[this.ROOT_ID].children.push(nodeId);
-      //   await this.addChildren(nodeId, tree, fields, issueWithLinks, filter);
-      // });
       result.forEach((issueWithLinks) => {
         const node = this.createTreeNode(
           tree,
@@ -263,20 +231,10 @@ export default class TreeUtils {
           false
         );
         const nodeId = node.id;
-        // make actual root a child of fake(hidden) root node
         tree.items[this.ROOT_ID].children.push(nodeId);
       });
       console.log("TREE FROM MULTI INIT TREE", tree);
-
-      // const issue = await this.api.getIssueWithLinks(fields);
-      // const mainNode = this.createTreeNode(tree, "", issue, null, true);
-      // const nodeId = mainNode.id;
-      // // make actual root a child of fake(hidden) root node
-      // tree.items[this.ROOT_ID].children = [nodeId];
-      // await this.addChildren(nodeId, tree, fields, issue, filter);
-      // console.log("TREE FROM INIT TREE", tree);
-      setTree(tree);
-      // issuekey=ST-5
+      return tree;
     } catch (err) {
       console.error(err);
       handleError(err);
