@@ -62,13 +62,10 @@ export const Toolbar = ({
   handleNewError,
   isExportDisabled,
   issueCardOptions,
-  // viewTabs,
-  // viewTabsId,
   handleTabOptionSelect,
   selectedTabIndex,
   selectedViewTab,
-}: // treeToolbarProps,
-Props): JSX.Element => {
+}: Props): JSX.Element => {
   const { t } = useTranslation();
   const isTreeReport = selectedViewTab === "tree-view";
   return (
@@ -122,7 +119,6 @@ Props): JSX.Element => {
           </ButtonGroup>
         </div>
       </MainBar>
-      {/* {isTreeReport && <TreeToolbar {...treeToolbarProps} />} */}
     </div>
   );
 };
