@@ -19,16 +19,16 @@ const TracebilityReport = () => {
       void handleLocale();
     }
   }, [api, i18n]);
-  // if (api.hasValidLicense()) {
-  return (
-    <TreeFilterContextProvider>
-      <TracebilityReportModule></TracebilityReportModule>
-    </TreeFilterContextProvider>
-  );
-  // } else {
-  //   console.log(api.hasValidLicense());
-  //   return <LicenseContainer></LicenseContainer>;
-  // }
+  if (api.hasValidLicense()) {
+    return (
+      <TreeFilterContextProvider>
+        <TracebilityReportModule></TracebilityReportModule>
+      </TreeFilterContextProvider>
+    );
+  } else {
+    console.log(api.hasValidLicense());
+    return <LicenseContainer></LicenseContainer>;
+  }
 };
 
 export default TracebilityReport;
