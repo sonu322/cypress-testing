@@ -305,8 +305,7 @@ export default class TreeUtils {
     tree: AtlasTree,
     filter: IssueTreeFilter,
     mainNode: AtlasTreeNode,
-    fields: IssueField[],
-    issue?: IssueWithLinkedIssues
+    issue: IssueWithLinkedIssues
   ): AtlasTreeNode[] {
     const prefix = mainNode.id;
 
@@ -404,8 +403,7 @@ export default class TreeUtils {
         filter,
         fields,
         firstNodeId,
-        true,
-        !tree.items[firstNodeId].isExpanded
+        true
       );
     }
   }
@@ -416,18 +414,10 @@ export default class TreeUtils {
     filter,
     fields,
     nodeId,
-    isFirstCall,
-    shouldNotExpandTree?: boolean
+    isFirstCall
   ): Promise<any> {
     let node = tree.items[nodeId];
-    tree = await this.addChildren(
-      nodeId,
-      tree,
-      fields,
-      node.data,
-      filter,
-      shouldNotExpandTree
-    );
+    tree = await this.addChildren(nodeId, tree, fields, node.data, filter);
     node = tree.items[nodeId];
     for (const typeNodeId of node.children) {
       // type nodes
@@ -441,7 +431,7 @@ export default class TreeUtils {
             filter,
             fields,
             child.id,
-            !child.isExpanded
+            false
           );
         }
       }
@@ -452,14 +442,7 @@ export default class TreeUtils {
     return tree;
   }
 
-  applyMultiFilter(
-    tree,
-    filter,
-    fields,
-    nodeId,
-    isFirstCall,
-    shouldNotExpandTree?: boolean
-  ): AtlasTree {
+  applyMultiFilter(tree, filter, fields, nodeId): AtlasTree {
     let node = tree.items[nodeId];
     tree = this.addMultiSyncChildren(nodeId, tree, fields, node.data, filter);
     node = tree.items[nodeId];
@@ -469,75 +452,15 @@ export default class TreeUtils {
       for (const childNodeId of typeNode.children) {
         const child = tree.items[childNodeId];
         if (child.hasChildrenLoaded) {
-          tree = this.applyMultiFilter(
-            tree,
-            filter,
-            fields,
-            child.id,
-            !child.isExpanded
-          );
+          tree = this.applyMultiFilter(tree, filter, fields, child.id);
         }
       }
-    }
-    if (isFirstCall) {
-      console.log("IS FIRST CALL!!!!!!!!!", isFirstCall);
-      console.log(tree);
-      return tree;
     }
     return tree;
   }
 
-  async handleApplyMultiNodeTreeFilter(
-    setTree,
-    tree,
-    filter,
-    fields,
-    nodeId,
-    isFirstCall
-  ): Promise<void> {
-    try {
-      console.log("called handleApplyMultiNodeTreeFilter");
-      let node = tree.items[nodeId];
-      tree = await this.addChildren(
-        nodeId,
-        tree,
-        fields,
-        node.data,
-        filter,
-        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-        !node.isExpanded
-      );
-      node = tree.items[nodeId];
-      for (const typeNodeId of node.children) {
-        // type nodes
-        const typeNode = tree.items[typeNodeId];
-        for (const childNodeId of typeNode.children) {
-          const child = tree.items[childNodeId];
-          if (child.hasChildrenLoaded) {
-            await this.applyFilter(
-              setTree,
-              tree,
-              filter,
-              fields,
-              child.id,
-              !child.isExpanded
-            );
-          }
-        }
-      }
-      if (isFirstCall) {
-        setTree(tree);
-      }
-      return tree;
-    } catch (error) {
-      console.log("from handle filter multi error");
-      console.log(error);
-    }
-  }
-
   applyMultiNodeTreeFilter(
     tree: AtlasTree,
-    setTree: Function,
     filter: IssueTreeFilter,
     fields: IssueField[]
   ): AtlasTree {
@@ -551,14 +474,7 @@ export default class TreeUtils {
 
     if (firstNodeIds !== undefined) {
       firstNodeIds.forEach((firstNodeId) => {
-        newTree = this.applyMultiFilter(
-          newTree,
-          filter,
-          fields,
-          firstNodeId,
-          true,
-          !tree.items[firstNodeId].isExpanded
-        );
+        newTree = this.applyMultiFilter(newTree, filter, fields, firstNodeId);
       });
     }
     console.log("new tree at end");
@@ -573,14 +489,7 @@ export default class TreeUtils {
     });
   }
 
-  async addChildren(
-    nodeId,
-    tree,
-    fields,
-    issue,
-    filter,
-    shouldNotExpandTree?: boolean
-  ): Promise<void> {
+  async addChildren(nodeId, tree, fields, issue, filter): Promise<void> {
     try {
       const mainNode = tree.items[nodeId];
       console.log(mainNode);
@@ -594,7 +503,6 @@ export default class TreeUtils {
       console.log(children);
       const childIds = children.map((item) => item.id);
       mainNode.children = childIds;
-      // mainNode.isExpanded = !shouldNotExpandTree;
       mainNode.isExpanded = true;
       mainNode.isChildrenLoading = false;
       mainNode.hasChildrenLoaded = true;
@@ -610,17 +518,10 @@ export default class TreeUtils {
     try {
       const mainNode = tree.items[nodeId];
       console.log(mainNode);
-      const children = this.getMultiSyncChildren(
-        tree,
-        filter,
-        mainNode,
-        fields,
-        issue
-      );
+      const children = this.getMultiSyncChildren(tree, filter, mainNode, issue);
       console.log(children);
       const childIds = children.map((item) => item.id);
       mainNode.children = childIds;
-      // mainNode.isExpanded = !shouldNotExpandTree;
       mainNode.isExpanded = true;
       mainNode.isChildrenLoading = false;
       mainNode.hasChildrenLoaded = true;

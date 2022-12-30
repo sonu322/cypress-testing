@@ -54,9 +54,6 @@ export const IssueTree = ({
       setTree((tree) => {
         const newTree = treeUtils.applyMultiNodeTreeFilter(
           tree,
-          () => {
-            "set tree called by apply multinodetree filter";
-          },
           filter,
           issueFields
         );
