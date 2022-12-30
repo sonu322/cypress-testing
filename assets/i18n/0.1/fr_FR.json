@@ -32,6 +32,7 @@
   "lxp.jira.current-issuekey-error": "Erreur lors de la récupération de la clé d’émission actuelle.",
   "issue.tab.name": "Liens Explorateur",
   "general.page.name": "Liens Explorateur",
+  "link-issue-tab-panel.name": "Problèmes liés",
   "link-issue-tab-panel.label": "Liens Explorateur",
   "link-issue-tab-panel.description": "La question du lien Panel Tab Plugin",
   "lxp.common.no-issues-text": "Il n'y a pas de tickets résultants",
@@ -43,10 +44,14 @@
   "lxp.toolbar.export-csv.title": "Cliquez ici pour exporter un fichier CSV",
   "lxp.license.do-not-have": "Aucune licence trouvé",
   "traceability-report.name": "Liens Explorer - Rapport de traçabilité",
+  "traceability-report.label": "Liens Explorer - Rapport de traçabilité",
   "traceability-report.description": "Liens Rapport Explorateur Traçabilité",
   "lxp.common.issue.assignee": "Responsable",
   "lxp.common.issue.priority": "Priorité",
   "traceability-report.toolbar.usejqlbutton.name": "Utiliser l'éditeur JQL",
   "lxp.common.unassigned": "Non assigné",
-  "lxp.api.locale-error": "Erreur lors de l'obtention des paramètres régionaux"
+  "lxp.api.locale-error": "Erreur lors de l'obtention des paramètres régionaux",
+  "gh-link-issue-tab": "questions liées",
+  "gh-link-issue-tab.label": "liens Explorateur",
+  "gh-link-issue-tab.tooltip": "liens Explorateur"
 }

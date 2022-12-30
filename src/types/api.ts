@@ -106,13 +106,20 @@ export interface IssueTreeFilter {
 }
 
 export enum CustomLinkType {
-  SUBTASK_OR_EPIC_CHILD = "SUBTASK_OR_EPIC_CHILD",
+  CHILD_ISSUES = "CHILD_ISSUES",
+  SUBTASKS = "SUBTASKS",
   PARENT = "PARENT",
 }
 
 export enum Labels {
-  SUBTASK_OR_EPIC_CHILD = "Subtasks / Child Issues",
+  CHILD_ISSUES = "Child issues",
+  SUBTASKS = "Subtasks",
   PARENT = "Parent"
+}
+
+export enum Constants {
+  EPIC_LINK_FLD = "Epic Link",
+  PARENT_LINK_FLD = "Parent Link"
 }
 
 export default interface LXPAPI {

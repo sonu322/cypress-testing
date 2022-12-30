@@ -1,5 +1,6 @@
 import i18n from "../../i18n";
 import LXPAPI, {
+  Constants,
   CustomLinkType,
   Filter,
   Issue,
@@ -167,8 +168,12 @@ export default class APIImpl implements LXPAPI {
         name: Labels.PARENT,
       });
       result.push({
-        id: CustomLinkType.SUBTASK_OR_EPIC_CHILD,
-        name: Labels.SUBTASK_OR_EPIC_CHILD,
+        id: CustomLinkType.SUBTASKS,
+        name: Labels.SUBTASKS,
+      });
+      result.push({
+        id: CustomLinkType.CHILD_ISSUES,
+        name: Labels.CHILD_ISSUES,
       });
 
       items.forEach((item) => {
@@ -328,8 +333,8 @@ export default class APIImpl implements LXPAPI {
   _addEpicChildrenToLinks(issue: Issue, childIssues: Issue[]): void {
     childIssues.forEach((child) => {
       issue.links.push({
-        linkTypeId: CustomLinkType.SUBTASK_OR_EPIC_CHILD,
-        name: Labels.SUBTASK_OR_EPIC_CHILD,
+        linkTypeId: CustomLinkType.CHILD_ISSUES,
+        name: Labels.CHILD_ISSUES,
         isInward: false,
         issueId: child.id,
       });
@@ -346,13 +351,13 @@ export default class APIImpl implements LXPAPI {
       const linkedIds = issue.links.map((link) => link.issueId);
       let linkedIssues: Issue[] = [];
       // add epic children to issue
-      if (issue.type.id === "epic") {
-        const childIssuesData = await this.getEpicChildIssues(issue, fields);
+      if (issue.type.id === "epic" || issue.type.id === "initiative") {
+        const childIssuesData = await this.getChildIssues(issue, fields, issue.type.id === "epic");
         this._addEpicChildrenToLinks(issue, childIssuesData.data);
         linkedIssues = childIssuesData.data;
       }
-      if (linkedIds && linkedIds.length) {
-        const result = await this.searchIssues(`id in (${linkedIds})`, fields);
+      if (linkedIds?.length > 0) {
+        const result = await this.searchIssues(`id in (${linkedIds.join(",")})`, fields);
         linkedIssues = linkedIssues.concat(result.data);
       }
 
@@ -394,8 +399,8 @@ export default class APIImpl implements LXPAPI {
           }
         }
         // add epic children to issue
-        if (issue.type.id === "epic") {
-          const childIssuesData = await this.getEpicChildIssues(issue, fields);
+        if (issue.type.id === "epic" || issue.type.id === "initiative") {
+          const childIssuesData = await this.getChildIssues(issue, fields, issue.type.id === "epic");
           this._addEpicChildrenToLinks(issue, childIssuesData.data);
           linkedIssues = linkedIssues.concat(childIssuesData.data);
         }
@@ -443,8 +448,8 @@ export default class APIImpl implements LXPAPI {
     }
     for (const subTask of subTasks) {
       result.push({
-        linkTypeId: CustomLinkType.SUBTASK_OR_EPIC_CHILD,
-        name: Labels.SUBTASK_OR_EPIC_CHILD,
+        linkTypeId: CustomLinkType.SUBTASKS,
+        name: Labels.SUBTASKS,
         isInward: false,
         issueId: subTask.id,
       });
@@ -553,20 +558,20 @@ export default class APIImpl implements LXPAPI {
     return fieldIds;
   }
 
-  async getEpicChildIssues(
+  async getChildIssues(
     issue: Issue,
-    fields: IssueField[]
+    fields: IssueField[],
+    isEpic: boolean
   ): Promise<{ data: Issue[]; total: number }> {
     try {
-      const childIssuesData = await this.searchIssues(
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        `parent = ${issue.issueKey} OR "Epic Link" = ${issue.issueKey}`,
-        fields
-      );
-      return childIssuesData;
+      let query = `"${Constants.PARENT_LINK_FLD}" = ${issue.issueKey}`;
+      if (isEpic) {
+        query = `parent = ${issue.issueKey} OR "${Constants.EPIC_LINK_FLD}" = ${issue.issueKey}`;
+      }
+      return await this.searchIssues(query, fields);
     } catch (error) {
       console.log(error);
-      throwError(`Error getting child issues of epic ${issue.issueKey}`);
+      throwError(`Error getting child issues of issue ${issue.issueKey}`);
     }
   }
 
@@ -576,7 +581,6 @@ export default class APIImpl implements LXPAPI {
       const fieldIds = this._getFieldIds(fields);
       const query = "?fields=" + fieldIds.join(",");
       const issue: JiraIssueFull = await this.api.getIssueById(issueId, query);
-
       issue || throwError("lxp.api.issue-by-id-error-main");
 
       return this._convertIssue(issue, fields);
@@ -653,12 +657,20 @@ export default class APIImpl implements LXPAPI {
     });
 
     const jqlComponents = ids.map((id) => `id=${id}`);
-    const epicIssues = issues.filter((issue) => issue.type.name === "Epic");
+    const epicIssues = issues.filter((issue) => issue.type.id === "epic");
     epicIssues.forEach((epic) => {
       jqlComponents.push(
-        `parent = ${epic.issueKey} OR "Epic Link" = ${epic.issueKey}`
+        `parent = ${epic.issueKey} OR "${Constants.EPIC_LINK_FLD}" = ${epic.issueKey}`
       );
     });
+
+    const initiativeIssues = issues.filter((issue) => issue.type.id === "initiative");
+    initiativeIssues.forEach((initiative) => {
+      jqlComponents.push(
+        `"${Constants.PARENT_LINK_FLD}" = ${initiative.issueKey}`
+      );
+    });
+
     const jqlString = jqlComponents.join(" OR ");
     return jqlString;
   };
@@ -685,11 +697,11 @@ export default class APIImpl implements LXPAPI {
         }
       });
       // add epic child issues
-      if (issue.type.name === "Epic") {
-        sortedLinks[CustomLinkType.SUBTASK_OR_EPIC_CHILD] = linkedIssues.filter(
+      if (issue.type.id === "epic" || issue.type.id === "initiative") {
+        sortedLinks[CustomLinkType.CHILD_ISSUES] = linkedIssues.filter(
           (linkedIssue) => {
             const parent = linkedIssue.links?.find(
-              (issue) => issue.linkTypeId === CustomLinkType.PARENT
+              (issue) => issue.linkTypeId === CustomLinkType.PARENT && linkedIssue.type.id !== "subtask"
             );
             if (parent?.issueId === issue.id) {
               return true;

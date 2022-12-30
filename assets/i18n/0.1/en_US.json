@@ -1,6 +1,7 @@
 {
   "issue.tab.name": "Links Explorer",
   "general.page.name": "Links Explorer",
+  "link-issue-tab-panel.name": "Linked Issues",
   "link-issue-tab-panel.label": "Links Explorer",
   "link-issue-tab-panel.description": "The Link Issue Tab Panel Plugin",
   "lxp.common.get-help": "Get Help",
@@ -21,7 +22,9 @@
   "lxp.toolbar.collapse-all.title": "Click here to collapse all tree nodes",
   "lxp.toolbar.export-csv.title": "Click here to export CSV file",
   "lxp.license.do-not-have": "No license found",
-  "traceability-report.name": "Links Explorer - Traceability Report",
+  "traceability-report.name": "Links Explorer - Traceability Reports",
+  "traceability-report.label": "Links Explorer - Traceability Reports",
+  "traceability-report.description": "Links Explorer Traceability Reports",
   "traceability-report.issuetype-view.name": "Issue Type View",
   "traceability-report.issuetype-view.description": "View related issues by their types",
   "traceability-report.linktype-view.name": "Link Type View",
@@ -51,5 +54,9 @@
   "lxp.api.filters-error": "Error in fetching the issue filters",
   "lxp.api.project-error": "Project not found.",
   "lxp.jira.current-issuekey-error": "Error in fetching the current issue key.",
-  "lxp.api.locale-error": "Error getting locale"
+  "lxp.api.locale-error": "Error getting locale",
+  "gh-link-issue-tab": "Linked Issues",
+  "gh-link-issue-tab.label": "Links Explorer",
+  "gh-link-issue-tab.tooltip": "Links Explorer"
+
 }
