@@ -50,7 +50,7 @@ export const TreeReportToolbar = ({
         updateFilteredKeyOptions={updateFilteredKeyOptions}
       />
       <Button onClick={toggleOrphans}>
-        {treeHasOnlyOrphans ? "Show All Issues" : "Show Orphan Issues"}
+        {treeHasOnlyOrphans ? "Hide Orphan Issues" : "Show Orphan Issues"}
       </Button>
     </FlexContainer>
   );
