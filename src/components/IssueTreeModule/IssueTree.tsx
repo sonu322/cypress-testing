@@ -5,6 +5,7 @@ import Tree from "@atlaskit/tree";
 import { IssueItem } from "./IssueItem";
 import { ID, IssueField, IssueTreeFilter } from "../../types/api";
 import { AtlasTree } from "../../types/app";
+import { useTranslation } from "react-i18next";
 
 const Container = styled.div`
   display: flex;
@@ -19,6 +20,8 @@ export interface Props {
   selectedIssueFieldIds: ID[];
   handleError: any;
   clearAllErrors: () => void;
+  isMultiNodeTree?: boolean;
+  treeHasOnlyOrphans?: boolean;
 }
 
 export const IssueTree = ({
@@ -30,18 +33,29 @@ export const IssueTree = ({
   selectedIssueFieldIds,
   handleError,
   clearAllErrors,
+  isMultiNodeTree,
+  treeHasOnlyOrphans,
 }: Props): JSX.Element => {
+  const { t } = useTranslation();
+  const loadingText = t("lxp.common.loading");
   const fieldMap = {};
   issueFields.forEach((field) => {
     fieldMap[field.id] = field;
   });
 
   useEffect(() => {
-    treeUtils.applyFilterHook(
-      setTree,
-      filter,
-      treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds)
-    );
+    if (isMultiNodeTree) {
+      setTree((tree) => {
+        const newTree = treeUtils.applyMultiNodeTreeFilter(
+          tree,
+          filter,
+          issueFields
+        );
+        return newTree;
+      });
+    } else {
+      treeUtils.applyFilterHook(tree, setTree, filter, issueFields);
+    }
   }, [filter, selectedIssueFieldIds]);
 
   const onExpand = (itemId) => {
@@ -61,20 +75,24 @@ export const IssueTree = ({
 
   const renderItem = ({ ...props }) => {
     return (
-      //@ts-ignore
+      // @ts-expect-error
       <IssueItem {...props} selectedIssueFieldIds={selectedIssueFieldIds} />
     );
   };
 
-  return (
-    <Container>
-      <Tree
-        tree={tree}
-        renderItem={renderItem}
-        onExpand={onExpand}
-        onCollapse={onCollapse}
-        isDragEnabled={false}
-      />
-    </Container>
-  );
+  if (tree !== undefined && tree.items !== undefined) {
+    return (
+      <Container>
+        <Tree
+          tree={tree}
+          renderItem={renderItem}
+          onExpand={onExpand}
+          onCollapse={onCollapse}
+          isDragEnabled={false}
+        />
+      </Container>
+    );
+  } else {
+    return <em>{loadingText}</em>;
+  }
 };
