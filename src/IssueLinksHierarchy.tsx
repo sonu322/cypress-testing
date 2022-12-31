@@ -4,6 +4,7 @@ import { IssueTreeModule } from "./components/IssueTreeModule/IssueTreeModule";
 import { APIContext } from "./context/api";
 import { useTranslation } from "react-i18next";
 import "../i18n";
+import { TreeFilterContextProvider } from "./components/common/TreeFilterContextProvider";
 
 const IssueLinksHierarchy = () => {
   const api = useContext(APIContext);
@@ -21,7 +22,13 @@ const IssueLinksHierarchy = () => {
   }, [api, i18n]);
   return (
     <Suspense fallback={t("lxp.common.loading")}>
-      {api.hasValidLicense() ? <IssueTreeModule /> : <LicenseContainer />}
+      {api.hasValidLicense() ? (
+        <TreeFilterContextProvider>
+          <IssueTreeModule />
+        </TreeFilterContextProvider>
+      ) : (
+        <LicenseContainer />
+      )}
     </Suspense>
   );
 };

@@ -14,6 +14,7 @@ import { IssueField, IssueLinkType, IssueType } from "../../types/api";
 import { TabGroup } from "./TabGroup";
 import { SelectedType } from "@atlaskit/tabs/types";
 import { useTranslation } from "react-i18next";
+import { viewTabs } from "../../constants/traceabilityReport";
 const MainBar = styled.div`
   padding: 8px;
   border-radius: 3px;
@@ -39,10 +40,9 @@ interface Props {
   handleNewError: (err: unknown) => void;
   isExportDisabled: boolean;
   issueCardOptions: IssueField[];
-  viewTabs: Array<{ name: string; description: string }>;
-  viewTabsId: string;
   handleTabOptionSelect: (tabIndex: SelectedType) => void;
   selectedTabIndex: SelectedType;
+  selectedViewTab: string;
 }
 
 export const Toolbar = ({
@@ -57,18 +57,18 @@ export const Toolbar = ({
   handleNewError,
   isExportDisabled,
   issueCardOptions,
-  viewTabs,
-  viewTabsId,
   handleTabOptionSelect,
   selectedTabIndex,
+  selectedViewTab,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
+  const isTreeReport = selectedViewTab === "tree-view";
   return (
     <div style={{ marginTop: "-16px", marginBottom: "-8px" }}>
       <TabGroup
         handleOptionSelect={handleTabOptionSelect}
-        id={viewTabsId}
-        options={viewTabs}
+        id={viewTabs.id}
+        options={viewTabs.tabs}
         selectedTabIndex={selectedTabIndex}
       />
       <MainBar>
@@ -87,7 +87,7 @@ export const Toolbar = ({
 
         <div>
           <ButtonGroup>
-            {Boolean(tableFields) && (
+            {!isTreeReport && Boolean(tableFields) && (
               <TableFieldsDropdown
                 selectedOptions={selectedTableFieldIds}
                 updateSelectedOptionIds={updateSelectedTableFieldIds}

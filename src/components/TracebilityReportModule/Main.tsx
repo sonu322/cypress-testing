@@ -8,11 +8,13 @@ import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
 import {
   IssueField,
   IssueLinkType,
+  IssueTreeFilter,
   IssueType,
   IssueWithSortedLinks,
 } from "../../types/api";
 import { useTranslation } from "react-i18next";
 import { DropdownSingleSelect } from "../common/DropdownSingleSelect";
+import { TreeReport } from "./TreeReport";
 const Container = styled.div`
   width: 100%;
 `;
@@ -46,8 +48,10 @@ interface Props {
   setFilteredIssues: React.Dispatch<
     React.SetStateAction<IssueWithSortedLinks[]>
   >;
-  isIssueTypeReport: boolean;
   errors: any[];
+  selectedViewTab: string;
+  issueTreeFilter: IssueTreeFilter;
+  treeHasOnlyOrphans: boolean;
 }
 
 export const Main = ({
@@ -62,8 +66,10 @@ export const Main = ({
   areIssuesLoading,
   setAreIssuesLoading,
   setFilteredIssues,
-  isIssueTypeReport,
+  issueTreeFilter,
   errors,
+  selectedViewTab,
+  treeHasOnlyOrphans,
 }: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
@@ -116,7 +122,8 @@ export const Main = ({
       undefined
     );
   };
-
+  const isIssueTypeReport = selectedViewTab === "issuetype-view";
+  const isTreeReport = selectedViewTab === "tree-view";
   if (areIssuesLoading) {
     return (
       <FullHeightContainer>
@@ -134,14 +141,30 @@ export const Main = ({
     return (
       <Container>
         <TableContainer>
-          <Report
-            filteredIssues={filteredIssues}
-            issueFieldIds={selectedIssueFieldIds}
-            tableFields={tableFields}
-            selectedTableFieldIds={selectedTableFieldIds}
-            isIssueTypeReport={isIssueTypeReport}
-            errors={errors}
-          />
+          {isTreeReport ? (
+            <TreeReport
+              filteredIssues={filteredIssues}
+              selectedIssueFieldIds={selectedIssueFieldIds}
+              tableFields={tableFields}
+              selectedTableFieldIds={selectedTableFieldIds}
+              isIssueTypeReport={isIssueTypeReport}
+              errors={errors}
+              issueFields={issueFields}
+              handleError={handleNewError}
+              clearAllErrors={clearAllErrors}
+              issueTreeFilter={issueTreeFilter}
+              treeHasOnlyOrphans={treeHasOnlyOrphans}
+            />
+          ) : (
+            <Report
+              filteredIssues={filteredIssues}
+              issueFieldIds={selectedIssueFieldIds}
+              tableFields={tableFields}
+              selectedTableFieldIds={selectedTableFieldIds}
+              isIssueTypeReport={isIssueTypeReport}
+              errors={errors}
+            />
+          )}
         </TableContainer>
         <MarginAddedContainer>
           <DropdownSingleSelect

@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import LicenseContainer from "./components/common/LicenseContainer";
+import { TreeFilterContextProvider } from "./components/common/TreeFilterContextProvider";
 import { TracebilityReportModule } from "./components/TracebilityReportModule/TracebilityReportModule";
 import { APIContext } from "./context/api";
 
@@ -19,9 +20,15 @@ const TracebilityReport = () => {
     }
   }, [api, i18n]);
   if (api.hasValidLicense()) {
-    return <TracebilityReportModule></TracebilityReportModule>;
+    return (
+      <TreeFilterContextProvider>
+        <TracebilityReportModule></TracebilityReportModule>
+      </TreeFilterContextProvider>
+    );
+  } else {
+    console.log(api.hasValidLicense());
+    return <LicenseContainer></LicenseContainer>;
   }
-  return <LicenseContainer></LicenseContainer>;
 };
 
 export default TracebilityReport;

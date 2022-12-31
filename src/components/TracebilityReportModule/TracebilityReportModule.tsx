@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { APIContext } from "../../context/api";
 import PageHeader from "@atlaskit/page-header";
@@ -18,10 +18,12 @@ import {
   orderSelectedIds,
 } from "../../util/tracebilityReportsUtils";
 import { getKeyValues } from "../../util/common";
+import { viewTabs } from "../../constants/traceabilityReport";
+import { TreeReportToolbar } from "./TreeReportToolbar";
+import { TreeFilterContext } from "../../context/treeFilterContext";
 
 const FullWidthContainer = styled.div`
   width: 100%;
-  // height: 100%;
   display: flex;
   flex-direction: column;
   margin-top: -16px;
@@ -33,6 +35,8 @@ const GrowContainer = styled.div`
 
 export const TracebilityReportModule = (): JSX.Element => {
   const { t } = useTranslation();
+  const treeFilterContext = useContext(TreeFilterContext);
+  const [treeHasOnlyOrphans, setTreeHasOnlyOrphans] = useState(false);
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
   const [filteredIssues, setFilteredIssues] = useState<
     IssueWithSortedLinks[] | null
@@ -50,28 +54,26 @@ export const TracebilityReportModule = (): JSX.Element => {
   );
   const [linkTypes, setLinkTypes] = useState<IssueLinkType[]>([]);
   const [selectedLinkTypeIds, setSelectedLinkTypeIds] = useState<string[]>([]);
-
   const [areIssuesLoading, setAreIssuesLoading] = useState(false);
   const [errors, setErrors] = useState<unknown[]>([]);
   const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>(0);
-  const viewTabs = [
-    {
-      name: t("traceability-report.issuetype-view.name"),
-      description: t("traceability-report.issuetype-view.description"),
-    },
-    {
-      name: t("traceability-report.linktype-view.name"),
-      description: t("traceability-report.linktype-view.description"),
-    },
-    {
-      name: t("traceability-report.tree-view.name"),
-      description: t("traceability-report.tree-view.description"),
-    },
-  ];
+  const api = useContext(APIContext);
+  const updateTreeHasOnlyOrphans = (treeHasOnlyOrphans: boolean): void => {
+    setTreeHasOnlyOrphans(treeHasOnlyOrphans);
+  };
+  const updateFilteredKeyOptions = (
+    key: string,
+    keyOptions: string[]
+  ): void => {
+    treeFilterContext.updateFilter((prevFilter) => {
+      const newFilter = { ...prevFilter };
+      newFilter[key] = keyOptions;
+      return newFilter;
+    });
+  };
   const handleTabOptionSelect = (tabIndex: SelectedType): void => {
     setSelectedTabIndex(tabIndex);
   };
-  const api = useContext(APIContext);
   const handleNewError = (err: unknown): void => {
     console.error(err);
     setErrors((prevErrors) => [...prevErrors, err]);
@@ -91,8 +93,6 @@ export const TracebilityReportModule = (): JSX.Element => {
         const issueTypes = result[0];
         const linkTypes = result[1];
         const fields = result[2];
-
-        // setting state - fields for issue card
         setIssueFields(fields);
 
         // setting state - selected field ids
@@ -152,39 +152,52 @@ export const TracebilityReportModule = (): JSX.Element => {
   const emptyEqualsAllTableIds =
     selectedTableFieldIds.length > 0 ? selectedTableFieldIds : allTableFieldIds;
   const title = t("traceability-report.name");
+  const selectedViewTab = viewTabs.tabs[selectedTabIndex].id;
+  const isTreeReport = selectedViewTab === "tree-view";
+  const allErrors = errors.concat(treeFilterContext.errors);
   return (
     <FullWidthContainer>
       <PageHeader
         bottomBar={
-          <Toolbar
-            selectedJQLString={selectedJQLString}
-            setSelectedJQLString={setSelectedJQLString}
-            issueCardOptions={issueFields}
-            selectedIssueFieldIds={selectedIssueFieldIds}
-            setSelectedIssueFieldIds={setSelectedIssueFieldIds}
-            selectedTableFieldIds={selectedTableFieldIds}
-            updateSelectedTableFieldIds={updateSelectedTableFieldIds}
-            tableFields={tableFields}
-            exportReport={() =>
-              exportReport(
-                tableFields,
-                emptyEqualsAllTableIds,
-                filteredIssues,
-                isIssueTypeReport
-              )
-            }
-            isExportDisabled={isExportDisabled}
-            handleNewError={handleNewError}
-            viewTabs={viewTabs}
-            viewTabsId={"view-tabs"}
-            handleTabOptionSelect={handleTabOptionSelect}
-            selectedTabIndex={selectedTabIndex}
-          />
+          <>
+            <Toolbar
+              selectedJQLString={selectedJQLString}
+              setSelectedJQLString={setSelectedJQLString}
+              issueCardOptions={issueFields}
+              selectedIssueFieldIds={selectedIssueFieldIds}
+              setSelectedIssueFieldIds={setSelectedIssueFieldIds}
+              selectedViewTab={selectedViewTab}
+              selectedTableFieldIds={selectedTableFieldIds}
+              updateSelectedTableFieldIds={updateSelectedTableFieldIds}
+              tableFields={tableFields}
+              exportReport={() =>
+                exportReport(
+                  tableFields,
+                  emptyEqualsAllTableIds,
+                  filteredIssues,
+                  isIssueTypeReport
+                )
+              }
+              isExportDisabled={isExportDisabled}
+              handleNewError={handleNewError}
+              handleTabOptionSelect={handleTabOptionSelect}
+              selectedTabIndex={selectedTabIndex}
+            />
+            {isTreeReport && (
+              <TreeReportToolbar
+                options={treeFilterContext.options}
+                filter={treeFilterContext.filter}
+                updateFilteredKeyOptions={updateFilteredKeyOptions}
+                treeHasOnlyOrphans={treeHasOnlyOrphans}
+                updateTreeHasOnlyOrphans={updateTreeHasOnlyOrphans}
+              />
+            )}
+          </>
         }
       >
         {title}
       </PageHeader>
-      {errors.length > 0 && <ErrorsList errors={errors} />}
+      {allErrors.length > 0 && <ErrorsList errors={errors} />}
       <GrowContainer>
         <Main
           jqlString={selectedJQLString}
@@ -198,8 +211,10 @@ export const TracebilityReportModule = (): JSX.Element => {
           setFilteredIssues={setFilteredIssues}
           areIssuesLoading={areIssuesLoading}
           setAreIssuesLoading={setAreIssuesLoading}
-          isIssueTypeReport={selectedTabIndex === 0}
+          selectedViewTab={viewTabs.tabs[selectedTabIndex].id}
           errors={errors}
+          issueTreeFilter={treeFilterContext.filter}
+          treeHasOnlyOrphans={treeHasOnlyOrphans}
         />
       </GrowContainer>
     </FullWidthContainer>
