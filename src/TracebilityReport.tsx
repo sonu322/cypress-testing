@@ -27,7 +27,11 @@ const TracebilityReport = () => {
     );
   } else {
     console.log(api.hasValidLicense());
-    return <LicenseContainer></LicenseContainer>;
+    return (
+      <TreeFilterContextProvider>
+        <TracebilityReportModule></TracebilityReportModule>
+      </TreeFilterContextProvider>
+    );
   }
 };
 
