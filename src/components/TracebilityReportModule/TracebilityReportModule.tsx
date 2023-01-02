@@ -36,7 +36,7 @@ const GrowContainer = styled.div`
 export const TracebilityReportModule = (): JSX.Element => {
   const { t } = useTranslation();
   const treeFilterContext = useContext(TreeFilterContext);
-  const [treeHasOnlyOrphans, setTreeHasOnlyOrphans] = useState(false);
+  const [isOrphansBranchPresent, setIsOrphansBranchPresent] = useState(false);
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
   const [filteredIssues, setFilteredIssues] = useState<
     IssueWithSortedLinks[] | null
@@ -58,8 +58,10 @@ export const TracebilityReportModule = (): JSX.Element => {
   const [errors, setErrors] = useState<unknown[]>([]);
   const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>(0);
   const api = useContext(APIContext);
-  const updateTreeHasOnlyOrphans = (treeHasOnlyOrphans: boolean): void => {
-    setTreeHasOnlyOrphans(treeHasOnlyOrphans);
+  const updateIsOrphansBranchPresent = (
+    isOrphansBranchPresent: boolean
+  ): void => {
+    setIsOrphansBranchPresent(isOrphansBranchPresent);
   };
   const updateFilteredKeyOptions = (
     key: string,
@@ -188,8 +190,8 @@ export const TracebilityReportModule = (): JSX.Element => {
                 options={treeFilterContext.options}
                 filter={treeFilterContext.filter}
                 updateFilteredKeyOptions={updateFilteredKeyOptions}
-                treeHasOnlyOrphans={treeHasOnlyOrphans}
-                updateTreeHasOnlyOrphans={updateTreeHasOnlyOrphans}
+                isOrphansBranchPresent={isOrphansBranchPresent}
+                updateIsOrphansBranchPresent={updateIsOrphansBranchPresent}
               />
             )}
           </>
@@ -200,7 +202,7 @@ export const TracebilityReportModule = (): JSX.Element => {
       {allErrors.length > 0 && <ErrorsList errors={errors} />}
       <GrowContainer>
         <Main
-          jqlString={selectedJQLString}
+          selectedJqlString={selectedJQLString}
           handleNewError={handleNewError}
           clearAllErrors={clearAllErrors}
           issueFields={issueFields}
@@ -214,7 +216,7 @@ export const TracebilityReportModule = (): JSX.Element => {
           selectedViewTab={viewTabs.tabs[selectedTabIndex].id}
           errors={errors}
           issueTreeFilter={treeFilterContext.filter}
-          treeHasOnlyOrphans={treeHasOnlyOrphans}
+          isOrphansBranchPresent={isOrphansBranchPresent}
         />
       </GrowContainer>
     </FullWidthContainer>

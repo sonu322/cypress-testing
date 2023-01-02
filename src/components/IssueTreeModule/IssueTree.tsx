@@ -21,7 +21,7 @@ export interface Props {
   handleError: any;
   clearAllErrors: () => void;
   isMultiNodeTree?: boolean;
-  treeHasOnlyOrphans?: boolean;
+  isOrphansBranchPresent?: boolean;
 }
 
 export const IssueTree = ({
@@ -34,7 +34,7 @@ export const IssueTree = ({
   handleError,
   clearAllErrors,
   isMultiNodeTree,
-  treeHasOnlyOrphans,
+  isOrphansBranchPresent,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
   const loadingText = t("lxp.common.loading");

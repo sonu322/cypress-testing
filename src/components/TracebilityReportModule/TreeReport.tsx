@@ -30,9 +30,11 @@ interface Props {
   clearAllErrors: () => void;
   handleError: (err: unknown) => void;
   issueTreeFilter: IssueTreeFilter;
-  treeHasOnlyOrphans: boolean;
+  isOrphansBranchPresent: boolean;
+  selectedJqlString: string;
 }
 export const TreeReport = ({
+  selectedJqlString,
   filteredIssues,
   tableFields,
   selectedTableFieldIds,
@@ -43,7 +45,7 @@ export const TreeReport = ({
   handleError,
   errors,
   issueTreeFilter,
-  treeHasOnlyOrphans,
+  isOrphansBranchPresent,
 }: Props): JSX.Element => {
   // TODO: probably we may improve this calculation
   const calculateTableHeight = (errors) => {
@@ -92,7 +94,8 @@ export const TreeReport = ({
         handleError={handleError}
         clearAllErrors={clearAllErrors}
         filteredIssues={filteredIssues}
-        treeHasOnlyOrphans={treeHasOnlyOrphans}
+        isOrphansBranchPresent={isOrphansBranchPresent}
+        selectedJqlString={selectedJqlString}
       />
     </Container>
   );

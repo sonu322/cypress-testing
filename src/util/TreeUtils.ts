@@ -14,6 +14,7 @@ import LXPAPI, {
 import { csv, download } from "./index";
 import { AtlasTree, AtlasTreeNode, LinkTypeTreeNode } from "../types/app";
 import { isPromise } from "./common";
+import { orphansTreeBranchName } from "../constants/traceabilityReport";
 
 // root node
 const root: AtlasTree = {
@@ -36,10 +37,8 @@ const root: AtlasTree = {
   },
 };
 
-
-
 export default class TreeUtils {
-  private readonly ROOT_ID = "0";
+  readonly ROOT_ID = "0";
   private readonly api: LXPAPI;
 
   constructor(api: LXPAPI) {
@@ -227,6 +226,83 @@ export default class TreeUtils {
       });
 
       return tree;
+    } catch (err) {
+      console.error(err);
+      handleError(err);
+    }
+  }
+
+  removeOrphansBranch(tree: AtlasTree): AtlasTree {
+    let newTree = this.cloneTree(tree);
+    const rootNode = tree.items[this.ROOT_ID];
+    const orphansTreeBranchId = `/${orphansTreeBranchName}`;
+    if (!rootNode.children.includes(orphansTreeBranchId)) {
+      const newChildren = rootNode.children.filter(
+        (child) => child !== orphansTreeBranchId
+      );
+      newTree = mutateTree(tree, this.ROOT_ID, { children: newChildren });
+    }
+    return newTree;
+  }
+
+  addOrphansBranch(tree: AtlasTree): AtlasTree {
+    let newTree = this.cloneTree(tree);
+    const rootNode = tree.items[this.ROOT_ID];
+    const orphansTreeBranchId = `/${orphansTreeBranchName}`;
+    if (tree.items[orphansTreeBranchId] !== undefined) {
+      const newChildren = [...rootNode.children];
+      newChildren.unshift(orphansTreeBranchId);
+      newTree = mutateTree(tree, this.ROOT_ID, { children: newChildren });
+    }
+    return newTree;
+  }
+
+  async initOrphanBranch(
+    tree: AtlasTree,
+    selectedJqlString: string, // TODO: add show/hiding of children based on tree filter
+    fields: IssueField[],
+    handleError,
+    filteredIssues: IssueWithSortedLinks[]
+  ): AtlasTree {
+    try {
+      let newTree = this.cloneTree(tree);
+      const searchResult = await this.api.searchOrphanIssues(
+        selectedJqlString,
+        fields
+      );
+      const orphanTypeNode = this.createTypeNode(
+        newTree,
+        "",
+        orphansTreeBranchName
+      );
+      console.log("orphanTypeNode", orphanTypeNode);
+      const issues = searchResult.data;
+      // newTree = mutateTree(newTree, orphanTypeNode.id, {
+      //   data: {
+      //     issues,
+      //   },
+      // });
+      console.log(newTree.items);
+      issues.forEach((issueWithLinks) => {
+        const node = this.createTreeNode(
+          newTree,
+          orphanTypeNode.id,
+          issueWithLinks,
+          null,
+          false,
+          false
+        );
+        const nodeId = node.id;
+        newTree.items[orphanTypeNode.id].children.push(nodeId);
+      });
+      const newChildren = newTree.items[this.ROOT_ID].children;
+      console.log("ACTUAL PRESENT CHILDRNE", newChildren);
+      newChildren.unshift(orphanTypeNode.id);
+      console.log("new children", newChildren);
+      // newTree.items[this.ROOT_ID].children.unshift(orphanTypeNode.id);
+      newTree = mutateTree(newTree, this.ROOT_ID, { children: newChildren });
+      console.log("from init orphan", newTree);
+      return newTree;
     } catch (err) {
       console.error(err);
       handleError(err);

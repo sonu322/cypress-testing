@@ -35,7 +35,7 @@ const options = [
   { id: 100, name: "100" },
 ];
 interface Props {
-  jqlString: string;
+  selectedJqlString: string;
   handleNewError: (err: unknown) => void;
   clearAllErrors: () => void;
   issueFields: IssueField[];
@@ -51,11 +51,11 @@ interface Props {
   errors: any[];
   selectedViewTab: string;
   issueTreeFilter: IssueTreeFilter;
-  treeHasOnlyOrphans: boolean;
+  isOrphansBranchPresent: boolean;
 }
 
 export const Main = ({
-  jqlString,
+  selectedJqlString,
   handleNewError,
   clearAllErrors,
   issueFields,
@@ -69,7 +69,7 @@ export const Main = ({
   issueTreeFilter,
   errors,
   selectedViewTab,
-  treeHasOnlyOrphans,
+  isOrphansBranchPresent,
 }: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
@@ -86,9 +86,9 @@ export const Main = ({
   };
   const tracebilityReportUtils = new TracebilityReportUtils(api);
   useEffect(() => {
-    if (jqlString !== null) {
+    if (selectedJqlString !== null) {
       void tracebilityReportUtils.populateIssues(
-        jqlString,
+        selectedJqlString,
         issueFields,
         START_INDEX,
         DEFAULT_ROWS_PER_PAGE,
@@ -100,7 +100,7 @@ export const Main = ({
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jqlString]);
+  }, [selectedJqlString]);
 
   useEffect(() => {
     if (selectedOptionId !== 0) {
@@ -111,7 +111,7 @@ export const Main = ({
   const fetchMoreIssues = (): void => {
     const selectedLimit = selectedOptionId ?? DEFAULT_ROWS_PER_PAGE;
     void tracebilityReportUtils.populateIssues(
-      jqlString,
+      selectedJqlString,
       issueFields,
       filteredIssues.length,
       selectedLimit,
@@ -130,7 +130,7 @@ export const Main = ({
         <Spinner size="medium" />
       </FullHeightContainer>
     );
-  } else if (jqlString !== null && filteredIssues != null) {
+  } else if (selectedJqlString !== null && filteredIssues != null) {
     if (filteredIssues.length === 0) {
       return (
         <FullHeightContainer>
@@ -143,6 +143,7 @@ export const Main = ({
         <TableContainer>
           {isTreeReport ? (
             <TreeReport
+              selectedJqlString={selectedJqlString}
               filteredIssues={filteredIssues}
               selectedIssueFieldIds={selectedIssueFieldIds}
               tableFields={tableFields}
@@ -153,7 +154,7 @@ export const Main = ({
               handleError={handleNewError}
               clearAllErrors={clearAllErrors}
               issueTreeFilter={issueTreeFilter}
-              treeHasOnlyOrphans={treeHasOnlyOrphans}
+              isOrphansBranchPresent={isOrphansBranchPresent}
             />
           ) : (
             <Report
