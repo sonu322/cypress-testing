@@ -153,9 +153,9 @@ export const IssueTreeMultiNode = ({
     ) {
       void initOrphans();
     }
-
+    // TODO: fix duplicate keys error . make sure this is not called the first time
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOrphansBranchPresent]);
+  }, [isOrphansBranchPresent, filteredIssues, tree]);
   return (
     <IssueTree
       tree={tree}
