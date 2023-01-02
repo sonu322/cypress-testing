@@ -77,6 +77,7 @@ export const IssueTreeMultiNode = ({
     const rootNode = tree.items[treeUtils.ROOT_ID];
     const orphansTreeBranchId = `/${orphansTreeBranchName}`;
     if (isOrphansBranchPresent) {
+      console.log(tree.items[orphansTreeBranchId]);
       if (tree.items[orphansTreeBranchId] !== undefined) {
         setTree((tree) => {
           const newTree = treeUtils.addOrphansBranch(tree);
@@ -86,15 +87,15 @@ export const IssueTreeMultiNode = ({
       } else {
         setTree(async (tree) => {
           const newPreviousTree = treeUtils.cloneTree(tree);
-          const newTree = await treeUtils.initOrphanBranch(
-            newPreviousTree,
-            selectedJqlString,
-            issueFields,
-            handleError,
-            filteredIssues
-          );
-          console.log("NEW TREEEEEEE!!!! from async add", newTree);
-          return newTree;
+          // const newTree = await treeUtils.initOrphanBranch(
+          //   newPreviousTree,
+          //   selectedJqlString,
+          //   issueFields,
+          //   handleError,
+          //   filteredIssues
+          // );
+          // console.log("NEW TREEEEEEE!!!! from async add", newTree);
+          return newPreviousTree;
         });
       }
     } else {
