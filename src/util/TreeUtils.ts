@@ -257,26 +257,27 @@ export default class TreeUtils {
     return newTree;
   }
 
-  async initOrphanBranch(
+  initOrphanBranch(
+    issues: Issue[],
     tree: AtlasTree,
     selectedJqlString: string, // TODO: add show/hiding of children based on tree filter
     fields: IssueField[],
-    handleError,
+    handleError: (err: unknown) => void,
     filteredIssues: IssueWithSortedLinks[]
   ): AtlasTree {
     try {
       let newTree = this.cloneTree(tree);
-      const searchResult = await this.api.searchOrphanIssues(
-        selectedJqlString,
-        fields
-      );
+      // const searchResult = await this.api.searchOrphanIssues(
+      //   selectedJqlString,
+      //   fields
+      // );
       const orphanTypeNode = this.createTypeNode(
         newTree,
         "",
         orphansTreeBranchName
       );
       console.log("orphanTypeNode", orphanTypeNode);
-      const issues = searchResult.data;
+      // const issues = searchResult.data;
       console.log(newTree.items);
       issues.forEach((issueWithLinks) => {
         const node = this.createTreeNode(
@@ -294,7 +295,6 @@ export default class TreeUtils {
       console.log("ACTUAL PRESENT CHILDRNE", newChildren);
       newChildren.unshift(orphanTypeNode.id);
       console.log("new children", newChildren);
-      // newTree.items[this.ROOT_ID].children.unshift(orphanTypeNode.id);
       newTree = mutateTree(newTree, this.ROOT_ID, { children: newChildren });
       console.log("from init orphan", newTree);
       return newTree;

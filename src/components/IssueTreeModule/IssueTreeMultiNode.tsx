@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useContext, useEffect, useMemo } from "react";
 import { mutateTree } from "@atlaskit/tree";
 import TreeUtils from "../../util/TreeUtils";
 import {
@@ -10,6 +10,7 @@ import {
 import { AtlasTree } from "../../types/app";
 import { IssueTree } from "./IssueTree";
 import { orphansTreeBranchName } from "../../constants/traceabilityReport";
+import { APIContext } from "../../context/api";
 
 export interface Props {
   tree: AtlasTree;
@@ -40,6 +41,7 @@ export const IssueTreeMultiNode = ({
   isOrphansBranchPresent,
   selectedJqlString,
 }: Props): JSX.Element => {
+  const api = useContext(APIContext);
   const fieldMap = {};
   issueFields.forEach((field) => {
     fieldMap[field.id] = field;
@@ -55,7 +57,14 @@ export const IssueTreeMultiNode = ({
         filteredIssues
       );
       if (isOrphansBranchPresent) {
-        newTree = await treeUtils.initOrphanBranch(
+        const searchResult = await api.searchOrphanIssues(
+          selectedJqlString,
+          issueFields,
+          0,
+          20
+        );
+        newTree = treeUtils.initOrphanBranch(
+          searchResult.data,
           newTree,
           selectedJqlString,
           issueFields,
@@ -78,24 +87,24 @@ export const IssueTreeMultiNode = ({
     const orphansTreeBranchId = `/${orphansTreeBranchName}`;
     if (isOrphansBranchPresent) {
       console.log(tree.items[orphansTreeBranchId]);
-      if (tree.items[orphansTreeBranchId] !== undefined) {
+      if (tree.items[orphansTreeBranchId] === undefined) {
+        // setTree((prevTree) => {
+        //   console.log("PREVIOUS TREE", prevTree);
+        //   const newTree = treeUtils.initOrphanBranch(
+        //     prevTree,
+        //     selectedJqlString,
+        //     issueFields,
+        //     handleError,
+        //     filteredIssues
+        //   );
+        //   console.log("ne")
+        //   return newTree;
+        // });
+      } else {
         setTree((tree) => {
           const newTree = treeUtils.addOrphansBranch(tree);
           console.log("NEW TREEEEEEE!!!!", newTree);
           return newTree;
-        });
-      } else {
-        setTree(async (tree) => {
-          const newPreviousTree = treeUtils.cloneTree(tree);
-          // const newTree = await treeUtils.initOrphanBranch(
-          //   newPreviousTree,
-          //   selectedJqlString,
-          //   issueFields,
-          //   handleError,
-          //   filteredIssues
-          // );
-          // console.log("NEW TREEEEEEE!!!! from async add", newTree);
-          return newPreviousTree;
         });
       }
     } else {
@@ -107,6 +116,45 @@ export const IssueTreeMultiNode = ({
         });
       }
     }
+  }, [isOrphansBranchPresent]);
+
+  useEffect(() => {
+    const orphansTreeBranchId = `/${orphansTreeBranchName}`;
+    console.log("called use effect is oprhans ");
+    const initOrphans = async (): Promise<void> => {
+      const searchResult = await api.searchOrphanIssues(
+        selectedJqlString,
+        issueFields,
+        0,
+        20
+      );
+
+      try {
+        setTree((tree) => {
+          const newTree = treeUtils.initOrphanBranch(
+            searchResult.data,
+            tree,
+            selectedJqlString,
+            issueFields,
+            handleError,
+            filteredIssues
+          );
+          return newTree;
+        });
+      } catch (e) {
+        handleError(e);
+        console.log(e);
+      }
+    };
+
+    if (
+      tree.items[orphansTreeBranchId] === undefined &&
+      isOrphansBranchPresent
+    ) {
+      void initOrphans();
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOrphansBranchPresent]);
   return (
     <IssueTree
