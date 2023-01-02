@@ -236,7 +236,7 @@ export default class TreeUtils {
     let newTree = this.cloneTree(tree);
     const rootNode = tree.items[this.ROOT_ID];
     const orphansTreeBranchId = `/${orphansTreeBranchName}`;
-    if (!rootNode.children.includes(orphansTreeBranchId)) {
+    if (rootNode.children.includes(orphansTreeBranchId)) {
       const newChildren = rootNode.children.filter(
         (child) => child !== orphansTreeBranchId
       );
@@ -277,11 +277,6 @@ export default class TreeUtils {
       );
       console.log("orphanTypeNode", orphanTypeNode);
       const issues = searchResult.data;
-      // newTree = mutateTree(newTree, orphanTypeNode.id, {
-      //   data: {
-      //     issues,
-      //   },
-      // });
       console.log(newTree.items);
       issues.forEach((issueWithLinks) => {
         const node = this.createTreeNode(
