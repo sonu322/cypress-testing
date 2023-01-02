@@ -43,6 +43,7 @@ export const IssueTreeMultiNode = ({
   });
 
   useEffect(() => {
+    console.log("called use effect");
     const initTree = async (): Promise<void> => {
       const newTree = await treeUtils.initMultiNodeTree(
         filter,
@@ -55,8 +56,7 @@ export const IssueTreeMultiNode = ({
     void initTree();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
+  }, [filteredIssues]);
   return (
     <IssueTree
       tree={tree}
