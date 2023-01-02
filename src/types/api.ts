@@ -143,7 +143,12 @@ export default interface LXPAPI {
     start?: number,
     max?: number
   ) => Promise<{ data: IssueWithSortedLinks[]; total: number }>;
-
+  searchOrphanIssues: (
+    jql: string,
+    fields: IssueField[],
+    start?: number,
+    max?: number
+  ) => Promise<{ data: Issue[]; total: number }>;
   getFilters: () => Promise<Filter[]>;
 
   getCurrentProject: (projectKey?: string) => Promise<Project>;

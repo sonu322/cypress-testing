@@ -89,7 +89,9 @@ export const IssueCard = ({
           )}
         </FooterSideContainer>
         <FooterSideContainer>
-          {selectedMap["fixVersions"] && <FixVersion versionInfo={versionInfo} />} 
+          {selectedMap["fixVersions"] && versionInfo && (
+            <FixVersion versionInfo={versionInfo} />
+          )}
           {selectedMap["status"] && <StatusText statusInfo={statusInfo} />}
           <IssueKey
             isResolved={issueData.isResolved}

@@ -30,3 +30,5 @@ export const viewTabs = {
     },
   ],
 };
+
+export const orphansTreeBranchName = "Orphan Issues";

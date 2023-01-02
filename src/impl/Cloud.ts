@@ -675,6 +675,58 @@ export default class APIImpl implements LXPAPI {
     return { data: populatedIssues, total: searchResult.total };
   }
 
+  async searchOrphanIssues(
+    jql: string,
+    fields: IssueField[],
+    start?: number,
+    max?: number
+  ): Promise<{ data: IssueWithLinkedIssues[]; total: number }> {
+    const isOrderingJqlRegex = /order*/;
+    const isOrderingJql = isOrderingJqlRegex.test(jql);
+    const jqlPrefix = isOrderingJql ? "" : "and";
+    const onlyOrphansJql = `issueLinkType is EMPTY and parent is EMPTY and "Epic Link" is EMPTY ${jqlPrefix} ${jql}`;
+    // TODO: add empty epics
+    // if epic, write serch to find childrne, if it is empty, then include it
+    // TODO: if more than 100 issues, add handling
+    const searchResult = await this.searchIssues(
+      onlyOrphansJql,
+      fields,
+      start,
+      max
+    );
+    const issues: Issue[] = searchResult.data;
+    console.log("from serachorphan issues");
+    console.log(issues);
+    const issueWithLinkedIssues: IssueWithLinkedIssues[] = issues.map(
+      (issue) => ({ ...issue, linkedIssues: [] })
+    );
+    // const linkedIssuesJQL = this._getLinkedIssueJQL(issues);
+    // let linkedIssues = [];
+    // if (linkedIssuesJQL !== undefined && linkedIssuesJQL.length > 0) {
+    //   const linkedIssuesResult = await this.searchIssues(
+    //     linkedIssuesJQL,
+    //     fields,
+    //     0
+    //   );
+    //   linkedIssues = linkedIssuesResult.data;
+    //   const totalLinkedIssues = linkedIssuesResult.total;
+    //   // danger - while loop may lead to infinite looping
+    //   while (linkedIssues.length < totalLinkedIssues) {
+    //     const moreLinkedIssuesData = await this.searchIssues(
+    //       linkedIssuesJQL,
+    //       fields,
+    //       linkedIssues.length,
+    //       totalLinkedIssues
+    //     );
+    //     linkedIssues = linkedIssues.concat(moreLinkedIssuesData.data);
+    //   }
+    //   // danger end
+    // }
+
+    // const populatedIssues = this._populateIssueLinks(issues, linkedIssues);
+    return { data: issueWithLinkedIssues, total: searchResult.total };
+  }
+
   private _convertFilter(filter: JiraFilter): Filter {
     return {
       ...filter,
