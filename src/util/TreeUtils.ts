@@ -181,23 +181,39 @@ export default class TreeUtils {
     }
   }
 
-  async initMultiNodeTree(
+  initMultiNodeTree(
     filter: IssueTreeFilter, // TODO: add show/hiding of children based on tree filter
     fields: IssueField[],
     handleError,
     filteredIssues: IssueWithSortedLinks[]
-  ): Promise<AtlasTree> {
+  ): AtlasTree {
     try {
       const prevTree = this.getRootTree();
       const tree = this.cloneTree(prevTree);
-      const allPromises = filteredIssues.map(async (issue) => {
-        return await this.api.getIssueWithLinks(fields, issue.id); // TODO: convert IssueWithSortedLinks into IssueWithLinkedIssues
-        // by transforming issue object instead of making an api call
-      };);
+      // const allPromises = filteredIssues.map(async (issue) => {
+      //   return await this.api.getIssueWithLinks(fields, issue.id); // TODO: convert IssueWithSortedLinks into IssueWithLinkedIssues
+      //   // by transforming issue object instead of making an api call
+      // });
 
-      const result = await Promise.all(allPromises);
+      const filteredIssuesWithLinks: IssueWithLinkedIssues[] =
+        filteredIssues.map((filteredIssue) => {
+          let linkedIssues = [];
+          Object.values(filteredIssue.sortedLinks).forEach((issuesOfType) => {
+            linkedIssues = linkedIssues.concat(issuesOfType);
+          });
+
+          const issueWithLinkedIssues = {
+            ...filteredIssue,
+            linkedIssues,
+          };
+          delete issueWithLinkedIssues.sortedLinks;
+          return issueWithLinkedIssues;
+        });
+
+      // filteredIssuesWithLinks = await Promise.all(allPromises);
+
       tree.items[this.ROOT_ID].children = [];
-      result.forEach((issueWithLinks) => {
+      filteredIssuesWithLinks.forEach((issueWithLinks) => {
         const node = this.createTreeNode(
           tree,
           "",
@@ -209,6 +225,7 @@ export default class TreeUtils {
         const nodeId = node.id;
         tree.items[this.ROOT_ID].children.push(nodeId);
       });
+
       return tree;
     } catch (err) {
       console.error(err);
