@@ -45,7 +45,7 @@ export const IssueTreeMultiNode = ({
   useEffect(() => {
     console.log("called use effect");
     const initTree = async (): Promise<void> => {
-      const newTree = await treeUtils.initMultiNodeTree(
+      const newTree = treeUtils.initMultiNodeTree(
         filter,
         issueFields,
         handleError,
