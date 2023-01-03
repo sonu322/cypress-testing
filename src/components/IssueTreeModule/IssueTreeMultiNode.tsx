@@ -48,7 +48,6 @@ export const IssueTreeMultiNode = ({
   });
 
   useEffect(() => {
-    console.log("called use effect");
     const initTree = async (): Promise<void> => {
       let newTree = treeUtils.initMultiNodeTree(
         filter,
@@ -56,22 +55,22 @@ export const IssueTreeMultiNode = ({
         handleError,
         filteredIssues
       );
-      if (isOrphansBranchPresent) {
-        const searchResult = await api.searchOrphanIssues(
-          selectedJqlString,
-          issueFields,
-          0,
-          20
-        );
-        newTree = treeUtils.initOrphanBranch(
-          searchResult.data,
-          newTree,
-          selectedJqlString,
-          issueFields,
-          handleError,
-          filteredIssues
-        );
-      }
+      // if (isOrphansBranchPresent) {
+      //   const searchResult = await api.searchOrphanIssues(
+      //     selectedJqlString,
+      //     issueFields,
+      //     0,
+      //     20
+      //   );
+      //   newTree = treeUtils.initOrphanBranch(
+      //     searchResult.data,
+      //     newTree,
+      //     selectedJqlString,
+      //     issueFields,
+      //     handleError,
+      //     filteredIssues
+      //   );
+      // }
       console.log("newest new tree");
       console.log(newTree);
       setTree(newTree);
@@ -86,24 +85,10 @@ export const IssueTreeMultiNode = ({
     const rootNode = tree.items[treeUtils.ROOT_ID];
     const orphansTreeBranchId = `/${orphansTreeBranchName}`;
     if (isOrphansBranchPresent) {
-      console.log(tree.items[orphansTreeBranchId]);
-      if (tree.items[orphansTreeBranchId] === undefined) {
-        // setTree((prevTree) => {
-        //   console.log("PREVIOUS TREE", prevTree);
-        //   const newTree = treeUtils.initOrphanBranch(
-        //     prevTree,
-        //     selectedJqlString,
-        //     issueFields,
-        //     handleError,
-        //     filteredIssues
-        //   );
-        //   console.log("ne")
-        //   return newTree;
-        // });
-      } else {
+      if (tree.items[orphansTreeBranchId] !== undefined) {
         setTree((tree) => {
           const newTree = treeUtils.addOrphansBranch(tree);
-          console.log("NEW TREEEEEEE!!!!", newTree);
+          console.log("NEW TREEEEEEE from sync add!!!!", newTree);
           return newTree;
         });
       }
@@ -151,11 +136,12 @@ export const IssueTreeMultiNode = ({
       tree.items[orphansTreeBranchId] === undefined &&
       isOrphansBranchPresent
     ) {
+      console.log("seperate conditon called");
       void initOrphans();
     }
     // TODO: fix duplicate keys error . make sure this is not called the first time
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOrphansBranchPresent, filteredIssues, tree]);
+  }, [isOrphansBranchPresent, filteredIssues]);
   return (
     <IssueTree
       tree={tree}
