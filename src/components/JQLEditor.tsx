@@ -8,11 +8,13 @@ const _AP: any = typeof AP !== "undefined" ? AP : null;
 interface Props {
   selectedFilterId: string;
   setSelectedFilterId: React.Dispatch<React.SetStateAction<string>>;
+  showCustomJQLEditor?: () => void;
 }
 
 export const JQLEditor = ({
   selectedFilterId,
   setSelectedFilterId,
+  showCustomJQLEditor
 }: Props): JSX.Element => {
   const { t } = useTranslation();
   const options = { ...jqlDialogOptions };
@@ -23,7 +25,9 @@ export const JQLEditor = ({
     setSelectedFilterId(jql);
   };
   const openJQLEditor = (): void => {
-    if (_AP !== null) {
+    if (showCustomJQLEditor) {
+      showCustomJQLEditor(options, callback);
+    } else if (_AP !== null) {
       _AP.jira.showJQLEditor(options, callback);
     }
   };

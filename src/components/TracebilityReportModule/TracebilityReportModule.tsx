@@ -31,7 +31,11 @@ const GrowContainer = styled.div`
   display: flex;
 `;
 
-export const TracebilityReportModule = (): JSX.Element => {
+interface Props {
+  showCustomJQLEditor?: any
+}
+
+export const TracebilityReportModule = ({ showCustomJQLEditor }: Props): JSX.Element => {
   const { t } = useTranslation();
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
   const [filteredIssues, setFilteredIssues] = useState<
@@ -161,6 +165,7 @@ export const TracebilityReportModule = (): JSX.Element => {
             selectedTableFieldIds={selectedTableFieldIds}
             updateSelectedTableFieldIds={updateSelectedTableFieldIds}
             tableFields={tableFields}
+            showCustomJQLEditor={showCustomJQLEditor}
             exportReport={() =>
               exportReport(
                 tableFields,

@@ -10,6 +10,8 @@ import {
   JiraProject,
   HelpLinks,
   JiraMyself,
+  JiraAutoCompleteResult,
+  JiraAutoCompleteSuggestionsResult,
 } from "../../types/jira";
 
 export default class JiraServerImpl implements JiraAPI {
@@ -132,5 +134,13 @@ export default class JiraServerImpl implements JiraAPI {
 
   async getMyself(): Promise<JiraMyself> {
     return await this._AJS.$.getJSON(this.contextPath + "/rest/api/2/myself");
+  }
+
+  async getAutoCompleteData(): Promise<JiraAutoCompleteResult> {
+    return await this._AJS.$.getJSON(this.contextPath + "/rest/api/2/jql/autocompletedata");
+  }
+
+  async getAutoCompleteSuggestions(query: string): Promise<JiraAutoCompleteSuggestionsResult> {
+    return await this._AJS.$.getJSON("/rest/api/2/jql/autocompletedata/suggestions?" + query);
   }
 }

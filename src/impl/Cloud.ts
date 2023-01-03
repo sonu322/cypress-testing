@@ -36,6 +36,8 @@ import {
   JiraVersion,
   JiraAPI,
   HelpLinks,
+  JiraAutoCompleteResult,
+  JiraAutoCompleteSuggestionsResult,
 } from "../types/jira";
 
 function throwError(msg: string) {
@@ -801,5 +803,13 @@ export default class APIImpl implements LXPAPI {
 
   getHelpLinks(): HelpLinks {
     return this.api.getHelpLinks();
+  }
+
+  async getAutoCompleteData(): Promise<JiraAutoCompleteResult> {
+    return await this.api.getAutoCompleteData();
+  }
+
+  async getAutoCompleteSuggestions(query: string): Promise<JiraAutoCompleteSuggestionsResult> {
+    return await this.api.getAutoCompleteSuggestions(query);
   }
 }
