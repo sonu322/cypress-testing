@@ -123,12 +123,13 @@ export default class TreeUtils {
     data: IssueWithLinkedIssues | Issue | LinkTypeTreeNode,
     parentIssueId: ID,
     isExpanded = false,
-    hasChildrenLoaded = false
+    hasChildrenLoaded = false,
+    hasChildren = true
   ) {
     const node: AtlasTreeNode = {
       id: prefix + "/" + data.id,
       children: [],
-      hasChildren: true,
+      hasChildren,
       hasChildrenLoaded,
       isExpanded,
       isChildrenLoading: false,
@@ -281,6 +282,7 @@ export default class TreeUtils {
           orphanTypeNode.id,
           issueWithLinks,
           null,
+          false,
           false,
           false
         );
