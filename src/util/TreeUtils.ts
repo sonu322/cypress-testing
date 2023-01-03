@@ -267,10 +267,6 @@ export default class TreeUtils {
   ): AtlasTree {
     try {
       let newTree = this.cloneTree(tree);
-      // const searchResult = await this.api.searchOrphanIssues(
-      //   selectedJqlString,
-      //   fields
-      // );
       const orphanTypeNode = this.createTypeNode(
         newTree,
         "",
@@ -291,6 +287,9 @@ export default class TreeUtils {
         const nodeId = node.id;
         newTree.items[orphanTypeNode.id].children.push(nodeId);
       });
+      const nonOrphanns = issues.filter((issue) => issue.links.length > 0);
+      console.log("NON ORPHAN ISSUESSSSSSSSS");
+      console.log(nonOrphanns);
       const newChildren = newTree.items[this.ROOT_ID].children;
       console.log("ACTUAL PRESENT CHILDRNE", newChildren);
       newChildren.unshift(orphanTypeNode.id);

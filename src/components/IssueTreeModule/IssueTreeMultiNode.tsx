@@ -55,24 +55,6 @@ export const IssueTreeMultiNode = ({
         handleError,
         filteredIssues
       );
-      // if (isOrphansBranchPresent) {
-      //   const searchResult = await api.searchOrphanIssues(
-      //     selectedJqlString,
-      //     issueFields,
-      //     0,
-      //     20
-      //   );
-      //   newTree = treeUtils.initOrphanBranch(
-      //     searchResult.data,
-      //     newTree,
-      //     selectedJqlString,
-      //     issueFields,
-      //     handleError,
-      //     filteredIssues
-      //   );
-      // }
-      console.log("newest new tree");
-      console.log(newTree);
       setTree(newTree);
     };
 
@@ -88,7 +70,6 @@ export const IssueTreeMultiNode = ({
       if (tree.items[orphansTreeBranchId] !== undefined) {
         setTree((tree) => {
           const newTree = treeUtils.addOrphansBranch(tree);
-          console.log("NEW TREEEEEEE from sync add!!!!", newTree);
           return newTree;
         });
       }
@@ -96,7 +77,6 @@ export const IssueTreeMultiNode = ({
       if (rootNode.children.includes(orphansTreeBranchId)) {
         setTree((tree) => {
           const newTree = treeUtils.removeOrphansBranch(tree);
-          console.log("NEW TREEEEEEE!!!! from remove", newTree);
           return newTree;
         });
       }
@@ -105,7 +85,6 @@ export const IssueTreeMultiNode = ({
 
   useEffect(() => {
     const orphansTreeBranchId = `/${orphansTreeBranchName}`;
-    console.log("called use effect is oprhans ");
     const initOrphans = async (): Promise<void> => {
       const searchResult = await api.searchOrphanIssues(
         selectedJqlString,
@@ -136,10 +115,8 @@ export const IssueTreeMultiNode = ({
       tree.items[orphansTreeBranchId] === undefined &&
       isOrphansBranchPresent
     ) {
-      console.log("seperate conditon called");
       void initOrphans();
     }
-    // TODO: fix duplicate keys error . make sure this is not called the first time
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOrphansBranchPresent, filteredIssues]);
   return (
