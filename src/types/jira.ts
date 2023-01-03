@@ -237,8 +237,41 @@ export interface HelpLinks {
   traceability: string;
 }
 
+export interface JiraAutoCompleteResult {
+  visibleFieldNames: VisibleFieldName[];
+  visibleFunctionNames: VisibleFunctionName[];
+  jqlReservedWords: string[];
+}
+
+interface VisibleFunctionName {
+  value: string;
+  displayName: string;
+  isList: string;
+  types: string[];
+}
+
+interface VisibleFieldName {
+  value: string;
+  displayName: string;
+  orderable: string;
+  searchable: string;
+  operators: string[];
+  types: string[];
+  auto?: string;
+  cfid?: string;
+}
+
+export interface JiraAutoCompleteSuggestionsResult {
+  results: SuggestionResult[];
+}
+
+interface SuggestionResult {
+  value: string;
+  displayName: string;
+}
+
 export interface JiraAPI {
-  
+
   isJiraCloud(): boolean;
 
   hasValidLicense(): boolean;
@@ -273,4 +306,8 @@ export interface JiraAPI {
   getCurrentProjectKey(): Promise<string>;
 
   getHelpLinks(): HelpLinks;
+
+  getAutoCompleteData(): Promise<JiraAutoCompleteResult>;
+
+  getAutoCompleteSuggestions(query: string): Promise<JiraAutoCompleteSuggestionsResult>;
 }

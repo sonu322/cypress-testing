@@ -4,7 +4,11 @@ import LicenseContainer from "./components/common/LicenseContainer";
 import { TracebilityReportModule } from "./components/TracebilityReportModule/TracebilityReportModule";
 import { APIContext } from "./context/api";
 
-const TracebilityReport = () => {
+interface Props {
+  showCustomJQLEditor?: any
+}
+
+const TracebilityReport = ({ showCustomJQLEditor }: Props): JSX.Element => {
   const { i18n } = useTranslation();
   const api = useContext(APIContext);
   useEffect(() => {
@@ -19,7 +23,9 @@ const TracebilityReport = () => {
     }
   }, [api, i18n]);
   if (api.hasValidLicense()) {
-    return <TracebilityReportModule></TracebilityReportModule>;
+    return <TracebilityReportModule
+      showCustomJQLEditor={showCustomJQLEditor}
+    ></TracebilityReportModule>;
   }
   return <LicenseContainer></LicenseContainer>;
 };

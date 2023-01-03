@@ -1,4 +1,4 @@
-import { HelpLinks } from "./jira";
+import { HelpLinks, JiraAutoCompleteResult, JiraAutoCompleteSuggestionsResult } from "./jira";
 export type ID = string;
 
 export interface IssueOption {
@@ -167,4 +167,8 @@ export default interface LXPAPI {
   getCurrentProject: (projectKey?: string) => Promise<Project>;
 
   getHelpLinks: () => HelpLinks;
+
+  getAutoCompleteData: () => Promise<JiraAutoCompleteResult>;
+
+  getAutoCompleteSuggestions: (query: string) => Promise<JiraAutoCompleteSuggestionsResult>;
 };

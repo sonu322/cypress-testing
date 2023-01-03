@@ -44,6 +44,7 @@ interface Props {
   viewTabsId: string;
   handleTabOptionSelect: (tabIndex: SelectedType) => void;
   selectedTabIndex: SelectedType;
+  showCustomJQLEditor: any;
 }
 
 export const Toolbar = ({
@@ -62,6 +63,7 @@ export const Toolbar = ({
   viewTabsId,
   handleTabOptionSelect,
   selectedTabIndex,
+  showCustomJQLEditor
 }: Props): JSX.Element => {
   const { t } = useTranslation();
   const api = useContext(APIContext);
@@ -85,6 +87,7 @@ export const Toolbar = ({
           <JQLEditor
             selectedFilterId={selectedJQLString}
             setSelectedFilterId={setSelectedJQLString}
+            showCustomJQLEditor={showCustomJQLEditor}
           />
         </FlexContainer>
 

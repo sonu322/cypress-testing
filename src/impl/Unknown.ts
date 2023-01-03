@@ -9,7 +9,7 @@ import LXPAPI, {
   IssueWithSortedLinks,
   Project,
 } from "../types/api";
-import { HelpLinks } from "../types/jira";
+import { HelpLinks, JiraAutoCompleteResult, JiraAutoCompleteSuggestionsResult } from "../types/jira";
 
 export default class UnknownImpl implements LXPAPI {
   hasValidLicense(): boolean {
@@ -82,6 +82,14 @@ export default class UnknownImpl implements LXPAPI {
   }
 
   getHelpLinks(): HelpLinks {
+    throw new Error("Method not implemented.");
+  }
+
+  async getAutoCompleteData(): Promise<JiraAutoCompleteResult> {
+    throw new Error("Method not implemented.");
+  }
+
+  async getAutoCompleteSuggestions(query: string): Promise<JiraAutoCompleteSuggestionsResult> {
     throw new Error("Method not implemented.");
   }
 }

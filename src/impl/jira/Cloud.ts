@@ -11,6 +11,7 @@ import {
   JiraMyself,
   JiraProject,
   HelpLinks,
+  JiraAutoCompleteResult,
 } from "../../types/jira";
 
 import { getQueryParam } from "../../util/index";
@@ -127,5 +128,15 @@ export default class JiraCloudImpl implements JiraAPI {
       issueTree: "https://optimizory.atlassian.net/l/cp/xj7rXies",
       traceability: "https://optimizory.atlassian.net/l/cp/77caidqE"
     };
+  }
+
+  async getAutoCompleteData(): Promise<JiraAutoCompleteResult> {
+    const response = await this._AP.request("/rest/api/3/jql/autocompletedata");
+    return response.body && JSON.parse(response.body);
+  }
+
+  async getAutoCompleteSuggestions(query: string): Promise<JiraAutoCompleteSuggestionsResult> {
+    const response = await this._AP.request("/rest/api/3/jql/autocompletedata/suggestions?" + query);
+    return response.body && JSON.parse(response.body);
   }
 }
