@@ -67,6 +67,10 @@ export const TracebilityReportModule = ({ showCustomJQLEditor }: Props): JSX.Ele
       name: t("traceability-report.linktype-view.name"),
       description: t("traceability-report.linktype-view.description"),
     },
+    {
+      name: t("traceability-report.tree-view.name"),
+      description: t("traceability-report.tree-view.description"),
+    },
   ];
   const handleTabOptionSelect = (tabIndex: SelectedType): void => {
     setSelectedTabIndex(tabIndex);

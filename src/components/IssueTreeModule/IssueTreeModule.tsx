@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Toolbar } from "./Toolbar";
-import { IssueTree } from "./IssueTree";
+import { IssueTreeSingleNode } from "./IssueTreeSingleNode";
 import { ErrorsList } from "../common/ErrorsList";
 import TreeUtils from "../../util/TreeUtils";
 import { APIContext } from "../../context/api";
 import { IssueField, IssueTreeFilter } from "../../types/api";
 import { useTranslation } from "react-i18next";
 export const IssueTreeModule = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
 
@@ -103,7 +103,7 @@ export const IssueTreeModule = () => {
         isExpandAllLoading={isExpandAllLoading}
         expandAll={() => treeUtils.expandAll(filter, issueFields, setTree, handleNewError, clearAllErrors, setIsExpandAllLoading)}
       />
-      <IssueTree
+      <IssueTreeSingleNode
         tree={tree}
         treeUtils={treeUtils}
         setTree={setTree}
