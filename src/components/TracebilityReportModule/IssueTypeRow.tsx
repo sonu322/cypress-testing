@@ -1,5 +1,5 @@
 import { colors } from "@atlaskit/theme";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
   Issue,
@@ -7,11 +7,10 @@ import {
   IssueType,
   IssueWithSortedLinks,
 } from "../../types/api";
-import Button from "@atlaskit/button";
 import { getUniqueValues } from "../../util/common";
 import { IssueCard } from "../common/issueCard/IssueCard";
 import { EmptyCell } from "./EmptyCell";
-
+import { IssueCell } from "./IssueCell";
 export const Td = styled.td`
   border: 1px solid ${colors.N40};
   padding: 8px !important;
@@ -44,7 +43,6 @@ export const IssueTypeRow = ({
   selectedTableFieldIds,
   selectedIssueInCellIds,
 }: Props): JSX.Element[] => {
-  const [areAllIssuesVisible, setAreAllIssuesVisible] = useState(false);
   const cells = [];
   // push issue cell into row
   const issueCell = (
@@ -58,7 +56,6 @@ export const IssueTypeRow = ({
 
   cells.push(snoCell);
   cells.push(issueCell);
-
   // push links cells into row
   selectedTableFieldIds.forEach((typeId) => {
     // render -- by default
@@ -87,36 +84,16 @@ export const IssueTypeRow = ({
         );
         issueCards.push(issueCard);
       });
-      let issueCardsToShow = [];
-      if (issueCards.length > 3) {
-        if (!areAllIssuesVisible) {
-          issueCardsToShow = issueCards.slice(0, 3);
-        } else {
-          issueCardsToShow = issueCards;
-        }
-      } else {
-        issueCardsToShow = issueCards;
-      }
-      const handleClick = () => {
-        if (issueCards.length > 3) {
-          setAreAllIssuesVisible(!areAllIssuesVisible);
-        }
-      };
-      if (selectedIssueInCellIds[0] == "Display All issue cards") {
-        issueCardsToShow = issueCards;
-      }
       issueCell = (
         <Td key={typeId}>
-          <MaxWidthContainer>{issueCardsToShow}</MaxWidthContainer>
-
-          {issueCardsToShow.length <= 3 && (
-            <Button onClick={handleClick} style={{ cursor: "pointer" }}>
-              More
-            </Button>
-          )}
+          <IssueCell
+            selectedIssueInCellIds={selectedIssueInCellIds}
+            issueCards={issueCards}
+          ></IssueCell>
         </Td>
       );
     }
+    //push cell into row
     cells.push(issueCell);
   });
   return cells;

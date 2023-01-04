@@ -75,7 +75,6 @@ export const Report = ({
     resizeHandler();
     return () => window.removeEventListener("resize", resizeHandler);
   }, [errors]);
-
   return (
     <Container style={{ maxHeight: tableHeight }}>
       <Table>
