@@ -1,18 +1,28 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
+import { mutateTree } from "@atlaskit/tree";
 import TreeUtils from "../../util/TreeUtils";
-import { ID, IssueField, IssueTreeFilter } from "../../types/api";
+import {
+  ID,
+  IssueField,
+  IssueTreeFilter,
+  IssueWithSortedLinks,
+} from "../../types/api";
 import { AtlasTree } from "../../types/app";
 import { IssueTree } from "./IssueTree";
 
 export interface Props {
   tree: AtlasTree;
   treeUtils: TreeUtils;
-  setTree: any;
+  setTree: (
+    tree: AtlasTree
+  ) => void | ((setterFunction: (tree: AtlasTree) => AtlasTree) => void);
   filter: IssueTreeFilter;
   issueFields: IssueField[];
   selectedIssueFieldIds: ID[];
   handleError: any;
   clearAllErrors: () => void;
+  filteredIssues: IssueWithSortedLinks[];
+  treeHasOnlyOrphans: boolean;
 }
 
 export const IssueTreeMultiNode = ({
@@ -23,7 +33,9 @@ export const IssueTreeMultiNode = ({
   issueFields,
   selectedIssueFieldIds,
   handleError,
+  filteredIssues,
   clearAllErrors,
+  treeHasOnlyOrphans,
 }: Props): JSX.Element => {
   const fieldMap = {};
   issueFields.forEach((field) => {
@@ -31,12 +43,17 @@ export const IssueTreeMultiNode = ({
   });
 
   useEffect(() => {
-    treeUtils.initTreeHook(
-      filter,
-      treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds),
-      setTree,
-      handleError
-    );
+    const initTree = async (): Promise<void> => {
+      const newTree = await treeUtils.initMultiNodeTree(
+        filter,
+        issueFields,
+        handleError,
+        filteredIssues
+      );
+      setTree(newTree);
+    };
+    void initTree();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -50,6 +67,8 @@ export const IssueTreeMultiNode = ({
       selectedIssueFieldIds={selectedIssueFieldIds}
       handleError={handleError}
       clearAllErrors={clearAllErrors}
+      isMultiNodeTree={true}
+      treeHasOnlyOrphans={treeHasOnlyOrphans}
     />
   );
 };
