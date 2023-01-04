@@ -31,34 +31,16 @@ export const IssueTree = ({
   handleError,
   clearAllErrors,
 }: Props): JSX.Element => {
-  let fieldMap = {};
+  const fieldMap = {};
   issueFields.forEach((field) => {
     fieldMap[field.id] = field;
   });
-
-  const findJiraFields = (selectedFieldIds): IssueField[] => {
-    let result = [];
-    for (let fieldId of selectedFieldIds) {
-      result.push(fieldMap[fieldId] as IssueField);
-    }
-    return result;
-  };
-
-  useEffect(() => {
-    treeUtils.initTreeHook(
-      filter,
-      findJiraFields(selectedIssueFieldIds),
-      setTree,
-      handleError
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     treeUtils.applyFilterHook(
       setTree,
       filter,
-      findJiraFields(selectedIssueFieldIds)
+      treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds)
     );
   }, [filter, selectedIssueFieldIds]);
 
@@ -66,7 +48,7 @@ export const IssueTree = ({
     treeUtils.expandTreeHook(
       itemId,
       filter,
-      findJiraFields(selectedIssueFieldIds),
+      treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds),
       setTree,
       handleError,
       clearAllErrors
