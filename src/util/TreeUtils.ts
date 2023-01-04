@@ -106,11 +106,23 @@ export default class TreeUtils {
     return root;
   }
 
-  createTypeNode(tree, prefix: string, issueType: string) {
+  createTypeNode(
+    tree,
+    prefix: string,
+    issueType: string,
+    hasLoadMoreButton?: boolean,
+    loadMoreHandler?: Function
+  ) {
     return this.createTreeNode(
       tree,
       prefix,
-      { isType: true, id: issueType, title: issueType },
+      {
+        isType: true,
+        hasLoadMoreButton,
+        loadMoreHandler,
+        id: issueType,
+        title: issueType,
+      },
       null,
       true,
       true
@@ -274,8 +286,21 @@ export default class TreeUtils {
         orphansTreeBranchName
       );
       console.log("orphanTypeNode", orphanTypeNode);
+      const loadMoreButtonNode = this.createTreeNode(
+        newTree,
+        `${orphanTypeNode.id}`,
+        {
+          isButton: true,
+        },
+        orphanTypeNode.id,
+        false,
+        false,
+        false
+      );
+
       // const issues = searchResult.data;
       console.log(newTree.items);
+      const orphanNodeIds = [];
       issues.forEach((issueWithLinks) => {
         const node = this.createTreeNode(
           newTree,
@@ -287,8 +312,14 @@ export default class TreeUtils {
           false
         );
         const nodeId = node.id;
-        newTree.items[orphanTypeNode.id].children.push(nodeId);
+        orphanNodeIds.push(nodeId);
+        // newTree.items[orphanTypeNode.id].children.push(nodeId);
       });
+      orphanNodeIds.unshift(loadMoreButtonNode.id);
+      newTree = mutateTree(newTree, orphanTypeNode.id, {
+        children: orphanNodeIds,
+      });
+
       const nonOrphanns = issues.filter((issue) => issue.links.length > 0);
       console.log("NON ORPHAN ISSUESSSSSSSSS");
       console.log(nonOrphanns);
@@ -297,6 +328,7 @@ export default class TreeUtils {
       newChildren.unshift(orphanTypeNode.id);
       console.log("new children", newChildren);
       newTree = mutateTree(newTree, this.ROOT_ID, { children: newChildren });
+
       console.log("from init orphan", newTree);
       return newTree;
     } catch (err) {

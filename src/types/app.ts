@@ -13,6 +13,8 @@ export interface LinkTypeTreeNode {
   id: string;
   isType: boolean;
   title: string;
+  hasLoadMoreButton?: boolean;
+  loadMoreHandler?: Function;
 }
 
 export interface AtlasTreeNode {

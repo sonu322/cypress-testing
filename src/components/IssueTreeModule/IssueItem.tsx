@@ -3,7 +3,7 @@ import styled, { css } from "styled-components";
 import { colors } from "@atlaskit/theme";
 import { IssueCard } from "../common/issueCard/IssueCard";
 import { ExpansionToggler } from "./ExpansionToggler";
-
+import Button from "@atlaskit/button";
 const PADDING_LEVEL = 30;
 const LinkTypeContainer = styled.div`
   display: flex;
@@ -56,10 +56,14 @@ export const IssueItem = ({
         onCollapse={() => onCollapse(item.id)}
         isTogglerDisabled={!item.hasChildren}
       ></ExpansionToggler>
-      {item.data && item.data.isType ? (
-        <LinkTypeContainer>
-          {item.data ? item.data.title : "No Name"}
-        </LinkTypeContainer>
+      {item.data?.isType ? (
+        <>
+          <LinkTypeContainer>
+            {item.data ? item.data.title : "No Name"}
+          </LinkTypeContainer>
+        </>
+      ) : item.data?.isButton ? (
+        <Button>load more issues</Button>
       ) : (
         <IssueCard
           issueData={item.data ?? null}
