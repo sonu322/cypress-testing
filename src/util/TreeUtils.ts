@@ -502,4 +502,12 @@ export default class TreeUtils {
       isChildrenLoading: false,
     });
   }
+
+  findJiraFields(fieldMap, selectedFieldIds: string[]): IssueField[] {
+    const result = [];
+    for (const fieldId of selectedFieldIds) {
+      result.push(fieldMap[fieldId] as IssueField);
+    }
+    return result;
+  };
 }
