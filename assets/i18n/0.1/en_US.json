@@ -32,7 +32,8 @@
   // new
   "traceability-report.tree-view.name": "Tree View",
   "traceability-report.tree-view.description": "View related issues in tree hierarchy format",
-  
+  "traceability-report.tree-view.show-orphan-issues": "Show Orphan Issues",
+  "traceability-report.tree-view.hide-orphan-issues": "Hide Orphan Issues",
   "traceability-report.toolbar.or": "OR",
   "traceability-report.toolbar.filterdropdown.name": "Select filter",
   "traceability-report.toolbar.usejqlbutton.name": "Use JQL Editor",
