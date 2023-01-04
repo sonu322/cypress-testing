@@ -20,7 +20,6 @@ export const LinkTypeRow = ({
   selectedIssueInCellIds,
 }: Props): JSX.Element[] => {
   const cells = [];
-  //const [showCards, setShowCards] = useState([]);
   // push issue cell into row
   const issueCell = (
     <IssueTd key="issue">
