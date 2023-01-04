@@ -291,6 +291,9 @@ export default class TreeUtils {
         `${orphanTypeNode.id}`,
         {
           isButton: true,
+          handleLoadMoreIssues: () => {
+            console.log("called loadmore issues");
+          },
         },
         orphanTypeNode.id,
         false,
@@ -315,7 +318,7 @@ export default class TreeUtils {
         orphanNodeIds.push(nodeId);
         // newTree.items[orphanTypeNode.id].children.push(nodeId);
       });
-      orphanNodeIds.unshift(loadMoreButtonNode.id);
+      orphanNodeIds.push(loadMoreButtonNode.id);
       newTree = mutateTree(newTree, orphanTypeNode.id, {
         children: orphanNodeIds,
       });

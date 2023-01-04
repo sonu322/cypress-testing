@@ -63,7 +63,9 @@ export const IssueItem = ({
           </LinkTypeContainer>
         </>
       ) : item.data?.isButton ? (
-        <Button>load more issues</Button>
+        <Button onClick={item.data.handleLoadMoreIssues}>
+          load more issues
+        </Button>
       ) : (
         <IssueCard
           issueData={item.data ?? null}
