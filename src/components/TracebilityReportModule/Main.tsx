@@ -8,11 +8,13 @@ import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
 import {
   IssueField,
   IssueLinkType,
+  IssueTreeFilter,
   IssueType,
   IssueWithSortedLinks,
 } from "../../types/api";
 import { useTranslation } from "react-i18next";
 import { DropdownSingleSelect } from "../common/DropdownSingleSelect";
+import { TreeReport } from "./TreeReport";
 const Container = styled.div`
   width: 100%;
 `;
@@ -47,8 +49,10 @@ interface Props {
   setFilteredIssues: React.Dispatch<
     React.SetStateAction<IssueWithSortedLinks[]>
   >;
-  isIssueTypeReport: boolean;
   errors: any[];
+  selectedViewTab: string;
+  issueTreeFilter: IssueTreeFilter;
+  treeHasOnlyOrphans: boolean;
 }
 
 export const Main = ({
@@ -64,12 +68,16 @@ export const Main = ({
   areIssuesLoading,
   setAreIssuesLoading,
   setFilteredIssues,
-  isIssueTypeReport,
+  issueTreeFilter,
   errors,
+  selectedViewTab,
+  treeHasOnlyOrphans,
 }: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
-  const [selectedOptionId, setSelectedOptionId] = useState(0);
+  const [selectedOptionId, setSelectedOptionId] = useState(
+    DEFAULT_ROWS_PER_PAGE
+  );
   const { t } = useTranslation();
   const api = useContext(APIContext);
   const addMoreIssues = (issues: IssueWithSortedLinks[]): void => {
@@ -98,11 +106,11 @@ export const Main = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jqlString]);
 
-  useEffect(() => {
-    if (selectedOptionId !== 0) {
-      fetchMoreIssues();
-    }
-  }, [selectedOptionId]);
+  // useEffect(() => {
+  //   if (selectedOptionId !== 0) {
+  //     fetchMoreIssues();
+  //   }
+  // }, [selectedOptionId]);
 
   const fetchMoreIssues = (): void => {
     const selectedLimit = selectedOptionId ?? DEFAULT_ROWS_PER_PAGE;
@@ -118,7 +126,8 @@ export const Main = ({
       undefined
     );
   };
-
+  const isIssueTypeReport = selectedViewTab === "issuetype-view";
+  const isTreeReport = selectedViewTab === "tree-view";
   if (areIssuesLoading) {
     return (
       <FullHeightContainer>
@@ -136,23 +145,43 @@ export const Main = ({
     return (
       <Container>
         <TableContainer>
-          <Report
-            filteredIssues={filteredIssues}
-            issueFieldIds={selectedIssueFieldIds}
-            tableFields={tableFields}
-            selectedTableFieldIds={selectedTableFieldIds}
-            selectedIssueInCellIds={selectedIssueInCellIds}
-            isIssueTypeReport={isIssueTypeReport}
-            errors={errors}
-          />
+          {isTreeReport ? (
+            <TreeReport
+              filteredIssues={filteredIssues}
+              selectedIssueFieldIds={selectedIssueFieldIds}
+              tableFields={tableFields}
+              selectedTableFieldIds={selectedTableFieldIds}
+              isIssueTypeReport={isIssueTypeReport}
+              errors={errors}
+              issueFields={issueFields}
+              handleError={handleNewError}
+              clearAllErrors={clearAllErrors}
+              issueTreeFilter={issueTreeFilter}
+              treeHasOnlyOrphans={treeHasOnlyOrphans}
+            />
+          ) : (
+            <Report
+              filteredIssues={filteredIssues}
+              issueFieldIds={selectedIssueFieldIds}
+              tableFields={tableFields}
+              selectedTableFieldIds={selectedTableFieldIds}
+              selectedIssueInCellIds={selectedIssueInCellIds}
+              isIssueTypeReport={isIssueTypeReport}
+              errors={errors}
+            />
+          )}
         </TableContainer>
         <MarginAddedContainer>
           <DropdownSingleSelect
             options={options}
-            dropdownName="Issue Limit"
+            dropdownName={
+              t("traceability-report.fetch-limit-dropdown.name") +
+              ` (${selectedOptionId})`
+            }
             selectedOptionId={selectedOptionId}
             setSelectedOptionId={setSelectedOptionId}
-          />
+          />{" "}
+          &nbsp;
           <LoadingButton
             isLoading={areMoreIssuesLoading}
             isDisabled={filteredIssues.length >= totalNumberOfIssues}

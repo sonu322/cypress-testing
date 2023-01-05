@@ -10,6 +10,8 @@ import {
   JiraLinkType,
   JiraMyself,
   JiraProject,
+  HelpLinks,
+  JiraAutoCompleteResult,
 } from "../../types/jira";
 
 import { getQueryParam } from "../../util/index";
@@ -17,6 +19,10 @@ import { getQueryParam } from "../../util/index";
 export default class JiraCloudImpl implements JiraAPI {
   // @ts-ignore
   private _AP: any = AP;
+
+  isJiraCloud(): boolean {
+    return true;
+  }
 
   hasValidLicense(): boolean {
     const lic = getQueryParam("lic");
@@ -114,6 +120,23 @@ export default class JiraCloudImpl implements JiraAPI {
 
   async getProject(projectKey?: string): Promise<JiraProject> {
     let response = await this._AP.request(`/rest/api/3/project/${projectKey}`);
+    return response.body && JSON.parse(response.body);
+  }
+
+  getHelpLinks(): HelpLinks {
+    return {
+      issueTree: "https://optimizory.atlassian.net/l/cp/xj7rXies",
+      traceability: "https://optimizory.atlassian.net/l/cp/77caidqE"
+    };
+  }
+
+  async getAutoCompleteData(): Promise<JiraAutoCompleteResult> {
+    const response = await this._AP.request("/rest/api/3/jql/autocompletedata");
+    return response.body && JSON.parse(response.body);
+  }
+
+  async getAutoCompleteSuggestions(query: string): Promise<JiraAutoCompleteSuggestionsResult> {
+    const response = await this._AP.request("/rest/api/3/jql/autocompletedata/suggestions?" + query);
     return response.body && JSON.parse(response.body);
   }
 }

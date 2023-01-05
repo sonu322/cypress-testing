@@ -8,23 +8,36 @@ import {
   JiraIssueType,
   JiraLinkType,
   JiraProject,
+  HelpLinks,
+  JiraMyself,
+  JiraAutoCompleteResult,
+  JiraAutoCompleteSuggestionsResult,
 } from "../../types/jira";
 
 export default class JiraServerImpl implements JiraAPI {
-  // @ts-ignore
-  private _AJS: any = AJS;
-  // @ts-ignore
-  private _JIRA: any = JIRA;
-  private contextPath: string = "";
+  // @ts-expect-error
+  private readonly _AJS: any = AJS;
+  // @ts-expect-error
+  private readonly _JIRA: any = JIRA;
+  private readonly contextPath: string = "";
+  private readonly isValidLicense: boolean = false;
+
+  constructor(rootElement: HTMLElement) {
+    this.isValidLicense = rootElement.dataset.license === "true";
+    this.contextPath = rootElement.dataset.contextpath;
+  }
+
+  isJiraCloud(): boolean {
+    return false;
+  }
 
   hasValidLicense(): boolean {
-    // throw new Error("Method not implemented.");
-    return true;
+    // return this.isValidLicense;
+    return true; // TODO: fix me
   }
 
   getJiraBaseURL(): string {
-    // throw new Error("Method not implemented.");
-    return "http://localhost:8082";
+    return this.contextPath;
   }
 
   async getPriorities(): Promise<JiraIssuePriorityFull[]> {
@@ -84,8 +97,16 @@ export default class JiraServerImpl implements JiraAPI {
   }
 
   async getFilters(): Promise<JiraFiltersResponse> {
-    let response = await this._AJS.getJSON("/rest/api/2/filter/search");
-    return response.body && JSON.parse(response.body);
+    // @ts-expect-error
+    const res = filters; // This variable is handled through lxp-server repo in velocity template
+    return {
+      self: null,
+      maxResults: res.length,
+      startAt: 0,
+      total: res.length,
+      isLast: true,
+      values: res
+    };
   }
 
   getCurrentProjectKey(): Promise<string> {
@@ -102,5 +123,24 @@ export default class JiraServerImpl implements JiraAPI {
     return await this._AJS.$.getJSON(
       this.contextPath + `/rest/api/2/project/${projectKey}`
     );
+  }
+
+  getHelpLinks(): HelpLinks {
+    return {
+      issueTree: "https://optimizory.atlassian.net/l/cp/gdv35UvD",
+      traceability: "https://optimizory.atlassian.net/l/cp/1KpzZ3z4"
+    };
+  }
+
+  async getMyself(): Promise<JiraMyself> {
+    return await this._AJS.$.getJSON(this.contextPath + "/rest/api/2/myself");
+  }
+
+  async getAutoCompleteData(): Promise<JiraAutoCompleteResult> {
+    return await this._AJS.$.getJSON(this.contextPath + "/rest/api/2/jql/autocompletedata");
+  }
+
+  async getAutoCompleteSuggestions(query: string): Promise<JiraAutoCompleteSuggestionsResult> {
+    return await this._AJS.$.getJSON("/rest/api/2/jql/autocompletedata/suggestions?" + query);
   }
 }
