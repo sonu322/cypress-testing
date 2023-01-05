@@ -62,6 +62,9 @@ export const IssueItem = ({
     >
       {item.data.type === buttonTypeTreeNodeName ? (
         <LoadingButton
+          isDisabled={
+            item.data.totalSearchResults <= item.data.startNextCallIndex
+          }
           isLoading={item.data.isDataLoading}
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
           onClick={() =>
