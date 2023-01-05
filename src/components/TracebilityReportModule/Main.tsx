@@ -56,6 +56,8 @@ interface Props {
   isOrphansBranchPresent: boolean;
   tree: AtlasTree;
   setTree: React.Dispatch<React.SetStateAction<AtlasTree>>;
+  isToggleOrphansLoading: boolean;
+  updateIsToggleOrphansLoading: (isToggleOrphansLoading: boolean) => void;
 }
 
 export const Main = ({
@@ -77,6 +79,8 @@ export const Main = ({
   isOrphansBranchPresent,
   tree,
   setTree,
+  isToggleOrphansLoading,
+  updateIsToggleOrphansLoading,
 }: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
@@ -110,7 +114,6 @@ export const Main = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedJqlString]);
-
 
   const fetchMoreIssues = (): void => {
     const selectedLimit = selectedOptionId ?? DEFAULT_ROWS_PER_PAGE;
@@ -158,6 +161,8 @@ export const Main = ({
               isOrphansBranchPresent={isOrphansBranchPresent}
               tree={tree}
               setTree={setTree}
+              isToggleOrphansLoading={isToggleOrphansLoading}
+              updateIsToggleOrphansLoading={updateIsToggleOrphansLoading}
             />
           ) : (
             <Report
