@@ -24,6 +24,10 @@ import {
   orphansMaxResults,
   orphansTreeBranchName,
 } from "../constants/traceabilityReport";
+import {
+  buttonTypeTreeNodeName,
+  linkTypeTreeNodeName,
+} from "../constants/common";
 
 // root node
 const root: AtlasTree = {
@@ -39,7 +43,7 @@ const root: AtlasTree = {
       parentIssueId: null,
       data: {
         id: "0",
-        isType: true,
+        type: linkTypeTreeNodeName,
         title: "Fake Root Node",
       },
     },
@@ -115,20 +119,12 @@ export default class TreeUtils {
     return root;
   }
 
-  createTypeNode(
-    tree,
-    prefix: string,
-    issueType: string,
-    hasLoadMoreButton?: boolean,
-    loadMoreHandler?: Function
-  ): AtlasTreeNode {
+  createTypeNode(tree, prefix: string, issueType: string): AtlasTreeNode {
     return this.createTreeNode(
       tree,
       prefix,
       {
-        isType: true,
-        hasLoadMoreButton,
-        loadMoreHandler,
+        type: linkTypeTreeNodeName,
         id: issueType,
         title: issueType,
       },
@@ -399,7 +395,7 @@ export default class TreeUtils {
           title: loadMoreOrphansButtonName,
           startNextCallIndex: orphansMaxResults,
           totalSearchResults,
-          isButton: true,
+          type: buttonTypeTreeNodeName,
           isDataLoading: false,
         },
         orphanTypeNode.id,
@@ -661,7 +657,7 @@ export default class TreeUtils {
       firstNodeIds.forEach((firstNodeId) => {
         const firstNode = tree.items[firstNodeId];
         if (
-          !firstNode.data.isButton &&
+          firstNode.data.type !== buttonTypeTreeNodeName &&
           firstNode.data.linkedIssues !== undefined &&
           firstNode.data.linkedIssues.length > 0
         ) {
@@ -718,7 +714,6 @@ export default class TreeUtils {
       console.log(error);
       throw new Error("Error occured while adding children");
     }
->>>>>>> origin/filter-tree
   }
 
   expandTreeHook(
@@ -788,7 +783,7 @@ export default class TreeUtils {
       if (item.hasChildrenLoaded) {
         item.isExpanded = true;
       } else {
-        issueIds.push((item.data as IssueWithLinkedIssues).id)
+        issueIds.push((item.data as IssueWithLinkedIssues).id);
       }
     }
     const issueIdMap = {};
@@ -804,7 +799,13 @@ export default class TreeUtils {
       if (!item.hasChildrenLoaded) {
         item.isExpanded = true;
         const issueId = (item.data as IssueWithLinkedIssues).id;
-        await this.addChildren(nodeId, tree, fields, issueIdMap[issueId], filter);
+        await this.addChildren(
+          nodeId,
+          tree,
+          fields,
+          issueIdMap[issueId],
+          filter
+        );
       }
       nodes.push(item);
     }
@@ -819,7 +820,11 @@ export default class TreeUtils {
     clearAllErrors,
     setIsExpandAllLoading
   ): Promise<void> {
-    const expandNodes = async (tree: AtlasTree, nodeIds: string[], level: number): Promise<void> => {
+    const expandNodes = async (
+      tree: AtlasTree,
+      nodeIds: string[],
+      level: number
+    ): Promise<void> => {
       if (level >= 3) return;
       const nodes = await this.expandTreeNodes(tree, nodeIds, filter, fields);
       let children = [];
@@ -899,7 +904,7 @@ export default class TreeUtils {
 
       if (item.data) {
         const dataObj = item.data;
-        if ((dataObj as LinkTypeTreeNode).isType) {
+        if ((dataObj as LinkTypeTreeNode).type === linkTypeTreeNodeName) {
           content.link = (dataObj as LinkTypeTreeNode).title;
         } else {
           const data = dataObj as IssueWithLinkedIssues;
@@ -932,7 +937,7 @@ export default class TreeUtils {
     const contents: any[] = [];
 
     const process = (item: AtlasTreeNode, indent) => {
-      if (!item || item.data?.isButton) {
+      if (!item || item.data?.type === buttonTypeTreeNodeName) {
         console.log("no", item);
         return;
       }
@@ -948,7 +953,7 @@ export default class TreeUtils {
 
       if (item.data) {
         const dataObj = item.data;
-        if ((dataObj as LinkTypeTreeNode).isType) {
+        if ((dataObj as LinkTypeTreeNode).type === linkTypeTreeNodeName) {
           content.link = (dataObj as LinkTypeTreeNode).title;
         } else {
           const data = dataObj as IssueWithLinkedIssues;

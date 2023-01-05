@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import TreeUtils from "../../util/TreeUtils";
-import Tree from "@atlaskit/tree";
+import Tree, { mutateTree } from "@atlaskit/tree";
 import { IssueItem } from "./IssueItem";
 import { ID, IssueField, IssueTreeFilter } from "../../types/api";
 import { AtlasTree } from "../../types/app";
@@ -54,13 +54,7 @@ export const IssueTree = ({
     } else {
       treeUtils.applyFilterHook(tree, setTree, filter, issueFields);
     }
-  }, [filter]);
-  useEffect(() => {
-    setTree((tree) => {
-      const newTree = treeUtils.cloneTree(tree);
-      return newTree;
-    });
-  }, [selectedIssueFieldIds]);
+  }, [filter, selectedIssueFieldIds]);
 
   const onExpand = (itemId) => {
     treeUtils.expandTreeHook(
@@ -107,4 +101,4 @@ export const IssueTree = ({
   } else {
     return <em>{loadingText}</em>;
   }
-};
+};;
