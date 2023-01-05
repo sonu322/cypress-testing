@@ -53,12 +53,7 @@ export const IssueTreeMultiNode = ({
 
   useEffect(() => {
     const initTree = async (): Promise<void> => {
-      let newTree = treeUtils.initMultiNodeTree(
-        filter,
-        issueFields,
-        handleError,
-        filteredIssues
-      );
+      let newTree = treeUtils.initMultiNodeTree(handleError, filteredIssues);
       setTree(newTree);
     };
 
@@ -121,10 +116,8 @@ export const IssueTreeMultiNode = ({
             searchResult.data,
             searchResult.total,
             tree,
-            selectedJqlString,
-            issueFields,
-            handleError,
-            filteredIssues
+
+            handleError
           );
           return newTree;
         });
