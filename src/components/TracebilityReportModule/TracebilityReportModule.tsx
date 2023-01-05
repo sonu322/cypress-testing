@@ -21,6 +21,7 @@ import { getKeyValues } from "../../util/common";
 import { viewTabs } from "../../constants/traceabilityReport";
 import { TreeReportToolbar } from "./TreeReportToolbar";
 import { TreeFilterContext } from "../../context/treeFilterContext";
+import TreeUtils from "../../util/TreeUtils";
 
 const FullWidthContainer = styled.div`
   width: 100%;
@@ -58,6 +59,8 @@ export const TracebilityReportModule = (): JSX.Element => {
   const [errors, setErrors] = useState<unknown[]>([]);
   const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>(0);
   const api = useContext(APIContext);
+  const treeUtils = new TreeUtils(api);
+  const [tree, setTree] = useState(treeUtils.getRootTree());
   const updateIsOrphansBranchPresent = (
     isOrphansBranchPresent: boolean
   ): void => {
@@ -157,6 +160,7 @@ export const TracebilityReportModule = (): JSX.Element => {
   const selectedViewTab = viewTabs.tabs[selectedTabIndex].id;
   const isTreeReport = selectedViewTab === "tree-view";
   const allErrors = errors.concat(treeFilterContext.errors);
+
   return (
     <FullWidthContainer>
       <PageHeader
@@ -172,14 +176,18 @@ export const TracebilityReportModule = (): JSX.Element => {
               selectedTableFieldIds={selectedTableFieldIds}
               updateSelectedTableFieldIds={updateSelectedTableFieldIds}
               tableFields={tableFields}
-              exportReport={() =>
-                exportReport(
-                  tableFields,
-                  emptyEqualsAllTableIds,
-                  filteredIssues,
-                  isIssueTypeReport
-                )
-              }
+              exportReport={() => {
+                if (isTreeReport) {
+                  treeUtils.exportMultiTree(tree);
+                } else {
+                  exportReport(
+                    tableFields,
+                    emptyEqualsAllTableIds,
+                    filteredIssues,
+                    isIssueTypeReport
+                  );
+                }
+              }}
               isExportDisabled={isExportDisabled}
               handleNewError={handleNewError}
               handleTabOptionSelect={handleTabOptionSelect}
@@ -217,6 +225,8 @@ export const TracebilityReportModule = (): JSX.Element => {
           errors={errors}
           issueTreeFilter={treeFilterContext.filter}
           isOrphansBranchPresent={isOrphansBranchPresent}
+          tree={tree}
+          setTree={setTree}
         />
       </GrowContainer>
     </FullWidthContainer>

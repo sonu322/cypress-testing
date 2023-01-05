@@ -59,6 +59,7 @@ export const IssueItem = ({
       {item.data.isButton ? (
         <LoadingButton
           isLoading={item.data.isDataLoading}
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
           onClick={() =>
             treeUtils.handleLoadMoreOrphanIssues(
               selectedJqlString,

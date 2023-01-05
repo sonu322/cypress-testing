@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import { JQLSelectDropdown } from "../JQLSelectDropdown";
@@ -15,6 +15,8 @@ import { TabGroup } from "./TabGroup";
 import { SelectedType } from "@atlaskit/tabs/types";
 import { useTranslation } from "react-i18next";
 import { viewTabs } from "../../constants/traceabilityReport";
+import TreeUtils from "../../util/TreeUtils";
+import { APIContext } from "../../context/api";
 const MainBar = styled.div`
   padding: 8px;
   border-radius: 3px;
@@ -62,6 +64,8 @@ export const Toolbar = ({
   selectedViewTab,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
+  const api = useContext(APIContext);
+  const treeUtils = new TreeUtils(api);
   const isTreeReport = selectedViewTab === "tree-view";
   return (
     <div style={{ marginTop: "-16px", marginBottom: "-8px" }}>
@@ -102,9 +106,7 @@ export const Toolbar = ({
             />
             <ExportContent
               description={t("lxp.toolbar.export-csv.title")}
-              exportContent={() => {
-                exportReport();
-              }}
+              exportContent={exportReport}
               isDisabled={isExportDisabled}
             />
             <HelpLink

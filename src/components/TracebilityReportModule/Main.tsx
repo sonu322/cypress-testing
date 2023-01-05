@@ -15,6 +15,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { DropdownSingleSelect } from "../common/DropdownSingleSelect";
 import { TreeReport } from "./TreeReport";
+import { AtlasTree } from "../../types/app";
 const Container = styled.div`
   width: 100%;
 `;
@@ -52,6 +53,8 @@ interface Props {
   selectedViewTab: string;
   issueTreeFilter: IssueTreeFilter;
   isOrphansBranchPresent: boolean;
+  tree: AtlasTree;
+  setTree: React.Dispatch<React.SetStateAction<AtlasTree>>;
 }
 
 export const Main = ({
@@ -70,6 +73,8 @@ export const Main = ({
   errors,
   selectedViewTab,
   isOrphansBranchPresent,
+  tree,
+  setTree,
 }: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
@@ -155,6 +160,8 @@ export const Main = ({
               clearAllErrors={clearAllErrors}
               issueTreeFilter={issueTreeFilter}
               isOrphansBranchPresent={isOrphansBranchPresent}
+              tree={tree}
+              setTree={setTree}
             />
           ) : (
             <Report
