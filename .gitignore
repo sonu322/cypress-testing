@@ -12,3 +12,4 @@ yarn.lock
 *.*~
 assets/atlassian-connect.json
 .parcel-cache/
+.idea/
