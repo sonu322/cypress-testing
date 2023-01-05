@@ -1,5 +1,5 @@
 import { colors } from "@atlaskit/theme";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
   Issue,
@@ -10,7 +10,7 @@ import {
 import { getUniqueValues } from "../../util/common";
 import { IssueCard } from "../common/issueCard/IssueCard";
 import { EmptyCell } from "./EmptyCell";
-
+import { IssueCell } from "./IssueCell";
 export const Td = styled.td`
   border: 1px solid ${colors.N40};
   padding: 8px !important;
@@ -30,6 +30,7 @@ export const MaxWidthContainer = styled.div`
 export interface Props {
   tableFields: IssueType[] | IssueLinkType[];
   selectedTableFieldIds: string[];
+  selectedIssueInCellIds: string[];
   issueFieldIds: string[];
   issue: IssueWithSortedLinks;
   rowSno: number;
@@ -40,9 +41,9 @@ export const IssueTypeRow = ({
   issue,
   rowSno,
   selectedTableFieldIds,
+  selectedIssueInCellIds,
 }: Props): JSX.Element[] => {
   const cells = [];
-
   // push issue cell into row
   const issueCell = (
     <IssueTd key="issue">
@@ -55,7 +56,6 @@ export const IssueTypeRow = ({
 
   cells.push(snoCell);
   cells.push(issueCell);
-
   // push links cells into row
   selectedTableFieldIds.forEach((typeId) => {
     // render -- by default
@@ -86,11 +86,14 @@ export const IssueTypeRow = ({
       });
       issueCell = (
         <Td key={typeId}>
-          <MaxWidthContainer>{issueCards}</MaxWidthContainer>
+          <IssueCell
+            selectedIssueInCellIds={selectedIssueInCellIds}
+            issueCards={issueCards}
+          ></IssueCell>
         </Td>
       );
     }
-    // push cells into row
+    //push cell into row
     cells.push(issueCell);
   });
   return cells;
