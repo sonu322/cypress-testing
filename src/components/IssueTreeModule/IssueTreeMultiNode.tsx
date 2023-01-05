@@ -28,6 +28,8 @@ export interface Props {
   filteredIssues: IssueWithSortedLinks[];
   isOrphansBranchPresent: boolean;
   selectedJqlString: string;
+  isToggleOrphansLoading: boolean;
+  updateIsToggleOrphansLoading: (isToggleOrphansLoading: boolean) => void;
 }
 
 export const IssueTreeMultiNode = ({
