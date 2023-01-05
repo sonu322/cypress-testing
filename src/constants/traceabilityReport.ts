@@ -32,3 +32,5 @@ export const viewTabs = {
 };
 
 export const orphansTreeBranchName = "Orphan Issues";
+export const loadMoreOrphansButtonName = "Load more orphans";
+export const orphansMaxResults = 20;

@@ -9,7 +9,10 @@ import {
 } from "../../types/api";
 import { AtlasTree } from "../../types/app";
 import { IssueTree } from "./IssueTree";
-import { orphansTreeBranchName } from "../../constants/traceabilityReport";
+import {
+  orphansMaxResults,
+  orphansTreeBranchName,
+} from "../../constants/traceabilityReport";
 import { APIContext } from "../../context/api";
 
 export interface Props {
@@ -46,6 +49,10 @@ export const IssueTreeMultiNode = ({
   issueFields.forEach((field) => {
     fieldMap[field.id] = field;
   });
+  console.log(
+    "selected issur field idds from multi tree",
+    selectedIssueFieldIds
+  );
 
   useEffect(() => {
     const initTree = async (): Promise<void> => {
@@ -90,13 +97,14 @@ export const IssueTreeMultiNode = ({
         selectedJqlString,
         issueFields,
         0,
-        20
+        orphansMaxResults
       );
 
       try {
         setTree((tree) => {
           const newTree = treeUtils.initOrphanBranch(
             searchResult.data,
+            searchResult.total,
             tree,
             selectedJqlString,
             issueFields,
@@ -131,6 +139,7 @@ export const IssueTreeMultiNode = ({
       clearAllErrors={clearAllErrors}
       isMultiNodeTree={true}
       isOrphansBranchPresent={isOrphansBranchPresent}
+      selectedJqlString={selectedJqlString}
     />
   );
 };
