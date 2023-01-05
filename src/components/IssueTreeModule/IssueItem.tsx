@@ -3,7 +3,7 @@ import styled, { css } from "styled-components";
 import { colors } from "@atlaskit/theme";
 import { IssueCard } from "../common/issueCard/IssueCard";
 import { ExpansionToggler } from "./ExpansionToggler";
-import Button from "@atlaskit/button";
+import { LoadingButton } from "@atlaskit/button";
 import { APIContext } from "../../context/api";
 import TreeUtils from "../../util/TreeUtils";
 const PADDING_LEVEL = 30;
@@ -57,7 +57,8 @@ export const IssueItem = ({
       {...provided.dragHandleProps}
     >
       {item.data.isButton ? (
-        <Button
+        <LoadingButton
+          isLoading={item.data.isDataLoading}
           onClick={() =>
             treeUtils.handleLoadMoreOrphanIssues(
               selectedJqlString,
@@ -69,7 +70,7 @@ export const IssueItem = ({
           }
         >
           {item.data.title}
-        </Button>
+        </LoadingButton>
       ) : (
         <>
           <ExpansionToggler

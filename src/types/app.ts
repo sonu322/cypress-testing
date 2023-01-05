@@ -21,6 +21,7 @@ export interface ButtonTypeTreeNode {
   title: string;
   startNextCallIndex: number;
   totalSearchResults: number;
+  isDataLoading: boolean;
 }
 
 export interface AtlasTreeNode {

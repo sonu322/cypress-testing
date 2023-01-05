@@ -283,6 +283,22 @@ export default class TreeUtils {
     handleError: (err: unknown) => void
   ): Promise<void> {
     try {
+      setTree((tree) => {
+        const loadMoreButtonNode =
+          tree.items[`/${orphansTreeBranchName}/${loadMoreOrphansButtonName}`];
+        const newButtonData: ButtonTypeTreeNode = {
+          ...loadMoreButtonNode.data,
+          isDataLoading: true,
+        };
+        let newTree = mutateTree(
+          tree,
+          `/${orphansTreeBranchName}/${loadMoreOrphansButtonName}`,
+          {
+            data: newButtonData,
+          }
+        );
+        return newTree;
+      });
       const searchResult = await this.api.searchOrphanIssues(
         jql,
         fields,
@@ -300,6 +316,7 @@ export default class TreeUtils {
             ...loadMoreButtonNode.data,
             startNextCallIndex:
               loadMoreButtonNode.data.startNextCallIndex + orphansMaxResults,
+            isDataLoading: false,
           };
           let newTree = mutateTree(
             tree,
@@ -338,6 +355,22 @@ export default class TreeUtils {
         });
       }
     } catch (error) {
+      setTree((tree) => {
+        const loadMoreButtonNode =
+          tree.items[`/${orphansTreeBranchName}/${loadMoreOrphansButtonName}`];
+        const newButtonData: ButtonTypeTreeNode = {
+          ...loadMoreButtonNode.data,
+          isDataLoading: false,
+        };
+        let newTree = mutateTree(
+          tree,
+          `/${orphansTreeBranchName}/${loadMoreOrphansButtonName}`,
+          {
+            data: newButtonData,
+          }
+        );
+        return newTree;
+      });
       handleError(error);
     }
   }
@@ -367,6 +400,7 @@ export default class TreeUtils {
           startNextCallIndex: orphansMaxResults,
           totalSearchResults,
           isButton: true,
+          isDataLoading: false,
         },
         orphanTypeNode.id,
         false,
