@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { IssueWithSortedLinks } from "../../types/api";
 import { IssueCard } from "../common/issueCard/IssueCard";
 import { EmptyCell } from "./EmptyCell";
 import { IssueTd, MaxWidthContainer, Td } from "./IssueTypeRow";
-
+import { IssueCell } from "./IssueCell";
 export interface Props {
   selectedTableFieldIds;
   issueFieldIds: string[];
   issue: IssueWithSortedLinks;
+  selectedIssueInCellIds: string[];
   rowSno: number;
 }
 
@@ -16,9 +17,9 @@ export const LinkTypeRow = ({
   issue,
   rowSno,
   selectedTableFieldIds,
+  selectedIssueInCellIds,
 }: Props): JSX.Element[] => {
   const cells = [];
-
   // push issue cell into row
   const issueCell = (
     <IssueTd key="issue">
@@ -58,7 +59,10 @@ export const LinkTypeRow = ({
       if (allIssues.length > 0) {
         issueCell = (
           <Td key={linkId}>
-            <MaxWidthContainer>{allIssues}</MaxWidthContainer>
+            <IssueCell
+              selectedIssueInCellIds={selectedIssueInCellIds}
+              issueCards={allIssues}
+            ></IssueCell>
           </Td>
         );
       }

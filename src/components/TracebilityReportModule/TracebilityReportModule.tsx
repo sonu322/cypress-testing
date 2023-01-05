@@ -32,16 +32,24 @@ const GrowContainer = styled.div`
   flex-grow: 1;
   display: flex;
 `;
+const cellOptions = [
+  { id: "Display All issue cards", name: "Display All issue cards" },
+];
 
 interface Props {
-  showCustomJQLEditor?: any
+  showCustomJQLEditor?: any;
 }
 
-export const TracebilityReportModule = ({ showCustomJQLEditor }: Props): JSX.Element => {
+export const TracebilityReportModule = ({
+  showCustomJQLEditor,
+}: Props): JSX.Element => {
   const { t } = useTranslation();
   const treeFilterContext = useContext(TreeFilterContext);
   const [treeHasOnlyOrphans, setTreeHasOnlyOrphans] = useState(false);
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
+  const [selectedIssueInCellIds, updateSelectedIssueInCellIds] = useState<
+    string[]
+  >([]);
   const [filteredIssues, setFilteredIssues] = useState<
     IssueWithSortedLinks[] | null
   >(null);
@@ -98,7 +106,6 @@ export const TracebilityReportModule = ({ showCustomJQLEditor }: Props): JSX.Ele
         const linkTypes = result[1];
         const fields = result[2];
         setIssueFields(fields);
-
         // setting state - selected field ids
         const selectedFieldIds = getKeyValues(fields, "id");
         setSelectedIssueFieldIds(selectedFieldIds);
@@ -121,7 +128,6 @@ export const TracebilityReportModule = ({ showCustomJQLEditor }: Props): JSX.Ele
     void loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   const isExportDisabled =
     filteredIssues == null || filteredIssues.length === 0;
 
@@ -165,6 +171,9 @@ export const TracebilityReportModule = ({ showCustomJQLEditor }: Props): JSX.Ele
         bottomBar={
           <>
             <Toolbar
+              selectedIssueInCellIds={selectedIssueInCellIds}
+              updateSelectedIssueInCellIds={updateSelectedIssueInCellIds}
+              issueInCell={cellOptions}
               selectedJQLString={selectedJQLString}
               setSelectedJQLString={setSelectedJQLString}
               issueCardOptions={issueFields}
@@ -210,6 +219,7 @@ export const TracebilityReportModule = ({ showCustomJQLEditor }: Props): JSX.Ele
           clearAllErrors={clearAllErrors}
           issueFields={issueFields}
           selectedIssueFieldIds={selectedIssueFieldIds}
+          selectedIssueInCellIds={selectedIssueInCellIds}
           tableFields={tableFields}
           selectedTableFieldIds={emptyEqualsAllTableIds}
           filteredIssues={filteredIssues}
