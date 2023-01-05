@@ -31,6 +31,10 @@ export const viewTabs = {
   ],
 };
 
-export const orphansTreeBranchName = "Orphan Issues";
-export const loadMoreOrphansButtonName = "Load more orphans";
+export const orphansTreeBranchName = t(
+  "traceability-report.tree-view.orphans-tree-branch-name"
+);
+export const loadMoreOrphansButtonName = t(
+  "traceability-report.tree-view.orphans-load-more-button-name"
+);
 export const orphansMaxResults = 20;

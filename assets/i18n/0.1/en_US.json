@@ -31,6 +31,8 @@
   "traceability-report.linktype-view.description": "View related issues by their link types",
   // new
   "traceability-report.tree-view.name": "Tree View",
+  "traceability-report.tree-view.orphans-tree-branch-name": "Orphan Issues",
+  "traceability-report.tree-view.orphans-load-more-button-name": "Load more orphan issues",
   "traceability-report.tree-view.description": "View related issues in tree hierarchy format",
   "traceability-report.tree-view.show-orphan-issues": "Show Orphan Issues",
   "traceability-report.tree-view.hide-orphan-issues": "Hide Orphan Issues",
@@ -63,5 +65,4 @@
   "gh-link-issue-tab": "Linked Issues",
   "gh-link-issue-tab.label": "Links Explorer",
   "gh-link-issue-tab.tooltip": "Links Explorer"
-
 }
