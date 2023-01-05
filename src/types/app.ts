@@ -13,8 +13,14 @@ export interface LinkTypeTreeNode {
   id: string;
   isType: boolean;
   title: string;
-  hasLoadMoreButton?: boolean;
-  loadMoreHandler?: Function;
+}
+
+export interface ButtonTypeTreeNode {
+  id: string;
+  isButton: boolean;
+  title: string;
+  startNextCallIndex: number;
+  totalSearchResults: number;
 }
 
 export interface AtlasTreeNode {
@@ -25,5 +31,5 @@ export interface AtlasTreeNode {
   isExpanded: boolean;
   isChildrenLoading: boolean;
   parentIssueId: ID;
-  data: IssueWithLinkedIssues | Issue | LinkTypeTreeNode;
+  data: IssueWithLinkedIssues | Issue | LinkTypeTreeNode | ButtonTypeTreeNode;
 }

@@ -722,8 +722,6 @@ export default class APIImpl implements LXPAPI {
             epicsWithoutChildren.push(epics[i]);
           }
         }
-
-        console.log("epis without children", epicsWithoutChildren);
         const orphansAndEpicsWithoutChildren =
           epicsWithoutChildren.concat(issuesWithoutEpics);
         // TODO: if we add optiton to make orphans fetch more than 100 issues, add handling

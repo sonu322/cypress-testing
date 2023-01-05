@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useMemo } from "react";
-import { mutateTree } from "@atlaskit/tree";
+import React, { useContext, useEffect } from "react";
 import TreeUtils from "../../util/TreeUtils";
 import {
   ID,
@@ -50,7 +49,6 @@ export const IssueTreeMultiNode = ({
     fieldMap[field.id] = field;
   });
 
-
   useEffect(() => {
     const initTree = async (): Promise<void> => {
       let newTree = treeUtils.initMultiNodeTree(
@@ -88,16 +86,15 @@ export const IssueTreeMultiNode = ({
   }, [isOrphansBranchPresent]);
 
   useEffect(() => {
-    const orphansTreeBranchId = `/${orphansTreeBranchName}`;
     const initOrphans = async (): Promise<void> => {
-      const searchResult = await api.searchOrphanIssues(
-        selectedJqlString,
-        issueFields,
-        0,
-        orphansMaxResults
-      );
-
       try {
+        const searchResult = await api.searchOrphanIssues(
+          selectedJqlString,
+          issueFields,
+          0,
+          orphansMaxResults
+        );
+
         setTree((tree) => {
           const newTree = treeUtils.initOrphanBranch(
             searchResult.data,
@@ -115,7 +112,8 @@ export const IssueTreeMultiNode = ({
         console.log(e);
       }
     };
-
+    const orphansTreeBranchId = `/
+    ${orphansTreeBranchName}`;
     if (
       tree.items[orphansTreeBranchId] === undefined &&
       isOrphansBranchPresent
@@ -135,7 +133,6 @@ export const IssueTreeMultiNode = ({
       handleError={handleError}
       clearAllErrors={clearAllErrors}
       isMultiNodeTree={true}
-      isOrphansBranchPresent={isOrphansBranchPresent}
       selectedJqlString={selectedJqlString}
     />
   );
