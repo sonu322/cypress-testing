@@ -30,9 +30,6 @@ interface Props {
   updateIsOrphansBranchPresent: (treeHasOnlyOptions: boolean) => void;
 }
 export const TreeReportToolbar = ({
-  // priorities,
-  // issueTypes,
-  // linkTypes,
   options,
   filter,
   updateFilteredKeyOptions,

@@ -111,11 +111,6 @@ export const Main = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedJqlString]);
 
-  // useEffect(() => {
-  //   if (selectedOptionId !== 0) {
-  //     fetchMoreIssues();
-  //   }
-  // }, [selectedOptionId]);
 
   const fetchMoreIssues = (): void => {
     const selectedLimit = selectedOptionId ?? DEFAULT_ROWS_PER_PAGE;
@@ -155,9 +150,6 @@ export const Main = ({
               selectedJqlString={selectedJqlString}
               filteredIssues={filteredIssues}
               selectedIssueFieldIds={selectedIssueFieldIds}
-              tableFields={tableFields}
-              selectedTableFieldIds={selectedTableFieldIds}
-              isIssueTypeReport={isIssueTypeReport}
               errors={errors}
               issueFields={issueFields}
               handleError={handleNewError}

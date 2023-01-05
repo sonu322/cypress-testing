@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import TreeUtils from "../../util/TreeUtils";
-import Tree, { mutateTree } from "@atlaskit/tree";
+import Tree from "@atlaskit/tree";
 import { IssueItem } from "./IssueItem";
 import { ID, IssueField, IssueTreeFilter } from "../../types/api";
 import { AtlasTree } from "../../types/app";
@@ -101,4 +101,4 @@ export const IssueTree = ({
   } else {
     return <em>{loadingText}</em>;
   }
-};;
+};

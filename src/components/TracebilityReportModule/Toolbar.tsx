@@ -21,8 +21,6 @@ import { SelectedType } from "@atlaskit/tabs/types";
 import { useTranslation } from "react-i18next";
 import { APIContext } from "../../context/api";
 import { viewTabs } from "../../constants/traceabilityReport";
-import TreeUtils from "../../util/TreeUtils";
-import { APIContext } from "../../context/api";
 const MainBar = styled.div`
   padding: 8px;
   border-radius: 3px;
@@ -79,7 +77,6 @@ export const Toolbar = ({
 }: Props): JSX.Element => {
   const { t } = useTranslation();
   const api = useContext(APIContext);
-  const treeUtils = new TreeUtils(api);
   const helpLinkUrl = api.getHelpLinks().traceability;
   const isTreeReport = selectedViewTab === "tree-view";
   return (
