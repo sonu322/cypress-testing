@@ -199,8 +199,6 @@ export default class TreeUtils {
   }
 
   initMultiNodeTree(
-    filter: IssueTreeFilter,
-    fields: IssueField[],
     handleError,
     filteredIssues: IssueWithSortedLinks[]
   ): AtlasTree {
@@ -375,10 +373,7 @@ export default class TreeUtils {
     issues: Issue[],
     totalSearchResults: number,
     tree: AtlasTree,
-    selectedJqlString: string,
-    fields: IssueField[],
-    handleError: (err: unknown) => void,
-    filteredIssues: IssueWithSortedLinks[]
+    handleError: (err: unknown) => void
   ): AtlasTree {
     try {
       let newTree = this.cloneTree(tree);
@@ -930,15 +925,12 @@ export default class TreeUtils {
   }
 
   exportMultiTree(tree: AtlasTree): void {
-    console.log("called export mulyi");
     const root = tree.items[tree.rootId];
-    // const mainNodeId = root.children[0];
 
     const contents: any[] = [];
 
     const process = (item: AtlasTreeNode, indent) => {
       if (!item || item.data?.type === buttonTypeTreeNodeName) {
-        console.log("no", item);
         return;
       }
       const content = {
@@ -976,7 +968,6 @@ export default class TreeUtils {
 
     // process(tree.items[mainNodeId], 1);
     root.children.forEach((mainNodeId) => {
-      console.log(tree.items[mainNodeId]);
       process(tree.items[mainNodeId], 1);
     });
     download("csv", csv(contents, true));

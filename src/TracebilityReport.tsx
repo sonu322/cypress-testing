@@ -32,12 +32,7 @@ const TracebilityReport = ({ showCustomJQLEditor }: Props): JSX.Element => {
       </TreeFilterContextProvider>
     );
   } else {
-    console.log(api.hasValidLicense());
-    return (
-      <TreeFilterContextProvider>
-        <TracebilityReportModule></TracebilityReportModule>
-      </TreeFilterContextProvider>
-    );
+    return <LicenseContainer></LicenseContainer>;
   }
 };
 
