@@ -4,13 +4,12 @@ import { IssueVersion } from "../../../types/api";
 import Lozenge from "@atlaskit/lozenge";
 import { TooltipContainer } from "../TooltipContainer";
 
+const StyledFixVersion = styled.div`
+  white-space: nowrap;
+`;
 interface Props {
   versionInfo: IssueVersion[];
 }
-
-const Container = styled.div`
-  white-space: nowrap;
-`;
 
 export const FixVersion = ({ versionInfo }: Props): JSX.Element => {
   const length = versionInfo.length;
@@ -28,13 +27,10 @@ export const FixVersion = ({ versionInfo }: Props): JSX.Element => {
   const tooltipContent = versionNames.join(", ");
   return (
     <TooltipContainer content={tooltipContent} position="bottom">
-      <Container>
-        <Lozenge>
-          {totalversions}
-        </Lozenge>
+      <StyledFixVersion>
+        <Lozenge>{totalversions}</Lozenge>
         {num}
-      </Container>
+      </StyledFixVersion>
     </TooltipContainer>
   );
 };
-
