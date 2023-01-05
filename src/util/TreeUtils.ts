@@ -14,7 +14,11 @@ import LXPAPI, {
 import { csv, download } from "./index";
 import { AtlasTree, AtlasTreeNode, LinkTypeTreeNode } from "../types/app";
 import { isPromise } from "./common";
-import { orphansTreeBranchName } from "../constants/traceabilityReport";
+import {
+  loadMoreOrphansButtonName,
+  orphansMaxResults,
+  orphansTreeBranchName,
+} from "../constants/traceabilityReport";
 
 // root node
 const root: AtlasTree = {
@@ -194,7 +198,7 @@ export default class TreeUtils {
   }
 
   initMultiNodeTree(
-    filter: IssueTreeFilter, // TODO: add show/hiding of children based on tree filter
+    filter: IssueTreeFilter,
     fields: IssueField[],
     handleError,
     filteredIssues: IssueWithSortedLinks[]
@@ -202,10 +206,6 @@ export default class TreeUtils {
     try {
       const prevTree = this.getRootTree();
       const tree = this.cloneTree(prevTree);
-      // const allPromises = filteredIssues.map(async (issue) => {
-      //   return await this.api.getIssueWithLinks(fields, issue.id); // TODO: convert IssueWithSortedLinks into IssueWithLinkedIssues
-      //   // by transforming issue object instead of making an api call
-      // });
 
       const filteredIssuesWithLinks: IssueWithLinkedIssues[] =
         filteredIssues.map((filteredIssue) => {
@@ -270,10 +270,77 @@ export default class TreeUtils {
     return newTree;
   }
 
+  async handleLoadMoreOrphanIssues(jql, fields, start, setTree, handleError) {
+    // TODO: add issues to tree
+    try {
+      const searchResult = await this.api.searchOrphanIssues(
+        jql,
+        fields,
+        start,
+        orphansMaxResults
+      );
+      if (searchResult?.data !== undefined) {
+        setTree((tree) => {
+          const loadMoreButtonNode =
+            tree.items[
+              `/${orphansTreeBranchName}/${loadMoreOrphansButtonName}`
+            ];
+          console.log(loadMoreButtonNode);
+          let newTree = mutateTree(
+            tree,
+            `/${orphansTreeBranchName}/${loadMoreOrphansButtonName}`,
+            {
+              data: {
+                ...loadMoreButtonNode.data,
+                startNextCallIndex:
+                  loadMoreButtonNode.data.startNextCallIndex +
+                  orphansMaxResults,
+              },
+            }
+          );
+          const orphanTypeNode = tree.items[`/${orphansTreeBranchName}`];
+          const issues = searchResult.data;
+          console.log("fetched issues", issues);
+          const newOrphanNodeIds = [];
+          issues.forEach((issueWithLinks) => {
+            const node = this.createTreeNode(
+              newTree,
+              orphanTypeNode.id,
+              issueWithLinks,
+              orphanTypeNode.id,
+              false,
+              false,
+              false
+            );
+            console.log("created node", node);
+            const nodeId = node.id;
+            newOrphanNodeIds.push(nodeId);
+            // newTree.items[orphanTypeNode.id].children.push(nodeId);
+          });
+
+          const oldChildren = [...orphanTypeNode.children];
+          const loadMoreButtonId = oldChildren.pop(); // removes button
+          const newChildren = oldChildren.concat(newOrphanNodeIds);
+          newChildren.push(loadMoreButtonId);
+          console.log("new children", newChildren);
+          newTree = mutateTree(newTree, `/${orphansTreeBranchName}`, {
+            children: newChildren,
+          });
+
+          console.log("new tree", newTree);
+          return newTree;
+        });
+      }
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
   initOrphanBranch(
     issues: Issue[],
+    totalSearchResults: number,
     tree: AtlasTree,
-    selectedJqlString: string, // TODO: add show/hiding of children based on tree filter
+    selectedJqlString: string,
     fields: IssueField[],
     handleError: (err: unknown) => void,
     filteredIssues: IssueWithSortedLinks[]
@@ -290,10 +357,15 @@ export default class TreeUtils {
         newTree,
         `${orphanTypeNode.id}`,
         {
+          id: loadMoreOrphansButtonName,
+          name: loadMoreOrphansButtonName,
+          // handleClick: this.handleLoadMoreOrphanIssues,
+          startNextCallIndex: orphansMaxResults,
+          totalSearchResults,
           isButton: true,
-          handleLoadMoreIssues: () => {
-            console.log("called loadmore issues");
-          },
+          // handleLoadMoreIssues: () => {
+          //   console.log("called loadmore issues");
+          // },
         },
         orphanTypeNode.id,
         false,

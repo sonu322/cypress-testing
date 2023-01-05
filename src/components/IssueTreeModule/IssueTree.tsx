@@ -6,7 +6,7 @@ import { IssueItem } from "./IssueItem";
 import { ID, IssueField, IssueTreeFilter } from "../../types/api";
 import { AtlasTree } from "../../types/app";
 import { useTranslation } from "react-i18next";
-
+import Button from "@atlaskit/button";
 const Container = styled.div`
   display: flex;
 `;
@@ -22,6 +22,7 @@ export interface Props {
   clearAllErrors: () => void;
   isMultiNodeTree?: boolean;
   isOrphansBranchPresent?: boolean;
+  selectedJqlString?: string;
 }
 
 export const IssueTree = ({
@@ -35,6 +36,7 @@ export const IssueTree = ({
   clearAllErrors,
   isMultiNodeTree,
   isOrphansBranchPresent,
+  selectedJqlString,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
   const loadingText = t("lxp.common.loading");
@@ -42,7 +44,10 @@ export const IssueTree = ({
   issueFields.forEach((field) => {
     fieldMap[field.id] = field;
   });
-
+  console.log(
+    "selected issue field ids form issue tree",
+    selectedIssueFieldIds
+  );
   useEffect(() => {
     if (isMultiNodeTree) {
       setTree((tree) => {
@@ -56,7 +61,13 @@ export const IssueTree = ({
     } else {
       treeUtils.applyFilterHook(tree, setTree, filter, issueFields);
     }
-  }, [filter, selectedIssueFieldIds]);
+  }, [filter]);
+  useEffect(() => {
+    setTree((tree) => {
+      const newTree = treeUtils.cloneTree(tree);
+      return newTree;
+    });
+  }, [selectedIssueFieldIds]);
 
   const onExpand = (itemId) => {
     treeUtils.expandTreeHook(
@@ -76,8 +87,16 @@ export const IssueTree = ({
   const renderItem = ({ ...props }) => {
     return (
       // @ts-expect-error
-      <IssueItem {...props} selectedIssueFieldIds={selectedIssueFieldIds} />
+      <IssueItem
+        {...props}
+        selectedIssueFieldIds={selectedIssueFieldIds}
+        selectedJqlString={selectedJqlString}
+        issueFields={issueFields}
+        setTree={setTree}
+        handleError={handleError}
+      />
     );
+    // }
   };
 
   if (tree !== undefined && tree.items !== undefined) {

@@ -681,66 +681,69 @@ export default class APIImpl implements LXPAPI {
     start?: number,
     max?: number
   ): Promise<{ data: IssueWithLinkedIssues[]; total: number }> {
-    console.log("search orphan issues called");
-    const isOrderingJqlRegex = /order*/;
-    const isOrderingJql = isOrderingJqlRegex.test(jql);
-    const jqlPrefix = isOrderingJql ? "" : "and";
-    const onlyOrphansJql = `issueLinkType is EMPTY and parent is EMPTY and "Epic Link" is EMPTY ${jqlPrefix} ${jql}`;
+    try {
+      console.log("search orphan issues called");
+      const isOrderingJqlRegex = /order*/;
+      const isOrderingJql = isOrderingJqlRegex.test(jql);
+      const jqlPrefix = isOrderingJql ? "" : "and";
+      const onlyOrphansJql = `issueLinkType is EMPTY and parent is EMPTY and "Epic Link" is EMPTY ${jqlPrefix} ${jql}`;
 
-    const searchResult = await this.searchIssues(
-      onlyOrphansJql,
-      fields,
-      start,
-      max
-    );
-    console.log("searhc initial called", searchResult.total);
+      const searchResult = await this.searchIssues(
+        onlyOrphansJql,
+        fields,
+        start,
+        max
+      );
+      console.log("searhc initial called", searchResult.total);
 
-    const orphansWithoutChildren = searchResult.data.filter(
-      (issue) => issue.links === undefined || issue.links.length === 0
-    );
-    const epics = orphansWithoutChildren.filter(
-      (issue) => issue.type.name === "Epic"
-    );
-    const issuesWithoutEpics = orphansWithoutChildren.filter(
-      (issue) => issue.type.name !== "Epic"
-    );
-    console.log("the epics", epics);
-    const removeChildrenPromises = epics.map(
-      async (epic) =>
-        await this.getEpicChildIssues(epic, fields).then((response) => {
-          console.log("repsonse", response, response.total === 0);
-          if (response.total === 0) {
-            return true;
-          } else {
-            return false;
+      const orphansWithoutChildren = searchResult.data.filter(
+        (issue) => issue.links === undefined || issue.links.length === 0
+      );
+      const epics = orphansWithoutChildren.filter(
+        (issue) => issue.type.name === "Epic"
+      );
+      const issuesWithoutEpics = orphansWithoutChildren.filter(
+        (issue) => issue.type.name !== "Epic"
+      );
+      console.log("the epics", epics);
+      const removeChildrenPromises = epics.map(
+        async (epic) =>
+          await this.getEpicChildIssues(epic, fields).then((response) => {
+            console.log("repsonse", response, response.total === 0);
+            if (response.total === 0) {
+              return true;
+            } else {
+              return false;
+            }
+          })
+      );
+      console.log("remove childrne promises", removeChildrenPromises);
+
+      const responses = await Promise.all(removeChildrenPromises);
+      const epicsWithoutChildren = [];
+      if (epics.length === 0 || responses !== undefined) {
+        for (let i = 0; i < epics.length; i++) {
+          if (responses[i]) {
+            console.log(epics[i]);
+            epicsWithoutChildren.push(epics[i]);
           }
-        })
-    );
-    console.log("remove childrne promises", removeChildrenPromises);
-
-    const responses = await Promise.all(removeChildrenPromises);
-    const epicsWithoutChildren = [];
-    if (epics.length === 0 || responses !== undefined) {
-      for (let i = 0; i < epics.length; i++) {
-        if (responses[i]) {
-          console.log(epics[i]);
-          epicsWithoutChildren.push(epics[i]);
         }
+
+        console.log("epis without children", epicsWithoutChildren);
+        const orphansAndEpicsWithoutChildren =
+          epicsWithoutChildren.concat(issuesWithoutEpics);
+        // TODO: if we add optiton to make orphans fetch more than 100 issues, add handling
+
+        const issueWithLinkedIssues: IssueWithLinkedIssues[] =
+          orphansAndEpicsWithoutChildren.map((issue) => ({
+            ...issue,
+            linkedIssues: [],
+          }));
+        return { data: issueWithLinkedIssues, total: searchResult.total };
       }
-
-      console.log("epis without children", epicsWithoutChildren);
-      const orphansAndEpicsWithoutChildren =
-        epicsWithoutChildren.concat(issuesWithoutEpics);
-      // TODO: add empty epics and issues without subtasks
-      // if epic, write serch to find childrne, if it is empty, then include it
-      // TODO: if more than 100 issues, add handling
-
-      const issueWithLinkedIssues: IssueWithLinkedIssues[] =
-        orphansAndEpicsWithoutChildren.map((issue) => ({
-          ...issue,
-          linkedIssues: [],
-        }));
-      return { data: issueWithLinkedIssues, total: searchResult.total };
+    } catch (error) {
+      console.log(error);
+      throwError("lxp.api.search-issues-error");
     }
 
   }
