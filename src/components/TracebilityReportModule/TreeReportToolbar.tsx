@@ -53,6 +53,7 @@ export const TreeReportToolbar = ({
         filter={filter}
         filterDropdowns={treeFilterDropdowns}
         updateFilteredKeyOptions={updateFilteredKeyOptions}
+        isMultiNodeTree={true}
       />
       <Button onClick={toggleOrphans}>
         {isOrphansBranchPresent ? hideOrphanText : showOrphanText}

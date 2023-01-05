@@ -145,7 +145,7 @@ export interface JiraProject {
   properties: JiraProjectProperties;
 }
 
-export interface JiraProjectProperties {}
+export interface JiraProjectProperties { }
 
 export interface JiraRoles {
   [roleName: string]: string;
@@ -232,7 +232,48 @@ interface AvatarUrls {
   "32x32": string;
 }
 
+export interface HelpLinks {
+  issueTree: string;
+  traceability: string;
+}
+
+export interface JiraAutoCompleteResult {
+  visibleFieldNames: VisibleFieldName[];
+  visibleFunctionNames: VisibleFunctionName[];
+  jqlReservedWords: string[];
+}
+
+interface VisibleFunctionName {
+  value: string;
+  displayName: string;
+  isList: string;
+  types: string[];
+}
+
+interface VisibleFieldName {
+  value: string;
+  displayName: string;
+  orderable: string;
+  searchable: string;
+  operators: string[];
+  types: string[];
+  auto?: string;
+  cfid?: string;
+}
+
+export interface JiraAutoCompleteSuggestionsResult {
+  results: SuggestionResult[];
+}
+
+interface SuggestionResult {
+  value: string;
+  displayName: string;
+}
+
 export interface JiraAPI {
+
+  isJiraCloud(): boolean;
+
   hasValidLicense(): boolean;
 
   getJiraBaseURL(): string;
@@ -263,4 +304,10 @@ export interface JiraAPI {
   getProject(projectKey: string): Promise<JiraProject>;
 
   getCurrentProjectKey(): Promise<string>;
+
+  getHelpLinks(): HelpLinks;
+
+  getAutoCompleteData(): Promise<JiraAutoCompleteResult>;
+
+  getAutoCompleteSuggestions(query: string): Promise<JiraAutoCompleteSuggestionsResult>;
 }

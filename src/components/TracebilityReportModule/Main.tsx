@@ -43,6 +43,7 @@ interface Props {
   selectedIssueFieldIds: string[];
   selectedTableFieldIds: string[];
   tableFields: IssueType[] | IssueLinkType[];
+  selectedIssueInCellIds: string[];
   filteredIssues: IssueWithSortedLinks[];
   areIssuesLoading: boolean;
   setAreIssuesLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -65,6 +66,7 @@ export const Main = ({
   selectedIssueFieldIds,
   selectedTableFieldIds,
   tableFields,
+  selectedIssueInCellIds,
   filteredIssues,
   areIssuesLoading,
   setAreIssuesLoading,
@@ -78,7 +80,9 @@ export const Main = ({
 }: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
-  const [selectedOptionId, setSelectedOptionId] = useState(0);
+  const [selectedOptionId, setSelectedOptionId] = useState(
+    DEFAULT_ROWS_PER_PAGE
+  );
   const { t } = useTranslation();
   const api = useContext(APIContext);
   const addMoreIssues = (issues: IssueWithSortedLinks[]): void => {
@@ -107,11 +111,11 @@ export const Main = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedJqlString]);
 
-  useEffect(() => {
-    if (selectedOptionId !== 0) {
-      fetchMoreIssues();
-    }
-  }, [selectedOptionId]);
+  // useEffect(() => {
+  //   if (selectedOptionId !== 0) {
+  //     fetchMoreIssues();
+  //   }
+  // }, [selectedOptionId]);
 
   const fetchMoreIssues = (): void => {
     const selectedLimit = selectedOptionId ?? DEFAULT_ROWS_PER_PAGE;
@@ -169,6 +173,7 @@ export const Main = ({
               issueFieldIds={selectedIssueFieldIds}
               tableFields={tableFields}
               selectedTableFieldIds={selectedTableFieldIds}
+              selectedIssueInCellIds={selectedIssueInCellIds}
               isIssueTypeReport={isIssueTypeReport}
               errors={errors}
             />
@@ -177,10 +182,14 @@ export const Main = ({
         <MarginAddedContainer>
           <DropdownSingleSelect
             options={options}
-            dropdownName="Issue Limit"
+            dropdownName={
+              t("traceability-report.fetch-limit-dropdown.name") +
+              ` (${selectedOptionId})`
+            }
             selectedOptionId={selectedOptionId}
             setSelectedOptionId={setSelectedOptionId}
-          />
+          />{" "}
+          &nbsp;
           <LoadingButton
             isLoading={areMoreIssuesLoading}
             isDisabled={filteredIssues.length >= totalNumberOfIssues}

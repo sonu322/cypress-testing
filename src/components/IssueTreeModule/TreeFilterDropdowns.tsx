@@ -1,12 +1,22 @@
 import React from "react";
-import { ButtonGroup } from "@atlaskit/button";
+import Button, { ButtonGroup, LoadingButton } from "@atlaskit/button";
 import { IssueOptionsDropdown } from "./IssueOptionsDropdown";
+import ExpandIcon from "@atlaskit/icon/glyph/hipchat/chevron-double-down";
+import CollapseIcon from "@atlaskit/icon/glyph/hipchat/chevron-double-up";
+import { TooltipContainer } from "../common/TooltipContainer";
+import { useTranslation } from "react-i18next";
+
 export const TreeFilterDropdowns = ({
   options,
   filter,
   filterDropdowns,
   updateFilteredKeyOptions,
+  expandAll,
+  isExpandAllLoading,
+  collapseAll,
+  isMultiNodeTree,
 }): JSX.Element => {
+  const { t } = useTranslation();
   return (
     <ButtonGroup>
       {filterDropdowns.map((fd) => (
@@ -19,6 +29,26 @@ export const TreeFilterDropdowns = ({
           updateSelectedOptions={updateFilteredKeyOptions}
         />
       ))}
+      {!isMultiNodeTree && (
+        <>
+          <TooltipContainer content={t("lxp.toolbar.expand-all.title")}>
+            <LoadingButton
+              appearance="default"
+              iconBefore={<ExpandIcon label={""} />}
+              onClick={expandAll}
+              isLoading={isExpandAllLoading}
+              isDisabled={isExpandAllLoading}
+            />
+          </TooltipContainer>
+          <TooltipContainer content={t("lxp.toolbar.collapse-all.title")}>
+            <Button
+              appearance="default"
+              iconBefore={<CollapseIcon label={""} />}
+              onClick={collapseAll}
+            />
+          </TooltipContainer>
+        </>
+      )}
     </ButtonGroup>
   );
 };

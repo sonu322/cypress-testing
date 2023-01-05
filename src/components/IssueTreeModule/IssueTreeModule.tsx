@@ -14,6 +14,7 @@ export const IssueTreeModule = () => {
   const treeUtils = new TreeUtils(api);
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isExpandAllLoading, setIsExpandAllLoading] = useState(false);
   const [errors, setErrors] = useState([]);
   const [tree, setTree] = useState(treeUtils.getRootTree());
   const [issueFields, setIssueFields] = useState<IssueField[]>([]);
@@ -81,6 +82,9 @@ export const IssueTreeModule = () => {
         issueCardOptions={issueFields}
         selectedIssueFieldIds={selectedIssueFieldIds}
         setSelectedIssueFieldIds={setSelectedIssueFieldIds}
+        collapseAll={() => treeUtils.collapseAll(setTree)}
+        isExpandAllLoading={isExpandAllLoading}
+        expandAll={() => treeUtils.expandAll(treeFilterContext.filter, issueFields, setTree, handleNewError, clearAllErrors, setIsExpandAllLoading)}
       />
       <IssueTreeSingleNode
         tree={tree}
