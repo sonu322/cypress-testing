@@ -11,13 +11,13 @@ export interface AtlasTreeItems {
 
 export interface LinkTypeTreeNode {
   id: string;
-  isType: boolean;
+  type: string;
   title: string;
 }
 
 export interface ButtonTypeTreeNode {
   id: string;
-  isButton: boolean;
+  type: string;
   title: string;
   startNextCallIndex: number;
   totalSearchResults: number;

@@ -6,6 +6,10 @@ import { ExpansionToggler } from "./ExpansionToggler";
 import { LoadingButton } from "@atlaskit/button";
 import { APIContext } from "../../context/api";
 import TreeUtils from "../../util/TreeUtils";
+import {
+  buttonTypeTreeNodeName,
+  linkTypeTreeNodeName,
+} from "../../constants/common";
 const PADDING_LEVEL = 30;
 const LinkTypeContainer = styled.div`
   display: flex;
@@ -56,7 +60,7 @@ export const IssueItem = ({
       innerRef={provided.innerRef}
       {...provided.dragHandleProps}
     >
-      {item.data.isButton ? (
+      {item.data.type === buttonTypeTreeNodeName ? (
         <LoadingButton
           isLoading={item.data.isDataLoading}
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -81,7 +85,7 @@ export const IssueItem = ({
             onCollapse={() => onCollapse(item.id)}
             isTogglerDisabled={!item.hasChildren}
           ></ExpansionToggler>
-          {item.data?.isType ? (
+          {item.data?.type === linkTypeTreeNodeName ? (
             <LinkTypeContainer>
               {item.data ? item.data.title : "No Name"}
             </LinkTypeContainer>
