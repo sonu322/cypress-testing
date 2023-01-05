@@ -821,6 +821,59 @@ export default class TreeUtils {
     download("csv", csv(contents, true));
   }
 
+  exportMultiTree(tree: AtlasTree): void {
+    console.log("called export mulyi");
+    const root = tree.items[tree.rootId];
+    // const mainNodeId = root.children[0];
+
+    const contents: any[] = [];
+
+    const process = (item: AtlasTreeNode, indent) => {
+      if (!item || item.data?.isButton) {
+        console.log("no", item);
+        return;
+      }
+      const content = {
+        indent,
+        key: "",
+        link: "",
+        summary: "",
+        type: "",
+        status: "",
+        priority: "",
+      };
+
+      if (item.data) {
+        const dataObj = item.data;
+        if ((dataObj as LinkTypeTreeNode).isType) {
+          content.link = (dataObj as LinkTypeTreeNode).title;
+        } else {
+          const data = dataObj as IssueWithLinkedIssues;
+          content.key = data.issueKey;
+          content.summary = data.summary;
+          content.type = data.type.name;
+          content.status = data.status.name;
+          content.priority = data.priority.name;
+        }
+      }
+
+      contents.push(content);
+      if (item.hasChildren && item.isExpanded) {
+        const nextIndent = indent + 1;
+        item.children.forEach((key) => {
+          process(tree.items[key], nextIndent);
+        });
+      }
+    };
+
+    // process(tree.items[mainNodeId], 1);
+    root.children.forEach((mainNodeId) => {
+      console.log(tree.items[mainNodeId]);
+      process(tree.items[mainNodeId], 1);
+    });
+    download("csv", csv(contents, true));
+  }
+
   collapseTreeHook(nodeId, setTree) {
     setTree((tree) => {
       return this.collapseTree(tree, nodeId, setTree);

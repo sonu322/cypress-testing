@@ -12,6 +12,7 @@ import { getScreenHeight } from "../../util/common";
 import { IssueTreeMultiNode } from "../IssueTreeModule/IssueTreeMultiNode";
 import { APIContext } from "../../context/api";
 import TreeUtils from "../../util/TreeUtils";
+import { AtlasTree } from "../../types/app";
 
 const Container = styled.div`
   width: 100%;
@@ -32,6 +33,8 @@ interface Props {
   issueTreeFilter: IssueTreeFilter;
   isOrphansBranchPresent: boolean;
   selectedJqlString: string;
+  tree: AtlasTree;
+  setTree: React.Dispatch<React.SetStateAction<AtlasTree>>;
 }
 export const TreeReport = ({
   selectedJqlString,
@@ -46,6 +49,8 @@ export const TreeReport = ({
   errors,
   issueTreeFilter,
   isOrphansBranchPresent,
+  tree,
+  setTree,
 }: Props): JSX.Element => {
   // TODO: probably we may improve this calculation
   const calculateTableHeight = (errors) => {
@@ -67,7 +72,7 @@ export const TreeReport = ({
   const treeUtils = new TreeUtils(api);
 
   const [tableHeight, setTableHeight] = useState(calculateTableHeight(errors));
-  const [tree, setTree] = useState(treeUtils.getRootTree());
+  // const [tree, setTree] = useState(treeUtils.getRootTree());
   // const [issueFields, setIssueFields] = useState<IssueField[]>([]);
   useEffect(() => {
     const resizeHandler = () => {
