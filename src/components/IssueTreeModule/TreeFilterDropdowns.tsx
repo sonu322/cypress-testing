@@ -4,6 +4,7 @@ import { IssueOptionsDropdown } from "./IssueOptionsDropdown";
 import ExpandIcon from "@atlaskit/icon/glyph/hipchat/chevron-double-down";
 import CollapseIcon from "@atlaskit/icon/glyph/hipchat/chevron-double-up";
 import { TooltipContainer } from "../common/TooltipContainer";
+import { useTranslation } from "react-i18next";
 
 export const TreeFilterDropdowns = ({
   options,
@@ -14,6 +15,7 @@ export const TreeFilterDropdowns = ({
   isExpandAllLoading,
   collapseAll
 }): JSX.Element => {
+  const { t } = useTranslation();
   return (
     <ButtonGroup>
       {filterDropdowns.map((fd) => (
