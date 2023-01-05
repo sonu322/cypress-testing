@@ -42,6 +42,8 @@ export const IssueTreeMultiNode = ({
   clearAllErrors,
   isOrphansBranchPresent,
   selectedJqlString,
+  isToggleOrphansLoading,
+  updateIsToggleOrphansLoading,
 }: Props): JSX.Element => {
   const api = useContext(APIContext);
   const fieldMap = {};
@@ -70,9 +72,19 @@ export const IssueTreeMultiNode = ({
     const orphansTreeBranchId = `/${orphansTreeBranchName}`;
     if (isOrphansBranchPresent) {
       if (tree.items[orphansTreeBranchId] !== undefined) {
+        updateIsToggleOrphansLoading(true);
         setTree((tree) => {
-          const newTree = treeUtils.addOrphansBranch(tree);
-          return newTree;
+          if (
+            isToggleOrphansLoading === true &&
+            !tree.items[treeUtils.ROOT_ID]?.children?.includes(
+              `/${orphansTreeBranchName}`
+            )
+          ) {
+            const newTree = treeUtils.addOrphansBranch(tree);
+            return newTree;
+          } else {
+            return tree;
+          }
         });
       }
     } else {
@@ -84,6 +96,17 @@ export const IssueTreeMultiNode = ({
       }
     }
   }, [isOrphansBranchPresent]);
+
+  useEffect(() => {
+    if (
+      isToggleOrphansLoading &&
+      tree.items[treeUtils.ROOT_ID]?.children?.includes(
+        `/${orphansTreeBranchName}`
+      )
+    ) {
+      updateIsToggleOrphansLoading(false);
+    }
+  }, [isToggleOrphansLoading, tree]);
 
   useEffect(() => {
     const initOrphans = async (): Promise<void> => {
@@ -118,7 +141,10 @@ export const IssueTreeMultiNode = ({
       tree.items[orphansTreeBranchId] === undefined &&
       isOrphansBranchPresent
     ) {
-      void initOrphans();
+      updateIsToggleOrphansLoading(true);
+      void initOrphans().then(() => {
+        updateIsToggleOrphansLoading(false);
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOrphansBranchPresent, filteredIssues]);

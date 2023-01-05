@@ -30,6 +30,8 @@ interface Props {
   selectedJqlString: string;
   tree: AtlasTree;
   setTree: React.Dispatch<React.SetStateAction<AtlasTree>>;
+  isToggleOrphansLoading: boolean;
+  updateIsToggleOrphansLoading: (isToggleOrphansLoading: boolean) => void;
 }
 export const TreeReport = ({
   selectedJqlString,
@@ -43,6 +45,8 @@ export const TreeReport = ({
   isOrphansBranchPresent,
   tree,
   setTree,
+  updateIsToggleOrphansLoading,
+  isToggleOrphansLoading,
 }: Props): JSX.Element => {
   // TODO: probably we may improve this calculation
   const calculateTableHeight = (errors) => {
@@ -91,6 +95,8 @@ export const TreeReport = ({
         filteredIssues={filteredIssues}
         isOrphansBranchPresent={isOrphansBranchPresent}
         selectedJqlString={selectedJqlString}
+        isToggleOrphansLoading={isToggleOrphansLoading}
+        updateIsToggleOrphansLoading={updateIsToggleOrphansLoading}
       />
     </Container>
   );

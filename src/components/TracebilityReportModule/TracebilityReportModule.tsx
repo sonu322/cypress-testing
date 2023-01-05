@@ -69,6 +69,7 @@ export const TracebilityReportModule = ({
   const [selectedLinkTypeIds, setSelectedLinkTypeIds] = useState<string[]>([]);
   const [areIssuesLoading, setAreIssuesLoading] = useState(false);
   const [errors, setErrors] = useState<unknown[]>([]);
+  const [isToggleOrphansLoading, setIsToggleOrphansLoading] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>(0);
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
@@ -214,6 +215,7 @@ export const TracebilityReportModule = ({
                 updateFilteredKeyOptions={updateFilteredKeyOptions}
                 isOrphansBranchPresent={isOrphansBranchPresent}
                 updateIsOrphansBranchPresent={updateIsOrphansBranchPresent}
+                isToggleOrphansLoading={isToggleOrphansLoading}
               />
             )}
           </>
@@ -240,6 +242,10 @@ export const TracebilityReportModule = ({
           errors={errors}
           issueTreeFilter={treeFilterContext.filter}
           isOrphansBranchPresent={isOrphansBranchPresent}
+          isToggleOrphansLoading={isToggleOrphansLoading}
+          updateIsToggleOrphansLoading={(isToggleOrphansLoading: boolean) => {
+            setIsToggleOrphansLoading(isToggleOrphansLoading);
+          }}
           tree={tree}
           setTree={setTree}
         />
