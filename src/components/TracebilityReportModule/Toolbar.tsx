@@ -6,9 +6,16 @@ import { ButtonGroup } from "@atlaskit/button";
 import { Dropdown } from "../common/Dropdown";
 import { HelpLink } from "../common/HelpLink";
 import { ExportContent } from "../common/ExportContent";
+import SettingsIcon from "@atlaskit/icon/glyph/settings";
 import { JQLEditor } from "../JQLEditor";
 import { TableFieldsDropdown } from "./TableFieldsDropdown";
-import { IssueField, IssueLinkType, IssueType } from "../../types/api";
+import {
+  CellLimit,
+  IssueField,
+  IssueLinkType,
+  IssueType,
+} from "../../types/api";
+
 import { TabGroup } from "./TabGroup";
 import { SelectedType } from "@atlaskit/tabs/types";
 import { useTranslation } from "react-i18next";
@@ -36,6 +43,9 @@ interface Props {
   selectedTableFieldIds: string[];
   updateSelectedTableFieldIds: (fieldIds: string[]) => void;
   tableFields: IssueType[] | IssueLinkType[];
+  issueInCell: CellLimit[];
+  selectedIssueInCellIds: string[];
+  updateSelectedIssueInCellIds: React.Dispatch<React.SetStateAction<string[]>>;
   exportReport: () => void;
   handleNewError: (err: unknown) => void;
   isExportDisabled: boolean;
@@ -54,6 +64,9 @@ export const Toolbar = ({
   selectedTableFieldIds,
   updateSelectedTableFieldIds,
   tableFields,
+  selectedIssueInCellIds,
+  updateSelectedIssueInCellIds,
+  issueInCell,
   exportReport,
   handleNewError,
   isExportDisabled,
@@ -61,7 +74,7 @@ export const Toolbar = ({
   handleTabOptionSelect,
   selectedTabIndex,
   showCustomJQLEditor,
-  selectedViewTab
+  selectedViewTab,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
   const api = useContext(APIContext);
@@ -104,6 +117,12 @@ export const Toolbar = ({
               options={issueCardOptions}
               selectedOptions={selectedIssueFieldIds}
               updateSelectedOptions={setSelectedIssueFieldIds}
+            />
+            <Dropdown
+              dropdownName={<SettingsIcon />}
+              options={issueInCell}
+              selectedOptions={selectedIssueInCellIds}
+              updateSelectedOptions={updateSelectedIssueInCellIds}
             />
             <ExportContent
               description={t("lxp.toolbar.export-csv.title")}

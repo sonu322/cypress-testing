@@ -34,6 +34,7 @@ interface Props {
   filteredIssues: IssueWithSortedLinks[];
   tableFields: IssueType[] | IssueLinkType[];
   selectedTableFieldIds: string[];
+  selectedIssueInCellIds: string[];
   issueFieldIds: string[];
   isIssueTypeReport: boolean;
   errors: any[];
@@ -42,18 +43,25 @@ export const Report = ({
   filteredIssues,
   tableFields,
   selectedTableFieldIds,
+  selectedIssueInCellIds,
   issueFieldIds,
   isIssueTypeReport,
-  errors
+  errors,
 }: Props): JSX.Element => {
-
   // TODO: probably we may improve this calculation
   const calculateTableHeight = (errors): number => {
     const headingHeight = 40 + 8; // 8: margin top
     const toolbarHeight = 94 + 8; // 8: table top margin
-    const footerHeight = 32 + 8 + 8; const // more button 8: margin top and bottom
-      errorsHeight = errors?.length > 0 ? ((52 + 8) * errors.length) : 0;
-    const finalHeight = getScreenHeight() - headingHeight - toolbarHeight - footerHeight - errorsHeight - 2;
+    const footerHeight = 32 + 8 + 8;
+    const // more button 8: margin top and bottom
+      errorsHeight = errors?.length > 0 ? (52 + 8) * errors.length : 0;
+    const finalHeight =
+      getScreenHeight() -
+      headingHeight -
+      toolbarHeight -
+      footerHeight -
+      errorsHeight -
+      2;
     return finalHeight < 200 ? 200 : finalHeight;
   };
 
@@ -73,7 +81,6 @@ export const Report = ({
     resizeHandler();
     return () => window.removeEventListener("resize", resizeHandler);
   }, [errors]);
-
   return (
     <Container style={{ maxHeight: tableHeight }}>
       <Table>
@@ -86,6 +93,7 @@ export const Report = ({
             <BorderTr key={`${issue.issueKey}`}>
               {isIssueTypeReport ? (
                 <IssueTypeRow
+                  selectedIssueInCellIds={selectedIssueInCellIds}
                   selectedTableFieldIds={selectedTableFieldIds}
                   issueFieldIds={issueFieldIds}
                   issue={issue}
@@ -93,6 +101,7 @@ export const Report = ({
                 />
               ) : (
                 <LinkTypeRow
+                  selectedIssueInCellIds={selectedIssueInCellIds}
                   selectedTableFieldIds={selectedTableFieldIds}
                   issueFieldIds={issueFieldIds}
                   issue={issue}
