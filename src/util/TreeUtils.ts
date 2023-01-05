@@ -271,7 +271,6 @@ export default class TreeUtils {
   }
 
   async handleLoadMoreOrphanIssues(jql, fields, start, setTree, handleError) {
-    // TODO: add issues to tree
     try {
       const searchResult = await this.api.searchOrphanIssues(
         jql,
@@ -634,7 +633,14 @@ export default class TreeUtils {
 
     if (firstNodeIds !== undefined) {
       firstNodeIds.forEach((firstNodeId) => {
-        newTree = this.applyMultiFilter(newTree, filter, fields, firstNodeId);
+        const firstNode = tree.items[firstNodeId];
+        if (
+          !firstNode.data.isButton &&
+          firstNode.data.linkedIssues !== undefined &&
+          firstNode.data.linkedIssues.length > 0
+        ) {
+          newTree = this.applyMultiFilter(newTree, filter, fields, firstNodeId);
+        }
       });
     }
     return newTree;

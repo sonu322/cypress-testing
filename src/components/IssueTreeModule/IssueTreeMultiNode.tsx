@@ -49,10 +49,7 @@ export const IssueTreeMultiNode = ({
   issueFields.forEach((field) => {
     fieldMap[field.id] = field;
   });
-  console.log(
-    "selected issur field idds from multi tree",
-    selectedIssueFieldIds
-  );
+
 
   useEffect(() => {
     const initTree = async (): Promise<void> => {

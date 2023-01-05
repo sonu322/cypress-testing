@@ -57,7 +57,6 @@ export const IssueCard = ({
   issueData,
   selectedIssueFieldIds,
 }: Props): JSX.Element => {
-  console.log("selected issue field ids", selectedIssueFieldIds);
   let selectedMap = {};
   for (let issueFieldId of selectedIssueFieldIds) {
     selectedMap[issueFieldId] = true;
