@@ -73,13 +73,13 @@ export const IssueTreeMultiNode = ({
     if (isOrphansBranchPresent) {
       if (tree.items[orphansTreeBranchId] !== undefined) {
         updateIsToggleOrphansLoading(true);
+
         setTree((tree) => {
-          if (
-            isToggleOrphansLoading === true &&
-            !tree.items[treeUtils.ROOT_ID]?.children?.includes(
-              `/${orphansTreeBranchName}`
-            )
-          ) {
+          const isOrphanBranchHidden = !tree.items[
+            treeUtils.ROOT_ID
+          ]?.children?.includes(`/${orphansTreeBranchName}`);
+
+          if (isToggleOrphansLoading === true && isOrphanBranchHidden) {
             const newTree = treeUtils.addOrphansBranch(tree);
             return newTree;
           } else {
@@ -98,12 +98,10 @@ export const IssueTreeMultiNode = ({
   }, [isOrphansBranchPresent]);
 
   useEffect(() => {
-    if (
-      isToggleOrphansLoading &&
-      tree.items[treeUtils.ROOT_ID]?.children?.includes(
-        `/${orphansTreeBranchName}`
-      )
-    ) {
+    const isOrphansBranchVisible = tree?.items[
+      treeUtils.ROOT_ID
+    ]?.children?.includes(`/${orphansTreeBranchName}`);
+    if (isToggleOrphansLoading && isOrphansBranchVisible) {
       updateIsToggleOrphansLoading(false);
     }
   }, [isToggleOrphansLoading, tree]);
