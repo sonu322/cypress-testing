@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Dropdown } from "../common/Dropdown";
 import { ButtonGroup } from "@atlaskit/button";
 import styled from "styled-components";
-import { helpLinkUrl } from "../../constants/common";
 import { ExportContent } from "../common/ExportContent";
 import { HelpLink } from "../common/HelpLink";
 import { useTranslation } from "react-i18next";
+import { APIContext } from "../../context/api";
 import { TreeFilterDropdowns } from "./TreeFilterDropdowns";
+
 export const Container = styled.div`
   display: flex;
   justify-content: space-between;
@@ -22,9 +23,14 @@ export const Toolbar = ({
   setSelectedIssueFieldIds,
   issueCardOptions,
   exportTree,
+  collapseAll,
+  expandAll,
   isExportDisabled,
+  isExpandAllLoading
 }) => {
   const { t } = useTranslation();
+  const api = useContext(APIContext);
+  const helpLinkUrl = api.getHelpLinks().issueTree;
   return (
     <Container>
       {options !== undefined && filter !== undefined && (
@@ -33,6 +39,9 @@ export const Toolbar = ({
           options={options}
           filterDropdowns={filterDropdowns}
           updateFilteredKeyOptions={updateFilteredKeyOptions}
+          collapseAll={collapseAll}
+          expandAll={expandAll}
+          isExpandAllLoading={isExpandAllLoading}
         />
       )}
       <div>
@@ -51,6 +60,6 @@ export const Toolbar = ({
           <HelpLink description={t("lxp.common.get-help")} href={helpLinkUrl} />
         </ButtonGroup>
       </div>
-    </Container>
+    </Container >
   );
 };

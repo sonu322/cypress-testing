@@ -5,7 +5,11 @@ import { TreeFilterContextProvider } from "./components/common/TreeFilterContext
 import { TracebilityReportModule } from "./components/TracebilityReportModule/TracebilityReportModule";
 import { APIContext } from "./context/api";
 
-const TracebilityReport = () => {
+interface Props {
+  showCustomJQLEditor?: any;
+}
+
+const TracebilityReport = ({ showCustomJQLEditor }: Props): JSX.Element => {
   const { i18n } = useTranslation();
   const api = useContext(APIContext);
   useEffect(() => {
@@ -22,7 +26,9 @@ const TracebilityReport = () => {
   if (api.hasValidLicense()) {
     return (
       <TreeFilterContextProvider>
-        <TracebilityReportModule></TracebilityReportModule>
+        <TracebilityReportModule
+          showCustomJQLEditor={showCustomJQLEditor}
+        ></TracebilityReportModule>
       </TreeFilterContextProvider>
     );
   } else {

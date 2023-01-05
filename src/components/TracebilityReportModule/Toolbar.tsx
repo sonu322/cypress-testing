@@ -4,16 +4,22 @@ import { colors } from "@atlaskit/theme";
 import { JQLSelectDropdown } from "../JQLSelectDropdown";
 import { ButtonGroup } from "@atlaskit/button";
 import { Dropdown } from "../common/Dropdown";
-import { helpLinkUrl } from "../../constants/common";
 import { HelpLink } from "../common/HelpLink";
 import { ExportContent } from "../common/ExportContent";
+import SettingsIcon from "@atlaskit/icon/glyph/settings";
 import { JQLEditor } from "../JQLEditor";
 import { TableFieldsDropdown } from "./TableFieldsDropdown";
-import { IssueField, IssueLinkType, IssueType } from "../../types/api";
+import {
+  CellLimit,
+  IssueField,
+  IssueLinkType,
+  IssueType,
+} from "../../types/api";
 
 import { TabGroup } from "./TabGroup";
 import { SelectedType } from "@atlaskit/tabs/types";
 import { useTranslation } from "react-i18next";
+import { APIContext } from "../../context/api";
 import { viewTabs } from "../../constants/traceabilityReport";
 import TreeUtils from "../../util/TreeUtils";
 import { APIContext } from "../../context/api";
@@ -38,12 +44,16 @@ interface Props {
   selectedTableFieldIds: string[];
   updateSelectedTableFieldIds: (fieldIds: string[]) => void;
   tableFields: IssueType[] | IssueLinkType[];
+  issueInCell: CellLimit[];
+  selectedIssueInCellIds: string[];
+  updateSelectedIssueInCellIds: React.Dispatch<React.SetStateAction<string[]>>;
   exportReport: () => void;
   handleNewError: (err: unknown) => void;
   isExportDisabled: boolean;
   issueCardOptions: IssueField[];
   handleTabOptionSelect: (tabIndex: SelectedType) => void;
   selectedTabIndex: SelectedType;
+  showCustomJQLEditor: any;
   selectedViewTab: string;
 }
 
@@ -55,17 +65,22 @@ export const Toolbar = ({
   selectedTableFieldIds,
   updateSelectedTableFieldIds,
   tableFields,
+  selectedIssueInCellIds,
+  updateSelectedIssueInCellIds,
+  issueInCell,
   exportReport,
   handleNewError,
   isExportDisabled,
   issueCardOptions,
   handleTabOptionSelect,
   selectedTabIndex,
+  showCustomJQLEditor,
   selectedViewTab,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
+  const helpLinkUrl = api.getHelpLinks().traceability;
   const isTreeReport = selectedViewTab === "tree-view";
   return (
     <div style={{ marginTop: "-16px", marginBottom: "-8px" }}>
@@ -86,6 +101,7 @@ export const Toolbar = ({
           <JQLEditor
             selectedFilterId={selectedJQLString}
             setSelectedFilterId={setSelectedJQLString}
+            showCustomJQLEditor={showCustomJQLEditor}
           />
         </FlexContainer>
 
@@ -104,6 +120,14 @@ export const Toolbar = ({
               selectedOptions={selectedIssueFieldIds}
               updateSelectedOptions={setSelectedIssueFieldIds}
             />
+            {!isTreeReport && (
+              <Dropdown
+                dropdownName={<SettingsIcon />}
+                options={issueInCell}
+                selectedOptions={selectedIssueInCellIds}
+                updateSelectedOptions={updateSelectedIssueInCellIds}
+              />
+            )}
             <ExportContent
               description={t("lxp.toolbar.export-csv.title")}
               exportContent={exportReport}
