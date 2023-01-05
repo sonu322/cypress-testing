@@ -682,7 +682,6 @@ export default class APIImpl implements LXPAPI {
     max?: number
   ): Promise<{ data: IssueWithLinkedIssues[]; total: number }> {
     try {
-      console.log("search orphan issues called");
       const isOrderingJqlRegex = /order*/;
       const isOrderingJql = isOrderingJqlRegex.test(jql);
       const jqlPrefix = isOrderingJql ? "" : "and";
@@ -694,7 +693,6 @@ export default class APIImpl implements LXPAPI {
         start,
         max
       );
-      console.log("searhc initial called", searchResult.total);
 
       const orphansWithoutChildren = searchResult.data.filter(
         (issue) => issue.links === undefined || issue.links.length === 0
@@ -705,11 +703,9 @@ export default class APIImpl implements LXPAPI {
       const issuesWithoutEpics = orphansWithoutChildren.filter(
         (issue) => issue.type.name !== "Epic"
       );
-      console.log("the epics", epics);
       const removeChildrenPromises = epics.map(
         async (epic) =>
           await this.getEpicChildIssues(epic, fields).then((response) => {
-            console.log("repsonse", response, response.total === 0);
             if (response.total === 0) {
               return true;
             } else {
@@ -717,14 +713,12 @@ export default class APIImpl implements LXPAPI {
             }
           })
       );
-      console.log("remove childrne promises", removeChildrenPromises);
 
       const responses = await Promise.all(removeChildrenPromises);
       const epicsWithoutChildren = [];
       if (epics.length === 0 || responses !== undefined) {
         for (let i = 0; i < epics.length; i++) {
           if (responses[i]) {
-            console.log(epics[i]);
             epicsWithoutChildren.push(epics[i]);
           }
         }

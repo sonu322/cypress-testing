@@ -44,10 +44,6 @@ export const IssueTree = ({
   issueFields.forEach((field) => {
     fieldMap[field.id] = field;
   });
-  console.log(
-    "selected issue field ids form issue tree",
-    selectedIssueFieldIds
-  );
   useEffect(() => {
     if (isMultiNodeTree) {
       setTree((tree) => {
