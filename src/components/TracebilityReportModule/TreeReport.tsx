@@ -3,9 +3,7 @@ import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import {
   IssueField,
-  IssueLinkType,
   IssueTreeFilter,
-  IssueType,
   IssueWithSortedLinks,
 } from "../../types/api";
 import { getScreenHeight } from "../../util/common";
@@ -22,10 +20,7 @@ const Container = styled.div`
 `;
 interface Props {
   filteredIssues: IssueWithSortedLinks[];
-  tableFields: IssueType[] | IssueLinkType[];
-  selectedTableFieldIds: string[];
   selectedIssueFieldIds: string[];
-  isIssueTypeReport: boolean;
   errors: any[];
   issueFields: IssueField[];
   clearAllErrors: () => void;
@@ -39,11 +34,8 @@ interface Props {
 export const TreeReport = ({
   selectedJqlString,
   filteredIssues,
-  tableFields,
-  selectedTableFieldIds,
   selectedIssueFieldIds,
   issueFields,
-  isIssueTypeReport,
   clearAllErrors,
   handleError,
   errors,
@@ -72,8 +64,6 @@ export const TreeReport = ({
   const treeUtils = new TreeUtils(api);
 
   const [tableHeight, setTableHeight] = useState(calculateTableHeight(errors));
-  // const [tree, setTree] = useState(treeUtils.getRootTree());
-  // const [issueFields, setIssueFields] = useState<IssueField[]>([]);
   useEffect(() => {
     const resizeHandler = () => {
       setTableHeight((prevHeight) => {
