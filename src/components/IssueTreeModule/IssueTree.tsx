@@ -6,7 +6,6 @@ import { IssueItem } from "./IssueItem";
 import { ID, IssueField, IssueTreeFilter } from "../../types/api";
 import { AtlasTree } from "../../types/app";
 import { useTranslation } from "react-i18next";
-import Button from "@atlaskit/button";
 const Container = styled.div`
   display: flex;
 `;
@@ -21,7 +20,6 @@ export interface Props {
   handleError: any;
   clearAllErrors: () => void;
   isMultiNodeTree?: boolean;
-  isOrphansBranchPresent?: boolean;
   selectedJqlString?: string;
 }
 
@@ -35,7 +33,6 @@ export const IssueTree = ({
   handleError,
   clearAllErrors,
   isMultiNodeTree,
-  isOrphansBranchPresent,
   selectedJqlString,
 }: Props): JSX.Element => {
   const { t } = useTranslation();

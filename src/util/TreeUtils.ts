@@ -12,7 +12,12 @@ import LXPAPI, {
   IssueWithSortedLinks,
 } from "../types/api";
 import { csv, download } from "./index";
-import { AtlasTree, AtlasTreeNode, LinkTypeTreeNode } from "../types/app";
+import {
+  AtlasTree,
+  AtlasTreeNode,
+  ButtonTypeTreeNode,
+  LinkTypeTreeNode,
+} from "../types/app";
 import { isPromise } from "./common";
 import {
   loadMoreOrphansButtonName,
@@ -116,7 +121,7 @@ export default class TreeUtils {
     issueType: string,
     hasLoadMoreButton?: boolean,
     loadMoreHandler?: Function
-  ) {
+  ): AtlasTreeNode {
     return this.createTreeNode(
       tree,
       prefix,
@@ -136,12 +141,12 @@ export default class TreeUtils {
   createTreeNode(
     tree: AtlasTree,
     prefix: string,
-    data: IssueWithLinkedIssues | Issue | LinkTypeTreeNode,
+    data: IssueWithLinkedIssues | Issue | LinkTypeTreeNode | ButtonTypeTreeNode,
     parentIssueId: ID,
     isExpanded = false,
     hasChildrenLoaded = false,
     hasChildren = true
-  ) {
+  ): AtlasTreeNode {
     const node: AtlasTreeNode = {
       id: prefix + "/" + data.id,
       children: [],
@@ -270,7 +275,13 @@ export default class TreeUtils {
     return newTree;
   }
 
-  async handleLoadMoreOrphanIssues(jql, fields, start, setTree, handleError) {
+  async handleLoadMoreOrphanIssues(
+    jql: string,
+    fields: IssueField[],
+    start: number,
+    setTree: React.Dispatch<React.SetStateAction<AtlasTree>>,
+    handleError: (err: unknown) => void
+  ): Promise<void> {
     try {
       const searchResult = await this.api.searchOrphanIssues(
         jql,
@@ -284,22 +295,21 @@ export default class TreeUtils {
             tree.items[
               `/${orphansTreeBranchName}/${loadMoreOrphansButtonName}`
             ];
-          console.log(loadMoreButtonNode);
+
+          const newButtonData: ButtonTypeTreeNode = {
+            ...loadMoreButtonNode.data,
+            startNextCallIndex:
+              loadMoreButtonNode.data.startNextCallIndex + orphansMaxResults,
+          };
           let newTree = mutateTree(
             tree,
             `/${orphansTreeBranchName}/${loadMoreOrphansButtonName}`,
             {
-              data: {
-                ...loadMoreButtonNode.data,
-                startNextCallIndex:
-                  loadMoreButtonNode.data.startNextCallIndex +
-                  orphansMaxResults,
-              },
+              data: newButtonData,
             }
           );
           const orphanTypeNode = tree.items[`/${orphansTreeBranchName}`];
           const issues = searchResult.data;
-          console.log("fetched issues", issues);
           const newOrphanNodeIds = [];
           issues.forEach((issueWithLinks) => {
             const node = this.createTreeNode(
@@ -311,7 +321,6 @@ export default class TreeUtils {
               false,
               false
             );
-            console.log("created node", node);
             const nodeId = node.id;
             newOrphanNodeIds.push(nodeId);
             // newTree.items[orphanTypeNode.id].children.push(nodeId);
@@ -321,12 +330,10 @@ export default class TreeUtils {
           const loadMoreButtonId = oldChildren.pop(); // removes button
           const newChildren = oldChildren.concat(newOrphanNodeIds);
           newChildren.push(loadMoreButtonId);
-          console.log("new children", newChildren);
           newTree = mutateTree(newTree, `/${orphansTreeBranchName}`, {
             children: newChildren,
           });
 
-          console.log("new tree", newTree);
           return newTree;
         });
       }
@@ -351,20 +358,15 @@ export default class TreeUtils {
         "",
         orphansTreeBranchName
       );
-      console.log("orphanTypeNode", orphanTypeNode);
       const loadMoreButtonNode = this.createTreeNode(
         newTree,
         `${orphanTypeNode.id}`,
         {
           id: loadMoreOrphansButtonName,
-          name: loadMoreOrphansButtonName,
-          // handleClick: this.handleLoadMoreOrphanIssues,
+          title: loadMoreOrphansButtonName,
           startNextCallIndex: orphansMaxResults,
           totalSearchResults,
           isButton: true,
-          // handleLoadMoreIssues: () => {
-          //   console.log("called loadmore issues");
-          // },
         },
         orphanTypeNode.id,
         false,
@@ -372,8 +374,6 @@ export default class TreeUtils {
         false
       );
 
-      // const issues = searchResult.data;
-      console.log(newTree.items);
       const orphanNodeIds = [];
       issues.forEach((issueWithLinks) => {
         const node = this.createTreeNode(
@@ -387,23 +387,15 @@ export default class TreeUtils {
         );
         const nodeId = node.id;
         orphanNodeIds.push(nodeId);
-        // newTree.items[orphanTypeNode.id].children.push(nodeId);
       });
       orphanNodeIds.push(loadMoreButtonNode.id);
       newTree = mutateTree(newTree, orphanTypeNode.id, {
         children: orphanNodeIds,
       });
 
-      const nonOrphanns = issues.filter((issue) => issue.links.length > 0);
-      console.log("NON ORPHAN ISSUESSSSSSSSS");
-      console.log(nonOrphanns);
       const newChildren = newTree.items[this.ROOT_ID].children;
-      console.log("ACTUAL PRESENT CHILDRNE", newChildren);
       newChildren.unshift(orphanTypeNode.id);
-      console.log("new children", newChildren);
       newTree = mutateTree(newTree, this.ROOT_ID, { children: newChildren });
-
-      console.log("from init orphan", newTree);
       return newTree;
     } catch (err) {
       console.error(err);

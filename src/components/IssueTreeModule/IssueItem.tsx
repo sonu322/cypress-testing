@@ -68,7 +68,7 @@ export const IssueItem = ({
             )
           }
         >
-          load more issues
+          {item.data.title}
         </Button>
       ) : (
         <>
