@@ -17,9 +17,7 @@ import { APIContext } from "../../context/api";
 export interface Props {
   tree: AtlasTree;
   treeUtils: TreeUtils;
-  setTree: (
-    tree: AtlasTree
-  ) => void | ((setterFunction: (tree: AtlasTree) => AtlasTree) => void);
+  setTree: (tree: AtlasTree | ((tree: AtlasTree) => AtlasTree)) => void;
   filter: IssueTreeFilter;
   issueFields: IssueField[];
   selectedIssueFieldIds: ID[];

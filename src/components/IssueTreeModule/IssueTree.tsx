@@ -13,7 +13,7 @@ const Container = styled.div`
 export interface Props {
   tree: AtlasTree;
   treeUtils: TreeUtils;
-  setTree: any;
+  setTree: (tree: AtlasTree | ((tree: AtlasTree) => AtlasTree)) => void;
   filter: IssueTreeFilter;
   issueFields: IssueField[];
   selectedIssueFieldIds: ID[];
