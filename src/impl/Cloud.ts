@@ -754,6 +754,71 @@ export default class APIImpl implements LXPAPI {
     return { data: populatedIssues, total: searchResult.total };
   }
 
+  async searchOrphanIssues(
+    jql: string,
+    fields: IssueField[],
+    start?: number,
+    max?: number
+  ): Promise<{ data: IssueWithLinkedIssues[]; total: number }> {
+    try {
+      const isOrderingJqlRegex = /order*/;
+      const isOrderingJql = isOrderingJqlRegex.test(jql);
+      const jqlPrefix = isOrderingJql ? "" : "and";
+      const onlyOrphansJql = `issueLinkType is EMPTY and parent is EMPTY and "Epic Link" is EMPTY ${jqlPrefix} ${jql}`;
+
+      const searchResult = await this.searchIssues(
+        onlyOrphansJql,
+        fields,
+        start,
+        max
+      );
+
+      const orphansWithoutChildren = searchResult.data.filter(
+        (issue) => issue.links === undefined || issue.links.length === 0
+      );
+      const epics = orphansWithoutChildren.filter(
+        (issue) => issue.type.name === "Epic"
+      );
+      const issuesWithoutEpics = orphansWithoutChildren.filter(
+        (issue) => issue.type.name !== "Epic"
+      );
+      const removeChildrenPromises = epics.map(
+        async (epic) =>
+          await this.getChildIssues(epic, fields, true).then((response) => {
+            if (response.total === 0) {
+              return true;
+            } else {
+              return false;
+            }
+          })
+      );
+
+      const responses = await Promise.all(removeChildrenPromises);
+      const epicsWithoutChildren = [];
+      if (epics.length === 0 || responses !== undefined) {
+        for (let i = 0; i < epics.length; i++) {
+          if (responses[i]) {
+            epicsWithoutChildren.push(epics[i]);
+          }
+        }
+        const orphansAndEpicsWithoutChildren =
+          epicsWithoutChildren.concat(issuesWithoutEpics);
+        // TODO: if we add optiton to make orphans fetch more than 100 issues, add handling
+
+        const issueWithLinkedIssues: IssueWithLinkedIssues[] =
+          orphansAndEpicsWithoutChildren.map((issue) => ({
+            ...issue,
+            linkedIssues: [],
+          }));
+        return { data: issueWithLinkedIssues, total: searchResult.total };
+      }
+    } catch (error) {
+      console.log(error);
+      throwError("lxp.api.search-issues-error");
+    }
+
+  }
+
   private _convertFilter(filter: JiraFilter): Filter {
     return {
       ...filter,

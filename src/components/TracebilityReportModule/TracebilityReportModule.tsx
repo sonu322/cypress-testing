@@ -21,6 +21,7 @@ import { getKeyValues } from "../../util/common";
 import { viewTabs } from "../../constants/traceabilityReport";
 import { TreeReportToolbar } from "./TreeReportToolbar";
 import { TreeFilterContext } from "../../context/treeFilterContext";
+import TreeUtils from "../../util/TreeUtils";
 
 const FullWidthContainer = styled.div`
   width: 100%;
@@ -45,7 +46,7 @@ export const TracebilityReportModule = ({
 }: Props): JSX.Element => {
   const { t } = useTranslation();
   const treeFilterContext = useContext(TreeFilterContext);
-  const [treeHasOnlyOrphans, setTreeHasOnlyOrphans] = useState(false);
+  const [isOrphansBranchPresent, setIsOrphansBranchPresent] = useState(false);
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
   const [selectedIssueInCellIds, updateSelectedIssueInCellIds] = useState<
     string[]
@@ -68,10 +69,15 @@ export const TracebilityReportModule = ({
   const [selectedLinkTypeIds, setSelectedLinkTypeIds] = useState<string[]>([]);
   const [areIssuesLoading, setAreIssuesLoading] = useState(false);
   const [errors, setErrors] = useState<unknown[]>([]);
+  const [isToggleOrphansLoading, setIsToggleOrphansLoading] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>(0);
   const api = useContext(APIContext);
-  const updateTreeHasOnlyOrphans = (treeHasOnlyOrphans: boolean): void => {
-    setTreeHasOnlyOrphans(treeHasOnlyOrphans);
+  const treeUtils = new TreeUtils(api);
+  const [tree, setTree] = useState(treeUtils.getRootTree());
+  const updateIsOrphansBranchPresent = (
+    isOrphansBranchPresent: boolean
+  ): void => {
+    setIsOrphansBranchPresent(isOrphansBranchPresent);
   };
   const updateFilteredKeyOptions = (
     key: string,
@@ -165,6 +171,7 @@ export const TracebilityReportModule = ({
   const selectedViewTab = viewTabs.tabs[selectedTabIndex].id;
   const isTreeReport = selectedViewTab === "tree-view";
   const allErrors = errors.concat(treeFilterContext.errors);
+
   return (
     <FullWidthContainer>
       <PageHeader
@@ -183,15 +190,19 @@ export const TracebilityReportModule = ({
               selectedTableFieldIds={selectedTableFieldIds}
               updateSelectedTableFieldIds={updateSelectedTableFieldIds}
               tableFields={tableFields}
+              exportReport={() => {
+                if (isTreeReport) {
+                  treeUtils.exportMultiTree(tree);
+                } else {
+                  exportReport(
+                    tableFields,
+                    emptyEqualsAllTableIds,
+                    filteredIssues,
+                    isIssueTypeReport
+                  );
+                }
+              }}
               showCustomJQLEditor={showCustomJQLEditor}
-              exportReport={() =>
-                exportReport(
-                  tableFields,
-                  emptyEqualsAllTableIds,
-                  filteredIssues,
-                  isIssueTypeReport
-                )
-              }
               isExportDisabled={isExportDisabled}
               handleNewError={handleNewError}
               handleTabOptionSelect={handleTabOptionSelect}
@@ -202,8 +213,9 @@ export const TracebilityReportModule = ({
                 options={treeFilterContext.options}
                 filter={treeFilterContext.filter}
                 updateFilteredKeyOptions={updateFilteredKeyOptions}
-                treeHasOnlyOrphans={treeHasOnlyOrphans}
-                updateTreeHasOnlyOrphans={updateTreeHasOnlyOrphans}
+                isOrphansBranchPresent={isOrphansBranchPresent}
+                updateIsOrphansBranchPresent={updateIsOrphansBranchPresent}
+                isToggleOrphansLoading={isToggleOrphansLoading}
               />
             )}
           </>
@@ -214,7 +226,7 @@ export const TracebilityReportModule = ({
       {allErrors.length > 0 && <ErrorsList errors={errors} />}
       <GrowContainer>
         <Main
-          jqlString={selectedJQLString}
+          selectedJqlString={selectedJQLString}
           handleNewError={handleNewError}
           clearAllErrors={clearAllErrors}
           issueFields={issueFields}
@@ -229,7 +241,13 @@ export const TracebilityReportModule = ({
           selectedViewTab={viewTabs.tabs[selectedTabIndex].id}
           errors={errors}
           issueTreeFilter={treeFilterContext.filter}
-          treeHasOnlyOrphans={treeHasOnlyOrphans}
+          isOrphansBranchPresent={isOrphansBranchPresent}
+          isToggleOrphansLoading={isToggleOrphansLoading}
+          updateIsToggleOrphansLoading={(isToggleOrphansLoading: boolean) => {
+            setIsToggleOrphansLoading(isToggleOrphansLoading);
+          }}
+          tree={tree}
+          setTree={setTree}
         />
       </GrowContainer>
     </FullWidthContainer>

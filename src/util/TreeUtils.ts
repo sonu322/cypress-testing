@@ -12,8 +12,22 @@ import LXPAPI, {
   IssueWithSortedLinks,
 } from "../types/api";
 import { csv, download } from "./index";
-import { AtlasTree, AtlasTreeNode, LinkTypeTreeNode } from "../types/app";
+import {
+  AtlasTree,
+  AtlasTreeNode,
+  ButtonTypeTreeNode,
+  LinkTypeTreeNode,
+} from "../types/app";
 import { isPromise } from "./common";
+import {
+  loadMoreOrphansButtonName,
+  orphansMaxResults,
+  orphansTreeBranchName,
+} from "../constants/traceabilityReport";
+import {
+  buttonTypeTreeNodeName,
+  linkTypeTreeNodeName,
+} from "../constants/common";
 
 // root node
 const root: AtlasTree = {
@@ -29,17 +43,15 @@ const root: AtlasTree = {
       parentIssueId: null,
       data: {
         id: "0",
-        isType: true,
+        type: linkTypeTreeNodeName,
         title: "Fake Root Node",
       },
     },
   },
 };
 
-
-
 export default class TreeUtils {
-  private readonly ROOT_ID = "0";
+  readonly ROOT_ID = "0";
   private readonly api: LXPAPI;
 
   constructor(api: LXPAPI) {
@@ -107,11 +119,15 @@ export default class TreeUtils {
     return root;
   }
 
-  createTypeNode(tree, prefix: string, issueType: string) {
+  createTypeNode(tree, prefix: string, issueType: string): AtlasTreeNode {
     return this.createTreeNode(
       tree,
       prefix,
-      { isType: true, id: issueType, title: issueType },
+      {
+        type: linkTypeTreeNodeName,
+        id: issueType,
+        title: issueType,
+      },
       null,
       true,
       true
@@ -121,15 +137,16 @@ export default class TreeUtils {
   createTreeNode(
     tree: AtlasTree,
     prefix: string,
-    data: IssueWithLinkedIssues | Issue | LinkTypeTreeNode,
+    data: IssueWithLinkedIssues | Issue | LinkTypeTreeNode | ButtonTypeTreeNode,
     parentIssueId: ID,
     isExpanded = false,
-    hasChildrenLoaded = false
-  ) {
+    hasChildrenLoaded = false,
+    hasChildren = true
+  ): AtlasTreeNode {
     const node: AtlasTreeNode = {
       id: prefix + "/" + data.id,
       children: [],
-      hasChildren: true,
+      hasChildren,
       hasChildrenLoaded,
       isExpanded,
       isChildrenLoading: false,
@@ -181,23 +198,33 @@ export default class TreeUtils {
     }
   }
 
-  async initMultiNodeTree(
-    filter: IssueTreeFilter, // TODO: add show/hiding of children based on tree filter
-    fields: IssueField[],
+  initMultiNodeTree(
     handleError,
     filteredIssues: IssueWithSortedLinks[]
-  ): Promise<AtlasTree> {
+  ): AtlasTree {
     try {
       const prevTree = this.getRootTree();
       const tree = this.cloneTree(prevTree);
-      const allPromises = filteredIssues.map(async (issue) => {
-        return await this.api.getIssueWithLinks(fields, issue.id); // TODO: convert IssueWithSortedLinks into IssueWithLinkedIssues
-        // by transforming issue object instead of making an api call
-      };);
 
-      const result = await Promise.all(allPromises);
+      const filteredIssuesWithLinks: IssueWithLinkedIssues[] =
+        filteredIssues.map((filteredIssue) => {
+          let linkedIssues = [];
+          Object.values(filteredIssue.sortedLinks).forEach((issuesOfType) => {
+            linkedIssues = linkedIssues.concat(issuesOfType);
+          });
+
+          const issueWithLinkedIssues = {
+            ...filteredIssue,
+            linkedIssues,
+          };
+          delete issueWithLinkedIssues.sortedLinks;
+          return issueWithLinkedIssues;
+        });
+
+      // filteredIssuesWithLinks = await Promise.all(allPromises);
+
       tree.items[this.ROOT_ID].children = [];
-      result.forEach((issueWithLinks) => {
+      filteredIssuesWithLinks.forEach((issueWithLinks) => {
         const node = this.createTreeNode(
           tree,
           "",
@@ -209,7 +236,192 @@ export default class TreeUtils {
         const nodeId = node.id;
         tree.items[this.ROOT_ID].children.push(nodeId);
       });
+
       return tree;
+    } catch (err) {
+      console.error(err);
+      handleError(err);
+    }
+  }
+
+  removeOrphansBranch(tree: AtlasTree): AtlasTree {
+    let newTree = this.cloneTree(tree);
+    const rootNode = tree.items[this.ROOT_ID];
+    const orphansTreeBranchId = `/${orphansTreeBranchName}`;
+    if (rootNode.children.includes(orphansTreeBranchId)) {
+      const newChildren = rootNode.children.filter(
+        (child) => child !== orphansTreeBranchId
+      );
+      newTree = mutateTree(tree, this.ROOT_ID, { children: newChildren });
+    }
+    return newTree;
+  }
+
+  addOrphansBranch(tree: AtlasTree): AtlasTree {
+    let newTree = this.cloneTree(tree);
+    const rootNode = tree.items[this.ROOT_ID];
+    const orphansTreeBranchId = `/${orphansTreeBranchName}`;
+    if (tree.items[orphansTreeBranchId] !== undefined) {
+      const newChildren = [...rootNode.children];
+      newChildren.unshift(orphansTreeBranchId);
+      newTree = mutateTree(tree, this.ROOT_ID, { children: newChildren });
+    }
+    return newTree;
+  }
+
+  async handleLoadMoreOrphanIssues(
+    jql: string,
+    fields: IssueField[],
+    start: number,
+    setTree: React.Dispatch<React.SetStateAction<AtlasTree>>,
+    handleError: (err: unknown) => void
+  ): Promise<void> {
+    try {
+      setTree((tree) => {
+        const loadMoreButtonNode =
+          tree.items[`/${orphansTreeBranchName}/${loadMoreOrphansButtonName}`];
+        const newButtonData: ButtonTypeTreeNode = {
+          ...loadMoreButtonNode.data,
+          isDataLoading: true,
+        };
+        let newTree = mutateTree(
+          tree,
+          `/${orphansTreeBranchName}/${loadMoreOrphansButtonName}`,
+          {
+            data: newButtonData,
+          }
+        );
+        return newTree;
+      });
+      const searchResult = await this.api.searchOrphanIssues(
+        jql,
+        fields,
+        start,
+        orphansMaxResults
+      );
+      if (searchResult?.data !== undefined) {
+        setTree((tree) => {
+          const loadMoreButtonNode =
+            tree.items[
+              `/${orphansTreeBranchName}/${loadMoreOrphansButtonName}`
+            ];
+
+          const newButtonData: ButtonTypeTreeNode = {
+            ...loadMoreButtonNode.data,
+            startNextCallIndex:
+              loadMoreButtonNode.data.startNextCallIndex + orphansMaxResults,
+            isDataLoading: false,
+          };
+          let newTree = mutateTree(
+            tree,
+            `/${orphansTreeBranchName}/${loadMoreOrphansButtonName}`,
+            {
+              data: newButtonData,
+            }
+          );
+          const orphanTypeNode = tree.items[`/${orphansTreeBranchName}`];
+          const issues = searchResult.data;
+          const newOrphanNodeIds = [];
+          issues.forEach((issueWithLinks) => {
+            const node = this.createTreeNode(
+              newTree,
+              orphanTypeNode.id,
+              issueWithLinks,
+              orphanTypeNode.id,
+              false,
+              false,
+              false
+            );
+            const nodeId = node.id;
+            newOrphanNodeIds.push(nodeId);
+            // newTree.items[orphanTypeNode.id].children.push(nodeId);
+          });
+
+          const oldChildren = [...orphanTypeNode.children];
+          const loadMoreButtonId = oldChildren.pop(); // removes button
+          const newChildren = oldChildren.concat(newOrphanNodeIds);
+          newChildren.push(loadMoreButtonId);
+          newTree = mutateTree(newTree, `/${orphansTreeBranchName}`, {
+            children: newChildren,
+          });
+
+          return newTree;
+        });
+      }
+    } catch (error) {
+      setTree((tree) => {
+        const loadMoreButtonNode =
+          tree.items[`/${orphansTreeBranchName}/${loadMoreOrphansButtonName}`];
+        const newButtonData: ButtonTypeTreeNode = {
+          ...loadMoreButtonNode.data,
+          isDataLoading: false,
+        };
+        let newTree = mutateTree(
+          tree,
+          `/${orphansTreeBranchName}/${loadMoreOrphansButtonName}`,
+          {
+            data: newButtonData,
+          }
+        );
+        return newTree;
+      });
+      handleError(error);
+    }
+  }
+
+  initOrphanBranch(
+    issues: Issue[],
+    totalSearchResults: number,
+    tree: AtlasTree,
+    handleError: (err: unknown) => void
+  ): AtlasTree {
+    try {
+      let newTree = this.cloneTree(tree);
+      const orphanTypeNode = this.createTypeNode(
+        newTree,
+        "",
+        orphansTreeBranchName
+      );
+      const loadMoreButtonNode = this.createTreeNode(
+        newTree,
+        `${orphanTypeNode.id}`,
+        {
+          id: loadMoreOrphansButtonName,
+          title: loadMoreOrphansButtonName,
+          startNextCallIndex: orphansMaxResults,
+          totalSearchResults,
+          type: buttonTypeTreeNodeName,
+          isDataLoading: false,
+        },
+        orphanTypeNode.id,
+        false,
+        false,
+        false
+      );
+
+      const orphanNodeIds = [];
+      issues.forEach((issueWithLinks) => {
+        const node = this.createTreeNode(
+          newTree,
+          orphanTypeNode.id,
+          issueWithLinks,
+          null,
+          false,
+          false,
+          false
+        );
+        const nodeId = node.id;
+        orphanNodeIds.push(nodeId);
+      });
+      orphanNodeIds.push(loadMoreButtonNode.id);
+      newTree = mutateTree(newTree, orphanTypeNode.id, {
+        children: orphanNodeIds,
+      });
+
+      const newChildren = newTree.items[this.ROOT_ID].children;
+      newChildren.unshift(orphanTypeNode.id);
+      newTree = mutateTree(newTree, this.ROOT_ID, { children: newChildren });
+      return newTree;
     } catch (err) {
       console.error(err);
       handleError(err);
@@ -438,7 +650,14 @@ export default class TreeUtils {
 
     if (firstNodeIds !== undefined) {
       firstNodeIds.forEach((firstNodeId) => {
-        newTree = this.applyMultiFilter(newTree, filter, fields, firstNodeId);
+        const firstNode = tree.items[firstNodeId];
+        if (
+          firstNode.data.type !== buttonTypeTreeNodeName &&
+          firstNode.data.linkedIssues !== undefined &&
+          firstNode.data.linkedIssues.length > 0
+        ) {
+          newTree = this.applyMultiFilter(newTree, filter, fields, firstNodeId);
+        }
       });
     }
     return newTree;
@@ -490,7 +709,6 @@ export default class TreeUtils {
       console.log(error);
       throw new Error("Error occured while adding children");
     }
->>>>>>> origin/filter-tree
   }
 
   expandTreeHook(
@@ -560,7 +778,7 @@ export default class TreeUtils {
       if (item.hasChildrenLoaded) {
         item.isExpanded = true;
       } else {
-        issueIds.push((item.data as IssueWithLinkedIssues).id)
+        issueIds.push((item.data as IssueWithLinkedIssues).id);
       }
     }
     const issueIdMap = {};
@@ -576,7 +794,13 @@ export default class TreeUtils {
       if (!item.hasChildrenLoaded) {
         item.isExpanded = true;
         const issueId = (item.data as IssueWithLinkedIssues).id;
-        await this.addChildren(nodeId, tree, fields, issueIdMap[issueId], filter);
+        await this.addChildren(
+          nodeId,
+          tree,
+          fields,
+          issueIdMap[issueId],
+          filter
+        );
       }
       nodes.push(item);
     }
@@ -591,7 +815,11 @@ export default class TreeUtils {
     clearAllErrors,
     setIsExpandAllLoading
   ): Promise<void> {
-    const expandNodes = async (tree: AtlasTree, nodeIds: string[], level: number): Promise<void> => {
+    const expandNodes = async (
+      tree: AtlasTree,
+      nodeIds: string[],
+      level: number
+    ): Promise<void> => {
       if (level >= 3) return;
       const nodes = await this.expandTreeNodes(tree, nodeIds, filter, fields);
       let children = [];
@@ -671,7 +899,7 @@ export default class TreeUtils {
 
       if (item.data) {
         const dataObj = item.data;
-        if ((dataObj as LinkTypeTreeNode).isType) {
+        if ((dataObj as LinkTypeTreeNode).type === linkTypeTreeNodeName) {
           content.link = (dataObj as LinkTypeTreeNode).title;
         } else {
           const data = dataObj as IssueWithLinkedIssues;
@@ -693,6 +921,55 @@ export default class TreeUtils {
     };
 
     process(tree.items[mainNodeId], 1);
+    download("csv", csv(contents, true));
+  }
+
+  exportMultiTree(tree: AtlasTree): void {
+    const root = tree.items[tree.rootId];
+
+    const contents: any[] = [];
+
+    const process = (item: AtlasTreeNode, indent) => {
+      if (!item || item.data?.type === buttonTypeTreeNodeName) {
+        return;
+      }
+      const content = {
+        indent,
+        key: "",
+        link: "",
+        summary: "",
+        type: "",
+        status: "",
+        priority: "",
+      };
+
+      if (item.data) {
+        const dataObj = item.data;
+        if ((dataObj as LinkTypeTreeNode).type === linkTypeTreeNodeName) {
+          content.link = (dataObj as LinkTypeTreeNode).title;
+        } else {
+          const data = dataObj as IssueWithLinkedIssues;
+          content.key = data.issueKey;
+          content.summary = data.summary;
+          content.type = data.type.name;
+          content.status = data.status.name;
+          content.priority = data.priority.name;
+        }
+      }
+
+      contents.push(content);
+      if (item.hasChildren && item.isExpanded) {
+        const nextIndent = indent + 1;
+        item.children.forEach((key) => {
+          process(tree.items[key], nextIndent);
+        });
+      }
+    };
+
+    // process(tree.items[mainNodeId], 1);
+    root.children.forEach((mainNodeId) => {
+      process(tree.items[mainNodeId], 1);
+    });
     download("csv", csv(contents, true));
   }
 
