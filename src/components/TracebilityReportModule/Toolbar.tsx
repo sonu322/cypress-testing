@@ -21,7 +21,6 @@ import { SelectedType } from "@atlaskit/tabs/types";
 import { useTranslation } from "react-i18next";
 import { APIContext } from "../../context/api";
 import { viewTabs } from "../../constants/traceabilityReport";
-
 const MainBar = styled.div`
   padding: 8px;
   border-radius: 3px;
@@ -118,17 +117,17 @@ export const Toolbar = ({
               selectedOptions={selectedIssueFieldIds}
               updateSelectedOptions={setSelectedIssueFieldIds}
             />
-            <Dropdown
-              dropdownName={<SettingsIcon />}
-              options={issueInCell}
-              selectedOptions={selectedIssueInCellIds}
-              updateSelectedOptions={updateSelectedIssueInCellIds}
-            />
+            {!isTreeReport && (
+              <Dropdown
+                dropdownName={<SettingsIcon />}
+                options={issueInCell}
+                selectedOptions={selectedIssueInCellIds}
+                updateSelectedOptions={updateSelectedIssueInCellIds}
+              />
+            )}
             <ExportContent
               description={t("lxp.toolbar.export-csv.title")}
-              exportContent={() => {
-                exportReport();
-              }}
+              exportContent={exportReport}
               isDisabled={isExportDisabled}
             />
             <HelpLink

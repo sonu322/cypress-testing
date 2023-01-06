@@ -6,7 +6,6 @@ import { IssueItem } from "./IssueItem";
 import { ID, IssueField, IssueTreeFilter } from "../../types/api";
 import { AtlasTree } from "../../types/app";
 import { useTranslation } from "react-i18next";
-
 const Container = styled.div`
   display: flex;
 `;
@@ -14,14 +13,14 @@ const Container = styled.div`
 export interface Props {
   tree: AtlasTree;
   treeUtils: TreeUtils;
-  setTree: any;
+  setTree: (tree: AtlasTree | ((tree: AtlasTree) => AtlasTree)) => void;
   filter: IssueTreeFilter;
   issueFields: IssueField[];
   selectedIssueFieldIds: ID[];
   handleError: any;
   clearAllErrors: () => void;
   isMultiNodeTree?: boolean;
-  treeHasOnlyOrphans?: boolean;
+  selectedJqlString?: string;
 }
 
 export const IssueTree = ({
@@ -34,7 +33,7 @@ export const IssueTree = ({
   handleError,
   clearAllErrors,
   isMultiNodeTree,
-  treeHasOnlyOrphans,
+  selectedJqlString,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
   const loadingText = t("lxp.common.loading");
@@ -42,7 +41,6 @@ export const IssueTree = ({
   issueFields.forEach((field) => {
     fieldMap[field.id] = field;
   });
-
   useEffect(() => {
     if (isMultiNodeTree) {
       setTree((tree) => {
@@ -54,7 +52,13 @@ export const IssueTree = ({
         return newTree;
       });
     } else {
-      treeUtils.applyFilterHook(tree, setTree, filter, issueFields);
+     setTree((prevTree) => {
+       if (prevTree !== undefined) {
+         treeUtils.applyFilterHook(tree, setTree, filter, issueFields);
+       } else {
+         return prevTree;
+       }
+     });
     }
   }, [filter, selectedIssueFieldIds]);
 
@@ -76,8 +80,16 @@ export const IssueTree = ({
   const renderItem = ({ ...props }) => {
     return (
       // @ts-expect-error
-      <IssueItem {...props} selectedIssueFieldIds={selectedIssueFieldIds} />
+      <IssueItem
+        {...props}
+        selectedIssueFieldIds={selectedIssueFieldIds}
+        selectedJqlString={selectedJqlString}
+        issueFields={issueFields}
+        setTree={setTree}
+        handleError={handleError}
+      />
     );
+    // }
   };
 
   if (tree !== undefined && tree.items !== undefined) {

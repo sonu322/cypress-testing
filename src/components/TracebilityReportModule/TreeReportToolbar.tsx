@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { treeFilterDropdowns } from "../../constants/common";
 import { TreeFilterDropdowns } from "../IssueTreeModule/TreeFilterDropdowns";
-import Button from "@atlaskit/button";
+import { LoadingButton } from "@atlaskit/button";
 import {
   IssueLinkType,
   IssuePriority,
@@ -26,24 +26,23 @@ interface Props {
   };
   filter: IssueTreeFilter;
   updateFilteredKeyOptions: (key: string, keyOptions: string[]) => void;
-  treeHasOnlyOrphans: boolean;
-  updateTreeHasOnlyOrphans: (treeHasOnlyOptions: boolean) => void;
+  isOrphansBranchPresent: boolean;
+  updateIsOrphansBranchPresent: (treeHasOnlyOptions: boolean) => void;
+  isToggleOrphansLoading: boolean;
 }
 export const TreeReportToolbar = ({
-  // priorities,
-  // issueTypes,
-  // linkTypes,
   options,
   filter,
   updateFilteredKeyOptions,
-  treeHasOnlyOrphans,
-  updateTreeHasOnlyOrphans,
+  isOrphansBranchPresent,
+  updateIsOrphansBranchPresent,
+  isToggleOrphansLoading,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
   const hideOrphanText = t("traceability-report.tree-view.hide-orphan-issues");
   const showOrphanText = t("traceability-report.tree-view.show-orphan-issues");
   const toggleOrphans = (): void => {
-    updateTreeHasOnlyOrphans(!treeHasOnlyOrphans);
+    updateIsOrphansBranchPresent(!isOrphansBranchPresent);
   };
 
   return (
@@ -53,10 +52,11 @@ export const TreeReportToolbar = ({
         filter={filter}
         filterDropdowns={treeFilterDropdowns}
         updateFilteredKeyOptions={updateFilteredKeyOptions}
+        isMultiNodeTree={true}
       />
-      <Button onClick={toggleOrphans}>
-        {treeHasOnlyOrphans ? hideOrphanText : showOrphanText}
-      </Button>
+      <LoadingButton onClick={toggleOrphans} isLoading={isToggleOrphansLoading}>
+        {isOrphansBranchPresent ? hideOrphanText : showOrphanText}
+      </LoadingButton>
     </FlexContainer>
   );
 };

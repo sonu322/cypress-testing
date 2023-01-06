@@ -6,7 +6,7 @@ import { TracebilityReportModule } from "./components/TracebilityReportModule/Tr
 import { APIContext } from "./context/api";
 
 interface Props {
-  showCustomJQLEditor?: any
+  showCustomJQLEditor?: any;
 }
 
 const TracebilityReport = ({ showCustomJQLEditor }: Props): JSX.Element => {

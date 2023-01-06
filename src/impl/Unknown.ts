@@ -72,6 +72,15 @@ export default class UnknownImpl implements LXPAPI {
     throw new Error("Method not implemented.");
   }
 
+  async searchOrphanIssues(
+    jql: string,
+    fields?: IssueField[],
+    start?: number,
+    max?: number
+  ): Promise<{ data: Issue[]; total: number }> {
+    throw new Error("Method not implemented.");
+  }
+
   async searchLinkedIssues(
     jql: string,
     fields?: IssueField[],

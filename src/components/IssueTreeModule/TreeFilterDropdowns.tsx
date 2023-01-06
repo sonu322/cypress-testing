@@ -5,7 +5,38 @@ import ExpandIcon from "@atlaskit/icon/glyph/hipchat/chevron-double-down";
 import CollapseIcon from "@atlaskit/icon/glyph/hipchat/chevron-double-up";
 import { TooltipContainer } from "../common/TooltipContainer";
 import { useTranslation } from "react-i18next";
+import {
+  IssueField,
+  IssueLinkType,
+  IssuePriority,
+  IssueTreeFilter,
+  IssueType,
+} from "../../types/api";
 
+interface Props {
+  options: {
+    issueTypes: IssueType[];
+    linkTypes: IssueLinkType[];
+    priorities: IssuePriority[];
+  };
+  filter: IssueTreeFilter;
+  filterDropdowns: Array<{
+    key: string;
+    label: string;
+  }>;
+  updateFilteredKeyOptions: (key: string, keyOptions: string[]) => void;
+  expandAll?: (
+    filter: IssueTreeFilter,
+    fields: IssueField[],
+    setTree,
+    handleError,
+    clearAllErrors,
+    setIsExpandAllLoading
+  ) => Promise<void>;
+  isExpandAllLoading?: boolean;
+  collapseAll?: (setTree) => void;
+  isMultiNodeTree?: boolean;
+}
 export const TreeFilterDropdowns = ({
   options,
   filter,
@@ -13,8 +44,9 @@ export const TreeFilterDropdowns = ({
   updateFilteredKeyOptions,
   expandAll,
   isExpandAllLoading,
-  collapseAll
-}): JSX.Element => {
+  collapseAll,
+  isMultiNodeTree,
+}: Props): JSX.Element => {
   const { t } = useTranslation();
   return (
     <ButtonGroup>
@@ -28,22 +60,26 @@ export const TreeFilterDropdowns = ({
           updateSelectedOptions={updateFilteredKeyOptions}
         />
       ))}
-      <TooltipContainer content={t("lxp.toolbar.expand-all.title")}>
-        <LoadingButton
-          appearance="default"
-          iconBefore={<ExpandIcon label={""} />}
-          onClick={expandAll}
-          isLoading={isExpandAllLoading}
-          isDisabled={isExpandAllLoading}
-        />
-      </TooltipContainer>
-      <TooltipContainer content={t("lxp.toolbar.collapse-all.title")}>
-        <Button
-          appearance="default"
-          iconBefore={<CollapseIcon label={""} />}
-          onClick={collapseAll}
-        />
-      </TooltipContainer>
+      {!isMultiNodeTree && (
+        <>
+          <TooltipContainer content={t("lxp.toolbar.expand-all.title")}>
+            <LoadingButton
+              appearance="default"
+              iconBefore={<ExpandIcon label={""} />}
+              onClick={expandAll}
+              isLoading={isExpandAllLoading}
+              isDisabled={isExpandAllLoading}
+            />
+          </TooltipContainer>
+          <TooltipContainer content={t("lxp.toolbar.collapse-all.title")}>
+            <Button
+              appearance="default"
+              iconBefore={<CollapseIcon label={""} />}
+              onClick={collapseAll}
+            />
+          </TooltipContainer>
+        </>
+      )}
     </ButtonGroup>
   );
 };

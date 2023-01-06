@@ -3,15 +3,14 @@ import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import {
   IssueField,
-  IssueLinkType,
   IssueTreeFilter,
-  IssueType,
   IssueWithSortedLinks,
 } from "../../types/api";
 import { getScreenHeight } from "../../util/common";
 import { IssueTreeMultiNode } from "../IssueTreeModule/IssueTreeMultiNode";
 import { APIContext } from "../../context/api";
 import TreeUtils from "../../util/TreeUtils";
+import { AtlasTree } from "../../types/app";
 
 const Container = styled.div`
   width: 100%;
@@ -21,29 +20,33 @@ const Container = styled.div`
 `;
 interface Props {
   filteredIssues: IssueWithSortedLinks[];
-  tableFields: IssueType[] | IssueLinkType[];
-  selectedTableFieldIds: string[];
   selectedIssueFieldIds: string[];
-  isIssueTypeReport: boolean;
   errors: any[];
   issueFields: IssueField[];
   clearAllErrors: () => void;
   handleError: (err: unknown) => void;
   issueTreeFilter: IssueTreeFilter;
-  treeHasOnlyOrphans: boolean;
+  isOrphansBranchPresent: boolean;
+  selectedJqlString: string;
+  tree: AtlasTree;
+  setTree: React.Dispatch<React.SetStateAction<AtlasTree>>;
+  isToggleOrphansLoading: boolean;
+  updateIsToggleOrphansLoading: (isToggleOrphansLoading: boolean) => void;
 }
 export const TreeReport = ({
+  selectedJqlString,
   filteredIssues,
-  tableFields,
-  selectedTableFieldIds,
   selectedIssueFieldIds,
   issueFields,
-  isIssueTypeReport,
   clearAllErrors,
   handleError,
   errors,
   issueTreeFilter,
-  treeHasOnlyOrphans,
+  isOrphansBranchPresent,
+  tree,
+  setTree,
+  updateIsToggleOrphansLoading,
+  isToggleOrphansLoading,
 }: Props): JSX.Element => {
   // TODO: probably we may improve this calculation
   const calculateTableHeight = (errors) => {
@@ -65,8 +68,6 @@ export const TreeReport = ({
   const treeUtils = new TreeUtils(api);
 
   const [tableHeight, setTableHeight] = useState(calculateTableHeight(errors));
-  const [tree, setTree] = useState(treeUtils.getRootTree());
-  // const [issueFields, setIssueFields] = useState<IssueField[]>([]);
   useEffect(() => {
     const resizeHandler = () => {
       setTableHeight((prevHeight) => {
@@ -92,7 +93,10 @@ export const TreeReport = ({
         handleError={handleError}
         clearAllErrors={clearAllErrors}
         filteredIssues={filteredIssues}
-        treeHasOnlyOrphans={treeHasOnlyOrphans}
+        isOrphansBranchPresent={isOrphansBranchPresent}
+        selectedJqlString={selectedJqlString}
+        isToggleOrphansLoading={isToggleOrphansLoading}
+        updateIsToggleOrphansLoading={updateIsToggleOrphansLoading}
       />
     </Container>
   );
