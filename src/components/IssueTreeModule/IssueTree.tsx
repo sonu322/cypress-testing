@@ -52,7 +52,13 @@ export const IssueTree = ({
         return newTree;
       });
     } else {
-      treeUtils.applyFilterHook(tree, setTree, filter, issueFields);
+     setTree((prevTree) => {
+       if (prevTree !== undefined) {
+         treeUtils.applyFilterHook(tree, setTree, filter, issueFields);
+       } else {
+         return prevTree;
+       }
+     });
     }
   }, [filter, selectedIssueFieldIds]);
 
