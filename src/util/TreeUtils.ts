@@ -755,7 +755,6 @@ export default class TreeUtils {
       const otherNodeIds = Object.keys(tree.items).filter(
         (otherNodeId) => otherNodeId !== nodeId
       );
-      console.log(otherNodeIds);
       otherNodeIds.forEach((otherNodeId) => {
         newTree = mutateTree(newTree, otherNodeId, {
           isTogglerDisabled: true,

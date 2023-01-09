@@ -6,8 +6,6 @@ import { ButtonGroup } from "@atlaskit/button";
 import { Dropdown } from "../common/Dropdown";
 import { HelpLink } from "../common/HelpLink";
 import { ExportContent } from "../common/ExportContent";
-import SettingsIcon from "@atlaskit/icon/glyph/settings";
-import ChevronDownIcon from "@atlaskit/icon/glyph/chevron-down";
 import { JQLEditor } from "../JQLEditor";
 import { TableFieldsDropdown } from "./TableFieldsDropdown";
 
