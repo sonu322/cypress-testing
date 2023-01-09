@@ -762,8 +762,9 @@ export default class APIImpl implements LXPAPI {
   ): Promise<{ data: IssueWithLinkedIssues[]; total: number }> {
     try {
       const isOrderingJqlRegex = /order*/;
-      const isOrderingJql = isOrderingJqlRegex.test(jql);
-      const jqlPrefix = isOrderingJql ? "" : "and";
+      const shouldOmitPrefix =
+        jql?.length === 0 || isOrderingJqlRegex.test(jql);
+      const jqlPrefix = shouldOmitPrefix ? "" : "and";
       const onlyOrphansJql = `issueLinkType is EMPTY and parent is EMPTY and "Epic Link" is EMPTY ${jqlPrefix} ${jql}`;
 
       const searchResult = await this.searchIssues(
