@@ -63,7 +63,7 @@ export const TreeReport = ({
       errorsHeight -
       2;
     return finalHeight < 200 ? 200 : finalHeight;
-  };;
+  };
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
 
@@ -100,4 +100,4 @@ export const TreeReport = ({
       />
     </Container>
   );
-};;
+};
