@@ -51,7 +51,7 @@ export const TreeReport = ({
   // TODO: probably we may improve this calculation
   const calculateTableHeight = (errors) => {
     const headingHeight = 40 + 8; // 8: margin top
-    const toolbarHeight = 94 + 8 + 42 + 8; // 8: table top margin
+    const toolbarHeight = 94 + 8 + 42; // 8: table top margin
     const footerHeight = 32 + 8 + 8;
     const // more button 8: margin top and bottom
       errorsHeight = errors && errors.length ? (52 + 8) * errors.length : 0;
