@@ -84,7 +84,7 @@ export const Main = ({
 }: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
-  const [selectedOptionId, setSelectedOptionId] = useState(
+  const [selectedLimitOptionId, setSelectedLimitOptionId] = useState(
     DEFAULT_ROWS_PER_PAGE
   );
   const { t } = useTranslation();
@@ -100,11 +100,12 @@ export const Main = ({
   const tracebilityReportUtils = new TracebilityReportUtils(api);
   useEffect(() => {
     if (selectedJqlString !== null) {
+      const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
       void tracebilityReportUtils.populateIssues(
         selectedJqlString,
         issueFields,
         START_INDEX,
-        DEFAULT_ROWS_PER_PAGE,
+        selectedLimit,
         updateIssues,
         setAreIssuesLoading,
         setTotalNumberOfIssues,
@@ -116,7 +117,7 @@ export const Main = ({
   }, [selectedJqlString]);
 
   const fetchMoreIssues = (): void => {
-    const selectedLimit = selectedOptionId ?? DEFAULT_ROWS_PER_PAGE;
+    const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
     void tracebilityReportUtils.populateIssues(
       selectedJqlString,
       issueFields,
@@ -181,11 +182,11 @@ export const Main = ({
             options={options}
             dropdownName={
               t("traceability-report.fetch-limit-dropdown.name") +
-              ` (${selectedOptionId})`
+              ` (${selectedLimitOptionId})`
             }
-            selectedOptionId={selectedOptionId}
-            setSelectedOptionId={setSelectedOptionId}
-          />{" "}
+            selectedOptionId={selectedLimitOptionId}
+            setSelectedOptionId={setSelectedLimitOptionId}
+          />
           &nbsp;
           <LoadingButton
             isLoading={areMoreIssuesLoading}

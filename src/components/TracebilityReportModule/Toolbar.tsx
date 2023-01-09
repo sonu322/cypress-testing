@@ -7,8 +7,10 @@ import { Dropdown } from "../common/Dropdown";
 import { HelpLink } from "../common/HelpLink";
 import { ExportContent } from "../common/ExportContent";
 import SettingsIcon from "@atlaskit/icon/glyph/settings";
+import ChevronDownIcon from "@atlaskit/icon/glyph/chevron-down";
 import { JQLEditor } from "../JQLEditor";
 import { TableFieldsDropdown } from "./TableFieldsDropdown";
+
 import {
   CellLimit,
   IssueField,
@@ -21,6 +23,7 @@ import { SelectedType } from "@atlaskit/tabs/types";
 import { useTranslation } from "react-i18next";
 import { APIContext } from "../../context/api";
 import { viewTabs } from "../../constants/traceabilityReport";
+import { SettingsDropdownTrigger } from "../common/SettingsDropdownTrigger";
 const MainBar = styled.div`
   padding: 8px;
   border-radius: 3px;
@@ -119,7 +122,7 @@ export const Toolbar = ({
             />
             {!isTreeReport && (
               <Dropdown
-                dropdownName={<SettingsIcon />}
+                dropdownName={(props) => <SettingsDropdownTrigger {...props} />}
                 options={issueInCell}
                 selectedOptions={selectedIssueInCellIds}
                 updateSelectedOptions={updateSelectedIssueInCellIds}
