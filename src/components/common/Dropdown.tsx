@@ -6,7 +6,8 @@ import DropdownMenu, {
 import { toTitleCase } from "../../util";
 interface Props {
   selectedOptions: string[];
-  dropdownName: string;
+  dropdownName: any;
+  dropdownNamePlacement?: string;
   updateSelectedOptions: React.Dispatch<React.SetStateAction<string[]>>;
   options: Array<{
     id: string;
@@ -18,6 +19,7 @@ interface Props {
 export const Dropdown = ({
   selectedOptions,
   dropdownName,
+  dropdownNamePlacement,
   updateSelectedOptions,
   options,
   useTitleCaseOptions,
@@ -33,7 +35,10 @@ export const Dropdown = ({
   };
 
   return (
-    <DropdownMenu trigger={dropdownName} placement="bottom-start">
+    <DropdownMenu
+      trigger={dropdownName}
+      placement={dropdownNamePlacement ?? "bottom-start"}
+    >
       <DropdownItemCheckboxGroup id={dropdownName + "-options"}>
         {options?.map((option) => (
           <DropdownItemCheckbox
