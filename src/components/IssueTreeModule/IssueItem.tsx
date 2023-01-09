@@ -86,7 +86,8 @@ export const IssueItem = ({
             isLoading={item.isChildrenLoading}
             onExpand={() => onExpand(item.id)}
             onCollapse={() => onCollapse(item.id)}
-            isTogglerDisabled={!item.hasChildren}
+            hasChildren={item.hasChildren}
+            isTogglerDisabled={item.isTogglerDisabled}
           ></ExpansionToggler>
           {item.data?.type === linkTypeTreeNodeName ? (
             <LinkTypeContainer>
