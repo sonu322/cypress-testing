@@ -41,6 +41,8 @@ interface Props {
   selectedTableFieldIds: string[];
   tableFields: IssueType[] | IssueLinkType[];
   selectedIssueInCellIds: string[];
+  selectedIssueTypeIds: string[];
+  selectedLinkTypeIds: string[];
   filteredIssues: IssueWithSortedLinks[];
   areIssuesLoading: boolean;
   setAreIssuesLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -60,6 +62,8 @@ export const Main = ({
   selectedTableFieldIds,
   tableFields,
   selectedIssueInCellIds,
+  selectedIssueTypeIds,
+  selectedLinkTypeIds,
   filteredIssues,
   areIssuesLoading,
   setAreIssuesLoading,
@@ -142,6 +146,8 @@ export const Main = ({
             tableFields={tableFields}
             selectedTableFieldIds={selectedTableFieldIds}
             selectedIssueInCellIds={selectedIssueInCellIds}
+            selectedIssueTypeIds={selectedIssueTypeIds}
+            selectedLinkTypeIds={selectedLinkTypeIds}
             isIssueTypeReport={isIssueTypeReport}
             errors={errors}
           />

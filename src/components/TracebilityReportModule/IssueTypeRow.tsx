@@ -32,6 +32,7 @@ export interface Props {
   tableFields: IssueType[] | IssueLinkType[];
   selectedTableFieldIds: string[];
   selectedIssueInCellIds: string[];
+  selectedIssueTypeIds: string[];
   issueFieldIds: string[];
   issue: IssueWithSortedLinks;
   rowSno: number;
@@ -43,6 +44,7 @@ export const IssueTypeRow = ({
   rowSno,
   selectedTableFieldIds,
   selectedIssueInCellIds,
+  selectedIssueTypeIds,
 }: Props): JSX.Element[] => {
   const [areAllIssuesVisible, setAreAllIssuesVisible] = useState(false);
   const cells = [];

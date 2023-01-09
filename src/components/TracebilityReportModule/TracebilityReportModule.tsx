@@ -32,6 +32,7 @@ const GrowContainer = styled.div`
 `;
 const cellOptions = [
   { id: "Display All issue cards", name: "Display All issue cards" },
+  { id: "Auto hide empty columns", name: "Auto hide empty columns" },
 ];
 
 export const TracebilityReportModule = (): JSX.Element => {
@@ -196,6 +197,8 @@ export const TracebilityReportModule = (): JSX.Element => {
           issueFields={issueFields}
           selectedIssueFieldIds={selectedIssueFieldIds}
           selectedIssueInCellIds={selectedIssueInCellIds}
+          selectedIssueTypeIds={selectedIssueTypeIds}
+          selectedLinkTypeIds={selectedLinkTypeIds}
           tableFields={tableFields}
           selectedTableFieldIds={emptyEqualsAllTableIds}
           filteredIssues={filteredIssues}

@@ -31,6 +31,8 @@ interface Props {
   tableFields: IssueType[] | IssueLinkType[];
   selectedTableFieldIds: string[];
   selectedIssueInCellIds: string[];
+  selectedIssueTypeIds: string[];
+  selectedLinkTypeIds: string[];
   issueFieldIds: string[];
   isIssueTypeReport: boolean;
   errors: any[];
@@ -40,6 +42,8 @@ export const Report = ({
   tableFields,
   selectedTableFieldIds,
   selectedIssueInCellIds,
+  selectedIssueTypeIds,
+  selectedLinkTypeIds,
   issueFieldIds,
   isIssueTypeReport,
   errors,
@@ -91,6 +95,7 @@ export const Report = ({
                   selectedIssueInCellIds={selectedIssueInCellIds}
                   selectedTableFieldIds={selectedTableFieldIds}
                   issueFieldIds={issueFieldIds}
+                  selectedIssueTypeIds={selectedIssueTypeIds}
                   issue={issue}
                   rowSno={index + 1}
                 />
@@ -99,6 +104,7 @@ export const Report = ({
                   selectedIssueInCellIds={selectedIssueInCellIds}
                   selectedTableFieldIds={selectedTableFieldIds}
                   issueFieldIds={issueFieldIds}
+                  selectedLinkTypeIds={selectedLinkTypeIds}
                   issue={issue}
                   rowSno={index + 1}
                 />
