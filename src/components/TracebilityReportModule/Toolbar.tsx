@@ -7,9 +7,10 @@ import { Dropdown } from "../common/Dropdown";
 import { HelpLink } from "../common/HelpLink";
 import { ExportContent } from "../common/ExportContent";
 import SettingsIcon from "@atlaskit/icon/glyph/settings";
+import ChevronDownIcon from "@atlaskit/icon/glyph/chevron-down";
 import { JQLEditor } from "../JQLEditor";
 import { TableFieldsDropdown } from "./TableFieldsDropdown";
-import Button from "@atlaskit/button";
+
 import {
   CellLimit,
   IssueField,
@@ -22,6 +23,7 @@ import { SelectedType } from "@atlaskit/tabs/types";
 import { useTranslation } from "react-i18next";
 import { APIContext } from "../../context/api";
 import { viewTabs } from "../../constants/traceabilityReport";
+import { SettingsDropdownTrigger } from "../common/SettingsDropdownTrigger";
 const MainBar = styled.div`
   padding: 8px;
   border-radius: 3px;
@@ -33,14 +35,6 @@ const FlexContainer = styled.div`
   display: flex;
   gap: 8px;
   line-height: 32px;
-`;
-const TestContainer = styled.div`
-  background: pink;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100$;
-  width: 100%;
 `;
 
 interface Props {
@@ -128,21 +122,7 @@ export const Toolbar = ({
             />
             {!isTreeReport && (
               <Dropdown
-                dropdownName={
-                  ({ triggerRef, ...props }) => {
-                    console.log(props);
-                    return (
-                      <Button
-                        {...props}
-                        iconBefore={<SettingsIcon label="" />}
-                        ref={triggerRef}
-                      />
-                    );
-                  }
-                  // <TestContainer>
-                  //   <SettingsIcon />
-                  // </TestContainer>
-                }
+                dropdownName={(props) => <SettingsDropdownTrigger {...props} />}
                 options={issueInCell}
                 selectedOptions={selectedIssueInCellIds}
                 updateSelectedOptions={updateSelectedIssueInCellIds}
