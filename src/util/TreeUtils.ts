@@ -751,13 +751,25 @@ export default class TreeUtils {
       const item = tree.items[nodeId];
       // clear all errors
       clearAllErrors();
-      this.updateTreeNode(setTree, nodeId, { isChildrenLoading: true });
+      let newTree = mutateTree(prevTree, nodeId, { isChildrenLoading: true });
+      const otherNodeIds = Object.keys(tree.items).filter(
+        (otherNodeId) => otherNodeId !== nodeId
+      );
+      console.log(otherNodeIds);
+      otherNodeIds.forEach((otherNodeId) => {
+        newTree = mutateTree(newTree, otherNodeId, {
+          isTogglerDisabled: true,
+        });
+      });
+      setTree(newTree);
+      // this.updateTreeNode(setTree, nodeId, { isChildrenLoading: true });
 
       const issue = await this.api.getIssueWithLinks(
         fields,
         (item.data as IssueWithLinkedIssues).id
       );
       await this.addChildren(nodeId, tree, fields, issue, filter);
+
       setTree(tree);
     } catch (error) {
       console.error(error);

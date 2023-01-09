@@ -2,9 +2,14 @@ import React from "react";
 import { useState, useEffect } from "react";
 import Button from "@atlaskit/button";
 import { MaxWidthContainer } from "./IssueTypeRow";
+import styled from "styled-components";
 export interface Props {
   selectedIssueInCellIds: string[];
 }
+
+const ButtonContainer = styled.div`
+  margin-top: 8px;
+`;
 export const IssueCell = ({ selectedIssueInCellIds, issueCards }) => {
   const [areAllIssuesVisible, setAreAllIssuesVisible] = useState(false);
   let issueCardsToShow = [];
@@ -35,9 +40,11 @@ export const IssueCell = ({ selectedIssueInCellIds, issueCards }) => {
     <div>
       <MaxWidthContainer>{issueCardsToShow}</MaxWidthContainer>
       {issueCards.length > issueCardsToShow.length && (
-        <Button onClick={handleClick} style={{ cursor: "pointer" }}>
-          More
-        </Button>
+        <ButtonContainer>
+          <Button onClick={handleClick} spacing="compact">
+            More
+          </Button>
+        </ButtonContainer>
       )}
     </div>
   );
