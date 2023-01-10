@@ -43,6 +43,7 @@ export const IssueTree = ({
   });
   // const [renderItem, setRenderItem] = useState();
   useEffect(() => {
+    console.log("filter changed");
     if (isMultiNodeTree) {
       setTree((tree) => {
         const newTree = treeUtils.applyMultiNodeTreeFilter(
@@ -63,8 +64,8 @@ export const IssueTree = ({
     }
   }, [filter, isMultiNodeTree]);
 
-  useEffect(() => {
-    console.log("called use eff ");
+  // useEffect(() => {
+  // console.log("called use eff ");
 
   //   setTree((tree) => {
   //     //   if (prevTree !== undefined) {
@@ -138,7 +139,7 @@ export const IssueTree = ({
       <Container>
         <Tree
           tree={tree}
-          key={selectedIssueFieldIds}
+          key={selectedIssueFieldIds} // needs change. called unnecessarily.
           renderItem={({ ...props }) => {
             return (
               // @ts-expect-error
@@ -161,4 +162,4 @@ export const IssueTree = ({
   } else {
     return <em>{loadingText}</em>;
   }
-};
+};;
