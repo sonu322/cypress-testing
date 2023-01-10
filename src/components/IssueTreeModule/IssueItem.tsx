@@ -51,7 +51,6 @@ export const IssueItem = ({
   depth,
   selectedIssueFieldIds,
 }) => {
-  console.log("called issue item");
   console.log(selectedIssueFieldIds);
   const marginLeft = getItemMargin(depth);
   const api = useContext(APIContext);
