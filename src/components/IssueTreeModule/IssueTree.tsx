@@ -36,7 +36,7 @@ export const IssueTree = ({
   selectedJqlString,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
-  const loadingText = t("lxp.common.loading");
+  const loadingText = t("otpl.lxp.common.loading");
   const fieldMap = {};
   issueFields.forEach((field) => {
     fieldMap[field.id] = field;
@@ -52,13 +52,13 @@ export const IssueTree = ({
         return newTree;
       });
     } else {
-     setTree((prevTree) => {
-       if (prevTree !== undefined) {
-         treeUtils.applyFilterHook(tree, setTree, filter, issueFields);
-       } else {
-         return prevTree;
-       }
-     });
+      setTree((prevTree) => {
+        if (prevTree !== undefined) {
+          treeUtils.applyFilterHook(tree, setTree, filter, issueFields);
+        } else {
+          return prevTree;
+        }
+      });
     }
   }, [filter, selectedIssueFieldIds]);
 

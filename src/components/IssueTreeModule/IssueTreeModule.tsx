@@ -63,7 +63,7 @@ export const IssueTreeModule = () => {
   };
   const allErrors = errors.concat(treeFilterContext.errors);
   return isLoading ? (
-    <div>{t("lxp.common.loading")}.</div>
+    <div>{t("otpl.lxp.common.loading")}.</div>
   ) : (
     <div>
       {allErrors !== undefined && allErrors.length > 0 && (

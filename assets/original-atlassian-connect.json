@@ -14,11 +14,11 @@
   "enableLicensing": true,
   "translations": {
     "paths": {
-      "en-US": "/i18n/0.1/en_US.json",
-      "de-DE": "/i18n/0.1/de_DE.json",
-      "es-ES": "/i18n/0.1/es_ES.json",
-      "fr-FR": "/i18n/0.1/fr_FR.json",
-      "zh-CN": "/i18n/0.1/zh_CN.json"
+      "en-US": "/i18n/0.2/en_US.json",
+      "de-DE": "/i18n/0.2/de_DE.json",
+      "es-ES": "/i18n/0.2/es_ES.json",
+      "fr-FR": "/i18n/0.2/fr_FR.json",
+      "zh-CN": "/i18n/0.2/zh_CN.json"
     }
   },
   "authentication": {
@@ -33,7 +33,7 @@
         "weight": 100,
         "name": {
           "value": "Links Explorer",
-          "i18n": "issue.tab.name"
+          "i18n": "otpl.lxp.issue.tab.name"
         },
         "key": "lxp-issue-tab"
       }
@@ -44,7 +44,7 @@
         "location": "system.top.navigation.bar",
         "name": {
           "value": "Links Explorer",
-          "i18n": "general.page.name"
+          "i18n": "otpl.lxp.general.page.name"
         },
         "conditions": [
           {

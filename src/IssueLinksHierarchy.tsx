@@ -21,7 +21,7 @@ const IssueLinksHierarchy = () => {
     }
   }, [api, i18n]);
   return (
-    <Suspense fallback={t("lxp.common.loading")}>
+    <Suspense fallback={t("otpl.lxp.common.loading")}>
       {api.hasValidLicense() ? (
         <TreeFilterContextProvider>
           <IssueTreeModule />

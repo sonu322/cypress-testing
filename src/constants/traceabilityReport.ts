@@ -2,12 +2,12 @@ import i18n from "../../i18n";
 
 const { t } = i18n;
 export const jqlDialogOptions = {
-  header: t("traceability-report.toolbar.jqlDialogOptions.header"),
+  header: t("otpl.lxp.traceability-report.toolbar.jqlDialogOptions.header"),
   descriptionText: t(
-    "traceability-report.toolbar.jqlDialogOptions.descriptionText"
+    "otpl.lxp.traceability-report.toolbar.jqlDialogOptions.descriptionText"
   ),
-  submitText: t("traceability-report.toolbar.jqlDialogOptions.submitText"),
-  cancelText: t("traceability-report.toolbar.jqlDialogOptions.cancelText"),
+  submitText: t("otpl.lxp.traceability-report.toolbar.jqlDialogOptions.submitText"),
+  cancelText: t("otpl.lxp.traceability-report.toolbar.jqlDialogOptions.cancelText"),
   jql: "order by status ASC",
 };
 export const viewTabs = {
@@ -15,26 +15,26 @@ export const viewTabs = {
   tabs: [
     {
       id: "issuetype-view",
-      name: t("traceability-report.issuetype-view.name"),
-      description: t("traceability-report.issuetype-view.description"),
+      name: t("otpl.lxp.traceability-report.issuetype-view.name"),
+      description: t("otpl.lxp.traceability-report.issuetype-view.description"),
     },
     {
       id: "linktype-view",
-      name: t("traceability-report.linktype-view.name"),
-      description: t("traceability-report.linktype-view.description"),
+      name: t("otpl.lxp.traceability-report.linktype-view.name"),
+      description: t("otpl.lxp.traceability-report.linktype-view.description"),
     },
     {
       id: "tree-view",
-      name: t("traceability-report.tree-view.name"),
-      description: t("traceability-report.tree-view.description"),
+      name: t("otpl.lxp.traceability-report.tree-view.name"),
+      description: t("otpl.lxp.traceability-report.tree-view.description"),
     },
   ],
 };
 
 export const orphansTreeBranchName = t(
-  "traceability-report.tree-view.orphans-tree-branch-name"
+  "otpl.lxp.traceability-report.tree-view.orphans-tree-branch-name"
 );
 export const loadMoreOrphansButtonName = t(
-  "traceability-report.tree-view.orphans-load-more-button-name"
+  "otpl.lxp.traceability-report.tree-view.orphans-load-more-button-name"
 );
 export const orphansMaxResults = 20;
