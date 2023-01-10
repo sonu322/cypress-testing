@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import TreeUtils from "../../util/TreeUtils";
-import Tree from "@atlaskit/tree";
 import { IssueItem } from "./IssueItem";
 import { ID, IssueField, IssueTreeFilter } from "../../types/api";
 import { AtlasTree } from "../../types/app";
 import { useTranslation } from "react-i18next";
+import Tree, { mutateTree } from "@atlaskit/tree";
 const Container = styled.div`
   display: flex;
 `;
@@ -41,6 +41,7 @@ export const IssueTree = ({
   issueFields.forEach((field) => {
     fieldMap[field.id] = field;
   });
+  // const [renderItem, setRenderItem] = useState();
   useEffect(() => {
     if (isMultiNodeTree) {
       setTree((tree) => {
@@ -63,19 +64,36 @@ export const IssueTree = ({
   }, [filter, isMultiNodeTree]);
 
   useEffect(() => {
-    if (selectedIssueFieldIds !== undefined) {
-      console.log(selectedIssueFieldIds);
-      console.log("called");
-      setTree((tree) => {
-        if (tree !== undefined) {
-          const newTree = treeUtils.cloneTree(tree);
-          return newTree;
-        } else {
-          return tree;
-        }
-      });
-    }
-  }, [selectedIssueFieldIds]);
+    console.log("called use eff ");
+
+  //   setTree((tree) => {
+  //     //   if (prevTree !== undefined) {
+  //     //     const newTree = treeUtils.cloneTree(prevTree);
+  //     //     const newestTree = { ...newTree };
+  //     //     console.log(newestTree === prevTree);
+  //     //     return newestTree;
+  //     //   } else {
+  //     //     return prevTree;
+  //     //   }
+  //     // });
+  //     const prevTree = { ...tree };
+  //     if (prevTree !== undefined) {
+  //       const root = prevTree.items[treeUtils.ROOT_ID];
+  //       const firstNode = prevTree.items[root.children[0]];
+  //       console.log(prevTree);
+
+  //       if (firstNode !== undefined) {
+  //         return mutateTree(prevTree, firstNode.id, {
+  //           children: [...prevTree.items[firstNode.id].children],
+  //           data: { ...prevTree.items[firstNode.id].data },
+  //           isExpanded: true,
+  //         });
+  //       }
+  //     } else {
+  //       return prevTree;
+  //     }
+  //   });
+  // }, [selectedIssueFieldIds, setTree, treeUtils.ROOT_ID]);
 
   const onExpand = (itemId) => {
     treeUtils.expandTreeHook(
@@ -92,27 +110,48 @@ export const IssueTree = ({
     treeUtils.collapseTreeHook(itemId, setTree);
   };
 
-  const renderItem = ({ ...props }) => {
-    return (
-      // @ts-expect-error
-      <IssueItem
-        {...props}
-        selectedIssueFieldIds={selectedIssueFieldIds}
-        selectedJqlString={selectedJqlString}
-        issueFields={issueFields}
-        setTree={setTree}
-        handleError={handleError}
-      />
-    );
-    // }
-  };
-
-  if (tree !== undefined && tree.items !== undefined) {
+  // useEffect(() => {
+  // const newRenderItem = ({ ...props }) => {
+  //   return (
+  //     // @ts-expect-error
+  //     <IssueItem
+  //       {...props}
+  //       selectedIssueFieldIds={selectedIssueFieldIds}
+  //       selectedJqlString={selectedJqlString}
+  //       issueFields={issueFields}
+  //       setTree={setTree}
+  //       handleError={handleError}
+  //     />
+  //   );
+  //   // }
+  // };
+  //   setRenderItem(newRenderItem);
+  // }, [
+  //   selectedIssueFieldIds,
+  //   selectedJqlString,
+  //   issueFields,
+  //   setTree,
+  //   handleError,
+  // ]);
+  if (tree?.items !== undefined) {
     return (
       <Container>
         <Tree
           tree={tree}
-          renderItem={renderItem}
+          key={selectedIssueFieldIds}
+          renderItem={({ ...props }) => {
+            return (
+              // @ts-expect-error
+              <IssueItem
+                {...props}
+                selectedIssueFieldIds={selectedIssueFieldIds}
+                selectedJqlString={selectedJqlString}
+                issueFields={issueFields}
+                setTree={setTree}
+                handleError={handleError}
+              />
+            );
+          }}
           onExpand={onExpand}
           onCollapse={onCollapse}
           isDragEnabled={false}

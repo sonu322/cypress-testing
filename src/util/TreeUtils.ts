@@ -173,9 +173,20 @@ export default class TreeUtils {
   }
 
   cloneTree(tree: AtlasTree): AtlasTree {
-    // const newTree = {...tree};
-    //     return newTree; - issue card fields change is not toggling fields.
     return JSON.parse(JSON.stringify(tree));
+    // console.log("clone tree called");
+    // const prevTree = { ...tree };
+    // const rootNode = prevTree.items[this.ROOT_ID];
+    // const newChildren = [...rootNode.children];
+    // console.log(rootNode);
+    // const newRootNode = {
+    //   ...rootNode,
+    //   data: { ...rootNode.data },
+    //   children: newChildren,
+    // };
+    // const newTree = mutateTree(prevTree, this.ROOT_ID, newRootNode);
+
+    // return newTree;
   }
 
   async initTree(
