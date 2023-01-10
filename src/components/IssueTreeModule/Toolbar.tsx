@@ -52,17 +52,17 @@ export const Toolbar = ({
       )}
       <ButtonGroup>
         <Dropdown
-          dropdownName={t("lxp.toolbar.issue-card-fields")}
+          dropdownName={t("otpl.lxp.toolbar.issue-card-fields")}
           options={issueCardOptions}
           selectedOptions={selectedIssueFieldIds}
           updateSelectedOptions={setSelectedIssueFieldIds}
         />
         <ExportContent
           isDisabled={isExportDisabled}
-          description={t("lxp.toolbar.export-csv.title")}
+          description={t("otpl.lxp.toolbar.export-csv.title")}
           exportContent={exportTree}
         />
-        <HelpLink description={t("lxp.common.get-help")} href={helpLinkUrl} />
+        <HelpLink description={t("otpl.lxp.common.get-help")} href={helpLinkUrl} />
       </ButtonGroup>
     </Container >
   );

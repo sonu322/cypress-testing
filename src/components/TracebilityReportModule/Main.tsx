@@ -142,7 +142,7 @@ export const Main = ({
     if (filteredIssues.length === 0) {
       return (
         <FullHeightContainer>
-          <em>{t("lxp.common.no-issues-text")}</em>
+          <em>{t("otpl.lxp.common.no-issues-text")}</em>
         </FullHeightContainer>
       );
     }
@@ -181,7 +181,7 @@ export const Main = ({
           <DropdownSingleSelect
             options={options}
             dropdownName={
-              t("traceability-report.fetch-limit-dropdown.name") +
+              t("otpl.lxp.traceability-report.fetch-limit-dropdown.name") +
               ` (${selectedLimitOptionId})`
             }
             selectedOptionId={selectedLimitOptionId}
@@ -193,7 +193,7 @@ export const Main = ({
             isDisabled={filteredIssues.length >= totalNumberOfIssues}
             onClick={fetchMoreIssues}
           >
-            {t("traceability-report.load-more-issues-button.name")}
+            {t("otpl.lxp.traceability-report.load-more-issues-button.name")}
           </LoadingButton>
         </MarginAddedContainer>
       </Container>
@@ -201,7 +201,7 @@ export const Main = ({
   } else {
     return (
       <FullHeightContainer>
-        <em>{t("traceability-report.select-filter.text")}</em>
+        <em>{t("otpl.lxp.traceability-report.select-filter.text")}</em>
       </FullHeightContainer>
     );
   }

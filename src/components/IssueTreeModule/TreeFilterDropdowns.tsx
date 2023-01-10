@@ -62,7 +62,7 @@ export const TreeFilterDropdowns = ({
       ))}
       {!isMultiNodeTree && (
         <>
-          <TooltipContainer content={t("lxp.toolbar.expand-all.title")}>
+          <TooltipContainer content={t("otpl.lxp.toolbar.expand-all.title")}>
             <LoadingButton
               appearance="default"
               iconBefore={<ExpandIcon label={""} />}
@@ -71,7 +71,7 @@ export const TreeFilterDropdowns = ({
               isDisabled={isExpandAllLoading}
             />
           </TooltipContainer>
-          <TooltipContainer content={t("lxp.toolbar.collapse-all.title")}>
+          <TooltipContainer content={t("otpl.lxp.toolbar.collapse-all.title")}>
             <Button
               appearance="default"
               iconBefore={<CollapseIcon label={""} />}

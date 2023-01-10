@@ -39,8 +39,8 @@ export const TreeReportToolbar = ({
   isToggleOrphansLoading,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
-  const hideOrphanText = t("traceability-report.tree-view.hide-orphan-issues");
-  const showOrphanText = t("traceability-report.tree-view.show-orphan-issues");
+  const hideOrphanText = t("otpl.lxp.traceability-report.tree-view.hide-orphan-issues");
+  const showOrphanText = t("otpl.lxp.traceability-report.tree-view.show-orphan-issues");
   const toggleOrphans = (): void => {
     updateIsOrphansBranchPresent(!isOrphansBranchPresent);
   };
