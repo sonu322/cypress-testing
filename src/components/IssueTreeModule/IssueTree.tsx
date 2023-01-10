@@ -52,15 +52,30 @@ export const IssueTree = ({
         return newTree;
       });
     } else {
-     setTree((prevTree) => {
-       if (prevTree !== undefined) {
-         treeUtils.applyFilterHook(tree, setTree, filter, issueFields);
-       } else {
-         return prevTree;
-       }
-     });
+      setTree((prevTree) => {
+        if (prevTree !== undefined) {
+          treeUtils.applyFilterHook(tree, setTree, filter, issueFields);
+        } else {
+          return prevTree;
+        }
+      });
     }
-  }, [filter, selectedIssueFieldIds]);
+  }, [filter, isMultiNodeTree]);
+
+  useEffect(() => {
+    if (selectedIssueFieldIds !== undefined) {
+      console.log(selectedIssueFieldIds);
+      console.log("called");
+      setTree((tree) => {
+        if (tree !== undefined) {
+          const newTree = treeUtils.cloneTree(tree);
+          return newTree;
+        } else {
+          return tree;
+        }
+      });
+    }
+  }, [selectedIssueFieldIds]);
 
   const onExpand = (itemId) => {
     treeUtils.expandTreeHook(
