@@ -172,8 +172,10 @@ export default class TreeUtils {
     }
   }
 
-  cloneTree(tree): any {
-    return JSON.parse(JSON.stringify(tree));
+  cloneTree(tree: AtlasTree): AtlasTree {
+    console.log(tree);
+    console.log({ ...tree });
+    return { ...tree };
   }
 
   async initTree(
