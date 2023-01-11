@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
 import TreeUtils from "../../util/TreeUtils";
 import { IssueItem } from "./IssueItem";
@@ -6,6 +6,7 @@ import { ID, IssueField, IssueTreeFilter } from "../../types/api";
 import { AtlasTree } from "../../types/app";
 import { useTranslation } from "react-i18next";
 import Tree, { mutateTree } from "@atlaskit/tree";
+import { APIContext } from "../../context/api";
 const Container = styled.div`
   display: flex;
 `;
@@ -36,6 +37,7 @@ export const IssueTree = ({
   selectedJqlString,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
+  const api = useContext(APIContext);
   const loadingText = t("lxp.common.loading");
   const fieldMap = {};
   issueFields.forEach((field) => {
@@ -56,10 +58,10 @@ export const IssueTree = ({
     } else {
       setTree((prevTree) => {
         if (prevTree !== undefined) {
-          treeUtils.applyFilterHook(tree, setTree, filter, issueFields);
-        } else {
-          return prevTree;
+          const newTree = treeUtils.applyFilterHook(tree, filter, issueFields);
+          return newTree;
         }
+        return prevTree;
       });
     }
   }, [filter, isMultiNodeTree]);
@@ -96,9 +98,44 @@ export const IssueTree = ({
   //   });
   // }, [selectedIssueFieldIds, setTree, treeUtils.ROOT_ID]);
 
-  const onExpand = (itemId) => {
-    treeUtils.expandTreeHook(
+  const onExpand = async (itemId: string): Promise<void> => {
+    // treeUtils.expandTreeHook(
+    //   itemId,
+    //   filter,
+    //   treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds),
+    //   setTree,
+    //   handleError,
+    //   clearAllErrors
+    // );
+    // setTree((prevTree) => {
+    //   console.log("is this error place? 1");
+    // const item = prevTree.items[itemId];
+    // if (item.hasChildrenLoaded) {
+    //   return mutateTree(prevTree, itemId, { isExpanded: true });
+    // }
+    // });
+    // const issueWithLinkedIssues = await api.getIssueWithLinks(
+    //   treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds),
+    //   item.data.id
+    // );
+    // setTree((prevTree) => {
+    //   const expandedTree = treeUtils.expandTreeHook(
+    //     itemId,
+    //     filter,
+    //     issueWithLinkedIssues,
+    //     prevTree,
+    //     handleError,
+    //     clearAllErrors
+    //   );
+    //   return expandedTree;
+    // });
+    console.log(itemId);
+    const lastSlashIndex = itemId.lastIndexOf("/");
+    const issueId = itemId.substring(lastSlashIndex + 1);
+    console.log(issueId);
+    await treeUtils.expandTree(
       itemId,
+      issueId,
       filter,
       treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds),
       setTree,
@@ -162,4 +199,4 @@ export const IssueTree = ({
   } else {
     return <em>{loadingText}</em>;
   }
-};;
+};
