@@ -18,6 +18,10 @@ const Container = styled.div`
   border: 1px solid ${colors.N40};
   border-radius: 10px;
 `;
+
+// @ts-expect-error
+const _AP: any = typeof AP !== "undefined" ? AP : null;
+
 interface Props {
   filteredIssues: IssueWithSortedLinks[];
   selectedIssueFieldIds: string[];
@@ -71,8 +75,9 @@ export const TreeReport = ({
   useEffect(() => {
     const resizeHandler = () => {
       setTableHeight((prevHeight) => {
-        // @ts-expect-error
-        AP.sizeToParent();
+        if (_AP !== null) {
+          _AP.sizeToParent();
+        }
         return calculateTableHeight(errors);
       });
     };
