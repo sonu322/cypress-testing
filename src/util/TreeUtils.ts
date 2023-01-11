@@ -26,6 +26,7 @@ import {
 } from "../constants/traceabilityReport";
 import {
   buttonTypeTreeNodeName,
+  emptyTreeFilter,
   linkTypeTreeNodeName,
 } from "../constants/common";
 
@@ -533,21 +534,14 @@ export default class TreeUtils {
     return result;
   }
 
-  async getChildren(
+  getChildren(
     tree: AtlasTree,
-    filter: IssueTreeFilter,
     mainNode: AtlasTreeNode,
     fields: IssueField[],
+    filter?: IssueTreeFilter,
     issue?: IssueWithLinkedIssues
-  ): Promise<AtlasTreeNode[]> {
+  ): AtlasTreeNode[] {
     const prefix = mainNode.id;
-    issue =
-      issue ||
-      (await this.api.getIssueWithLinks(
-        fields,
-        (mainNode.data as IssueWithLinkedIssues).id
-      ));
-
     const typeMap = {};
     const issueMap = {};
     issue.linkedIssues.forEach((linkedIssue: Issue) => {
@@ -583,8 +577,7 @@ export default class TreeUtils {
   getChildrenNew(
     tree: AtlasTree,
     filter: IssueTreeFilter,
-    mainNode: AtlasTreeNode,
-    fields: IssueField[]
+    mainNode: AtlasTreeNode
     // issue: IssueWithLinkedIssues
   ): AtlasTreeNode[] {
     const prefix = mainNode.id;
@@ -611,37 +604,61 @@ export default class TreeUtils {
       const foundNodeId = Object.keys(tree.items).find((nodeId) => {
         return nodeId === prefix + "/" + link.name + "/" + linkedIssue.id;
       });
-      console.log("tree", tree);
-      console.log(
-        "found node id",
-        foundNodeId,
-        prefix + "/" + link.name + linkedIssue.id
-      );
-      const node = tree.items[foundNodeId];
-      console.log("found node", node);
+      let node: AtlasTreeNode;
+      if (foundNodeId !== undefined) {
+        console.log("tree", tree);
+        console.log(
+          "found node id",
+          foundNodeId,
+          prefix + "/" + link.name + linkedIssue.id
+        );
+        node = tree.items[foundNodeId];
+        console.log("found node", node);
+      } else {
+        node = this.createTreeNode(
+          tree,
+          prefix + "/" + link.name,
+          linkedIssue,
+          issue.id
+        );
+      }
       if (typeMap[link.name] === undefined) {
         typeMap[link.name] = [];
       }
-      typeMap[link.name].push(node.id);
+      if (node !== undefined) {
+        typeMap[link.name].push(node?.id);
+      } else {
+        throw new Error("Error occured while adding children");
+      }
     }
     const result: AtlasTreeNode[] = [];
     const types = Object.keys(typeMap);
     if (types.length > 0) {
       for (const type of types) {
         // const typeNode = this.createTypeNode(tree, prefix, type);
+        let typeNode: AtlasTreeNode;
         const typeNodeId = Object.keys(tree.items).find(
           (nodeId) => nodeId === prefix + "/" + type
         );
-        console.log(typeNodeId, prefix + "/" + type, tree);
-        const typeNode = tree.items[typeNodeId];
-        typeNode.children = typeMap[type];
-        result.push(typeNode);
+        if (typeNodeId !== undefined) {
+          console.log(typeNodeId, prefix + "/" + type, tree);
+          typeNode = tree.items[typeNodeId];
+        } else {
+          typeNode = this.createTypeNode(tree, prefix, type);
+        }
+        if (typeNode !== undefined) {
+          typeNode.children = typeMap[type];
+          result.push(typeNode);
+        } else {
+          throw new Error("Error occured while adding children");
+        }
       }
     }
     return result;
   }
 
-  applyFilterHook(tree, setTree, filter, fields) {
+  applyFilterHook(tree: AtlasTree, filter, fields): AtlasTree {
+    console.log("filter", filter);
     // TODO: use setState(func) to make the filter apply on to previous tree
     let firstNodeId;
     if (tree.items !== undefined) {
@@ -650,15 +667,15 @@ export default class TreeUtils {
     if (firstNodeId !== undefined) {
       const node = tree.items[firstNodeId];
       if (node.hasChildrenLoaded) {
+        console.log("children are loaded");
         const newTree = this.cloneTree(tree);
         const result = this.applyFilterNew(
-          setTree,
           newTree,
           filter,
           fields,
-          firstNodeId,
-          true
+          firstNodeId
         );
+        return result;
       }
     }
   }
@@ -697,37 +714,21 @@ export default class TreeUtils {
     return tree;
   }
 
-  applyFilterNew(
-    setTree,
-    tree,
-    filter,
-    fields,
-    nodeId,
-    isFirstCall
-  ): AtlasTree {
+  applyFilterNew(tree, filter, fields, nodeId): AtlasTree {
     console.log("filter tree new called", nodeId);
     console.log(tree.items[nodeId]);
     const node = tree.items[nodeId];
-    tree = this.addChildrenNew(nodeId, tree, fields, filter);
+    tree = this.addChildrenNew(nodeId, tree, filter); // filters
+    // tree = this.filterNodeChildren(nodeId, tree, filter);
     for (const typeNodeId of node.children) {
       // type nodes
       const typeNode = tree.items[typeNodeId];
       for (const childNodeId of typeNode.children) {
         const child = tree.items[childNodeId];
         if (child.hasChildrenLoaded) {
-          tree = this.applyFilterNew(
-            setTree,
-            tree,
-            filter,
-            fields,
-            child.id,
-            false
-          );
+          tree = this.applyFilterNew(tree, filter, fields, child.id);
         }
       }
-    }
-    if (isFirstCall) {
-      setTree(tree);
     }
     return tree;
   }
@@ -782,15 +783,21 @@ export default class TreeUtils {
     });
   }
 
-  async addChildren(nodeId, tree, fields, issue, filter): Promise<AtlasTree> {
+  async addChildren(
+    nodeId,
+    tree,
+    fields,
+    issue,
+    filter = undefined
+  ): Promise<AtlasTree> {
     // TODO: use setState(func) to make the filter apply on to previous tree
     try {
       const mainNode = tree.items[nodeId];
       const children = await this.getChildren(
         tree,
-        filter,
         mainNode,
         fields,
+        filter,
         issue
       );
       const childIds = children.map((item) => item.id);
@@ -806,11 +813,11 @@ export default class TreeUtils {
     }
   }
 
-  addChildrenNew(nodeId, tree, fields, filter): AtlasTree {
+  addChildrenNew(nodeId, tree, filter): AtlasTree {
     try {
       const mainNode = tree.items[nodeId];
       console.log(mainNode);
-      const children = this.getChildrenNew(tree, filter, mainNode, fields);
+      const children = this.getChildrenNew(tree, filter, mainNode);
       const childIds = children.map((item) => item.id);
       mainNode.children = childIds;
       // mainNode.isExpanded = true;
@@ -824,6 +831,8 @@ export default class TreeUtils {
       throw new Error("Error occured while adding children for issue");
     }
   }
+
+  nodeFilter;
 
   addMultiSyncChildren(nodeId, tree, fields, issue, filter): AtlasTree {
     try {
@@ -842,73 +851,113 @@ export default class TreeUtils {
     }
   }
 
-  expandTreeHook(
-    nodeId: string,
-    filter: IssueTreeFilter,
-    fields: IssueField[],
-    setTree,
-    handleError,
-    clearAllErrors
-  ): void {
-    console.log("from expand", nodeId);
+  // expandTreeHook(
+  //   nodeId: string,
+  //   filter: IssueTreeFilter,
+  //   fields: IssueField[],
+  //   setTree: React.Dispatch<React.SetStateAction<AtlasTree>>,
+  //   handleError: (err: unknown) => void,
+  //   clearAllErrors: () => void
+  // ): void {
+  //   console.log("from expand", nodeId);
 
-    setTree((tree: AtlasTree) => {
-      const item = tree.items[nodeId];
-      console.log("node", item);
-      if (item.hasChildrenLoaded) {
-        return mutateTree(tree, nodeId, { isExpanded: true });
-      }
-      const result = this.expandTree(
-        tree,
-        nodeId,
-        filter,
-        fields,
-        setTree,
-        handleError,
-        clearAllErrors
-      );
-      return isPromise(result) ? tree : result;
-    });
-  }
+  //   setTree(() => {
+  //     const result = this.expandTree(
+  //       nodeId,
+  //       filter,
+  //       fields,
+  //       setTree,
+  //       handleError,
+  //       clearAllErrors
+  //     );
+  //     return isPromise(result) ? tree : result;
+  //   });
+  // }
 
   async expandTree(
-    prevTree: AtlasTree,
     nodeId: string,
+    issueId: string,
     filter: IssueTreeFilter,
     fields: IssueField[],
-    setTree,
-    handleError,
-    clearAllErrors
+    setTree: React.Dispatch<React.SetStateAction<AtlasTree>>,
+    handleError: (err: unknown) => void,
+    clearAllErrors: () => void
   ): Promise<void> {
     try {
-      const tree = this.cloneTree(prevTree);
-      const item = tree.items[nodeId];
-      // clear all errors
       clearAllErrors();
-      let newTree = mutateTree(prevTree, nodeId, { isChildrenLoading: true });
-      const otherNodeIds = Object.keys(tree.items).filter(
-        (otherNodeId) => otherNodeId !== nodeId
-      );
-      otherNodeIds.forEach((otherNodeId) => {
-        newTree = mutateTree(newTree, otherNodeId, {
-          isTogglerDisabled: true,
+      setTree((prevTree) => {
+        const item = prevTree.items[nodeId];
+        if (item.hasChildrenLoaded) {
+          return mutateTree(prevTree, nodeId, { isExpanded: true });
+        }
+        let newTree = mutateTree(prevTree, nodeId, { isChildrenLoading: true });
+        const otherNodeIds = Object.keys(prevTree.items).filter(
+          (otherNodeId) => otherNodeId !== nodeId
+        );
+        otherNodeIds.forEach((otherNodeId) => {
+          newTree = mutateTree(newTree, otherNodeId, {
+            isTogglerDisabled: true,
+          });
         });
+        return newTree;
       });
-      setTree(newTree);
+      const issue = await this.api.getIssueWithLinks(fields, issueId);
+
+      if (issue !== undefined) {
+        console.log("issue", issue);
+        setTree((prevTree) => {
+          const populatedIssueWithLinksTree = mutateTree(prevTree, nodeId, {
+            data: issue,
+          });
+          const treeWithAddedChildren = this.addChildrenNew(
+            nodeId,
+            populatedIssueWithLinksTree,
+            emptyTreeFilter
+          );
+          let loadingResetTree = mutateTree(treeWithAddedChildren, nodeId, {
+            isExpanded: true,
+            hasChildrenLoaded: true,
+            isChildrenLoading: false, // TODO: reset loading
+          });
+          const otherNodeIds = Object.keys(treeWithAddedChildren.items).filter(
+            (otherNodeId) => otherNodeId !== nodeId
+          );
+          otherNodeIds.forEach((otherNodeId) => {
+            loadingResetTree = mutateTree(loadingResetTree, otherNodeId, {
+              isTogglerDisabled: false,
+            });
+          });
+
+          console.log("populatedIssueWithLinksTree", loadingResetTree);
+          if (loadingResetTree !== undefined) {
+            console.log("loading reset tree", loadingResetTree);
+            const filteredTree = this.applyFilterHook(
+              loadingResetTree,
+              filter,
+              fields
+            );
+            console.log("filteredTree", filteredTree);
+            return filteredTree;
+          }
+          return prevTree;
+        });
+      }
+      // const tree = this.cloneTree(prevTree);
+      // const item = tree.items[nodeId];
+      // clear all errors
+
       // this.updateTreeNode(setTree, nodeId, { isChildrenLoading: true });
 
-      const issue = await this.api.getIssueWithLinks(
-        fields,
-        (item.data as IssueWithLinkedIssues).id
-      );
-      await this.addChildren(nodeId, tree, fields, issue, filter);
-      const populatedIssueWithLinksTree = mutateTree(tree, nodeId, {
-        data: issue,
-      });
-      setTree(populatedIssueWithLinksTree);
+      // const issue = await this.api.getIssueWithLinks(
+      //   fields,
+      //   (item.data as IssueWithLinkedIssues).id
+      // );
+      // await this.addChildren(nodeId, tree, fields, issue, filter);
     } catch (error) {
       console.error(error);
-      this.updateTreeNode(setTree, nodeId, { isChildrenLoading: false });
+      setTree((prevTree) =>
+        mutateTree(prevTree, nodeId, { isChildrenLoading: false })
+      );
       handleError(error);
     }
   }
