@@ -1,15 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import { JQLSelectDropdown } from "../JQLSelectDropdown";
 import { ButtonGroup } from "@atlaskit/button";
 import { Dropdown } from "../common/Dropdown";
-import { helpLinkUrl } from "../../constants/common";
 import { HelpLink } from "../common/HelpLink";
 import { ExportContent } from "../common/ExportContent";
-import SettingsIcon from "@atlaskit/icon/glyph/settings";
 import { JQLEditor } from "../JQLEditor";
 import { TableFieldsDropdown } from "./TableFieldsDropdown";
+
 import {
   CellLimit,
   IssueField,
@@ -20,6 +19,9 @@ import {
 import { TabGroup } from "./TabGroup";
 import { SelectedType } from "@atlaskit/tabs/types";
 import { useTranslation } from "react-i18next";
+import { APIContext } from "../../context/api";
+import { viewTabs } from "../../constants/traceabilityReport";
+import { SettingsDropdownTrigger } from "../common/SettingsDropdownTrigger";
 const MainBar = styled.div`
   padding: 8px;
   border-radius: 3px;
@@ -48,10 +50,10 @@ interface Props {
   handleNewError: (err: unknown) => void;
   isExportDisabled: boolean;
   issueCardOptions: IssueField[];
-  viewTabs: Array<{ name: string; description: string }>;
-  viewTabsId: string;
   handleTabOptionSelect: (tabIndex: SelectedType) => void;
   selectedTabIndex: SelectedType;
+  showCustomJQLEditor: any;
+  selectedViewTab: string;
 }
 
 export const Toolbar = ({
@@ -69,18 +71,21 @@ export const Toolbar = ({
   handleNewError,
   isExportDisabled,
   issueCardOptions,
-  viewTabs,
-  viewTabsId,
   handleTabOptionSelect,
   selectedTabIndex,
+  showCustomJQLEditor,
+  selectedViewTab,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
+  const api = useContext(APIContext);
+  const helpLinkUrl = api.getHelpLinks().traceability;
+  const isTreeReport = selectedViewTab === "tree-view";
   return (
     <div style={{ marginTop: "-16px", marginBottom: "-8px" }}>
       <TabGroup
         handleOptionSelect={handleTabOptionSelect}
-        id={viewTabsId}
-        options={viewTabs}
+        id={viewTabs.id}
+        options={viewTabs.tabs}
         selectedTabIndex={selectedTabIndex}
       />
       <MainBar>
@@ -90,16 +95,17 @@ export const Toolbar = ({
             setSelectedFilterId={setSelectedJQLString}
             handleNewError={handleNewError}
           />
-          <span>{t("traceability-report.toolbar.or")}</span>
+          <span>{t("otpl.lxp.traceability-report.toolbar.or")}</span>
           <JQLEditor
             selectedFilterId={selectedJQLString}
             setSelectedFilterId={setSelectedJQLString}
+            showCustomJQLEditor={showCustomJQLEditor}
           />
         </FlexContainer>
 
         <div>
           <ButtonGroup>
-            {Boolean(tableFields) && (
+            {!isTreeReport && Boolean(tableFields) && (
               <TableFieldsDropdown
                 selectedOptions={selectedTableFieldIds}
                 updateSelectedOptionIds={updateSelectedTableFieldIds}
@@ -107,26 +113,26 @@ export const Toolbar = ({
               />
             )}
             <Dropdown
-              dropdownName={t("lxp.toolbar.issue-card-fields")}
+              dropdownName={t("otpl.lxp.toolbar.issue-card-fields")}
               options={issueCardOptions}
               selectedOptions={selectedIssueFieldIds}
               updateSelectedOptions={setSelectedIssueFieldIds}
             />
-            <Dropdown
-              dropdownName={<SettingsIcon />}
-              options={issueInCell}
-              selectedOptions={selectedIssueInCellIds}
-              updateSelectedOptions={updateSelectedIssueInCellIds}
-            />
+            {!isTreeReport && (
+              <Dropdown
+                dropdownName={(props) => <SettingsDropdownTrigger {...props} />}
+                options={issueInCell}
+                selectedOptions={selectedIssueInCellIds}
+                updateSelectedOptions={updateSelectedIssueInCellIds}
+              />
+            )}
             <ExportContent
-              description={t("lxp.toolbar.export-csv.title")}
-              exportContent={() => {
-                exportReport();
-              }}
+              description={t("otpl.lxp.toolbar.export-csv.title")}
+              exportContent={exportReport}
               isDisabled={isExportDisabled}
             />
             <HelpLink
-              description={t("lxp.common.get-help")}
+              description={t("otpl.lxp.common.get-help")}
               href={helpLinkUrl}
             />
           </ButtonGroup>

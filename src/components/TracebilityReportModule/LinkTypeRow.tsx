@@ -3,8 +3,7 @@ import { IssueWithSortedLinks } from "../../types/api";
 import { IssueCard } from "../common/issueCard/IssueCard";
 import { EmptyCell } from "./EmptyCell";
 import { IssueTd, MaxWidthContainer, Td } from "./IssueTypeRow";
-import Button from "@atlaskit/button";
-
+import { IssueCell } from "./IssueCell";
 export interface Props {
   selectedTableFieldIds;
   issueFieldIds: string[];
@@ -20,9 +19,7 @@ export const LinkTypeRow = ({
   selectedTableFieldIds,
   selectedIssueInCellIds,
 }: Props): JSX.Element[] => {
-  const [areAllIssuesVisible, setAreAllIssuesVisible] = useState(false);
   const cells = [];
-
   // push issue cell into row
   const issueCell = (
     <IssueTd key="issue">
@@ -59,33 +56,13 @@ export const LinkTypeRow = ({
           allIssues.push(singleIssue);
         }
       });
-      let issueCardsToShow = [];
-      if (allIssues.length > 3) {
-        if (!areAllIssuesVisible) {
-          issueCardsToShow = allIssues.slice(0, 3);
-        } else {
-          issueCardsToShow = allIssues;
-        }
-      } else {
-        issueCardsToShow = allIssues;
-      }
-      const handleClick = () => {
-        if (allIssues.length > 3) {
-          setAreAllIssuesVisible(!areAllIssuesVisible);
-        }
-      };
-      if (selectedIssueInCellIds[0] == "Display All issue cards") {
-        issueCardsToShow = allIssues;
-      }
       if (allIssues.length > 0) {
         issueCell = (
           <Td key={linkId}>
-            <MaxWidthContainer>{issueCardsToShow}</MaxWidthContainer>
-            {issueCardsToShow.length <= 3 && (
-              <Button onClick={handleClick} style={{ cursor: "pointer" }}>
-                More
-              </Button>
-            )}
+            <IssueCell
+              selectedIssueInCellIds={selectedIssueInCellIds}
+              issueCards={allIssues}
+            ></IssueCell>
           </Td>
         );
       }
