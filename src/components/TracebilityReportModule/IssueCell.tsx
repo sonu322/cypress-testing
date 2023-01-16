@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Button from "@atlaskit/button";
 import { MaxWidthContainer } from "./IssueTypeRow";
 import styled from "styled-components";
+import { displayAllIssueCardsId } from "../../constants/traceabilityReport";
 export interface Props {
   selectedIssueInCellIds: string[];
 }
@@ -28,7 +29,7 @@ export const IssueCell = ({ selectedIssueInCellIds, issueCards }) => {
     }
   };
   selectedIssueInCellIds.every((issueId) => {
-    if (issueId == "Display All issue cards") {
+    if (issueId == displayAllIssueCardsId) {
       issueCardsToShow = issueCards;
       return false;
     }
