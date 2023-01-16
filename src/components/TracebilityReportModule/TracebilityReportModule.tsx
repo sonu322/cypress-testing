@@ -18,7 +18,11 @@ import {
   orderSelectedIds,
 } from "../../util/tracebilityReportsUtils";
 import { getKeyValues } from "../../util/common";
-import { viewTabs } from "../../constants/traceabilityReport";
+import {
+  autoHideEmptyColumnsId,
+  reportCellOptions,
+  viewTabs,
+} from "../../constants/traceabilityReport";
 import { TreeReportToolbar } from "./TreeReportToolbar";
 import { TreeFilterContext } from "../../context/treeFilterContext";
 import TreeUtils from "../../util/TreeUtils";
@@ -33,10 +37,10 @@ const GrowContainer = styled.div`
   flex-grow: 1;
   display: flex;
 `;
-const cellOptions = [
-  { id: "Display All issue cards", name: "Display All issue cards" },
-  { id: "Auto hide empty columns", name: "Auto hide empty columns" },
-];
+// const cellOptions = [
+//   { id: "Display All issue cards", name: "Display All issue cards" },
+//   { id: "Auto hide empty columns", name: "Auto hide empty columns" },
+// ];
 
 interface Props {
   showCustomJQLEditor?: any;
@@ -51,7 +55,7 @@ export const TracebilityReportModule = ({
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
   const [selectedIssueInCellIds, updateSelectedIssueInCellIds] = useState<
     string[]
-  >([]);
+  >([autoHideEmptyColumnsId]);
   const [filteredIssues, setFilteredIssues] = useState<
     IssueWithSortedLinks[] | null
   >(null);
@@ -181,7 +185,7 @@ export const TracebilityReportModule = ({
             <Toolbar
               selectedIssueInCellIds={selectedIssueInCellIds}
               updateSelectedIssueInCellIds={updateSelectedIssueInCellIds}
-              issueInCell={cellOptions}
+              issueInCell={reportCellOptions}
               selectedJQLString={selectedJQLString}
               setSelectedJQLString={setSelectedJQLString}
               issueCardOptions={issueFields}

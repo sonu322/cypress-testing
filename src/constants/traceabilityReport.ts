@@ -6,10 +6,20 @@ export const jqlDialogOptions = {
   descriptionText: t(
     "otpl.lxp.traceability-report.toolbar.jqlDialogOptions.descriptionText"
   ),
-  submitText: t("otpl.lxp.traceability-report.toolbar.jqlDialogOptions.submitText"),
-  cancelText: t("otpl.lxp.traceability-report.toolbar.jqlDialogOptions.cancelText"),
+  submitText: t(
+    "otpl.lxp.traceability-report.toolbar.jqlDialogOptions.submitText"
+  ),
+  cancelText: t(
+    "otpl.lxp.traceability-report.toolbar.jqlDialogOptions.cancelText"
+  ),
   jql: "order by status ASC",
 };
+export const displayAllIssueCardsId = "Display All issue cards";
+export const autoHideEmptyColumnsId = "Auto hide empty columns";
+export const reportCellOptions = [
+  { id: displayAllIssueCardsId, name: "Display All issue cards" },
+  { id: autoHideEmptyColumnsId, name: "Auto hide empty columns" },
+];
 export const viewTabs = {
   id: "view-tabs",
   tabs: [
