@@ -26,13 +26,15 @@ const BorderTr = styled.tr`
 const Table = styled.table`
   border: 1px solid ${colors.N40};
 `;
+
+// @ts-expect-error
+const _AP: any = typeof AP !== "undefined" ? AP : null;
+
 interface Props {
   filteredIssues: IssueWithSortedLinks[];
   tableFields: IssueType[] | IssueLinkType[];
   selectedTableFieldIds: string[];
   selectedIssueInCellIds: string[];
-  selectedIssueTypeIds: string[];
-  selectedLinkTypeIds: string[];
   issueFieldIds: string[];
   isIssueTypeReport: boolean;
   errors: any[];
@@ -42,19 +44,17 @@ export const Report = ({
   tableFields,
   selectedTableFieldIds,
   selectedIssueInCellIds,
-  selectedIssueTypeIds,
-  selectedLinkTypeIds,
   issueFieldIds,
   isIssueTypeReport,
   errors,
 }: Props): JSX.Element => {
   // TODO: probably we may improve this calculation
-  const calculateTableHeight = (errors) => {
+  const calculateTableHeight = (errors): number => {
     const headingHeight = 40 + 8; // 8: margin top
     const toolbarHeight = 94 + 8; // 8: table top margin
     const footerHeight = 32 + 8 + 8;
     const // more button 8: margin top and bottom
-      errorsHeight = errors && errors.length ? (52 + 8) * errors.length : 0;
+      errorsHeight = errors?.length > 0 ? (52 + 8) * errors.length : 0;
     const finalHeight =
       getScreenHeight() -
       headingHeight -
@@ -68,10 +68,12 @@ export const Report = ({
   const [tableHeight, setTableHeight] = useState(calculateTableHeight(errors));
 
   useEffect(() => {
-    const resizeHandler = () => {
-      setTableHeight((prevHeight) => {
-        // @ts-expect-error
-        AP.sizeToParent();
+    const resizeHandler = (): void => {
+      setTableHeight(() => {
+        if (_AP !== null) {
+          _AP.sizeToParent();
+        }
+
         return calculateTableHeight(errors);
       });
     };
@@ -79,7 +81,6 @@ export const Report = ({
     resizeHandler();
     return () => window.removeEventListener("resize", resizeHandler);
   }, [errors]);
-
   return (
     <Container style={{ maxHeight: tableHeight }}>
       <Table>
@@ -95,7 +96,6 @@ export const Report = ({
                   selectedIssueInCellIds={selectedIssueInCellIds}
                   selectedTableFieldIds={selectedTableFieldIds}
                   issueFieldIds={issueFieldIds}
-                  selectedIssueTypeIds={selectedIssueTypeIds}
                   issue={issue}
                   rowSno={index + 1}
                 />
@@ -104,7 +104,6 @@ export const Report = ({
                   selectedIssueInCellIds={selectedIssueInCellIds}
                   selectedTableFieldIds={selectedTableFieldIds}
                   issueFieldIds={issueFieldIds}
-                  selectedLinkTypeIds={selectedLinkTypeIds}
                   issue={issue}
                   rowSno={index + 1}
                 />

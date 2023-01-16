@@ -8,11 +8,14 @@ import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
 import {
   IssueField,
   IssueLinkType,
+  IssueTreeFilter,
   IssueType,
   IssueWithSortedLinks,
 } from "../../types/api";
 import { useTranslation } from "react-i18next";
 import { DropdownSingleSelect } from "../common/DropdownSingleSelect";
+import { TreeReport } from "./TreeReport";
+import { AtlasTree } from "../../types/app";
 const Container = styled.div`
   width: 100%;
 `;
@@ -33,7 +36,7 @@ const options = [
   { id: 100, name: "100" },
 ];
 interface Props {
-  jqlString: string;
+  selectedJqlString: string;
   handleNewError: (err: unknown) => void;
   clearAllErrors: () => void;
   issueFields: IssueField[];
@@ -49,12 +52,18 @@ interface Props {
   setFilteredIssues: React.Dispatch<
     React.SetStateAction<IssueWithSortedLinks[]>
   >;
-  isIssueTypeReport: boolean;
   errors: any[];
+  selectedViewTab: string;
+  issueTreeFilter: IssueTreeFilter;
+  isOrphansBranchPresent: boolean;
+  tree: AtlasTree;
+  setTree: React.Dispatch<React.SetStateAction<AtlasTree>>;
+  isToggleOrphansLoading: boolean;
+  updateIsToggleOrphansLoading: (isToggleOrphansLoading: boolean) => void;
 }
 
 export const Main = ({
-  jqlString,
+  selectedJqlString,
   handleNewError,
   clearAllErrors,
   issueFields,
@@ -68,12 +77,20 @@ export const Main = ({
   areIssuesLoading,
   setAreIssuesLoading,
   setFilteredIssues,
-  isIssueTypeReport,
+  issueTreeFilter,
   errors,
+  selectedViewTab,
+  isOrphansBranchPresent,
+  tree,
+  setTree,
+  isToggleOrphansLoading,
+  updateIsToggleOrphansLoading,
 }: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
-  const [selectedOptionId, setSelectedOptionId] = useState(0);
+  const [selectedLimitOptionId, setSelectedLimitOptionId] = useState(
+    DEFAULT_ROWS_PER_PAGE
+  );
   const { t } = useTranslation();
   const api = useContext(APIContext);
   const addMoreIssues = (issues: IssueWithSortedLinks[]): void => {
@@ -86,12 +103,13 @@ export const Main = ({
   };
   const tracebilityReportUtils = new TracebilityReportUtils(api);
   useEffect(() => {
-    if (jqlString !== null) {
+    if (selectedJqlString !== null) {
+      const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
       void tracebilityReportUtils.populateIssues(
-        jqlString,
+        selectedJqlString,
         issueFields,
         START_INDEX,
-        DEFAULT_ROWS_PER_PAGE,
+        selectedLimit,
         updateIssues,
         setAreIssuesLoading,
         setTotalNumberOfIssues,
@@ -100,18 +118,12 @@ export const Main = ({
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jqlString]);
-
-  useEffect(() => {
-    if (selectedOptionId !== 0) {
-      fetchMoreIssues();
-    }
-  }, [selectedOptionId]);
+  }, [selectedJqlString]);
 
   const fetchMoreIssues = (): void => {
-    const selectedLimit = selectedOptionId ?? DEFAULT_ROWS_PER_PAGE;
+    const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
     void tracebilityReportUtils.populateIssues(
-      jqlString,
+      selectedJqlString,
       issueFields,
       filteredIssues.length,
       selectedLimit,
@@ -122,49 +134,70 @@ export const Main = ({
       undefined
     );
   };
-
+  const isIssueTypeReport = selectedViewTab === "issuetype-view";
+  const isTreeReport = selectedViewTab === "tree-view";
   if (areIssuesLoading) {
     return (
       <FullHeightContainer>
         <Spinner size="medium" />
       </FullHeightContainer>
     );
-  } else if (jqlString !== null && filteredIssues != null) {
+  } else if (selectedJqlString !== null && filteredIssues != null) {
     if (filteredIssues.length === 0) {
       return (
         <FullHeightContainer>
-          <em>{t("lxp.common.no-issues-text")}</em>
+          <em>{t("otpl.lxp.common.no-issues-text")}</em>
         </FullHeightContainer>
       );
     }
     return (
       <Container>
         <TableContainer>
-          <Report
-            filteredIssues={filteredIssues}
-            issueFieldIds={selectedIssueFieldIds}
-            tableFields={tableFields}
-            selectedTableFieldIds={selectedTableFieldIds}
-            selectedIssueInCellIds={selectedIssueInCellIds}
-            selectedIssueTypeIds={selectedIssueTypeIds}
-            selectedLinkTypeIds={selectedLinkTypeIds}
-            isIssueTypeReport={isIssueTypeReport}
-            errors={errors}
-          />
+          {isTreeReport ? (
+            <TreeReport
+              selectedJqlString={selectedJqlString}
+              filteredIssues={filteredIssues}
+              selectedIssueFieldIds={selectedIssueFieldIds}
+              errors={errors}
+              issueFields={issueFields}
+              handleError={handleNewError}
+              clearAllErrors={clearAllErrors}
+              issueTreeFilter={issueTreeFilter}
+              isOrphansBranchPresent={isOrphansBranchPresent}
+              tree={tree}
+              setTree={setTree}
+              isToggleOrphansLoading={isToggleOrphansLoading}
+              updateIsToggleOrphansLoading={updateIsToggleOrphansLoading}
+            />
+          ) : (
+            <Report
+              filteredIssues={filteredIssues}
+              issueFieldIds={selectedIssueFieldIds}
+              tableFields={tableFields}
+              selectedTableFieldIds={selectedTableFieldIds}
+              selectedIssueInCellIds={selectedIssueInCellIds}
+              isIssueTypeReport={isIssueTypeReport}
+              errors={errors}
+            />
+          )}
         </TableContainer>
         <MarginAddedContainer>
           <DropdownSingleSelect
             options={options}
-            dropdownName="Issue Limit"
-            selectedOptionId={selectedOptionId}
-            setSelectedOptionId={setSelectedOptionId}
+            dropdownName={
+              t("otpl.lxp.traceability-report.fetch-limit-dropdown.name") +
+              ` (${selectedLimitOptionId})`
+            }
+            selectedOptionId={selectedLimitOptionId}
+            setSelectedOptionId={setSelectedLimitOptionId}
           />
+          &nbsp;
           <LoadingButton
             isLoading={areMoreIssuesLoading}
             isDisabled={filteredIssues.length >= totalNumberOfIssues}
             onClick={fetchMoreIssues}
           >
-            {t("traceability-report.load-more-issues-button.name")}
+            {t("otpl.lxp.traceability-report.load-more-issues-button.name")}
           </LoadingButton>
         </MarginAddedContainer>
       </Container>
@@ -172,7 +205,7 @@ export const Main = ({
   } else {
     return (
       <FullHeightContainer>
-        <em>{t("traceability-report.select-filter.text")}</em>
+        <em>{t("otpl.lxp.traceability-report.select-filter.text")}</em>
       </FullHeightContainer>
     );
   }

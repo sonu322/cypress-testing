@@ -11,8 +11,17 @@ export interface AtlasTreeItems {
 
 export interface LinkTypeTreeNode {
   id: string;
-  isType: boolean;
+  type: string;
   title: string;
+}
+
+export interface ButtonTypeTreeNode {
+  id: string;
+  type: string;
+  title: string;
+  startNextCallIndex: number;
+  totalSearchResults: number;
+  isDataLoading: boolean;
 }
 
 export interface AtlasTreeNode {
@@ -23,5 +32,5 @@ export interface AtlasTreeNode {
   isExpanded: boolean;
   isChildrenLoading: boolean;
   parentIssueId: ID;
-  data: IssueWithLinkedIssues | Issue | LinkTypeTreeNode;
+  data: IssueWithLinkedIssues | Issue | LinkTypeTreeNode | ButtonTypeTreeNode;
 }

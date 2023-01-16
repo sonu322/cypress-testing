@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled, { css } from "styled-components";
 import { colors } from "@atlaskit/theme";
 import { IssueCard } from "../common/issueCard/IssueCard";
 import { ExpansionToggler } from "./ExpansionToggler";
-
+import { LoadingButton } from "@atlaskit/button";
+import { APIContext } from "../../context/api";
+import TreeUtils from "../../util/TreeUtils";
+import {
+  buttonTypeTreeNodeName,
+  linkTypeTreeNodeName,
+} from "../../constants/common";
 const PADDING_LEVEL = 30;
 const LinkTypeContainer = styled.div`
   display: flex;
@@ -34,6 +40,10 @@ const Container = styled.div<any>`
 `;
 
 export const IssueItem = ({
+  selectedJqlString,
+  issueFields,
+  setTree,
+  handleError,
   item,
   onExpand,
   onCollapse,
@@ -42,29 +52,54 @@ export const IssueItem = ({
   selectedIssueFieldIds,
 }) => {
   const marginLeft = getItemMargin(depth);
-
+  const api = useContext(APIContext);
+  const treeUtils = new TreeUtils(api);
   return (
     <Container
       marginLeft={marginLeft}
       innerRef={provided.innerRef}
       {...provided.dragHandleProps}
     >
-      <ExpansionToggler
-        isExpanded={item.isExpanded}
-        isLoading={item.isChildrenLoading}
-        onExpand={() => onExpand(item.id)}
-        onCollapse={() => onCollapse(item.id)}
-        isTogglerDisabled={!item.hasChildren}
-      ></ExpansionToggler>
-      {item.data && item.data.isType ? (
-        <LinkTypeContainer>
-          {item.data ? item.data.title : "No Name"}
-        </LinkTypeContainer>
+      {item.data.type === buttonTypeTreeNodeName ? (
+        <LoadingButton
+          isDisabled={
+            item.data.totalSearchResults <= item.data.startNextCallIndex
+          }
+          isLoading={item.data.isDataLoading}
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          onClick={() =>
+            treeUtils.handleLoadMoreOrphanIssues(
+              selectedJqlString,
+              issueFields,
+              item.data.startNextCallIndex,
+              setTree,
+              handleError
+            )
+          }
+        >
+          {item.data.title}
+        </LoadingButton>
       ) : (
-        <IssueCard
-          issueData={item.data ?? null}
-          selectedIssueFieldIds={selectedIssueFieldIds}
-        />
+        <>
+          <ExpansionToggler
+            isExpanded={item.isExpanded}
+            isLoading={item.isChildrenLoading}
+            onExpand={() => onExpand(item.id)}
+            onCollapse={() => onCollapse(item.id)}
+            hasChildren={item.hasChildren}
+            isTogglerDisabled={item.isTogglerDisabled}
+          ></ExpansionToggler>
+          {item.data?.type === linkTypeTreeNodeName ? (
+            <LinkTypeContainer>
+              {item.data ? item.data.title : "No Name"}
+            </LinkTypeContainer>
+          ) : (
+            <IssueCard
+              issueData={item.data ?? null}
+              selectedIssueFieldIds={selectedIssueFieldIds}
+            />
+          )}
+        </>
       )}
     </Container>
   );

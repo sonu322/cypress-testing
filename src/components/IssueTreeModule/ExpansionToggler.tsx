@@ -27,6 +27,7 @@ const SpinnerContainer = styled.span`
 export const ExpansionToggler = ({
   isLoading,
   isTogglerDisabled,
+  hasChildren,
   isExpanded,
   onExpand,
   onCollapse,
@@ -37,17 +38,27 @@ export const ExpansionToggler = ({
         <Spinner size={16} />
       </SpinnerContainer>
     );
-  } else if (isTogglerDisabled) {
+  } else if (!hasChildren) {
     return <Box />;
   } else if (isExpanded) {
     return (
-      <Button spacing="none" appearance="subtle-link" onClick={onCollapse}>
+      <Button
+        spacing="none"
+        appearance="subtle-link"
+        onClick={onCollapse}
+        isDisabled={isTogglerDisabled}
+      >
         <ChevronDownIcon label="" size="small" />
       </Button>
     );
   } else {
     return (
-      <Button spacing="none" appearance="subtle-link" onClick={onExpand}>
+      <Button
+        spacing="none"
+        appearance="subtle-link"
+        onClick={onExpand}
+        isDisabled={isTogglerDisabled}
+      >
         <ChevronRightIcon label="" size="small" />
       </Button>
     );

@@ -39,7 +39,7 @@ export const JQLSelectDropdown = ({
     <DropdownSingleSelect
       dropdownName={
         selectedOption?.name ??
-        t("traceability-report.toolbar.filterdropdown.name")
+        t("otpl.lxp.traceability-report.toolbar.filterdropdown.name")
       }
       options={filters}
       selectedOptionId={selectedFilterId}

@@ -1,3 +1,4 @@
+import { HelpLinks, JiraAutoCompleteResult, JiraAutoCompleteSuggestionsResult } from "./jira";
 export type ID = string;
 
 export interface IssueOption {
@@ -69,7 +70,7 @@ export interface IssueWithSortedLinks extends Issue {
   };
 }
 
-export interface IssueVersion { 
+export interface IssueVersion {
   id: ID;
   name: string;
   archived: boolean;
@@ -110,8 +111,20 @@ export interface IssueTreeFilter {
 }
 
 export enum CustomLinkType {
-  SUBTASK_OR_EPIC_CHILD = "SUBTASK_OR_EPIC_CHILD",
+  CHILD_ISSUES = "CHILD_ISSUES",
+  SUBTASKS = "SUBTASKS",
   PARENT = "PARENT",
+}
+
+export enum Labels {
+  CHILD_ISSUES = "Child issues",
+  SUBTASKS = "Subtasks",
+  PARENT = "Parent"
+}
+
+export enum Constants {
+  EPIC_LINK_FLD = "Epic Link",
+  PARENT_LINK_FLD = "Parent Link"
 }
 
 export default interface LXPAPI {
@@ -132,6 +145,11 @@ export default interface LXPAPI {
     issueId?: string
   ) => Promise<IssueWithLinkedIssues>;
 
+  getIssuesWithLinks: (
+    fields: IssueField[],
+    issueIds: string[]
+  ) => Promise<IssueWithLinkedIssues[]>;
+
   getCurrentIssueId: () => Promise<string>;
 
   getIssueById: (fields: IssueField[], issueId?: string) => Promise<Issue>;
@@ -148,8 +166,19 @@ export default interface LXPAPI {
     start?: number,
     max?: number
   ) => Promise<{ data: IssueWithSortedLinks[]; total: number }>;
-
+  searchOrphanIssues: (
+    jql: string,
+    fields: IssueField[],
+    start?: number,
+    max?: number
+  ) => Promise<{ data: Issue[]; total: number }>;
   getFilters: () => Promise<Filter[]>;
 
   getCurrentProject: (projectKey?: string) => Promise<Project>;
+
+  getHelpLinks: () => HelpLinks;
+
+  getAutoCompleteData: () => Promise<JiraAutoCompleteResult>;
+
+  getAutoCompleteSuggestions: (query: string) => Promise<JiraAutoCompleteSuggestionsResult>;
 };

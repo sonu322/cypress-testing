@@ -5,7 +5,7 @@ import Tree from "@atlaskit/tree";
 import { IssueItem } from "./IssueItem";
 import { ID, IssueField, IssueTreeFilter } from "../../types/api";
 import { AtlasTree } from "../../types/app";
-
+import { useTranslation } from "react-i18next";
 const Container = styled.div`
   display: flex;
 `;
@@ -13,12 +13,14 @@ const Container = styled.div`
 export interface Props {
   tree: AtlasTree;
   treeUtils: TreeUtils;
-  setTree: any;
+  setTree: (tree: AtlasTree | ((tree: AtlasTree) => AtlasTree)) => void;
   filter: IssueTreeFilter;
   issueFields: IssueField[];
   selectedIssueFieldIds: ID[];
   handleError: any;
   clearAllErrors: () => void;
+  isMultiNodeTree?: boolean;
+  selectedJqlString?: string;
 }
 
 export const IssueTree = ({
@@ -30,43 +32,41 @@ export const IssueTree = ({
   selectedIssueFieldIds,
   handleError,
   clearAllErrors,
+  isMultiNodeTree,
+  selectedJqlString,
 }: Props): JSX.Element => {
-  let fieldMap = {};
+  const { t } = useTranslation();
+  const loadingText = t("otpl.lxp.common.loading");
+  const fieldMap = {};
   issueFields.forEach((field) => {
     fieldMap[field.id] = field;
   });
-
-  const findJiraFields = (selectedFieldIds): IssueField[] => {
-    let result = [];
-    for (let fieldId of selectedFieldIds) {
-      result.push(fieldMap[fieldId] as IssueField);
+  useEffect(() => {
+    if (isMultiNodeTree) {
+      setTree((tree) => {
+        const newTree = treeUtils.applyMultiNodeTreeFilter(
+          tree,
+          filter,
+          issueFields
+        );
+        return newTree;
+      });
+    } else {
+      setTree((prevTree) => {
+        if (prevTree !== undefined) {
+          treeUtils.applyFilterHook(tree, setTree, filter, issueFields);
+        } else {
+          return prevTree;
+        }
+      });
     }
-    return result;
-  };
-
-  useEffect(() => {
-    treeUtils.initTreeHook(
-      filter,
-      findJiraFields(selectedIssueFieldIds),
-      setTree,
-      handleError
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    treeUtils.applyFilterHook(
-      setTree,
-      filter,
-      findJiraFields(selectedIssueFieldIds)
-    );
   }, [filter, selectedIssueFieldIds]);
 
   const onExpand = (itemId) => {
     treeUtils.expandTreeHook(
       itemId,
       filter,
-      findJiraFields(selectedIssueFieldIds),
+      treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds),
       setTree,
       handleError,
       clearAllErrors
@@ -79,20 +79,32 @@ export const IssueTree = ({
 
   const renderItem = ({ ...props }) => {
     return (
-      //@ts-ignore
-      <IssueItem {...props} selectedIssueFieldIds={selectedIssueFieldIds} />
+      // @ts-expect-error
+      <IssueItem
+        {...props}
+        selectedIssueFieldIds={selectedIssueFieldIds}
+        selectedJqlString={selectedJqlString}
+        issueFields={issueFields}
+        setTree={setTree}
+        handleError={handleError}
+      />
     );
+    // }
   };
 
-  return (
-    <Container>
-      <Tree
-        tree={tree}
-        renderItem={renderItem}
-        onExpand={onExpand}
-        onCollapse={onCollapse}
-        isDragEnabled={false}
-      />
-    </Container>
-  );
+  if (tree !== undefined && tree.items !== undefined) {
+    return (
+      <Container>
+        <Tree
+          tree={tree}
+          renderItem={renderItem}
+          onExpand={onExpand}
+          onCollapse={onCollapse}
+          isDragEnabled={false}
+        />
+      </Container>
+    );
+  } else {
+    return <em>{loadingText}</em>;
+  }
 };
