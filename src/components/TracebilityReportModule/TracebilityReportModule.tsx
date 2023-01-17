@@ -37,10 +37,6 @@ const GrowContainer = styled.div`
   flex-grow: 1;
   display: flex;
 `;
-// const cellOptions = [
-//   { id: "Display All issue cards", name: "Display All issue cards" },
-//   { id: "Auto hide empty columns", name: "Auto hide empty columns" },
-// ];
 
 interface Props {
   showCustomJQLEditor?: any;
@@ -53,9 +49,8 @@ export const TracebilityReportModule = ({
   const treeFilterContext = useContext(TreeFilterContext);
   const [isOrphansBranchPresent, setIsOrphansBranchPresent] = useState(false);
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
-  const [selectedIssueInCellIds, updateSelectedIssueInCellIds] = useState<
-    string[]
-  >([autoHideEmptyColumnsId]);
+  const [selectedSettingsDropdownIds, setSelectedSettingsDropdownIds] =
+    useState<string[]>([]);
   const [filteredIssues, setFilteredIssues] = useState<
     IssueWithSortedLinks[] | null
   >(null);
@@ -183,8 +178,8 @@ export const TracebilityReportModule = ({
         bottomBar={
           <>
             <Toolbar
-              selectedIssueInCellIds={selectedIssueInCellIds}
-              updateSelectedIssueInCellIds={updateSelectedIssueInCellIds}
+              selectedSettingsDropdownIds={selectedSettingsDropdownIds}
+              setSelectedSettingsDropdownIds={setSelectedSettingsDropdownIds}
               issueInCell={reportCellOptions}
               selectedJQLString={selectedJQLString}
               setSelectedJQLString={setSelectedJQLString}
@@ -236,9 +231,7 @@ export const TracebilityReportModule = ({
           clearAllErrors={clearAllErrors}
           issueFields={issueFields}
           selectedIssueFieldIds={selectedIssueFieldIds}
-          selectedIssueInCellIds={selectedIssueInCellIds}
-          selectedIssueTypeIds={selectedIssueTypeIds}
-          selectedLinkTypeIds={selectedLinkTypeIds}
+          selectedSettingsDropdownIds={selectedSettingsDropdownIds}
           tableFields={tableFields}
           selectedTableFieldIds={emptyEqualsAllTableIds}
           filteredIssues={filteredIssues}

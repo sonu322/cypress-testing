@@ -10,6 +10,7 @@ import {
 } from "../../types/api";
 import { IssueTypeRow } from "./IssueTypeRow";
 import { getScreenHeight } from "../../util/common";
+import { autoHideEmptyColumnsId } from "../../constants/traceabilityReport";
 const Container = styled.div`
   width: 100%;
   // height: 100%;
@@ -34,7 +35,7 @@ interface Props {
   filteredIssues: IssueWithSortedLinks[];
   tableFields: IssueType[] | IssueLinkType[];
   selectedTableFieldIds: string[];
-  selectedIssueInCellIds: string[];
+  selectedSettingsDropdownIds: string[];
   issueFieldIds: string[];
   isIssueTypeReport: boolean;
   errors: any[];
@@ -43,7 +44,7 @@ export const Report = ({
   filteredIssues,
   tableFields,
   selectedTableFieldIds,
-  selectedIssueInCellIds,
+  selectedSettingsDropdownIds,
   issueFieldIds,
   isIssueTypeReport,
   errors,
@@ -93,15 +94,16 @@ export const Report = ({
             <BorderTr key={`${issue.issueKey}`}>
               {isIssueTypeReport ? (
                 <IssueTypeRow
-                  selectedIssueInCellIds={selectedIssueInCellIds}
+                  selectedSettingsDropdownIds={selectedSettingsDropdownIds}
                   selectedTableFieldIds={selectedTableFieldIds}
+                  //selectedTableFieldIds={nonEmptyCols}
                   issueFieldIds={issueFieldIds}
                   issue={issue}
                   rowSno={index + 1}
                 />
               ) : (
                 <LinkTypeRow
-                  selectedIssueInCellIds={selectedIssueInCellIds}
+                  selectedSettingsDropdownIds={selectedSettingsDropdownIds}
                   selectedTableFieldIds={selectedTableFieldIds}
                   issueFieldIds={issueFieldIds}
                   issue={issue}
