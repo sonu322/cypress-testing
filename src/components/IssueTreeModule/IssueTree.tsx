@@ -7,6 +7,7 @@ import { AtlasTree } from "../../types/app";
 import { useTranslation } from "react-i18next";
 import Tree, { mutateTree } from "@atlaskit/tree";
 import { APIContext } from "../../context/api";
+import { linkTypeTreeNodeName } from "../../constants/common";
 const Container = styled.div`
   display: flex;
 `;
@@ -98,50 +99,32 @@ export const IssueTree = ({
   //   });
   // }, [selectedIssueFieldIds, setTree, treeUtils.ROOT_ID]);
 
-  const onExpand = async (itemId: string): Promise<void> => {
-    // treeUtils.expandTreeHook(
-    //   itemId,
-    //   filter,
-    //   treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds),
-    //   setTree,
-    //   handleError,
-    //   clearAllErrors
-    // );
-    // setTree((prevTree) => {
-    //   console.log("is this error place? 1");
-    // const item = prevTree.items[itemId];
-    // if (item.hasChildrenLoaded) {
-    //   return mutateTree(prevTree, itemId, { isExpanded: true });
-    // }
-    // });
-    // const issueWithLinkedIssues = await api.getIssueWithLinks(
-    //   treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds),
-    //   item.data.id
-    // );
-    // setTree((prevTree) => {
-    //   const expandedTree = treeUtils.expandTreeHook(
-    //     itemId,
-    //     filter,
-    //     issueWithLinkedIssues,
-    //     prevTree,
-    //     handleError,
-    //     clearAllErrors
-    //   );
-    //   return expandedTree;
-    // });
-    console.log(itemId);
-    const lastSlashIndex = itemId.lastIndexOf("/");
-    const issueId = itemId.substring(lastSlashIndex + 1);
-    console.log(issueId);
-    await treeUtils.expandTree(
-      itemId,
-      issueId,
-      filter,
-      treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds),
-      setTree,
-      handleError,
-      clearAllErrors
-    );
+  const onExpand = async ({
+    itemId,
+    itemType,
+  }: {
+    itemId: string;
+    itemType: string;
+  }): Promise<void> => {
+    console.log("type", itemType);
+    if (itemType === linkTypeTreeNodeName) {
+      console.log("this is a link");
+      setTree((prevTree) => treeUtils.expandSingleNode(itemId, prevTree));
+    } else {
+      console.log(itemId);
+      const lastSlashIndex = itemId.lastIndexOf("/");
+      const issueId = itemId.substring(lastSlashIndex + 1);
+      console.log(issueId);
+      await treeUtils.expandTree(
+        itemId,
+        issueId,
+        filter,
+        treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds),
+        setTree,
+        handleError,
+        clearAllErrors
+      );
+    }
   };
 
   const onCollapse = (itemId) => {

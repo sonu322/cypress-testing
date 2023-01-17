@@ -85,7 +85,9 @@ export const IssueItem = ({
           <ExpansionToggler
             isExpanded={item.isExpanded}
             isLoading={item.isChildrenLoading}
-            onExpand={() => onExpand(item.id)}
+            onExpand={() =>
+              onExpand({ itemId: item.id, itemType: item.data?.type })
+            }
             onCollapse={() => onCollapse(item.id)}
             hasChildren={item.hasChildren}
             isTogglerDisabled={item.isTogglerDisabled}
