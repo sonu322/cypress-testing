@@ -44,8 +44,10 @@ interface Props {
   updateSelectedTableFieldIds: (fieldIds: string[]) => void;
   tableFields: IssueType[] | IssueLinkType[];
   issueInCell: CellLimit[];
-  selectedIssueInCellIds: string[];
-  updateSelectedIssueInCellIds: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedSettingsDropdownIds: string[];
+  setSelectedSettingsDropdownIds: React.Dispatch<
+    React.SetStateAction<string[]>
+  >;
   exportReport: () => void;
   handleNewError: (err: unknown) => void;
   isExportDisabled: boolean;
@@ -64,8 +66,8 @@ export const Toolbar = ({
   selectedTableFieldIds,
   updateSelectedTableFieldIds,
   tableFields,
-  selectedIssueInCellIds,
-  updateSelectedIssueInCellIds,
+  selectedSettingsDropdownIds,
+  setSelectedSettingsDropdownIds,
   issueInCell,
   exportReport,
   handleNewError,
@@ -122,8 +124,8 @@ export const Toolbar = ({
               <Dropdown
                 dropdownName={(props) => <SettingsDropdownTrigger {...props} />}
                 options={issueInCell}
-                selectedOptions={selectedIssueInCellIds}
-                updateSelectedOptions={updateSelectedIssueInCellIds}
+                selectedOptions={selectedSettingsDropdownIds}
+                updateSelectedOptions={setSelectedSettingsDropdownIds}
               />
             )}
             <ExportContent

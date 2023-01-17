@@ -17,8 +17,18 @@ export const jqlDialogOptions = {
 export const displayAllIssueCardsId = "Display All issue cards";
 export const autoHideEmptyColumnsId = "Auto hide empty columns";
 export const reportCellOptions = [
-  { id: displayAllIssueCardsId, name: "Display All issue cards" },
-  { id: autoHideEmptyColumnsId, name: "Auto hide empty columns" },
+  {
+    id: displayAllIssueCardsId,
+    name: t(
+      "otpl.lxp.traceability-report.toolbar.settingsDropdown.displayAllIssueCards"
+    ),
+  },
+  {
+    id: autoHideEmptyColumnsId,
+    name: t(
+      "otpl.lxp.traceability-report.toolbar.settingsDropdown.autoHideEmptyColumns"
+    ),
+  },
 ];
 export const viewTabs = {
   id: "view-tabs",
