@@ -1224,20 +1224,22 @@ export default class TreeUtils {
         const node = prevTree.items[nodeId];
         if (!node.isExpanded) {
           newTree = mutateTree(newTree, nodeId, { isExpanded: true });
-          if (!node.hasChildrenLoaded) {
-            const lastSlashIndex = nodeId.lastIndexOf("/");
-            const issueId = nodeId.substring(lastSlashIndex + 1);
-            console.log(issueId);
-            issuesToFetch.push(issueId);
-          }
+        }
+        if (!node.hasChildrenLoaded) {
+          const lastSlashIndex = nodeId.lastIndexOf("/");
+          const issueId = nodeId.substring(lastSlashIndex + 1);
+          console.log(issueId);
+          issuesToFetch.push(issueId);
+        }
 
-          if (node.children.length > 0) {
-            node.children.forEach((typeNodeId) => {
-              const typeNode = newTree.items[typeNodeId];
+        if (node.children.length > 0) {
+          node.children.forEach((typeNodeId) => {
+            const typeNode = newTree.items[typeNodeId];
+            if (!typeNode.isExpanded) {
               newTree = mutateTree(newTree, typeNodeId, { isExpanded: true });
-              nextNodeIds = nextNodeIds.concat(typeNode.children);
-            });
-          }
+            }
+            nextNodeIds = nextNodeIds.concat(typeNode.children);
+          });
         }
       });
 
