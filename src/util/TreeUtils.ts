@@ -1195,7 +1195,7 @@ export default class TreeUtils {
         );
         setTree(() => {
           console.log("newtree from settree", newTree);
-          // newTree = this.applyFilterHook(newTree, filter, fields);
+          newTree = this.applyFilterHook(newTree, filter, fields);
           return newTree;
         });
         setIsExpandAllLoading(false);
