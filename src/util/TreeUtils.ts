@@ -774,6 +774,34 @@ export default class TreeUtils {
     return newTree;
   }
 
+  applyMultiNodeTreeFilterNew(
+    tree: AtlasTree,
+    filter: IssueTreeFilter,
+    fields: IssueField[]
+  ): AtlasTree {
+    let newTree = this.cloneTree(tree);
+    let firstNodeIds;
+    if (newTree.items !== undefined) {
+      firstNodeIds = newTree.items[this.ROOT_ID].children;
+    }
+
+    if (firstNodeIds !== undefined) {
+      firstNodeIds.forEach((firstNodeId) => {
+        const firstNode = tree.items[firstNodeId];
+        console.log("firstnodeid", firstNodeId);
+        if (
+          firstNode.data.type !== buttonTypeTreeNodeName &&
+          firstNode.data.linkedIssues !== undefined &&
+          firstNode.data.linkedIssues.length > 0 &&
+          firstNode.isExpanded
+        ) {
+          newTree = this.applyFilterNew(newTree, filter, fields, firstNodeId);
+        }
+      });
+    }
+    return newTree;
+  }
+
   updateTreeNode(setTree, nodeId, data) {
     setTree((prevTree) => {
       const tree = mutateTree(prevTree, nodeId, data);
@@ -830,7 +858,7 @@ export default class TreeUtils {
       return newTree;
     } catch (error) {
       console.log(error);
-      throw new Error("Error occured while adding children for issue");
+      throw new Error("Error occured while adding children for issue", nodeId);
     }
   }
 
@@ -854,10 +882,14 @@ export default class TreeUtils {
       const filteredLinks = this.filterLinks(issue, filter, mainNode, issueMap);
 
       for (const link of filteredLinks) {
+        console.log("filtered links", filteredLinks);
         const linkedIssue: Issue = issueMap[link.issueId];
+        console.log(linkedIssue);
+        console.log("tree.items", tree.items);
         const foundNodeId = Object.keys(tree.items).find((nodeId) => {
           return nodeId === prefix + "/" + link.name + "/" + linkedIssue.id;
         });
+        console.log("found node id", foundNodeId);
         let node: AtlasTreeNode;
         if (foundNodeId !== undefined) {
           console.log("tree", tree);
@@ -984,7 +1016,6 @@ export default class TreeUtils {
             isTogglerDisabled: true,
           });
         });
-        console.log("if link type, just expand it and filter");
         return newTree;
       });
 
@@ -1003,7 +1034,7 @@ export default class TreeUtils {
           let loadingResetTree = mutateTree(treeWithAddedChildren, nodeId, {
             isExpanded: true,
             hasChildrenLoaded: true,
-            isChildrenLoading: false, // TODO: reset loading
+            isChildrenLoading: false,
           });
           const otherNodeIds = Object.keys(treeWithAddedChildren.items).filter(
             (otherNodeId) => otherNodeId !== nodeId
@@ -1021,7 +1052,7 @@ export default class TreeUtils {
               loadingResetTree,
               filter,
               fields
-            );
+            ); // TODO: make it handle only its tree does not work for multinode
             console.log("filteredTree", filteredTree);
             return filteredTree;
           }
@@ -1040,7 +1071,7 @@ export default class TreeUtils {
       // );
       // await this.addChildren(nodeId, tree, fields, issue, filter);
     } catch (error) {
-      console.error(error);
+      console.error("caught error from expand", error);
       setTree((prevTree) =>
         mutateTree(prevTree, nodeId, { isChildrenLoading: false })
       );

@@ -49,7 +49,7 @@ export const IssueTree = ({
     console.log("filter changed");
     if (isMultiNodeTree) {
       setTree((tree) => {
-        const newTree = treeUtils.applyMultiNodeTreeFilter(
+        const newTree = treeUtils.applyMultiNodeTreeFilterNew(
           tree,
           filter,
           issueFields
