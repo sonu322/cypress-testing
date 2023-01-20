@@ -825,6 +825,7 @@ export default class TreeUtils {
       const newTree = mutateTree(tree, mainNode.id, {
         children: childIds,
         hasChildren: childIds.length > 0,
+        hasChildrenLoaded: true,
       });
       return newTree;
     } catch (error) {
@@ -1179,7 +1180,7 @@ export default class TreeUtils {
       setIsExpandAllLoading(true);
       clearAllErrors();
       console.log("expand all new called");
-      const newTree = await this.expandAllNodes(
+      let newTree = await this.expandAllNodes(
         prevTree,
         prevTree.items[this.ROOT_ID].children,
         0,
@@ -1194,6 +1195,7 @@ export default class TreeUtils {
         );
         setTree(() => {
           console.log("newtree from settree", newTree);
+          // newTree = this.applyFilterHook(newTree, filter, fields);
           return newTree;
         });
         setIsExpandAllLoading(false);
@@ -1210,6 +1212,7 @@ export default class TreeUtils {
     issueFields: IssueField[],
     setTree
   ): Promise<AtlasTree> {
+    console.log("EXPAND ALL NODES CALLED");
     console.log("level", level);
     console.log("given tree", prevTree);
     // eslint-disable-next-line no-useless-catch
@@ -1219,17 +1222,24 @@ export default class TreeUtils {
       }
       let newTree = this.cloneTree(prevTree);
       let nextNodeIds: string[] = [];
+      const issueNodeIdMap = new Map<string, string[]>();
       const issuesToFetch: string[] = [];
       nodeIds.forEach((nodeId) => {
         const node = prevTree.items[nodeId];
         if (!node.isExpanded) {
           newTree = mutateTree(newTree, nodeId, { isExpanded: true });
         }
+
         if (!node.hasChildrenLoaded) {
           const lastSlashIndex = nodeId.lastIndexOf("/");
           const issueId = nodeId.substring(lastSlashIndex + 1);
           console.log(issueId);
           issuesToFetch.push(issueId);
+          if (issueNodeIdMap[issueId] === undefined) {
+            issueNodeIdMap[issueId] = [nodeId];
+          } else {
+            issueNodeIdMap[issueId] = issueNodeIdMap[issueId].concat([nodeId]);
+          }
         }
 
         if (node.children.length > 0) {
@@ -1251,15 +1261,12 @@ export default class TreeUtils {
           issueFields,
           issuesToFetch
         );
-        const issueIdMap = new Map<string, IssueWithLinkedIssues>();
+        console.log("issue node id map", issueNodeIdMap);
         for (const issue of issues) {
-          issueIdMap[issue.id] = issue;
-          const issueNodes = Object.values(newTree.items).filter((item) => {
-            return item.data.id === issue.id;
-          });
-          issueNodes.forEach((item) => {
-            newTree = mutateTree(newTree, item.id, { data: issue });
-            newTree = this.addChildrenNew(item.id, newTree);
+          const issueNodeIds = issueNodeIdMap[issue.id];
+          issueNodeIds.forEach((nodeId) => {
+            newTree = mutateTree(newTree, nodeId, { data: issue });
+            newTree = this.addChildrenNew(nodeId, newTree);
           });
         }
 
