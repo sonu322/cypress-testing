@@ -1175,9 +1175,9 @@ export default class TreeUtils {
     clearAllErrors,
     setIsExpandAllLoading
   ): Promise<void> {
+    setIsExpandAllLoading(true);
     // NOTE: using setTree without function is ok because, the node ids to be expanded are not being changed from prev tree to now. we just need the node ids. we dont need the most recent value. its ok if batched.
     try {
-      setIsExpandAllLoading(true);
       clearAllErrors();
       console.log("expand all new called");
       let newTree = await this.expandAllNodes(
@@ -1201,6 +1201,7 @@ export default class TreeUtils {
         setIsExpandAllLoading(false);
       }
     } catch (error) {
+      setIsExpandAllLoading(false);
       handleError(error);
     }
   }
