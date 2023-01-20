@@ -67,6 +67,16 @@ export const IssueTree = ({
     }
   }, [filter, isMultiNodeTree]);
 
+  useEffect(() => {
+    console.log("use eff selectedIssueFieldIds", selectedIssueFieldIds);
+
+    setTree((tree) => {
+      if (tree?.items !== undefined && selectedIssueFieldIds !== undefined) {
+        return treeUtils.cloneTree(tree);
+      }
+    });
+  }, [selectedIssueFieldIds]);
+
   // useEffect(() => {
   // console.log("called use eff ");
 
@@ -160,7 +170,7 @@ export const IssueTree = ({
       <Container>
         <Tree
           tree={tree}
-          key={selectedIssueFieldIds} // needs change. called unnecessarily.
+          // key={selectedIssueFieldIds} // needs change. called unnecessarily.
           renderItem={({ ...props }) => {
             return (
               // @ts-expect-error
