@@ -1183,6 +1183,7 @@ export default class TreeUtils {
         prevTree,
         prevTree.items[this.ROOT_ID].children,
         0,
+        fields,
         setTree
       );
       console.log("newtree", newTree);
@@ -1206,6 +1207,7 @@ export default class TreeUtils {
     prevTree: AtlasTree,
     nodeIds: string[],
     level: number,
+    issueFields: IssueField[],
     setTree
   ): Promise<AtlasTree> {
     console.log("level", level);
@@ -1232,6 +1234,7 @@ export default class TreeUtils {
           if (node.children.length > 0) {
             node.children.forEach((typeNodeId) => {
               const typeNode = newTree.items[typeNodeId];
+              newTree = mutateTree(newTree, typeNodeId, { isExpanded: true });
               nextNodeIds = nextNodeIds.concat(typeNode.children);
             });
           }
@@ -1241,12 +1244,29 @@ export default class TreeUtils {
       console.log("issuesToFetch", issuesToFetch);
       console.log("nextnodeids", nextNodeIds);
       if (issuesToFetch?.length > 0) {
-        console.log("fetch issuees");
+        console.log("fetch issuees and add children ");
+        const issues = await this.api.getIssuesWithLinks(
+          issueFields,
+          issuesToFetch
+        );
+        const issueIdMap = new Map<string, IssueWithLinkedIssues>();
+        for (const issue of issues) {
+          issueIdMap[issue.id] = issue;
+          const issueNodes = Object.values(newTree.items).filter((item) => {
+            return item.data.id === issue.id;
+          });
+          issueNodes.forEach((item) => {
+            newTree = mutateTree(newTree, item.id, { data: issue });
+            newTree = this.addChildrenNew(item.id, newTree);
+          });
+        }
+
         // return newTree;
         newTree = await this.expandAllNodes(
           newTree,
           nextNodeIds,
           level + 1,
+          issueFields,
           setTree
         );
         return newTree;
@@ -1258,6 +1278,7 @@ export default class TreeUtils {
           newTree,
           nextNodeIds,
           level + 1,
+          issueFields,
           setTree
         );
         return newTree;
