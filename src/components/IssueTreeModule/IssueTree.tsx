@@ -154,6 +154,7 @@ export const IssueTree = ({
   //   setTree,
   //   handleError,
   // ]);
+  console.log("tree from main file", tree);
   if (tree?.items !== undefined) {
     return (
       <Container>
