@@ -50,7 +50,7 @@ export const TracebilityReportModule = ({
   const [isOrphansBranchPresent, setIsOrphansBranchPresent] = useState(false);
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
   const [selectedSettingsDropdownIds, setSelectedSettingsDropdownIds] =
-    useState<string[]>([]);
+    useState<string[]>([autoHideEmptyColumnsId]);
   const [filteredIssues, setFilteredIssues] = useState<
     IssueWithSortedLinks[] | null
   >(null);
