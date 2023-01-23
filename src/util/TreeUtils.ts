@@ -474,11 +474,11 @@ export default class TreeUtils {
     issue: IssueWithLinkedIssues,
     filter: IssueTreeFilter,
     mainNode: AtlasTreeNode,
-    issueMap: any
+    issueMap: Map<string, Issue>
   ): IssueLink[] {
     const result = [];
     for (const link of issue.links) {
-      const linkedIssue = issueMap[link.issueId];
+      const linkedIssue: Issue = issueMap[link.issueId];
       if (
         this._shouldIncludeNode(
           issue,
@@ -650,13 +650,14 @@ export default class TreeUtils {
     return result;
   }
 
-  applyFilterHook(tree: AtlasTree, filter, fields): AtlasTree {
+  applyFilterHook(
+    tree: AtlasTree,
+    filter: IssueTreeFilter,
+    fields: IssueField[],
+    firstNodeId: string
+  ): AtlasTree {
     console.log("filter", filter);
     // TODO: use setState(func) to make the filter apply on to previous tree
-    let firstNodeId;
-    if (tree.items !== undefined) {
-      firstNodeId = tree.items[this.ROOT_ID].children[0];
-    }
     if (firstNodeId !== undefined) {
       const node = tree.items[firstNodeId];
       if (node.hasChildrenLoaded) {
@@ -707,23 +708,44 @@ export default class TreeUtils {
     return tree;
   }
 
-  applyFilterNew(tree, filter, fields, nodeId): AtlasTree {
+  applyFilterNew(
+    tree: AtlasTree,
+    filter: IssueTreeFilter,
+    fields: IssueField[],
+    nodeId: string
+  ): AtlasTree {
     try {
-      console.log("filter tree new called", nodeId);
-      console.log(tree.items[nodeId]);
-      const node = tree.items[nodeId];
+      console.log(
+        "filter tree new called ****must call for all expanded levels******",
+        nodeId
+      );
+
       // tree = this.addChildrenNew(nodeId, tree, filter); // filters
       tree = this.filterNodeChildren(nodeId, tree, filter);
+      console.log("FROM FILTER NODE CHILDREN AFTER", nodeId);
+      console.log(tree);
+      const node = tree.items[nodeId];
+      console.log(node.data.issueKey);
+      console.log("NODE'S CHILDREN", node.id, node.children);
       for (const typeNodeId of node.children) {
         // type nodes
         const typeNode = tree.items[typeNodeId];
         for (const childNodeId of typeNode.children) {
+          console.log("type nodes children", childNodeId);
           const child = tree.items[childNodeId];
+          console.log(
+            "child info",
+            child.data.issueKey,
+            child.hasChildrenLoaded,
+            child.hasChildren
+          );
           if (child.hasChildrenLoaded) {
             tree = this.applyFilterNew(tree, filter, fields, child.id);
           }
         }
       }
+      console.log("FINAL RETURNING TREE FROM APPLY FILTER NEW");
+      console.log(tree);
       return tree;
     } catch (e) {
       console.log("e from apply filter new");
@@ -855,6 +877,7 @@ export default class TreeUtils {
         hasChildren: childIds.length > 0,
         hasChildrenLoaded: true,
       });
+      console.log("set has children to true");
       return newTree;
     } catch (error) {
       console.log(error);
@@ -871,28 +894,27 @@ export default class TreeUtils {
       const mainNode = tree.items[nodeId];
       const prefix = mainNode.id;
       console.log(mainNode, "from filter node children");
-      // const children = this.getChildrenNew(tree, filter, mainNode);
-      // const childIds = children.map((item) => item.id);
       const issue = mainNode.data;
       const issueMap: Map<string, IssueWithLinkedIssues> = new Map();
       const typeMap: Map<string, string> = new Map();
-      issue.linkedIssues?.forEach((linkedIssue: Issue) => {
-        issueMap[linkedIssue.id] = linkedIssue;
-      });
-      const filteredLinks = this.filterLinks(issue, filter, mainNode, issueMap);
-
+      (issue as IssueWithLinkedIssues).linkedIssues?.forEach(
+        (linkedIssue: Issue) => {
+          issueMap[linkedIssue.id] = linkedIssue;
+        }
+      );
+      const filteredLinks = this.filterLinks(
+        issue as IssueWithLinkedIssues,
+        filter,
+        mainNode,
+        issueMap
+      );
       for (const link of filteredLinks) {
-        console.log("filtered links", filteredLinks);
         const linkedIssue: Issue = issueMap[link.issueId];
-        console.log(linkedIssue);
-        console.log("tree.items", tree.items);
         const foundNodeId = Object.keys(tree.items).find((nodeId) => {
           return nodeId === prefix + "/" + link.name + "/" + linkedIssue.id;
         });
-        console.log("found node id", foundNodeId);
         let node: AtlasTreeNode;
         if (foundNodeId !== undefined) {
-          console.log("tree", tree);
           console.log(
             "found node id",
             foundNodeId,
@@ -940,6 +962,7 @@ export default class TreeUtils {
       const newTree = mutateTree(tree, mainNode.id, {
         children: childIds,
         hasChildren: childIds.length > 0,
+        hasChildrenLoaded: true, // added new should not add here. put in correct place FILTER IS NOT BEING CALLED DEEPLY
       });
 
       return newTree;
@@ -999,11 +1022,9 @@ export default class TreeUtils {
     clearAllErrors: () => void
   ): Promise<void> {
     try {
-      console.log("calleld expand tree", nodeId);
       clearAllErrors();
       setTree((prevTree) => {
         const item = prevTree.items[nodeId];
-        console.log("item", item);
         if (item.hasChildrenLoaded) {
           return mutateTree(prevTree, nodeId, { isExpanded: true });
         }
@@ -1022,7 +1043,6 @@ export default class TreeUtils {
       const issue = await this.api.getIssueWithLinks(fields, issueId);
 
       if (issue !== undefined) {
-        console.log("issue", issue);
         setTree((prevTree) => {
           const populatedIssueWithLinksTree = mutateTree(prevTree, nodeId, {
             data: issue,
@@ -1045,15 +1065,14 @@ export default class TreeUtils {
             });
           });
 
-          console.log("populatedIssueWithLinksTree", loadingResetTree);
           if (loadingResetTree !== undefined) {
-            console.log("loading reset tree", loadingResetTree);
             const filteredTree = this.applyFilterHook(
               loadingResetTree,
               filter,
-              fields
+              fields,
+              nodeId
             ); // TODO: make it handle only its tree does not work for multinode
-            console.log("filteredTree", filteredTree);
+
             return filteredTree;
           }
           return prevTree;
@@ -1085,7 +1104,6 @@ export default class TreeUtils {
     filter: IssueTreeFilter,
     fields: IssueField[]
   ): Promise<AtlasTreeNode[]> {
-    console.log("caleld expnd tree nodes");
     try {
       let tree = prevTree;
       const issueIds = [];
@@ -1095,7 +1113,7 @@ export default class TreeUtils {
           tree = mutateTree(tree, nodeId, {
             isExpanded: true,
           });
-          console.log("tree", tree);
+
           // item.isExpanded = true;
         } else {
           issueIds.push((item.data as IssueWithLinkedIssues).id);
@@ -1104,7 +1122,6 @@ export default class TreeUtils {
       const issueIdMap = {};
       if (issueIds.length > 0) {
         const issues = await this.api.getIssuesWithLinks(fields, issueIds);
-        console.log(issues);
         for (const issue of issues) {
           issueIdMap[issue.id] = issue;
           const items = Object.values(tree.items).filter((item) => {
@@ -1122,7 +1139,6 @@ export default class TreeUtils {
               item.isExpanded = true;
               // const issueId = (item.data as IssueWithLinkedIssues).id;
               tree = this.addChildrenNew(nodeId, tree);
-              console.log(tree);
               // filter
             }
             nodes.push(item);
@@ -1143,7 +1159,6 @@ export default class TreeUtils {
     filter: IssueTreeFilter,
     fields: IssueField[]
   ): Promise<{ tree: AtlasTree; nodes: AtlasTreeNode[] }> {
-    console.log("caleld expnd tree nodes");
     try {
       let tree;
       const issueIds = [];
@@ -1153,7 +1168,6 @@ export default class TreeUtils {
           tree = mutateTree(prevTree, nodeId, {
             isExpanded: true,
           });
-          console.log("tree from children loaded loaded", tree);
           return { tree, nodes: [] };
           // item.isExpanded = true;
         } else {
@@ -1162,9 +1176,7 @@ export default class TreeUtils {
       }
       const issueIdMap = {};
       if (issueIds.length > 0) {
-        console.log("issue ids", issueIds);
         const issues = await this.api.getIssuesWithLinks(fields, issueIds);
-        console.log(issues);
         for (const issue of issues) {
           issueIdMap[issue.id] = issue;
           const items = Object.values(tree.items).filter((item) => {
@@ -1182,7 +1194,6 @@ export default class TreeUtils {
               item.isExpanded = true;
               // const issueId = (item.data as IssueWithLinkedIssues).id;
               tree = this.addChildrenNew(nodeId, tree);
-              console.log("tree from add children new", tree);
               // filter
             }
             nodes.push(item);
@@ -1210,7 +1221,6 @@ export default class TreeUtils {
     // NOTE: using setTree without function is ok because, the node ids to be expanded are not being changed from prev tree to now. we just need the node ids. we dont need the most recent value. its ok if batched.
     try {
       clearAllErrors();
-      console.log("expand all new called");
       let newTree = await this.expandAllNodes(
         prevTree,
         prevTree.items[this.ROOT_ID].children,
@@ -1218,15 +1228,16 @@ export default class TreeUtils {
         fields,
         setTree
       );
-      console.log("newtree", newTree);
       if (newTree?.items !== undefined) {
-        console.log(
-          "new tree from expand all new returned from expand all nodes",
-          newTree
-        );
         setTree(() => {
-          console.log("newtree from settree", newTree);
-          newTree = this.applyFilterHook(newTree, filter, fields);
+          const rootNode = newTree.items[this.ROOT_ID];
+          const rootIssueNodeId = rootNode.children[0];
+          newTree = this.applyFilterHook(
+            newTree,
+            filter,
+            fields,
+            rootIssueNodeId
+          );
           return newTree;
         });
         setIsExpandAllLoading(false);
