@@ -59,8 +59,17 @@ export const IssueTree = ({
     } else {
       setTree((prevTree) => {
         if (prevTree !== undefined) {
-          const newTree = treeUtils.applyFilterHook(tree, filter, issueFields);
-          return newTree;
+          const rootNode = prevTree.items[treeUtils.ROOT_ID];
+          const rootIssueNodeId = rootNode.children[0];
+          if (rootIssueNodeId !== undefined && rootIssueNodeId !== "") {
+            const newTree = treeUtils.applyFilterHook(
+              tree,
+              filter,
+              issueFields,
+              rootIssueNodeId
+            );
+            return newTree;
+          }
         }
         return prevTree;
       });
