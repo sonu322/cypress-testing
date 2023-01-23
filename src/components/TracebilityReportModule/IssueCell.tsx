@@ -28,7 +28,7 @@ export const IssueCell = ({ selectedSettingsDropdownIds, issueCards }) => {
       setAreAllIssuesVisible(!areAllIssuesVisible);
     }
   };
-  selectedSettingsDropdownIds.every((issueId) => {
+  selectedSettingsDropdownIds.forEach((issueId) => {
     if (issueId == displayAllIssueCardsId) {
       issueCardsToShow = issueCards;
       return false;

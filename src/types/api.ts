@@ -69,7 +69,6 @@ export interface IssueWithLinkedIssues extends Issue {
 }
 
 export interface IssueWithSortedLinks extends Issue {
-  //[x: string]: any;
   sortedLinks: {
     [key: string]: Issue[];
   };
