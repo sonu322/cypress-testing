@@ -757,7 +757,7 @@ export default class TreeUtils {
         if (linkedIssueNodeId !== undefined) {
           linkedIssueNode = tree.items[linkedIssueNodeId];
         } else {
-          throw new Error(i18n.t("otpl.lxp.api.filters-error")); // TODO: add translation
+          throw new Error(i18n.t("otpl.lxp.api.filters-error"));
         }
         if (typeMap[link.name] === undefined) {
           typeMap[link.name] = [];
@@ -765,7 +765,7 @@ export default class TreeUtils {
         if (linkedIssueNode !== undefined) {
           typeMap[link.name].push(linkedIssueNode.id);
         } else {
-          throw new Error(i18n.t("otpl.lxp.api.filters-error")); // TODO: add translation
+          throw new Error(i18n.t("otpl.lxp.api.filters-error"));
         }
       }
       // get type nodes corresponding to filtered links
@@ -781,7 +781,7 @@ export default class TreeUtils {
           if (typeNodeId !== undefined) {
             typeNode = tree.items[typeNodeId];
           } else {
-            throw new Error(i18n.t("otpl.lxp.api.filters-error")); // TODO: add translation
+            throw new Error(i18n.t("otpl.lxp.api.filters-error"));
           }
           if (typeNode !== undefined) {
             tree = mutateTree(tree, typeNodeId, {
@@ -789,7 +789,7 @@ export default class TreeUtils {
             });
             mainNodeChildIds.push(typeNodeId);
           } else {
-            throw new Error(i18n.t("otpl.lxp.api.filters-error")); // TODO: add translation
+            throw new Error(i18n.t("otpl.lxp.api.filters-error"));
           }
         }
       }
@@ -803,7 +803,7 @@ export default class TreeUtils {
       return newTree;
     } catch (error) {
       console.log(error);
-      throw new Error(i18n.t("otpl.lxp.api.add-node-children-error")); // TODO: add translation
+      throw new Error(i18n.t("otpl.lxp.api.add-node-children-error")); 
     }
   }
 
@@ -931,7 +931,7 @@ export default class TreeUtils {
     issueFields: IssueField[],
     setTree
   ): Promise<AtlasTree> {
-    try {
+
       if (level >= 3) {
         return prevTree;
       }
@@ -1000,11 +1000,7 @@ export default class TreeUtils {
         );
         return newTree;
       }
-    } catch (error) {
-      // TODO: add translation
-      console.log("error has occured", error);
-      throw error;
-    }
+
   }
 
   collapseAll(setTree): void {
