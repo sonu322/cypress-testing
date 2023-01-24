@@ -524,7 +524,7 @@ export default class TreeUtils {
     return result;
   }
 
-  getChildrenNew(
+  getChildrenSync(
     tree: AtlasTree,
     mainNode: AtlasTreeNode
     // issue: IssueWithLinkedIssues
@@ -691,10 +691,10 @@ export default class TreeUtils {
     }
   }
 
-  addChildrenNew(nodeId, tree): AtlasTree {
+  addChildrenSync(nodeId, tree): AtlasTree {
     try {
       const mainNode = tree.items[nodeId];
-      const children = this.getChildrenNew(tree, mainNode);
+      const children = this.getChildrenSync(tree, mainNode);
       const childIds = children.map((item) => item.id);
       const newTree = mutateTree(tree, mainNode.id, {
         children: childIds,
@@ -795,7 +795,7 @@ export default class TreeUtils {
     }
   }
 
-  async expandTree(
+  async expandIssueNode(
     nodeId: string,
     issueId: string,
     filter: IssueTreeFilter,
@@ -830,7 +830,7 @@ export default class TreeUtils {
           const populatedIssueWithLinksTree = mutateTree(prevTree, nodeId, {
             data: issue,
           });
-          const treeWithAddedChildren = this.addChildrenNew(
+          const treeWithAddedChildren = this.addChildrenSync(
             nodeId,
             populatedIssueWithLinksTree
           );
@@ -854,7 +854,7 @@ export default class TreeUtils {
               filter,
               fields,
               nodeId
-            ); // TODO: make it handle only its tree does not work for multinode
+            );
 
             return filteredTree;
           }
@@ -870,7 +870,7 @@ export default class TreeUtils {
     }
   }
 
-  async expandAllNew(
+  async handleExpandAllNodes(
     filter: IssueTreeFilter,
     fields: IssueField[],
     prevTree: AtlasTree,
@@ -963,7 +963,7 @@ export default class TreeUtils {
           const issueNodeIds = issueNodeIdMap[issue.id];
           issueNodeIds.forEach((nodeId) => {
             newTree = mutateTree(newTree, nodeId, { data: issue });
-            newTree = this.addChildrenNew(nodeId, newTree);
+            newTree = this.addChildrenSync(nodeId, newTree);
           });
         }
 

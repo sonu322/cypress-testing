@@ -91,7 +91,7 @@ export const IssueTree = ({
     } else {
       const lastSlashIndex = nodeId.lastIndexOf("/");
       const issueId = nodeId.substring(lastSlashIndex + 1);
-      await treeUtils.expandTree(
+      await treeUtils.expandIssueNode(
         nodeId,
         issueId,
         filter,

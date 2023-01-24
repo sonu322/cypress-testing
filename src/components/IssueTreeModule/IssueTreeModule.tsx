@@ -85,7 +85,7 @@ export const IssueTreeModule = () => {
         collapseAll={() => treeUtils.collapseAll(setTree)}
         isExpandAllLoading={isExpandAllLoading}
         expandAll={async () =>
-          await treeUtils.expandAllNew(
+          await treeUtils.handleExpandAllNodes(
             treeFilterContext.filter,
             issueFields,
             tree,
