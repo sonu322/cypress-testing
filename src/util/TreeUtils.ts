@@ -17,16 +17,13 @@ import {
   AtlasTreeNode,
   ButtonTypeTreeNode,
   LinkTypeTreeNode,
+  TreeNodeType,
 } from "../types/app";
 import {
   loadMoreOrphansButtonName,
   orphansMaxResults,
   orphansTreeBranchName,
 } from "../constants/traceabilityReport";
-import {
-  buttonTypeTreeNodeName,
-  linkTypeTreeNodeName,
-} from "../constants/common";
 
 // root node
 const root: AtlasTree = {
@@ -34,6 +31,7 @@ const root: AtlasTree = {
   items: {
     0: {
       id: "0",
+      nodeType: TreeNodeType.LinkNode,
       children: [],
       hasChildren: true,
       hasChildrenLoaded: false,
@@ -42,7 +40,6 @@ const root: AtlasTree = {
       parentIssueId: null,
       data: {
         id: "0",
-        type: linkTypeTreeNodeName,
         title: "Fake Root Node",
       },
     },
@@ -123,11 +120,11 @@ export default class TreeUtils {
       tree,
       prefix,
       {
-        type: linkTypeTreeNodeName,
         id: issueType,
         title: issueType,
       },
       null,
+      TreeNodeType.LinkNode,
       true,
       true
     );
@@ -138,11 +135,13 @@ export default class TreeUtils {
     prefix: string,
     data: IssueWithLinkedIssues | Issue | LinkTypeTreeNode | ButtonTypeTreeNode,
     parentIssueId: ID,
+    nodeType: TreeNodeType,
     isExpanded = false,
     hasChildrenLoaded = false,
     hasChildren = true
   ): AtlasTreeNode {
     const node: AtlasTreeNode = {
+      nodeType,
       id: prefix + "/" + data.id,
       children: [],
       hasChildren,
@@ -185,7 +184,14 @@ export default class TreeUtils {
     try {
       const tree = this.cloneTree(prevTree);
       const issue = await this.api.getIssueWithLinks(fields);
-      const mainNode = this.createTreeNode(tree, "", issue, null, true);
+      const mainNode = this.createTreeNode(
+        tree,
+        "",
+        issue,
+        null,
+        TreeNodeType.IssueNode,
+        true
+      );
       const nodeId = mainNode.id;
       // make actual root a child of fake(hidden) root node
       tree.items[this.ROOT_ID].children = [nodeId];
@@ -229,6 +235,7 @@ export default class TreeUtils {
           "",
           issueWithLinks,
           null,
+          TreeNodeType.IssueNode,
           false,
           false
         );
@@ -327,6 +334,7 @@ export default class TreeUtils {
               orphanTypeNode.id,
               issueWithLinks,
               orphanTypeNode.id,
+              TreeNodeType.IssueNode,
               false,
               false,
               false
@@ -389,10 +397,10 @@ export default class TreeUtils {
           title: loadMoreOrphansButtonName,
           startNextCallIndex: orphansMaxResults,
           totalSearchResults,
-          type: buttonTypeTreeNodeName,
           isDataLoading: false,
         },
         orphanTypeNode.id,
+        TreeNodeType.ButtonNode,
         false,
         false,
         false
@@ -405,6 +413,7 @@ export default class TreeUtils {
           orphanTypeNode.id,
           issueWithLinks,
           null,
+          TreeNodeType.IssueNode,
           false,
           false,
           false
@@ -487,8 +496,8 @@ export default class TreeUtils {
     issue?: IssueWithLinkedIssues
   ): AtlasTreeNode[] {
     const prefix = mainNode.id;
-    const typeMap = {};
-    const issueMap = {};
+    const typeMap = {}; // TODO: convert to map
+    const issueMap = {}; // TODO: convert to map
     issue.linkedIssues.forEach((linkedIssue: Issue) => {
       issueMap[linkedIssue.id] = linkedIssue;
     });
@@ -500,7 +509,8 @@ export default class TreeUtils {
         tree,
         prefix + "/" + link.name,
         linkedIssue,
-        issue.id
+        issue.id,
+        TreeNodeType.IssueNode
       );
       if (typeMap[link.name] === undefined) {
         typeMap[link.name] = [];
@@ -526,8 +536,8 @@ export default class TreeUtils {
   ): AtlasTreeNode[] {
     const prefix = mainNode.id;
 
-    const typeMap = {};
-    const issueMap: Map<string, Issue> = {};
+    const typeMap = {}; // TODO: convert to map
+    const issueMap: Map<string, Issue> = new Map();
     const issue = mainNode.data;
     issue.linkedIssues.forEach((linkedIssue: Issue) => {
       issueMap[linkedIssue.id] = linkedIssue;
@@ -547,7 +557,8 @@ export default class TreeUtils {
           tree,
           prefix + "/" + link.name,
           linkedIssue,
-          issue.id
+          issue.id,
+          TreeNodeType.IssueNode
         );
       }
       if (typeMap[link.name] === undefined) {
@@ -639,7 +650,7 @@ export default class TreeUtils {
     fields: IssueField[]
   ): AtlasTree {
     let newTree = this.cloneTree(tree);
-    let firstNodeIds;
+    let firstNodeIds: string[];
     if (newTree.items !== undefined) {
       firstNodeIds = newTree.items[this.ROOT_ID].children;
     }
@@ -648,9 +659,10 @@ export default class TreeUtils {
       firstNodeIds.forEach((firstNodeId) => {
         const firstNode = tree.items[firstNodeId];
         if (
-          firstNode.data.type !== buttonTypeTreeNodeName &&
-          firstNode.data.linkedIssues !== undefined &&
-          firstNode.data.linkedIssues.length > 0 &&
+          firstNode.nodeType !== TreeNodeType.ButtonNode &&
+          (firstNode.data as IssueWithLinkedIssues).linkedIssues !==
+            undefined &&
+          (firstNode.data as IssueWithLinkedIssues).linkedIssues.length > 0 &&
           firstNode.isExpanded
         ) {
           newTree = this.applyFilterNew(newTree, filter, fields, firstNodeId);
@@ -1034,7 +1046,7 @@ export default class TreeUtils {
 
       if (item.data) {
         const dataObj = item.data;
-        if ((dataObj as LinkTypeTreeNode).type === linkTypeTreeNodeName) {
+        if (item.nodeType === TreeNodeType.LinkNode) {
           content.link = (dataObj as LinkTypeTreeNode).title;
         } else {
           const data = dataObj as IssueWithLinkedIssues;
@@ -1064,8 +1076,8 @@ export default class TreeUtils {
 
     const contents: any[] = [];
 
-    const process = (item: AtlasTreeNode, indent) => {
-      if (!item || item.data?.type === buttonTypeTreeNodeName) {
+    const process = (item: AtlasTreeNode, indent: number): void => {
+      if (!item || item.nodeType === TreeNodeType.ButtonNode) {
         return;
       }
       const content = {
@@ -1080,7 +1092,7 @@ export default class TreeUtils {
 
       if (item.data) {
         const dataObj = item.data;
-        if ((dataObj as LinkTypeTreeNode).type === linkTypeTreeNodeName) {
+        if (item.nodeType === TreeNodeType.LinkNode) {
           content.link = (dataObj as LinkTypeTreeNode).title;
         } else {
           const data = dataObj as IssueWithLinkedIssues;

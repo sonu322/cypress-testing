@@ -8,16 +8,19 @@ export interface AtlasTree {
 export interface AtlasTreeItems {
   [itemId: string]: AtlasTreeNode;
 }
+export enum TreeNodeType {
+  LinkNode = "linkNode",
+  ButtonNode = "buttonNode",
+  IssueNode = "issueNode",
+}
 
 export interface LinkTypeTreeNode {
   id: string;
-  type: string;
   title: string;
 }
 
 export interface ButtonTypeTreeNode {
   id: string;
-  type: string;
   title: string;
   startNextCallIndex: number;
   totalSearchResults: number;
@@ -25,6 +28,7 @@ export interface ButtonTypeTreeNode {
 }
 
 export interface AtlasTreeNode {
+  nodeType: TreeNodeType;
   id: string;
   children: string[];
   hasChildren: boolean;
@@ -33,4 +37,5 @@ export interface AtlasTreeNode {
   isChildrenLoading: boolean;
   parentIssueId: ID;
   data: IssueWithLinkedIssues | Issue | LinkTypeTreeNode | ButtonTypeTreeNode;
+  isTogglerDisabled?: boolean;
 }

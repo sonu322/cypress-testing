@@ -6,10 +6,14 @@ import { ExpansionToggler } from "./ExpansionToggler";
 import { LoadingButton } from "@atlaskit/button";
 import { APIContext } from "../../context/api";
 import TreeUtils from "../../util/TreeUtils";
+import { Issue, IssueField, IssueWithLinkedIssues } from "../../types/api";
 import {
-  buttonTypeTreeNodeName,
-  linkTypeTreeNodeName,
-} from "../../constants/common";
+  AtlasTree,
+  AtlasTreeNode,
+  ButtonTypeTreeNode,
+  LinkTypeTreeNode,
+  TreeNodeType,
+} from "../../types/app";
 const PADDING_LEVEL = 30;
 const LinkTypeContainer = styled.div`
   display: flex;
@@ -39,6 +43,25 @@ const Container = styled.div<any>`
     `}
 `;
 
+interface Props {
+  selectedJqlString: string;
+  issueFields: IssueField[];
+  setTree: React.Dispatch<React.SetStateAction<AtlasTree>>;
+  handleError: (err: unknown) => void;
+  item: AtlasTreeNode;
+  onExpand: ({
+    nodeId,
+    nodeType,
+  }: {
+    nodeId: string;
+    nodeType: TreeNodeType;
+  }) => void;
+  onCollapse: (itemId: string) => void;
+  provided;
+  depth;
+  selectedIssueFieldIds: string[];
+}
+
 export const IssueItem = ({
   selectedJqlString,
   issueFields,
@@ -50,7 +73,7 @@ export const IssueItem = ({
   provided,
   depth,
   selectedIssueFieldIds,
-}) => {
+}: Props): JSX.Element => {
   const marginLeft = getItemMargin(depth);
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
@@ -60,24 +83,25 @@ export const IssueItem = ({
       innerRef={provided.innerRef}
       {...provided.dragHandleProps}
     >
-      {item.data.type === buttonTypeTreeNodeName ? (
+      {item.nodeType === TreeNodeType.ButtonNode ? (
         <LoadingButton
           isDisabled={
-            item.data.totalSearchResults <= item.data.startNextCallIndex
+            (item.data as ButtonTypeTreeNode).totalSearchResults <=
+            (item.data as ButtonTypeTreeNode).startNextCallIndex
           }
-          isLoading={item.data.isDataLoading}
+          isLoading={(item.data as ButtonTypeTreeNode).isDataLoading}
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
           onClick={() =>
             treeUtils.handleLoadMoreOrphanIssues(
               selectedJqlString,
               issueFields,
-              item.data.startNextCallIndex,
+              (item.data as ButtonTypeTreeNode).startNextCallIndex,
               setTree,
               handleError
             )
           }
         >
-          {item.data.title}
+          {(item.data as ButtonTypeTreeNode).title}
         </LoadingButton>
       ) : (
         <>
@@ -85,19 +109,22 @@ export const IssueItem = ({
             isExpanded={item.isExpanded}
             isLoading={item.isChildrenLoading}
             onExpand={() =>
-              onExpand({ itemId: item.id, itemType: item.data?.type })
+              onExpand({
+                nodeId: item.id,
+                nodeType: item.nodeType,
+              })
             }
             onCollapse={() => onCollapse(item.id)}
             hasChildren={item.hasChildren}
             isTogglerDisabled={item.isTogglerDisabled}
           ></ExpansionToggler>
-          {item.data?.type === linkTypeTreeNodeName ? (
+          {item.nodeType === TreeNodeType.LinkNode ? (
             <LinkTypeContainer>
-              {item.data ? item.data.title : "No Name"}
+              {(item.data as LinkTypeTreeNode)?.title ?? ""}
             </LinkTypeContainer>
           ) : (
             <IssueCard
-              issueData={item.data ?? null}
+              issueData={(item.data as IssueWithLinkedIssues | Issue) ?? null}
               selectedIssueFieldIds={selectedIssueFieldIds}
             />
           )}

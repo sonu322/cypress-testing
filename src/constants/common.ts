@@ -6,9 +6,8 @@ export const treeFilterDropdowns = [
   { key: "linkTypes", label: i18n.t("lxp.toolbar.link-type.text") },
   { key: "issueTypes", label: i18n.t("lxp.toolbar.issue-type.text") },
 ];
-export const linkTypeTreeNodeName = "linkTypeNode";
-export const buttonTypeTreeNodeName = "buttonTypeNode";
-export const issueTypeTreeNodeName = "issueTypeNode";
+
+
 
 export const emptyTreeFilter: IssueTreeFilter = {
   priorities: [],

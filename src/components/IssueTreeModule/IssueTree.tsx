@@ -3,10 +3,9 @@ import styled from "styled-components";
 import TreeUtils from "../../util/TreeUtils";
 import { IssueItem } from "./IssueItem";
 import { ID, IssueField, IssueTreeFilter } from "../../types/api";
-import { AtlasTree } from "../../types/app";
+import { AtlasTree, TreeNodeType } from "../../types/app";
 import { useTranslation } from "react-i18next";
 import Tree from "@atlaskit/tree";
-import { linkTypeTreeNodeName } from "../../constants/common";
 const Container = styled.div`
   display: flex;
 `;
@@ -81,19 +80,19 @@ export const IssueTree = ({
   }, [selectedIssueFieldIds]);
 
   const onExpand = async ({
-    itemId,
-    itemType,
+    nodeId,
+    nodeType,
   }: {
-    itemId: string;
-    itemType: string;
+    nodeId: string;
+    nodeType: TreeNodeType;
   }): Promise<void> => {
-    if (itemType === linkTypeTreeNodeName) {
-      setTree((prevTree) => treeUtils.expandSingleNode(itemId, prevTree));
+    if (nodeType === TreeNodeType.LinkNode) {
+      setTree((prevTree) => treeUtils.expandSingleNode(nodeId, prevTree));
     } else {
-      const lastSlashIndex = itemId.lastIndexOf("/");
-      const issueId = itemId.substring(lastSlashIndex + 1);
+      const lastSlashIndex = nodeId.lastIndexOf("/");
+      const issueId = nodeId.substring(lastSlashIndex + 1);
       await treeUtils.expandTree(
-        itemId,
+        nodeId,
         issueId,
         filter,
         treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds),
