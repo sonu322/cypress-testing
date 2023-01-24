@@ -8,7 +8,7 @@ import { StoryPointsInfo } from "./StoryPointsInfo";
 import { IssueKey } from "./IssueKey";
 import { AssigneeInfo } from "./AssigneeInfo";
 import { IssueSummary } from "./IssueSummary";
-import { Issue } from "../../../types/api";
+import { Issue, IssueWithLinkedIssues } from "../../../types/api";
 import { StatusText } from "./StatusInfo";
 import { FixVersion } from "./FixVersion";
 
@@ -48,7 +48,7 @@ const FooterSideContainer = styled.div`
 `;
 
 export interface Props {
-  issueData: Issue;
+  issueData: Issue | IssueWithLinkedIssues;
   selectedIssueFieldIds: string[];
 }
 
