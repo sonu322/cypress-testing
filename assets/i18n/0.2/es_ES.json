@@ -35,6 +35,7 @@
   "otpl.lxp.api.issue-by-id-error-prefix": "Error al recuperar el incidencia",
   "otpl.lxp.api.search-issues-error": "Error al buscar incidencias",
   "otpl.lxp.api.filters-error": "Error al obtener los filtros de incidencias",
+  "otpl.lxp.api.filter-tree-error": "Incidencias de filtrado de errores",
   "otpl.lxp.api.project-error": "Proyecto no encontrado.",
   "otpl.lxp.jira.current-issuekey-error": "Error al obtener la clave de incidencia actual.",
   "otpl.lxp.link-issue-tab-panel.name": "Los temas relacionados",
