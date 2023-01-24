@@ -80,8 +80,9 @@ export const Toolbar = ({
   const api = useContext(APIContext);
   const helpLinkUrl = api.getHelpLinks().traceability;
   const isTreeReport = selectedViewTab === "tree-view";
+  const marginTop = api.isJiraCloud() ? "-16px" : "-50px";
   return (
-    <div style={{ marginTop: "-16px", marginBottom: "-8px" }}>
+    <div style={{ marginTop, marginBottom: "-8px" }}>
       <TabGroup
         handleOptionSelect={handleTabOptionSelect}
         id={viewTabs.id}

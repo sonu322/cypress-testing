@@ -6,11 +6,11 @@ import {
   IssueTreeFilter,
   IssueWithSortedLinks,
 } from "../../types/api";
-import { getScreenHeight } from "../../util/common";
 import { IssueTreeMultiNode } from "../IssueTreeModule/IssueTreeMultiNode";
 import { APIContext } from "../../context/api";
 import TreeUtils from "../../util/TreeUtils";
 import { AtlasTree } from "../../types/app";
+import { calculateTreeHeight } from "../../util/tracebilityReportsUtils";
 
 const Container = styled.div`
   width: 100%;
@@ -52,33 +52,17 @@ export const TreeReport = ({
   updateIsToggleOrphansLoading,
   isToggleOrphansLoading,
 }: Props): JSX.Element => {
-  // TODO: probably we may improve this calculation
-  const calculateTableHeight = (errors) => {
-    const headingHeight = 40 + 8; // 8: margin top
-    const toolbarHeight = 94 + 8 + 42; // 8: table top margin
-    const footerHeight = 32 + 8 + 8;
-    const // more button 8: margin top and bottom
-      errorsHeight = errors && errors.length ? (52 + 8) * errors.length : 0;
-    const finalHeight =
-      getScreenHeight() -
-      headingHeight -
-      toolbarHeight -
-      footerHeight -
-      errorsHeight -
-      2;
-    return finalHeight < 200 ? 200 : finalHeight;
-  };
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
 
-  const [tableHeight, setTableHeight] = useState(calculateTableHeight(errors));
+  const [tableHeight, setTableHeight] = useState(calculateTreeHeight(errors));
   useEffect(() => {
     const resizeHandler = () => {
       setTableHeight((prevHeight) => {
         if (_AP !== null) {
           _AP.sizeToParent();
         }
-        return calculateTableHeight(errors);
+        return calculateTreeHeight(errors);
       });
     };
     window.addEventListener("resize", resizeHandler);
