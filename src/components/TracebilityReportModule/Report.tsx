@@ -52,29 +52,29 @@ export const Report = ({
   const autoHideEmptyColsSelected = selectedSettingsDropdownIds.includes(
     autoHideEmptyColumnsId
   );
-  const nonEmptyCols = [];
+  const columnsToDisplay = [];
   if (autoHideEmptyColsSelected) {
     filteredIssues.forEach((issue) => {
       Object.keys(issue.sortedLinks).forEach((key) => {
         if (isIssueTypeReport) {
-          if (!nonEmptyCols.includes(issue.sortedLinks[key][0].type.id)) {
+          if (!columnsToDisplay.includes(issue.sortedLinks[key][0].type.id)) {
             if (
               selectedTableFieldIds.includes(issue.sortedLinks[key][0].type.id)
             ) {
-              nonEmptyCols.push(issue.sortedLinks[key][0].type.id);
+              columnsToDisplay.push(issue.sortedLinks[key][0].type.id);
             }
           }
         } else {
-          if (!nonEmptyCols.includes(key)) {
+          if (!columnsToDisplay.includes(key)) {
             if (selectedTableFieldIds.includes(key)) {
-              nonEmptyCols.push(key);
+              columnsToDisplay.push(key);
             }
           }
         }
       });
     });
   } else {
-    nonEmptyCols.push(...selectedTableFieldIds);
+    columnsToDisplay.push(...selectedTableFieldIds);
   }
 
   // TODO: probably we may improve this calculation
@@ -113,14 +113,17 @@ export const Report = ({
   return (
     <Container style={{ maxHeight: tableHeight }}>
       <Table>
-        <ReportHeader selectedFieldIds={nonEmptyCols} fields={tableFields} />
+        <ReportHeader
+          selectedFieldIds={columnsToDisplay}
+          fields={tableFields}
+        />
         <tbody>
           {filteredIssues.map((issue, index) => (
             <BorderTr key={`${issue.issueKey}`}>
               {isIssueTypeReport ? (
                 <IssueTypeRow
                   selectedSettingsDropdownIds={selectedSettingsDropdownIds}
-                  selectedTableFieldIds={nonEmptyCols}
+                  selectedTableFieldIds={columnsToDisplay}
                   issueFieldIds={issueFieldIds}
                   issue={issue}
                   rowSno={index + 1}
@@ -128,7 +131,7 @@ export const Report = ({
               ) : (
                 <LinkTypeRow
                   selectedSettingsDropdownIds={selectedSettingsDropdownIds}
-                  selectedTableFieldIds={nonEmptyCols}
+                  selectedTableFieldIds={columnsToDisplay}
                   issueFieldIds={issueFieldIds}
                   issue={issue}
                   rowSno={index + 1}

@@ -180,7 +180,7 @@ export const TracebilityReportModule = ({
             <Toolbar
               selectedSettingsDropdownIds={selectedSettingsDropdownIds}
               setSelectedSettingsDropdownIds={setSelectedSettingsDropdownIds}
-              issueInCell={reportCellOptions}
+              settingsDropdown={reportCellOptions}
               selectedJQLString={selectedJQLString}
               setSelectedJQLString={setSelectedJQLString}
               issueCardOptions={issueFields}
