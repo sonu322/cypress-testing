@@ -195,8 +195,8 @@ export default class TreeUtils {
       const nodeId = mainNode.id;
       // make actual root a child of fake(hidden) root node
       tree.items[this.ROOT_ID].children = [nodeId];
-      await this.addChildren(nodeId, tree, fields, issue, filter);
-      setTree(tree);
+      const newTree = await this.addChildren(nodeId, tree, issue, filter);
+      setTree(newTree);
     } catch (err) {
       console.error(err);
       handleError(err);
@@ -225,8 +225,6 @@ export default class TreeUtils {
           delete issueWithLinkedIssues.sortedLinks;
           return issueWithLinkedIssues;
         });
-
-      // filteredIssuesWithLinks = await Promise.all(allPromises);
 
       tree.items[this.ROOT_ID].children = [];
       filteredIssuesWithLinks.forEach((issueWithLinks) => {
@@ -489,7 +487,6 @@ export default class TreeUtils {
   getChildren(
     tree: AtlasTree,
     mainNode: AtlasTreeNode,
-    fields: IssueField[],
     filter?: IssueTreeFilter,
     issue?: IssueWithLinkedIssues
   ): AtlasTreeNode[] {
@@ -672,26 +669,21 @@ export default class TreeUtils {
   async addChildren(
     nodeId,
     tree,
-    fields,
     issue,
     filter = undefined
   ): Promise<AtlasTree> {
     try {
       const mainNode = tree.items[nodeId];
-      const children = await this.getChildren(
-        tree,
-        mainNode,
-        fields,
-        filter,
-        issue
-      );
+      const children = await this.getChildren(tree, mainNode, filter, issue);
       const childIds = children.map((item) => item.id);
-      mainNode.children = childIds;
-      mainNode.isExpanded = true;
-      mainNode.isChildrenLoading = false;
-      mainNode.hasChildrenLoaded = true;
-      mainNode.hasChildren = childIds.length > 0;
-      return tree;
+      const newTree = mutateTree(tree, nodeId, {
+        children: childIds,
+        isExpanded: true,
+        isChildrenLoading: false,
+        hasChildrenLoaded: true,
+        hasChildren: childIds.length > 0,
+      });
+      return newTree;
     } catch (error) {
       console.log(error);
       throw new Error("Error occured while adding children");
