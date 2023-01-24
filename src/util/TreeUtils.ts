@@ -437,7 +437,6 @@ export default class TreeUtils {
   }
 
   _shouldIncludeNode(
-    mainIssue: Issue,
     linkedIssue: Issue,
     issueLink: IssueLink,
     filter: IssueTreeFilter,
@@ -458,7 +457,7 @@ export default class TreeUtils {
       !filter.priorities.includes(linkedIssue.priority?.id)
     ) {
       return false;
-    } else if (parentIssueId && parentIssueId === linkedIssue.id) {
+    } else if (parentIssueId?.length > 0 && parentIssueId === linkedIssue.id) {
       return false;
     }
     return true;
@@ -470,22 +469,21 @@ export default class TreeUtils {
     mainNode: AtlasTreeNode,
     issueMap: Map<string, Issue>
   ): IssueLink[] {
-    const result = [];
+    const filteredIssueLinks: IssueLink[] = [];
     for (const link of issue.links) {
       const linkedIssue: Issue = issueMap[link.issueId];
       if (
         this._shouldIncludeNode(
-          issue,
           linkedIssue,
           link,
           filter,
           mainNode.parentIssueId
         )
       ) {
-        result.push(link);
+        filteredIssueLinks.push(link);
       }
     }
-    return result;
+    return filteredIssueLinks;
   }
 
   getChildren(
@@ -496,8 +494,8 @@ export default class TreeUtils {
     issue?: IssueWithLinkedIssues
   ): AtlasTreeNode[] {
     const prefix = mainNode.id;
-    const typeMap = {}; // TODO: convert to map
-    const issueMap = {}; // TODO: convert to map
+    const typeMap: Map<string, string[]> = new Map(); // TODO: convert to map
+    const issueMap: Map<string, Issue> = new Map();
     issue.linkedIssues.forEach((linkedIssue: Issue) => {
       issueMap[linkedIssue.id] = linkedIssue;
     });
@@ -595,29 +593,23 @@ export default class TreeUtils {
     return result;
   }
 
-  applyFilterHook(
+  applyFilter(
     tree: AtlasTree,
     filter: IssueTreeFilter,
     fields: IssueField[],
     firstNodeId: string
   ): AtlasTree {
-    // TODO: use setState(func) to make the filter apply on to previous tree
     if (firstNodeId !== undefined) {
       const node = tree.items[firstNodeId];
       if (node.hasChildrenLoaded) {
         const newTree = this.cloneTree(tree);
-        const result = this.applyFilterNew(
-          newTree,
-          filter,
-          fields,
-          firstNodeId
-        );
+        const result = this.filterSubtree(newTree, filter, fields, firstNodeId);
         return result;
       }
     }
   }
 
-  applyFilterNew(
+  filterSubtree(
     tree: AtlasTree,
     filter: IssueTreeFilter,
     fields: IssueField[],
@@ -632,7 +624,7 @@ export default class TreeUtils {
         for (const childNodeId of typeNode.children) {
           const child = tree.items[childNodeId];
           if (child.hasChildrenLoaded) {
-            tree = this.applyFilterNew(tree, filter, fields, child.id);
+            tree = this.filterSubtree(tree, filter, fields, child.id);
           }
         }
       }
@@ -665,7 +657,7 @@ export default class TreeUtils {
           (firstNode.data as IssueWithLinkedIssues).linkedIssues.length > 0 &&
           firstNode.isExpanded
         ) {
-          newTree = this.applyFilterNew(newTree, filter, fields, firstNodeId);
+          newTree = this.filterSubtree(newTree, filter, fields, firstNodeId);
         }
       });
     }
@@ -726,16 +718,16 @@ export default class TreeUtils {
   }
 
   filterNodeChildren(
-    nodeId: string,
+    mainNodeId: string,
     tree: AtlasTree,
     filter: IssueTreeFilter
   ): AtlasTree {
     try {
-      const mainNode = tree.items[nodeId];
+      const mainNode = tree.items[mainNodeId];
       const prefix = mainNode.id;
       const issue = mainNode.data;
       const issueMap: Map<string, IssueWithLinkedIssues> = new Map();
-      const typeMap: Map<string, string> = new Map();
+      const typeMap: Map<string, string[]> = new Map();
       (issue as IssueWithLinkedIssues).linkedIssues?.forEach(
         (linkedIssue: Issue) => {
           issueMap[linkedIssue.id] = linkedIssue;
@@ -749,26 +741,27 @@ export default class TreeUtils {
       );
       for (const link of filteredLinks) {
         const linkedIssue: Issue = issueMap[link.issueId];
-        const foundNodeId = Object.keys(tree.items).find((nodeId) => {
+        const linkedIssueNodeId = Object.keys(tree.items).find((nodeId) => {
           return nodeId === prefix + "/" + link.name + "/" + linkedIssue.id;
         });
-        let node: AtlasTreeNode;
-        if (foundNodeId !== undefined) {
-          node = tree.items[foundNodeId];
+        let linkedIssueNode: AtlasTreeNode;
+        if (linkedIssueNodeId !== undefined) {
+          linkedIssueNode = tree.items[linkedIssueNodeId];
         } else {
-          throw new Error("could not filter");
+          throw new Error("could not filter"); // TODO: add translation
         }
         if (typeMap[link.name] === undefined) {
           typeMap[link.name] = [];
         }
-        if (node !== undefined) {
-          typeMap[link.name].push(node?.id);
+        if (linkedIssueNode !== undefined) {
+          typeMap[link.name].push(linkedIssueNode.id);
         } else {
-          throw new Error("Error occured while adding children");
+          throw new Error("could not filter"); // TODO: add translation
         }
       }
 
-      const children: AtlasTreeNode[] = [];
+      const mainNodeChildIds: string[] = [];
+      // const childIds = children.map((item) => item.id);
       const types = Object.keys(typeMap);
       if (types.length > 0) {
         for (const type of types) {
@@ -779,22 +772,24 @@ export default class TreeUtils {
           if (typeNodeId !== undefined) {
             typeNode = tree.items[typeNodeId];
           } else {
-            throw new Error("Error occured while adding children");
+            throw new Error("could not filter"); // TODO: add translation
           }
           if (typeNode !== undefined) {
-            typeNode.children = typeMap[type];
-            children.push(typeNode);
+            // typeNode.children = typeMap[type];
+            tree = mutateTree(tree, typeNodeId, {
+              children: typeMap[type],
+            });
+            mainNodeChildIds.push(typeNodeId);
           } else {
-            throw new Error("Error occured while adding children");
+            throw new Error("could not filter"); // TODO: add translation
           }
         }
       }
 
-      const childIds = children.map((item) => item.id);
       const newTree = mutateTree(tree, mainNode.id, {
-        children: childIds,
-        hasChildren: childIds.length > 0,
-        hasChildrenLoaded: true, // added new should not add here. put in correct place FILTER IS NOT BEING CALLED DEEPLY
+        children: mainNodeChildIds,
+        hasChildren: mainNodeChildIds.length > 0,
+        hasChildrenLoaded: true,
       });
 
       return newTree;
@@ -859,7 +854,7 @@ export default class TreeUtils {
           });
 
           if (loadingResetTree !== undefined) {
-            const filteredTree = this.applyFilterHook(
+            const filteredTree = this.applyFilter(
               loadingResetTree,
               filter,
               fields,
@@ -904,12 +899,7 @@ export default class TreeUtils {
         setTree(() => {
           const rootNode = newTree.items[this.ROOT_ID];
           const rootIssueNodeId = rootNode.children[0];
-          newTree = this.applyFilterHook(
-            newTree,
-            filter,
-            fields,
-            rootIssueNodeId
-          );
+          newTree = this.applyFilter(newTree, filter, fields, rootIssueNodeId);
           return newTree;
         });
         setIsExpandAllLoading(false);
