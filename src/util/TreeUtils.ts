@@ -593,7 +593,7 @@ export default class TreeUtils {
     return result;
   }
 
-  applyFilter(
+  applySingleNodeTreeFilter(
     tree: AtlasTree,
     filter: IssueTreeFilter,
     fields: IssueField[],
@@ -739,6 +739,10 @@ export default class TreeUtils {
         mainNode,
         issueMap
       );
+
+      // get linked issue nodes corresponding to filtered links
+      // and store them in type map.
+
       for (const link of filteredLinks) {
         const linkedIssue: Issue = issueMap[link.issueId];
         const linkedIssueNodeId = Object.keys(tree.items).find((nodeId) => {
@@ -759,9 +763,9 @@ export default class TreeUtils {
           throw new Error("could not filter"); // TODO: add translation
         }
       }
-
+      // get type nodes corresponding to filtered links
+      // add filtered linked issue nodes as children to type nodes
       const mainNodeChildIds: string[] = [];
-      // const childIds = children.map((item) => item.id);
       const types = Object.keys(typeMap);
       if (types.length > 0) {
         for (const type of types) {
@@ -775,7 +779,6 @@ export default class TreeUtils {
             throw new Error("could not filter"); // TODO: add translation
           }
           if (typeNode !== undefined) {
-            // typeNode.children = typeMap[type];
             tree = mutateTree(tree, typeNodeId, {
               children: typeMap[type],
             });
@@ -785,7 +788,7 @@ export default class TreeUtils {
           }
         }
       }
-
+      // set filtered type nodes as children of main node
       const newTree = mutateTree(tree, mainNode.id, {
         children: mainNodeChildIds,
         hasChildren: mainNodeChildIds.length > 0,
@@ -854,7 +857,7 @@ export default class TreeUtils {
           });
 
           if (loadingResetTree !== undefined) {
-            const filteredTree = this.applyFilter(
+            const filteredTree = this.applySingleNodeTreeFilter(
               loadingResetTree,
               filter,
               fields,
@@ -899,7 +902,12 @@ export default class TreeUtils {
         setTree(() => {
           const rootNode = newTree.items[this.ROOT_ID];
           const rootIssueNodeId = rootNode.children[0];
-          newTree = this.applyFilter(newTree, filter, fields, rootIssueNodeId);
+          newTree = this.applySingleNodeTreeFilter(
+            newTree,
+            filter,
+            fields,
+            rootIssueNodeId
+          );
           return newTree;
         });
         setIsExpandAllLoading(false);
