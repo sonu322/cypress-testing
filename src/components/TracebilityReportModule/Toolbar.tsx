@@ -80,8 +80,9 @@ export const Toolbar = ({
   const api = useContext(APIContext);
   const helpLinkUrl = api.getHelpLinks().traceability;
   const isTreeReport = selectedViewTab === "tree-view";
+  const marginTop = api.isJiraCloud() ? "-16px" : "-50px";
   return (
-    <div style={{ marginTop: "-16px", marginBottom: "-8px" }}>
+    <div style={{ marginTop, marginBottom: "-8px" }}>
       <TabGroup
         handleOptionSelect={handleTabOptionSelect}
         id={viewTabs.id}
@@ -95,7 +96,7 @@ export const Toolbar = ({
             setSelectedFilterId={setSelectedJQLString}
             handleNewError={handleNewError}
           />
-          <span>{t("traceability-report.toolbar.or")}</span>
+          <span>{t("otpl.lxp.traceability-report.toolbar.or")}</span>
           <JQLEditor
             selectedFilterId={selectedJQLString}
             setSelectedFilterId={setSelectedJQLString}
@@ -113,7 +114,7 @@ export const Toolbar = ({
               />
             )}
             <Dropdown
-              dropdownName={t("lxp.toolbar.issue-card-fields")}
+              dropdownName={t("otpl.lxp.toolbar.issue-card-fields")}
               options={issueCardOptions}
               selectedOptions={selectedIssueFieldIds}
               updateSelectedOptions={setSelectedIssueFieldIds}
@@ -127,12 +128,12 @@ export const Toolbar = ({
               />
             )}
             <ExportContent
-              description={t("lxp.toolbar.export-csv.title")}
+              description={t("otpl.lxp.toolbar.export-csv.title")}
               exportContent={exportReport}
               isDisabled={isExportDisabled}
             />
             <HelpLink
-              description={t("lxp.common.get-help")}
+              description={t("otpl.lxp.common.get-help")}
               href={helpLinkUrl}
             />
           </ButtonGroup>

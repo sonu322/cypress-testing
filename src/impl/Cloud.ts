@@ -78,6 +78,10 @@ export default class APIImpl implements LXPAPI {
     return this.api.hasValidLicense();
   }
 
+  isJiraCloud(): boolean {
+    return this.api.isJiraCloud();
+  }
+
   getJiraBaseURL(): string {
     return this.api.getJiraBaseURL();
   }
@@ -100,12 +104,12 @@ export default class APIImpl implements LXPAPI {
   async getPriorities(): Promise<IssuePriority[]> {
     try {
       const items: JiraIssuePriorityFull[] = await this.api.getPriorities();
-      items || throwError("lxp.api.priority-error-main");
+      items || throwError("otpl.lxp.api.priority-error-main");
 
       return items.map((item) => this._convertPriority(item));
     } catch (error) {
       console.error(error);
-      let msg = i18n.t("lxp.api.priority-error-prefix");
+      let msg = i18n.t("otpl.lxp.api.priority-error-prefix");
       msg += error.message ? " - " + error.message : ".";
       throw new Error(msg);
     }
@@ -117,7 +121,7 @@ export default class APIImpl implements LXPAPI {
       return myself.locale;
     } catch (error) {
       console.error(error);
-      const msg = i18n.t("lxp.api.locale-error");
+      const msg = i18n.t("otpl.lxp.api.locale-error");
       throw new Error(msg);
     }
   }
@@ -139,7 +143,7 @@ export default class APIImpl implements LXPAPI {
     try {
       const items: JiraIssueType[] = await this.api.getIssueTypes();
 
-      items || throwError("lxp.api.issue-type-error");
+      items || throwError("otpl.lxp.api.issue-type-error");
       const uniqueIssueTypes: IssueType[] = [];
       items.forEach((issueType) => {
         const name = issueType.name.toLowerCase().replace(/-/g, "");
@@ -153,7 +157,7 @@ export default class APIImpl implements LXPAPI {
       return uniqueIssueTypes;
     } catch (error) {
       console.error(error);
-      const prefix = i18n.t("lxp.api.issue-type-error-prefix");
+      const prefix = i18n.t("otpl.lxp.api.issue-type-error-prefix");
       throw new Error(prefix + error.message);
     }
   }
@@ -162,7 +166,7 @@ export default class APIImpl implements LXPAPI {
     try {
       const items: JiraLinkType[] = await this.api.getIssueLinkTypes();
 
-      items || throwError("lxp.api.link-type-error-main");
+      items || throwError("otpl.lxp.api.link-type-error-main");
 
       const result = [];
       result.push({
@@ -194,7 +198,8 @@ export default class APIImpl implements LXPAPI {
       return result;
     } catch (error) {
       console.error(error);
-      throw new Error("lxp.api.link-type-error-prefix" + error.message);
+      const prefix = i18n.t("otpl.lxp.api.link-type-error-prefix");
+      throw new Error(prefix + error.message);
     }
   }
 
@@ -252,7 +257,7 @@ export default class APIImpl implements LXPAPI {
         (jiraField) => jiraField.id === issueField.jiraId
       );
       if (jiraIssueField === undefined) {
-        throwError("lxp.api.issue-field-error-main");
+        throwError("otpl.lxp.api.issue-field-error-main");
       }
       return {
         ...issueField,
@@ -316,7 +321,7 @@ export default class APIImpl implements LXPAPI {
       return result;
     } catch (error) {
       console.error(error);
-      const prefix = i18n.t("lxp.api.issue-field-error-prefix");
+      const prefix = i18n.t("otpl.lxp.api.issue-field-error-prefix");
       throw new Error(prefix + error.message);
     }
   }
@@ -324,7 +329,7 @@ export default class APIImpl implements LXPAPI {
   async getAllIssueFields(): Promise<JiraIssueField[]> {
     try {
       const fields = await this.api.getIssueFields();
-      fields || throwError("lxp.api.issue-field-error-main");
+      fields || throwError("otpl.lxp.api.issue-field-error-main");
       return fields;
     } catch (error) {
       console.error(error);
@@ -583,12 +588,12 @@ export default class APIImpl implements LXPAPI {
       const fieldIds = this._getFieldIds(fields);
       const query = "?fields=" + fieldIds.join(",");
       const issue: JiraIssueFull = await this.api.getIssueById(issueId, query);
-      issue || throwError("lxp.api.issue-by-id-error-main");
+      issue || throwError("otpl.lxp.api.issue-by-id-error-main");
 
       return this._convertIssue(issue, fields);
     } catch (error) {
       console.error(error);
-      const prefix = i18n.t("lxp.api.issue-by-id-error-prefix");
+      const prefix = i18n.t("otpl.lxp.api.issue-by-id-error-prefix");
 
       let finalMessage = `${prefix} ${issueId}`;
       if (error.message) {
@@ -639,7 +644,7 @@ export default class APIImpl implements LXPAPI {
       return { data: result, total };
     } catch (error) {
       console.error(error);
-      let finalMessage = i18n.t("lxp.api.search-issues-error");
+      let finalMessage = i18n.t("otpl.lxp.api.search-issues-error");
       if (error.message) {
         finalMessage = finalMessage.concat(`: + ${error.message}`);
       }
@@ -815,7 +820,7 @@ export default class APIImpl implements LXPAPI {
       }
     } catch (error) {
       console.log(error);
-      throwError("lxp.api.search-issues-error");
+      throwError("otpl.lxp.api.search-issues-error");
     }
 
   }
@@ -837,7 +842,7 @@ export default class APIImpl implements LXPAPI {
       );
     } catch (error) {
       console.error(error);
-      let message = i18n.t("lxp.api.filters-error");
+      let message = i18n.t("otpl.lxp.api.filters-error");
       if (error.message) {
         message += " - " + error.message;
       }
@@ -855,11 +860,11 @@ export default class APIImpl implements LXPAPI {
     try {
       projectKey = projectKey || (await this.api.getCurrentProjectKey());
       const project: JiraProject = await this.api.getProject(projectKey);
-      project || throwError("lxp.api.project-error");
+      project || throwError("otpl.lxp.api.project-error");
       return this._convertProject(project);
     } catch (error) {
       console.error(error);
-      let message = i18n.t("lxp.api.project-error");
+      let message = i18n.t("otpl.lxp.api.project-error");
       if (error.message && error.message !== message) {
         message = message.concat(`: ${error.message}`);
       }

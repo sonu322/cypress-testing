@@ -36,7 +36,7 @@ export const IssueTree = ({
   selectedJqlString,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
-  const loadingText = t("lxp.common.loading");
+  const loadingText = t("otpl.lxp.common.loading");
   const fieldMap = {};
   issueFields.forEach((field) => {
     fieldMap[field.id] = field;

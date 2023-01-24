@@ -33,7 +33,7 @@ export const JQLEditor = ({
   };
   return (
     <Button appearance="default" onClick={openJQLEditor}>
-      {t("traceability-report.toolbar.usejqlbutton.name")}
+      {t("otpl.lxp.traceability-report.toolbar.usejqlbutton.name")}
     </Button>
   );
 };
