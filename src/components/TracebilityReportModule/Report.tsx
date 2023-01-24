@@ -9,7 +9,8 @@ import {
   IssueWithSortedLinks,
 } from "../../types/api";
 import { IssueTypeRow } from "./IssueTypeRow";
-import { getScreenHeight } from "../../util/common";
+import { calculateTableHeight } from "../../util/tracebilityReportsUtils";
+
 const Container = styled.div`
   width: 100%;
   // height: 100%;
@@ -25,6 +26,7 @@ const BorderTr = styled.tr`
 `;
 const Table = styled.table`
   border: 1px solid ${colors.N40};
+  border-collapse: collapse;
 `;
 
 // @ts-expect-error
@@ -48,22 +50,6 @@ export const Report = ({
   isIssueTypeReport,
   errors,
 }: Props): JSX.Element => {
-  // TODO: probably we may improve this calculation
-  const calculateTableHeight = (errors): number => {
-    const headingHeight = 40 + 8; // 8: margin top
-    const toolbarHeight = 94 + 8; // 8: table top margin
-    const footerHeight = 32 + 8 + 8;
-    const // more button 8: margin top and bottom
-      errorsHeight = errors?.length > 0 ? (52 + 8) * errors.length : 0;
-    const finalHeight =
-      getScreenHeight() -
-      headingHeight -
-      toolbarHeight -
-      footerHeight -
-      errorsHeight -
-      2;
-    return finalHeight < 200 ? 200 : finalHeight;
-  };
 
   const [tableHeight, setTableHeight] = useState(calculateTableHeight(errors));
 

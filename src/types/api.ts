@@ -20,8 +20,8 @@ export interface IssueField {
 }
 
 export interface CellLimit {
-    id: string;
-    name: string;
+  id: string;
+  name: string;
 }
 
 export interface Issue {
@@ -129,6 +129,8 @@ export enum Constants {
 
 export default interface LXPAPI {
   hasValidLicense: () => boolean;
+
+  isJiraCloud: () => boolean;
 
   getJiraBaseURL: () => string;
 

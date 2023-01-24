@@ -17,7 +17,7 @@ export const TableFieldsDropdown = ({
   return (
     <Dropdown
       useTitleCaseOptions
-      dropdownName={t("traceability-report.toolbar.tableFields.name")}
+      dropdownName={t("otpl.lxp.traceability-report.toolbar.tableFields.name")}
       options={options}
       selectedOptions={selectedOptions}
       updateSelectedOptions={updateSelectedOptionIds}

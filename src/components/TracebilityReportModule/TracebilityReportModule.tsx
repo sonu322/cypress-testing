@@ -138,7 +138,7 @@ export const TracebilityReportModule = ({
     filteredIssues == null || filteredIssues.length === 0;
 
   if (areOptionsLoading) {
-    return <div>{t("lxp.common.loading")}</div>;
+    return <div>{t("otpl.lxp.common.loading")}</div>;
   }
   const updateSelectedIssueTypeIds = (fieldIds: string[]): void => {
     const newSelectedIds = orderSelectedIds(fieldIds, issueTypes);
@@ -167,7 +167,7 @@ export const TracebilityReportModule = ({
 
   const emptyEqualsAllTableIds =
     selectedTableFieldIds.length > 0 ? selectedTableFieldIds : allTableFieldIds;
-  const title = t("traceability-report.name");
+  const title = t("otpl.lxp.traceability-report.name");
   const selectedViewTab = viewTabs.tabs[selectedTabIndex].id;
   const isTreeReport = selectedViewTab === "tree-view";
   const allErrors = errors.concat(treeFilterContext.errors);
@@ -221,7 +221,7 @@ export const TracebilityReportModule = ({
           </>
         }
       >
-        {title}
+        {api.isJiraCloud() && title}
       </PageHeader>
       {allErrors.length > 0 && <ErrorsList errors={errors} />}
       <GrowContainer>
