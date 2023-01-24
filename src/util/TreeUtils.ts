@@ -664,7 +664,7 @@ export default class TreeUtils {
     return newTree;
   }
 
-  expandSingleNode(nodeId: string, tree: AtlasTree): AtlasTree {
+  expandLinkNode(nodeId: string, tree: AtlasTree): AtlasTree {
     const expandedNodeTree = mutateTree(tree, nodeId, { isExpanded: true });
     return expandedNodeTree;
   }

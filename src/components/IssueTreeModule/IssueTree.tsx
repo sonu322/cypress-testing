@@ -87,7 +87,7 @@ export const IssueTree = ({
     nodeType: TreeNodeType;
   }): Promise<void> => {
     if (nodeType === TreeNodeType.LinkNode) {
-      setTree((prevTree) => treeUtils.expandSingleNode(nodeId, prevTree));
+      setTree((prevTree) => treeUtils.expandLinkNode(nodeId, prevTree));
     } else {
       const lastSlashIndex = nodeId.lastIndexOf("/");
       const issueId = nodeId.substring(lastSlashIndex + 1);
