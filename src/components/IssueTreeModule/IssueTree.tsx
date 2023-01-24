@@ -57,7 +57,7 @@ export const IssueTree = ({
           const rootNode = prevTree.items[treeUtils.ROOT_ID];
           const rootIssueNodeId = rootNode.children[0];
           if (rootIssueNodeId !== undefined && rootIssueNodeId !== "") {
-            const newTree = treeUtils.applyFilterHook(
+            const newTree = treeUtils.applyFilter(
               tree,
               filter,
               issueFields,
