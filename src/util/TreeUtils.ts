@@ -718,8 +718,7 @@ export default class TreeUtils {
       return newTree;
     } catch (error) {
       console.log(error);
-      throw new Error("Error occured while adding children for issue");
-      // TODO: add translation
+      throw new Error(i18n.t("otpl.lxp.api.add-node-children-error"));
     }
   }
 
@@ -804,7 +803,7 @@ export default class TreeUtils {
       return newTree;
     } catch (error) {
       console.log(error);
-      throw new Error("Error occured while adding children for issue"); // TODO: add translation
+      throw new Error(i18n.t("otpl.lxp.api.add-node-children-error")); // TODO: add translation
     }
   }
 

@@ -38,6 +38,7 @@
   "otpl.lxp.api.search-issues-error": "搜索事务时出错",
   "otpl.lxp.api.filters-error": "获取事务筛选器时出错",
   "otpl.lxp.api.filter-tree-error": "错误过滤问题",
+  "otpl.lxp.api.add-node-children-error": "添加子问题时出错",
   "otpl.lxp.api.project-error": "未找到项目。",
   "otpl.lxp.jira.current-issuekey-error": "获取当前事务密钥时出错。",
   "otpl.lxp.traceability-report.toolbar.usejqlbutton.name": "使用 JQL 编辑器",

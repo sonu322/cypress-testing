@@ -61,6 +61,7 @@
   "otpl.lxp.api.search-issues-error": "Error in searching issues",
   "otpl.lxp.api.filters-error": "Error in fetching the issue filters",
   "otpl.lxp.api.filter-tree-error": "Error filtering issues",
+  "otpl.lxp.api.add-node-children-error": "Error adding child issues",
   "otpl.lxp.api.project-error": "Project not found.",
   "otpl.lxp.jira.current-issuekey-error": "Error in fetching the current issue key.",
   "otpl.lxp.api.locale-error": "Error getting locale",
