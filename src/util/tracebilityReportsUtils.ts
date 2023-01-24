@@ -5,7 +5,7 @@ import LXPAPI, {
   IssueType,
   IssueWithSortedLinks,
 } from "../types/api";
-import { getUniqueValues } from "./common";
+import { getUniqueValues, getScreenHeight } from "./common";
 import { download, toTitleCase } from "./index";
 
 export default class TracebilityReportUtils {
@@ -130,7 +130,7 @@ export const exportReport = (
 
 export const orderSelectedIds = (
   selectedIds: string[],
-  referenceList: Array<{ id: string; [key: string]: any }>
+  referenceList: Array<{ id: string;[key: string]: any }>
 ): string[] => {
   const newSelectedIds: string[] = [];
   if (selectedIds.length > 0) {
@@ -141,4 +141,31 @@ export const orderSelectedIds = (
     });
   }
   return newSelectedIds;
+};
+
+export const calculateHeight = (errors): number => {
+  const headingHeight = 40 + 8; // 8: margin top
+  const toolbarHeight = 94 + 8; // 8: table top margin
+  const footerHeight = 32 + 8 + 8;
+  const // more button 8: margin top and bottom
+    errorsHeight = errors?.length > 0 ? (52 + 8) * errors.length : 0;
+  const finalHeight =
+    getScreenHeight() -
+    headingHeight -
+    toolbarHeight -
+    footerHeight -
+    errorsHeight -
+    2;
+  return finalHeight;
+};
+
+// TODO: probably we may improve this calculation
+export const calculateTableHeight = (errors): number => {
+  const finalHeight = calculateHeight(errors);
+  return finalHeight < 200 ? 200 : finalHeight;
+};
+
+export const calculateTreeHeight = (errors): number => {
+  const finalHeight = calculateHeight(errors) - 42;
+  return finalHeight < 200 ? 200 : finalHeight;
 };
