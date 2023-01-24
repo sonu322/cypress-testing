@@ -1110,16 +1110,15 @@ export default class TreeUtils {
     download("csv", csv(contents, true));
   }
 
-  collapseTreeHook(nodeId, setTree) {
+  collapseNode(
+    nodeId: string,
+    setTree: React.Dispatch<React.SetStateAction<AtlasTree>>
+  ): void {
     setTree((tree) => {
-      return this.collapseTree(tree, nodeId, setTree);
-    });
-  }
-
-  collapseTree(tree, nodeId, setTree) {
-    return mutateTree(tree, nodeId, {
-      isExpanded: false,
-      isChildrenLoading: false,
+      return mutateTree(tree, nodeId, {
+        isExpanded: false,
+        isChildrenLoading: false,
+      });
     });
   }
 

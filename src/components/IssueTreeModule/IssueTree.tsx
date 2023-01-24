@@ -104,7 +104,7 @@ export const IssueTree = ({
   };
 
   const onCollapse = (itemId: string): void => {
-    treeUtils.collapseTreeHook(itemId, setTree);
+    treeUtils.collapseNode(itemId, setTree);
   };
 
   if (tree?.items !== undefined) {
