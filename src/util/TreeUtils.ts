@@ -528,13 +528,10 @@ export default class TreeUtils {
 
     const typeMap = {};
     const issueMap: Map<string, Issue> = {};
-    console.log("main node", mainNode);
-    console.log("tree", tree);
     const issue = mainNode.data;
     issue.linkedIssues.forEach((linkedIssue: Issue) => {
       issueMap[linkedIssue.id] = linkedIssue;
     });
-    console.log("issue map", issueMap);
     const issueLinks = mainNode?.data?.links;
 
     for (const link of issueLinks) {
@@ -544,14 +541,7 @@ export default class TreeUtils {
       });
       let node: AtlasTreeNode;
       if (foundNodeId !== undefined) {
-        console.log("tree", tree);
-        console.log(
-          "found node id",
-          foundNodeId,
-          prefix + "/" + link.name + linkedIssue.id
-        );
         node = tree.items[foundNodeId];
-        console.log("found node", node);
       } else {
         node = this.createTreeNode(
           tree,
@@ -579,7 +569,6 @@ export default class TreeUtils {
           (nodeId) => nodeId === prefix + "/" + type
         );
         if (typeNodeId !== undefined) {
-          console.log(typeNodeId, prefix + "/" + type, tree);
           typeNode = tree.items[typeNodeId];
         } else {
           typeNode = this.createTypeNode(tree, prefix, type);
@@ -601,12 +590,10 @@ export default class TreeUtils {
     fields: IssueField[],
     firstNodeId: string
   ): AtlasTree {
-    console.log("filter", filter);
     // TODO: use setState(func) to make the filter apply on to previous tree
     if (firstNodeId !== undefined) {
       const node = tree.items[firstNodeId];
       if (node.hasChildrenLoaded) {
-        console.log("children are loaded");
         const newTree = this.cloneTree(tree);
         const result = this.applyFilterNew(
           newTree,
@@ -626,43 +613,27 @@ export default class TreeUtils {
     nodeId: string
   ): AtlasTree {
     try {
-      console.log(
-        "filter tree new called ****must call for all expanded levels******",
-        nodeId
-      );
       tree = this.filterNodeChildren(nodeId, tree, filter);
-      console.log("FROM FILTER NODE CHILDREN AFTER", nodeId);
-      console.log(tree);
       const node = tree.items[nodeId];
-      console.log(node.data.issueKey);
-      console.log("NODE'S CHILDREN", node.id, node.children);
       for (const typeNodeId of node.children) {
         // type nodes
         const typeNode = tree.items[typeNodeId];
         for (const childNodeId of typeNode.children) {
-          console.log("type nodes children", childNodeId);
           const child = tree.items[childNodeId];
-          console.log(
-            "child info",
-            child.data.issueKey,
-            child.hasChildrenLoaded,
-            child.hasChildren
-          );
           if (child.hasChildrenLoaded) {
             tree = this.applyFilterNew(tree, filter, fields, child.id);
           }
         }
       }
-      console.log("FINAL RETURNING TREE FROM APPLY FILTER NEW");
-      console.log(tree);
       return tree;
     } catch (e) {
       console.log("e from apply filter new");
       console.log(e);
+      // TODO: add error handling
     }
   }
 
-  applyMultiNodeTreeFilterNew(
+  applyMultiNodeTreeFilter(
     tree: AtlasTree,
     filter: IssueTreeFilter,
     fields: IssueField[]
@@ -676,7 +647,6 @@ export default class TreeUtils {
     if (firstNodeIds !== undefined) {
       firstNodeIds.forEach((firstNodeId) => {
         const firstNode = tree.items[firstNodeId];
-        console.log("firstnodeid", firstNodeId);
         if (
           firstNode.data.type !== buttonTypeTreeNodeName &&
           firstNode.data.linkedIssues !== undefined &&
@@ -721,13 +691,13 @@ export default class TreeUtils {
     } catch (error) {
       console.log(error);
       throw new Error("Error occured while adding children");
+      // TODO: add error handling
     }
   }
 
   addChildrenNew(nodeId, tree): AtlasTree {
     try {
       const mainNode = tree.items[nodeId];
-      console.log(mainNode);
       const children = this.getChildrenNew(tree, mainNode);
       const childIds = children.map((item) => item.id);
       const newTree = mutateTree(tree, mainNode.id, {
@@ -735,11 +705,11 @@ export default class TreeUtils {
         hasChildren: childIds.length > 0,
         hasChildrenLoaded: true,
       });
-      console.log("set has children to true");
       return newTree;
     } catch (error) {
       console.log(error);
       throw new Error("Error occured while adding children for issue", nodeId);
+      // TODO: add error handling
     }
   }
 
@@ -751,7 +721,6 @@ export default class TreeUtils {
     try {
       const mainNode = tree.items[nodeId];
       const prefix = mainNode.id;
-      console.log(mainNode, "from filter node children");
       const issue = mainNode.data;
       const issueMap: Map<string, IssueWithLinkedIssues> = new Map();
       const typeMap: Map<string, string> = new Map();
@@ -773,13 +742,7 @@ export default class TreeUtils {
         });
         let node: AtlasTreeNode;
         if (foundNodeId !== undefined) {
-          console.log(
-            "found node id",
-            foundNodeId,
-            prefix + "/" + link.name + linkedIssue.id
-          );
           node = tree.items[foundNodeId];
-          console.log("found node", node);
         } else {
           throw new Error("could not filter");
         }
@@ -802,7 +765,6 @@ export default class TreeUtils {
             (nodeId) => nodeId === prefix + "/" + type
           );
           if (typeNodeId !== undefined) {
-            console.log(typeNodeId, prefix + "/" + type, tree);
             typeNode = tree.items[typeNodeId];
           } else {
             throw new Error("Error occured while adding children");
@@ -827,6 +789,7 @@ export default class TreeUtils {
     } catch (error) {
       console.log(error);
       throw new Error("Error occured while adding children for issue");
+      // TODO: add error handling
     }
   }
 
@@ -952,10 +915,7 @@ export default class TreeUtils {
     issueFields: IssueField[],
     setTree
   ): Promise<AtlasTree> {
-    console.log("EXPAND ALL NODES CALLED");
-    console.log("level", level);
-    console.log("given tree", prevTree);
-    // eslint-disable-next-line no-useless-catch
+    // TODO: add error handling
     try {
       if (level >= 3) {
         return prevTree;
@@ -973,7 +933,6 @@ export default class TreeUtils {
         if (!node.hasChildrenLoaded) {
           const lastSlashIndex = nodeId.lastIndexOf("/");
           const issueId = nodeId.substring(lastSlashIndex + 1);
-          console.log(issueId);
           issuesToFetch.push(issueId);
           if (issueNodeIdMap[issueId] === undefined) {
             issueNodeIdMap[issueId] = [nodeId];
@@ -993,15 +952,11 @@ export default class TreeUtils {
         }
       });
 
-      console.log("issuesToFetch", issuesToFetch);
-      console.log("nextnodeids", nextNodeIds);
       if (issuesToFetch?.length > 0) {
-        console.log("fetch issuees and add children ");
         const issues = await this.api.getIssuesWithLinks(
           issueFields,
           issuesToFetch
         );
-        console.log("issue node id map", issueNodeIdMap);
         for (const issue of issues) {
           const issueNodeIds = issueNodeIdMap[issue.id];
           issueNodeIds.forEach((nodeId) => {
@@ -1020,8 +975,6 @@ export default class TreeUtils {
         );
         return newTree;
       } else {
-        console.log("returned from else");
-        console.log(newTree);
         // return newTree;
         newTree = await this.expandAllNodes(
           newTree,
@@ -1033,6 +986,7 @@ export default class TreeUtils {
         return newTree;
       }
     } catch (error) {
+      // TODO: add error handling
       console.log("error has occured", error);
       throw error;
     }
