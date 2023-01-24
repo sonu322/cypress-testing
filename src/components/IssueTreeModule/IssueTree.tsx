@@ -47,7 +47,8 @@ export const IssueTree = ({
         const newTree = treeUtils.applyMultiNodeTreeFilter(
           tree,
           filter,
-          issueFields
+          issueFields,
+          handleError
         );
         return newTree;
       });
@@ -61,7 +62,8 @@ export const IssueTree = ({
               tree,
               filter,
               issueFields,
-              rootIssueNodeId
+              rootIssueNodeId,
+              handleError
             );
             return newTree;
           }
