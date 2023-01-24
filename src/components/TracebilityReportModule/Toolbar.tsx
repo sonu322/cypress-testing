@@ -43,7 +43,7 @@ interface Props {
   selectedTableFieldIds: string[];
   updateSelectedTableFieldIds: (fieldIds: string[]) => void;
   tableFields: IssueType[] | IssueLinkType[];
-  issueInCell: CellLimit[];
+  settingsDropdown: CellLimit[];
   selectedSettingsDropdownIds: string[];
   setSelectedSettingsDropdownIds: React.Dispatch<
     React.SetStateAction<string[]>
@@ -68,7 +68,7 @@ export const Toolbar = ({
   tableFields,
   selectedSettingsDropdownIds,
   setSelectedSettingsDropdownIds,
-  issueInCell,
+  settingsDropdown,
   exportReport,
   handleNewError,
   isExportDisabled,
@@ -123,7 +123,7 @@ export const Toolbar = ({
             {!isTreeReport && (
               <Dropdown
                 dropdownName={(props) => <SettingsDropdownTrigger {...props} />}
-                options={issueInCell}
+                options={settingsDropdown}
                 selectedOptions={selectedSettingsDropdownIds}
                 updateSelectedOptions={setSelectedSettingsDropdownIds}
               />
