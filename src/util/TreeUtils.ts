@@ -55,6 +55,16 @@ export default class TreeUtils {
     this.api = api;
   }
 
+  getIssueIdFromNodeId = (nodeId: string): string => {
+    const lastSlashIndex = nodeId.lastIndexOf("/");
+    if (lastSlashIndex > -1) {
+      const issueId = nodeId.substring(lastSlashIndex + 1);
+      return issueId;
+    } else {
+      return "";
+    }
+  };
+
   loadToolbarData = async (
     updateSelectedIssueFieldIds: (selectedIssueFieldIds: string[]) => void,
     updateIssueFields: (issueFields: IssueField[]) => void,
@@ -803,7 +813,7 @@ export default class TreeUtils {
       return newTree;
     } catch (error) {
       console.log(error);
-      throw new Error(i18n.t("otpl.lxp.api.add-node-children-error")); 
+      throw new Error(i18n.t("otpl.lxp.api.add-node-children-error"));
     }
   }
 
@@ -931,76 +941,73 @@ export default class TreeUtils {
     issueFields: IssueField[],
     setTree
   ): Promise<AtlasTree> {
-
-      if (level >= 3) {
-        return prevTree;
+    if (level >= 3) {
+      return prevTree;
+    }
+    let newTree = this.cloneTree(prevTree);
+    let nextNodeIds: string[] = [];
+    const issueNodeIdMap = new Map<string, string[]>();
+    const issuesToFetch: string[] = [];
+    nodeIds.forEach((nodeId) => {
+      const node = prevTree.items[nodeId];
+      if (!node.isExpanded) {
+        newTree = mutateTree(newTree, nodeId, { isExpanded: true });
       }
-      let newTree = this.cloneTree(prevTree);
-      let nextNodeIds: string[] = [];
-      const issueNodeIdMap = new Map<string, string[]>();
-      const issuesToFetch: string[] = [];
-      nodeIds.forEach((nodeId) => {
-        const node = prevTree.items[nodeId];
-        if (!node.isExpanded) {
-          newTree = mutateTree(newTree, nodeId, { isExpanded: true });
-        }
 
-        if (!node.hasChildrenLoaded) {
-          const lastSlashIndex = nodeId.lastIndexOf("/");
-          const issueId = nodeId.substring(lastSlashIndex + 1);
-          issuesToFetch.push(issueId);
-          if (issueNodeIdMap[issueId] === undefined) {
-            issueNodeIdMap[issueId] = [nodeId];
-          } else {
-            issueNodeIdMap[issueId] = issueNodeIdMap[issueId].concat([nodeId]);
+      if (!node.hasChildrenLoaded) {
+        const issueId = this.getIssueIdFromNodeId(nodeId);
+        issuesToFetch.push(issueId);
+        if (issueNodeIdMap[issueId] === undefined) {
+          issueNodeIdMap[issueId] = [nodeId];
+        } else {
+          issueNodeIdMap[issueId] = issueNodeIdMap[issueId].concat([nodeId]);
+        }
+      }
+
+      if (node.children.length > 0) {
+        node.children.forEach((typeNodeId) => {
+          const typeNode = newTree.items[typeNodeId];
+          if (!typeNode.isExpanded) {
+            newTree = mutateTree(newTree, typeNodeId, { isExpanded: true });
           }
-        }
+          nextNodeIds = nextNodeIds.concat(typeNode.children);
+        });
+      }
+    });
 
-        if (node.children.length > 0) {
-          node.children.forEach((typeNodeId) => {
-            const typeNode = newTree.items[typeNodeId];
-            if (!typeNode.isExpanded) {
-              newTree = mutateTree(newTree, typeNodeId, { isExpanded: true });
-            }
-            nextNodeIds = nextNodeIds.concat(typeNode.children);
-          });
-        }
-      });
-
-      if (issuesToFetch?.length > 0) {
-        const issues = await this.api.getIssuesWithLinks(
-          issueFields,
-          issuesToFetch
-        );
-        for (const issue of issues) {
-          const issueNodeIds = issueNodeIdMap[issue.id];
-          issueNodeIds.forEach((nodeId) => {
-            newTree = mutateTree(newTree, nodeId, { data: issue });
-            newTree = this.addChildrenSync(nodeId, newTree);
-          });
-        }
-
-        // return newTree;
-        newTree = await this.expandAllNodes(
-          newTree,
-          nextNodeIds,
-          level + 1,
-          issueFields,
-          setTree
-        );
-        return newTree;
-      } else {
-        // return newTree;
-        newTree = await this.expandAllNodes(
-          newTree,
-          nextNodeIds,
-          level + 1,
-          issueFields,
-          setTree
-        );
-        return newTree;
+    if (issuesToFetch?.length > 0) {
+      const issues = await this.api.getIssuesWithLinks(
+        issueFields,
+        issuesToFetch
+      );
+      for (const issue of issues) {
+        const issueNodeIds = issueNodeIdMap[issue.id];
+        issueNodeIds.forEach((nodeId) => {
+          newTree = mutateTree(newTree, nodeId, { data: issue });
+          newTree = this.addChildrenSync(nodeId, newTree);
+        });
       }
 
+      // return newTree;
+      newTree = await this.expandAllNodes(
+        newTree,
+        nextNodeIds,
+        level + 1,
+        issueFields,
+        setTree
+      );
+      return newTree;
+    } else {
+      // return newTree;
+      newTree = await this.expandAllNodes(
+        newTree,
+        nextNodeIds,
+        level + 1,
+        issueFields,
+        setTree
+      );
+      return newTree;
+    }
   }
 
   collapseAll(setTree): void {
