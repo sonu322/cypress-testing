@@ -817,9 +817,39 @@ export default class TreeUtils {
     }
   }
 
+  startLoadingNode = (tree: AtlasTree, loadingNodeId: string): AtlasTree => {
+    let newTree = mutateTree(tree, loadingNodeId, { isChildrenLoading: true });
+    const otherNodeIds = Object.keys(tree.items).filter(
+      (otherNodeId) => otherNodeId !== loadingNodeId
+    );
+    otherNodeIds.forEach((otherNodeId) => {
+      newTree = mutateTree(newTree, otherNodeId, {
+        isTogglerDisabled: true,
+      });
+    });
+    return newTree;
+  };
+
+  stopLoadingNode = (tree: AtlasTree, loadingNodeId: string): AtlasTree => {
+    let loadingResetTree = mutateTree(tree, loadingNodeId, {
+      isExpanded: true,
+      hasChildrenLoaded: true,
+      isChildrenLoading: false,
+    });
+    const otherNodeIds = Object.keys(tree.items).filter(
+      (otherNodeId) => otherNodeId !== loadingNodeId
+    );
+    otherNodeIds.forEach((otherNodeId) => {
+      loadingResetTree = mutateTree(loadingResetTree, otherNodeId, {
+        isTogglerDisabled: false,
+      });
+    });
+    return loadingResetTree;
+  };
+
   async expandIssueNode(
     nodeId: string,
-    issueId: string,
+    hasNodeChildrenLoaded: boolean,
     filter: IssueTreeFilter,
     fields: IssueField[],
     setTree: React.Dispatch<React.SetStateAction<AtlasTree>>,
@@ -829,66 +859,59 @@ export default class TreeUtils {
     try {
       clearAllErrors();
       setTree((prevTree) => {
-        const item = prevTree.items[nodeId];
-        if (item.hasChildrenLoaded) {
-          return mutateTree(prevTree, nodeId, { isExpanded: true });
-        }
-        let newTree = mutateTree(prevTree, nodeId, { isChildrenLoading: true });
-        const otherNodeIds = Object.keys(prevTree.items).filter(
-          (otherNodeId) => otherNodeId !== nodeId
-        );
-        otherNodeIds.forEach((otherNodeId) => {
-          newTree = mutateTree(newTree, otherNodeId, {
-            isTogglerDisabled: true,
-          });
-        });
+        const newTree = this.startLoadingNode(prevTree, nodeId);
         return newTree;
       });
-
-      const issue = await this.api.getIssueWithLinks(fields, issueId);
-
-      if (issue !== undefined) {
-        setTree((prevTree) => {
-          const populatedIssueWithLinksTree = mutateTree(prevTree, nodeId, {
-            data: issue,
-          });
-          const treeWithAddedChildren = this.addChildrenSync(
-            nodeId,
-            populatedIssueWithLinksTree
-          );
-          let loadingResetTree = mutateTree(treeWithAddedChildren, nodeId, {
-            isExpanded: true,
-            hasChildrenLoaded: true,
-            isChildrenLoading: false,
-          });
-          const otherNodeIds = Object.keys(treeWithAddedChildren.items).filter(
-            (otherNodeId) => otherNodeId !== nodeId
-          );
-          otherNodeIds.forEach((otherNodeId) => {
-            loadingResetTree = mutateTree(loadingResetTree, otherNodeId, {
-              isTogglerDisabled: false,
+      const issueId = this.getIssueIdFromNodeId(nodeId);
+      if (issueId?.length > 0 && !hasNodeChildrenLoaded) {
+        const issue = await this.api.getIssueWithLinks(fields, issueId);
+        if (issue !== undefined) {
+          setTree((prevTree) => {
+            const populatedIssueWithLinksTree = mutateTree(prevTree, nodeId, {
+              data: issue,
             });
-          });
-
-          if (loadingResetTree !== undefined) {
-            const filteredTree = this.applySingleNodeTreeFilter(
-              loadingResetTree,
-              filter,
-              fields,
+            const treeWithAddedChildren = this.addChildrenSync(
               nodeId,
-              handleError
+              populatedIssueWithLinksTree
+            );
+            const loadingResetTree = this.stopLoadingNode(
+              treeWithAddedChildren,
+              nodeId
             );
 
-            return filteredTree;
-          }
-          return prevTree;
+            if (loadingResetTree !== undefined) {
+              const filteredTree = this.applySingleNodeTreeFilter(
+                loadingResetTree,
+                filter,
+                fields,
+                nodeId,
+                handleError
+              );
+
+              return filteredTree;
+            }
+            return prevTree;
+          });
+        }
+      } else {
+        setTree((prevTree) => {
+          const filteredTree = this.applySingleNodeTreeFilter(
+            prevTree,
+            filter,
+            fields,
+            nodeId,
+            handleError
+          );
+          const loadingResetTree = this.stopLoadingNode(filteredTree, nodeId);
+          return loadingResetTree;
         });
       }
     } catch (error) {
       console.error("caught error from expand", error);
-      setTree((prevTree) =>
-        mutateTree(prevTree, nodeId, { isChildrenLoading: false })
-      );
+      setTree((prevTree) => {
+        const loadingResetTree = this.startLoadingNode(prevTree, nodeId);
+        return loadingResetTree;
+      });
       handleError(error);
     }
   }

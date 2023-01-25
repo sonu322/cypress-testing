@@ -91,11 +91,13 @@ export const IssueTree = ({
     if (nodeType === TreeNodeType.LinkNode) {
       setTree((prevTree) => treeUtils.expandLinkNode(nodeId, prevTree));
     } else {
-      const issueId = treeUtils.getIssueIdFromNodeId(nodeId);
-      if (issueId?.length > 0) {
+      const node = tree.items[nodeId];
+      // we dont need immediately previous tree in this case,
+      // since we are using it to check only if children are loaded or not.
+      if (node !== undefined) {
         await treeUtils.expandIssueNode(
           nodeId,
-          issueId,
+          node.hasChildrenLoaded,
           filter,
           treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds),
           setTree,
