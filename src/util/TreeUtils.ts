@@ -535,11 +535,7 @@ export default class TreeUtils {
     return result;
   }
 
-  getChildrenSync(
-    tree: AtlasTree,
-    mainNode: AtlasTreeNode
-    // issue: IssueWithLinkedIssues
-  ): AtlasTreeNode[] {
+  getChildrenSync(tree: AtlasTree, mainNode: AtlasTreeNode): AtlasTreeNode[] {
     const prefix = mainNode.id;
 
     const typeMap: Map<string, string[]> = new Map();
@@ -573,14 +569,13 @@ export default class TreeUtils {
       if (node !== undefined) {
         typeMap[link.name].push(node?.id);
       } else {
-        throw new Error("Error occured while adding children");
+        throw new Error(i18n.t("otpl.lxp.api.add-node-children-error"));
       }
     }
     const result: AtlasTreeNode[] = [];
     const types = Object.keys(typeMap);
     if (types.length > 0) {
       for (const type of types) {
-        // const typeNode = this.createTypeNode(tree, prefix, type);
         let typeNode: AtlasTreeNode;
         const typeNodeId = Object.keys(tree.items).find(
           (nodeId) => nodeId === prefix + "/" + type
