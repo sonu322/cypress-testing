@@ -91,17 +91,18 @@ export const IssueTree = ({
     if (nodeType === TreeNodeType.LinkNode) {
       setTree((prevTree) => treeUtils.expandLinkNode(nodeId, prevTree));
     } else {
-      const lastSlashIndex = nodeId.lastIndexOf("/");
-      const issueId = nodeId.substring(lastSlashIndex + 1);
-      await treeUtils.expandIssueNode(
-        nodeId,
-        issueId,
-        filter,
-        treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds),
-        setTree,
-        handleError,
-        clearAllErrors
-      );
+      const issueId = treeUtils.getIssueIdFromNodeId(nodeId);
+      if (issueId?.length > 0) {
+        await treeUtils.expandIssueNode(
+          nodeId,
+          issueId,
+          filter,
+          treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds),
+          setTree,
+          handleError,
+          clearAllErrors
+        );
+      }
     }
   };
 
