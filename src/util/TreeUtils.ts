@@ -206,8 +206,15 @@ export default class TreeUtils {
       const nodeId = mainNode.id;
       // make actual root a child of fake(hidden) root node
       tree.items[this.ROOT_ID].children = [nodeId];
-      const newTree = await this.addChildren(nodeId, tree, issue, filter);
-      setTree(newTree);
+      const treeWithAddedChildren = this.addChildren(mainNode.id, tree);
+      const filteredTree = this.applySingleNodeTreeFilter(
+        treeWithAddedChildren,
+        filter,
+        fields,
+        nodeId,
+        handleError
+      );
+      setTree(filteredTree);
     } catch (err) {
       console.error(err);
       handleError(err);
@@ -495,62 +502,25 @@ export default class TreeUtils {
     return filteredIssueLinks;
   }
 
-  getChildren(
-    tree: AtlasTree,
-    mainNode: AtlasTreeNode,
-    filter?: IssueTreeFilter,
-    issue?: IssueWithLinkedIssues
-  ): AtlasTreeNode[] {
-    const prefix = mainNode.id;
-    const typeMap: Map<string, string[]> = new Map();
-    const issueMap: Map<string, Issue> = new Map();
-    issue.linkedIssues.forEach((linkedIssue: Issue) => {
-      issueMap[linkedIssue.id] = linkedIssue;
-    });
-    const filteredLinks = this.filterLinks(issue, filter, mainNode, issueMap);
-
-    for (const link of filteredLinks) {
-      const linkedIssue = issueMap[link.issueId];
-      const node = this.createTreeNode(
-        tree,
-        prefix + "/" + link.name,
-        linkedIssue,
-        issue.id,
-        TreeNodeType.IssueNode
-      );
-      if (typeMap[link.name] === undefined) {
-        typeMap[link.name] = [];
-      }
-      typeMap[link.name].push(node.id);
-    }
-    const result = [];
-    const types = Object.keys(typeMap);
-    if (types.length > 0) {
-      for (const type of types) {
-        const typeNode = this.createTypeNode(tree, prefix, type);
-        typeNode.children = typeMap[type];
-        result.push(typeNode);
-      }
-    }
-    return result;
-  }
-
-  getChildrenSync(tree: AtlasTree, mainNode: AtlasTreeNode): AtlasTreeNode[] {
+  getChildren(tree: AtlasTree, mainNode: AtlasTreeNode): AtlasTreeNode[] {
     const prefix = mainNode.id;
 
     const typeMap: Map<string, string[]> = new Map();
     const issueMap: Map<string, Issue> = new Map();
-    const issue = mainNode.data;
-    issue.linkedIssues.forEach((linkedIssue: Issue) => {
+    const issue: IssueWithLinkedIssues = mainNode.data as IssueWithLinkedIssues;
+    issue.linkedIssues.forEach((linkedIssue) => {
       issueMap[linkedIssue.id] = linkedIssue;
     });
-    const issueLinks = mainNode?.data?.links;
+    const issueLinks = issue.links;
 
     for (const link of issueLinks) {
       const linkedIssue: Issue = issueMap[link.issueId];
-      const foundNodeId = Object.keys(tree.items).find((nodeId) => {
-        return nodeId === prefix + "/" + link.name + "/" + linkedIssue.id;
-      });
+      let foundNodeId: string;
+      if (linkedIssue !== undefined) {
+        foundNodeId = Object.keys(tree.items).find((nodeId) => {
+          return nodeId === prefix + "/" + link.name + "/" + linkedIssue.id;
+        });
+      }
       let node: AtlasTreeNode;
       if (foundNodeId !== undefined) {
         node = tree.items[foundNodeId];
@@ -567,7 +537,7 @@ export default class TreeUtils {
         typeMap[link.name] = [];
       }
       if (node !== undefined) {
-        typeMap[link.name].push(node?.id);
+        typeMap[link.name].push(node.id);
       } else {
         throw new Error(i18n.t("otpl.lxp.api.add-node-children-error"));
       }
@@ -686,41 +656,21 @@ export default class TreeUtils {
     return expandedNodeTree;
   }
 
-  async addChildren(
-    nodeId,
-    tree,
-    issue,
-    filter = undefined
-  ): Promise<AtlasTree> {
+  addChildren(nodeId, tree): AtlasTree {
     try {
       const mainNode = tree.items[nodeId];
-      const children = await this.getChildren(tree, mainNode, filter, issue);
-      const childIds = children.map((item) => item.id);
-      const newTree = mutateTree(tree, nodeId, {
-        children: childIds,
-        isExpanded: true,
-        isChildrenLoading: false,
-        hasChildrenLoaded: true,
-        hasChildren: childIds.length > 0,
-      });
-      return newTree;
-    } catch (error) {
-      console.log(error);
-      throw new Error("Error occured while adding children");
-    }
-  }
-
-  addChildrenSync(nodeId, tree): AtlasTree {
-    try {
-      const mainNode = tree.items[nodeId];
-      const children = this.getChildrenSync(tree, mainNode);
-      const childIds = children.map((item) => item.id);
-      const newTree = mutateTree(tree, mainNode.id, {
-        children: childIds,
-        hasChildren: childIds.length > 0,
-        hasChildrenLoaded: true,
-      });
-      return newTree;
+      if ((mainNode.data as IssueWithLinkedIssues).linkedIssues !== undefined) {
+        const children = this.getChildren(tree, mainNode);
+        const childIds = children.map((item) => item.id);
+        const newTree = mutateTree(tree, mainNode.id, {
+          children: childIds,
+          hasChildren: childIds.length > 0,
+          hasChildrenLoaded: true,
+        });
+        return newTree;
+      } else {
+        return tree;
+      }
     } catch (error) {
       console.log(error);
       throw new Error(i18n.t("otpl.lxp.api.add-node-children-error"));
@@ -865,7 +815,7 @@ export default class TreeUtils {
             const populatedIssueWithLinksTree = mutateTree(prevTree, nodeId, {
               data: issue,
             });
-            const treeWithAddedChildren = this.addChildrenSync(
+            const treeWithAddedChildren = this.addChildren(
               nodeId,
               populatedIssueWithLinksTree
             );
@@ -1002,7 +952,7 @@ export default class TreeUtils {
         const issueNodeIds = issueNodeIdMap[issue.id];
         issueNodeIds.forEach((nodeId) => {
           newTree = mutateTree(newTree, nodeId, { data: issue });
-          newTree = this.addChildrenSync(nodeId, newTree);
+          newTree = this.addChildren(nodeId, newTree);
         });
       }
 
