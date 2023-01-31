@@ -8,12 +8,14 @@ import React from "react";
 window.React = React;
 
 const render = async (): Promise<void> => {
+  console.log("hi from traceability server");
   // eslint-disable-next-line no-undef
   const App = await getAppRoot();
 
   if (App) {
+    console.log("app root");
     const jiraServer = new JiraServerImpl(App);
-    const api = new APIImpl(jiraServer);
+    const api = new APIImpl(jiraServer, true);
     ReactDOM.render(
       <APIContext.Provider value={api}>
         <TracebilityReport />

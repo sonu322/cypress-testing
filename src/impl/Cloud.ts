@@ -70,8 +70,11 @@ export default class APIImpl implements LXPAPI {
     "issuetype",
   ];
 
-  constructor(api: JiraAPI) {
+  isServer: boolean;
+
+  constructor(api: JiraAPI, isServer: boolean = false) {
     this.api = api;
+    this.isServer = isServer;
   }
 
   hasValidLicense(): boolean {
@@ -359,12 +362,19 @@ export default class APIImpl implements LXPAPI {
       let linkedIssues: Issue[] = [];
       // add epic children to issue
       if (issue.type.id === "epic" || issue.type.id === "initiative") {
-        const childIssuesData = await this.getChildIssues(issue, fields, issue.type.id === "epic");
+        const childIssuesData = await this.getChildIssues(
+          issue,
+          fields,
+          issue.type.id === "epic"
+        );
         this._addEpicChildrenToLinks(issue, childIssuesData.data);
         linkedIssues = childIssuesData.data;
       }
       if (linkedIds?.length > 0) {
-        const result = await this.searchIssues(`id in (${linkedIds.join(",")})`, fields);
+        const result = await this.searchIssues(
+          `id in (${linkedIds.join(",")})`,
+          fields
+        );
         linkedIssues = linkedIssues.concat(result.data);
       }
 
@@ -390,7 +400,10 @@ export default class APIImpl implements LXPAPI {
       }
       const linkedIssuesMap = {};
       if (allLinkIds.length > 0) {
-        const allLinkedIssues = await this.searchIssuesByIds(allLinkIds, fields);
+        const allLinkedIssues = await this.searchIssuesByIds(
+          allLinkIds,
+          fields
+        );
         for (const linkedIssue of allLinkedIssues) {
           linkedIssuesMap[linkedIssue.id] = linkedIssue;
         }
@@ -407,7 +420,11 @@ export default class APIImpl implements LXPAPI {
         }
         // add epic children to issue
         if (issue.type.id === "epic" || issue.type.id === "initiative") {
-          const childIssuesData = await this.getChildIssues(issue, fields, issue.type.id === "epic");
+          const childIssuesData = await this.getChildIssues(
+            issue,
+            fields,
+            issue.type.id === "epic"
+          );
           this._addEpicChildrenToLinks(issue, childIssuesData.data);
           linkedIssues = linkedIssues.concat(childIssuesData.data);
         }
@@ -671,7 +688,9 @@ export default class APIImpl implements LXPAPI {
       );
     });
 
-    const initiativeIssues = issues.filter((issue) => issue.type.id === "initiative");
+    const initiativeIssues = issues.filter(
+      (issue) => issue.type.id === "initiative"
+    );
     initiativeIssues.forEach((initiative) => {
       jqlComponents.push(
         `"${Constants.PARENT_LINK_FLD}" = ${initiative.issueKey}`
@@ -708,7 +727,9 @@ export default class APIImpl implements LXPAPI {
         sortedLinks[CustomLinkType.CHILD_ISSUES] = linkedIssues.filter(
           (linkedIssue) => {
             const parent = linkedIssue.links?.find(
-              (issue) => issue.linkTypeId === CustomLinkType.PARENT && linkedIssue.type.id !== "subtask"
+              (issue) =>
+                issue.linkTypeId === CustomLinkType.PARENT &&
+                linkedIssue.type.id !== "subtask"
             );
             if (parent?.issueId === issue.id) {
               return true;
@@ -765,6 +786,11 @@ export default class APIImpl implements LXPAPI {
     start?: number,
     max?: number
   ): Promise<{ data: IssueWithLinkedIssues[]; total: number }> {
+    console.log("is from server", this.isServer);
+    if (this.isServer) {
+      console.log("this is from server");
+      return;
+    }
     try {
       const isOrderingJqlRegex = /order*/;
       const shouldOmitPrefix =
@@ -822,7 +848,6 @@ export default class APIImpl implements LXPAPI {
       console.log(error);
       throwError("otpl.lxp.api.search-issues-error");
     }
-
   }
 
   private _convertFilter(filter: JiraFilter): Filter {
@@ -880,7 +905,9 @@ export default class APIImpl implements LXPAPI {
     return await this.api.getAutoCompleteData();
   }
 
-  async getAutoCompleteSuggestions(query: string): Promise<JiraAutoCompleteSuggestionsResult> {
+  async getAutoCompleteSuggestions(
+    query: string
+  ): Promise<JiraAutoCompleteSuggestionsResult> {
     return await this.api.getAutoCompleteSuggestions(query);
   }
 }
