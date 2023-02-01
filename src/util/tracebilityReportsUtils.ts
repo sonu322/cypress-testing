@@ -94,7 +94,12 @@ export default class TracebilityReportUtils {
   };
 
   calculateTreeHeight = (errors): number => {
-    const finalHeight = calculateHeight(errors) - 42;
+    let finalHeight: number;
+    if (this.api.isServer) {
+      finalHeight = this.calculateServerHeight(errors) - 42;
+    } else {
+      finalHeight = calculateHeight(errors) - 42;
+    }
     return finalHeight < 10 ? 10 : finalHeight;
   };
 }
