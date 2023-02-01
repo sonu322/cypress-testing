@@ -10,7 +10,7 @@ import { IssueTreeMultiNode } from "../IssueTreeModule/IssueTreeMultiNode";
 import { APIContext } from "../../context/api";
 import TreeUtils from "../../util/TreeUtils";
 import { AtlasTree } from "../../types/app";
-import { calculateTreeHeight } from "../../util/tracebilityReportsUtils";
+import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
 
 const Container = styled.div`
   width: 100%;
@@ -54,15 +54,17 @@ export const TreeReport = ({
 }: Props): JSX.Element => {
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
+  const traceabilityReportUtils = new TracebilityReportUtils(api);
 
-  const [tableHeight, setTableHeight] = useState(calculateTreeHeight(errors));
+  const initialHeight = traceabilityReportUtils.calculateTreeHeight(errors);
+  const [tableHeight, setTableHeight] = useState(initialHeight);
   useEffect(() => {
     const resizeHandler = () => {
       setTableHeight((prevHeight) => {
         if (_AP !== null) {
           _AP.sizeToParent();
         }
-        return calculateTreeHeight(errors);
+        return traceabilityReportUtils.calculateTreeHeight(errors);
       });
     };
     window.addEventListener("resize", resizeHandler);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import { LinkTypeRow } from "./LinkTypeRow";
@@ -9,7 +9,8 @@ import {
   IssueWithSortedLinks,
 } from "../../types/api";
 import { IssueTypeRow } from "./IssueTypeRow";
-import { calculateTableHeight } from "../../util/tracebilityReportsUtils";
+import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
+import { APIContext } from "../../context/api";
 
 const Container = styled.div`
   width: 100%;
@@ -50,8 +51,10 @@ export const Report = ({
   isIssueTypeReport,
   errors,
 }: Props): JSX.Element => {
-
-  const [tableHeight, setTableHeight] = useState(calculateTableHeight(errors));
+  const api = useContext(APIContext);
+  const traceabilityUtils = new TracebilityReportUtils(api);
+  const initialHeight = traceabilityUtils.calculateTableHeight(errors);
+  const [tableHeight, setTableHeight] = useState(initialHeight);
 
   useEffect(() => {
     const resizeHandler = (): void => {
@@ -60,7 +63,7 @@ export const Report = ({
           _AP.sizeToParent();
         }
 
-        return calculateTableHeight(errors);
+        return traceabilityUtils.calculateTableHeight(errors);
       });
     };
     window.addEventListener("resize", resizeHandler);

@@ -141,7 +141,7 @@ export default interface LXPAPI {
   getIssueLinkTypes: () => Promise<IssueLinkType[]>;
 
   getIssueFields: () => Promise<IssueField[]>;
-
+  isServer?: boolean;
   getIssueWithLinks: (
     fields: IssueField[],
     issueId?: string
@@ -182,5 +182,7 @@ export default interface LXPAPI {
 
   getAutoCompleteData: () => Promise<JiraAutoCompleteResult>;
 
-  getAutoCompleteSuggestions: (query: string) => Promise<JiraAutoCompleteSuggestionsResult>;
+  getAutoCompleteSuggestions: (
+    query: string
+  ) => Promise<JiraAutoCompleteSuggestionsResult>;
 };
