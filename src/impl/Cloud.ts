@@ -780,6 +780,13 @@ export default class APIImpl implements LXPAPI {
     return { data: populatedIssues, total: searchResult.total };
   }
 
+  async searchOrphanIssuesServer(
+    jql: string,
+    fields: IssueField[],
+    start?: number,
+    max?: number
+  ): Promise<{ data: IssueWithLinkedIssues[]; total: number }> {}
+
   async searchOrphanIssues(
     jql: string,
     fields: IssueField[],
@@ -787,62 +794,75 @@ export default class APIImpl implements LXPAPI {
     max?: number
   ): Promise<{ data: IssueWithLinkedIssues[]; total: number }> {
     console.log("is from server", this.isServer);
-    if (this.isServer) {
-      console.log("this is from server");
-      return;
-    }
+
     try {
       const isOrderingJqlRegex = /order*/;
-      const shouldOmitPrefix =
-        jql?.length === 0 || isOrderingJqlRegex.test(jql);
-      const jqlPrefix = shouldOmitPrefix ? "" : "and";
-      const onlyOrphansJql = `issueLinkType is EMPTY and parent is EMPTY and "Epic Link" is EMPTY ${jqlPrefix} ${jql}`;
 
+      let orphansSearchJql: string;
+      if (this.isServer) {
+        console.log("this is from server");
+        orphansSearchJql = jql;
+        // const { data, total } = await this.searchOrphanIssuesServer(
+        //   jql,
+        //   fields,
+        //   start,
+        //   max
+        // );
+        // return { data, total };
+      } else {
+        const shouldOmitPrefix =
+          jql?.length === 0 || isOrderingJqlRegex.test(jql);
+        const jqlPrefix = shouldOmitPrefix ? "" : "and";
+        orphansSearchJql = `issueLinkType is EMPTY and parent is EMPTY and "Epic Link" is EMPTY ${jqlPrefix} ${jql}`;
+      }
+      console.log("orphans jql", orphansSearchJql, jql);
       const searchResult = await this.searchIssues(
-        onlyOrphansJql,
+        orphansSearchJql,
         fields,
         start,
         max
       );
 
-      const orphansWithoutChildren = searchResult.data.filter(
-        (issue) => issue.links === undefined || issue.links.length === 0
-      );
-      const epics = orphansWithoutChildren.filter(
-        (issue) => issue.type.name === "Epic"
-      );
-      const issuesWithoutEpics = orphansWithoutChildren.filter(
-        (issue) => issue.type.name !== "Epic"
-      );
-      const removeChildrenPromises = epics.map(
-        async (epic) =>
-          await this.getChildIssues(epic, fields, true).then((response) => {
-            if (response.total === 0) {
-              return true;
-            } else {
-              return false;
+      if (searchResult.data !== undefined) {
+        const orphansWithoutChildren = searchResult.data.filter(
+          (issue) => issue.links === undefined || issue.links.length === 0
+        ); // in case of server, it removes all links
+        const epics = orphansWithoutChildren.filter(
+          (issue) => issue.type.name === "Epic"
+        );
+        const issuesWithoutEpics = orphansWithoutChildren.filter(
+          (issue) => issue.type.name !== "Epic"
+        );
+        const removeChildrenPromises = epics.map(
+          async (epic) =>
+            await this.getChildIssues(epic, fields, true).then((response) => {
+              if (response.total === 0) {
+                return true;
+              } else {
+                return false;
+              }
+            })
+        );
+
+        const responses = await Promise.all(removeChildrenPromises);
+        const epicsWithoutChildren = [];
+        if (epics.length === 0 || responses !== undefined) {
+          for (let i = 0; i < epics.length; i++) {
+            if (responses[i]) {
+              epicsWithoutChildren.push(epics[i]);
             }
-          })
-      );
-
-      const responses = await Promise.all(removeChildrenPromises);
-      const epicsWithoutChildren = [];
-      if (epics.length === 0 || responses !== undefined) {
-        for (let i = 0; i < epics.length; i++) {
-          if (responses[i]) {
-            epicsWithoutChildren.push(epics[i]);
           }
-        }
-        const orphansAndEpicsWithoutChildren =
-          epicsWithoutChildren.concat(issuesWithoutEpics);
-        // TODO: if we add optiton to make orphans fetch more than 100 issues, add handling
+          const orphansAndEpicsWithoutChildren =
+            epicsWithoutChildren.concat(issuesWithoutEpics);
+          // TODO: if we add optiton to make orphans fetch more than 100 issues, add handling
 
-        const issueWithLinkedIssues: IssueWithLinkedIssues[] =
-          orphansAndEpicsWithoutChildren.map((issue) => ({
-            ...issue,
-            linkedIssues: [],
-          }));
-        return { data: issueWithLinkedIssues, total: searchResult.total };
+          const issueWithLinkedIssues: IssueWithLinkedIssues[] =
+            orphansAndEpicsWithoutChildren.map((issue) => ({
+              ...issue,
+              linkedIssues: [],
+            }));
+          return { data: issueWithLinkedIssues, total: searchResult.total };
+        }
       }
     } catch (error) {
       console.log(error);
