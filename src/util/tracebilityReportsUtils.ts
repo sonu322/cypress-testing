@@ -83,7 +83,6 @@ export default class TracebilityReportUtils {
 
   // TODO: probably we may improve this calculation
   calculateTableHeight = (errors): number => {
-    console.log("is server from calc table height", this.api.isServer);
     let finalHeight: number;
     if (this.api.isServer) {
       finalHeight = this.calculateServerHeight(errors);
@@ -184,7 +183,7 @@ export const exportReport = (
 
 export const orderSelectedIds = (
   selectedIds: string[],
-  referenceList: Array<{ id: string;[key: string]: any }>
+  referenceList: Array<{ id: string; [key: string]: any }>
 ): string[] => {
   const newSelectedIds: string[] = [];
   if (selectedIds.length > 0) {
@@ -212,14 +211,3 @@ export const calculateHeight = (errors): number => {
     2;
   return finalHeight;
 };
-
-// TODO: probably we may improve this calculation
-// export const calculateTableHeight = (errors): number => {
-//   const finalHeight = calculateHeight(errors);
-//   return finalHeight < 10 ? 10 : finalHeight;
-// };
-
-// export const calculateTreeHeight = (errors): number => {
-//   const finalHeight = calculateHeight(errors) - 42;
-//   return finalHeight < 10 ? 10 : finalHeight;
-// };

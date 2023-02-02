@@ -780,42 +780,24 @@ export default class APIImpl implements LXPAPI {
     return { data: populatedIssues, total: searchResult.total };
   }
 
-  async searchOrphanIssuesServer(
-    jql: string,
-    fields: IssueField[],
-    start?: number,
-    max?: number
-  ): Promise<{ data: IssueWithLinkedIssues[]; total: number }> {}
-
   async searchOrphanIssues(
     jql: string,
     fields: IssueField[],
     start?: number,
     max?: number
   ): Promise<{ data: IssueWithLinkedIssues[]; total: number }> {
-    console.log("is from server", this.isServer);
-
     try {
       const isOrderingJqlRegex = /order*/;
 
       let orphansSearchJql: string;
       if (this.isServer) {
-        console.log("this is from server");
         orphansSearchJql = jql;
-        // const { data, total } = await this.searchOrphanIssuesServer(
-        //   jql,
-        //   fields,
-        //   start,
-        //   max
-        // );
-        // return { data, total };
       } else {
         const shouldOmitPrefix =
           jql?.length === 0 || isOrderingJqlRegex.test(jql);
         const jqlPrefix = shouldOmitPrefix ? "" : "and";
         orphansSearchJql = `issueLinkType is EMPTY and parent is EMPTY and "Epic Link" is EMPTY ${jqlPrefix} ${jql}`;
       }
-      console.log("orphans jql", orphansSearchJql, jql);
       const searchResult = await this.searchIssues(
         orphansSearchJql,
         fields,
