@@ -53,7 +53,7 @@
   "otpl.lxp.license.do-not-have": "Keine Lizenz vorhanden",
   "otpl.lxp.traceability-report.name": "Links Explorer - Rückverfolgbarkeitsberichte",
   "otpl.lxp.traceability-report.label": "Links Explorer - Rückverfolgbarkeitsberichte",
-  "otpl.lxp.traceability-report.description": "Links Explorer - Rückverfolgbarkeitsberichte",
+  "otpl.lxp.traceability-report.description": "End-to-End-Rückverfolgbarkeit berichte, die Jira-vorgänge und die damit verknüpften vorgänge in einem leicht verständlichen Tabellenformat anzeigen.",
   "otpl.lxp.common.issue.assignee": "Zugewiesene Person",
   "otpl.lxp.common.issue.priority": "Priorität",
   "otpl.lxp.common.unassigned": "nicht zugewiesen",

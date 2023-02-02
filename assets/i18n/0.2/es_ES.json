@@ -52,7 +52,7 @@
   "otpl.lxp.license.do-not-have": "No se han encontrado licencia",
   "otpl.lxp.traceability-report.name": "Explorer de Enlaces - Informe de trazabilidad",
   "otpl.lxp.traceability-report.label": "Explorer de Enlaces - Informe de trazabilidad",
-  "otpl.lxp.traceability-report.description": "Enlaces Trazabilidad Explorador de Informe",
+  "otpl.lxp.traceability-report.description": "Informes de trazabilidad de extremo a extremo que muestran los incidencias de Jira y sus incidencias vinculados en un formato tabular fácil de comprender.",
   "otpl.lxp.traceability-report.toolbar.usejqlbutton.name": "Usar editor JQL",
   "otpl.lxp.common.issue.assignee": "Responsable",
   "otpl.lxp.common.issue.priority": "Prioridad",
