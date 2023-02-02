@@ -195,19 +195,3 @@ export const orderSelectedIds = (
   }
   return newSelectedIds;
 };
-
-// export const calculateHeight = (errors): number => {
-//   const headingHeight = 40 + 8; // 8: margin top
-//   const toolbarHeight = 94 + 8; // 8: table top margin
-//   const footerHeight = 32 + 8 + 8;
-//   const // more button 8: margin top and bottom
-//     errorsHeight = errors?.length > 0 ? (52 + 8) * errors.length : 0;
-//   const finalHeight =
-//     getScreenHeight() -
-//     headingHeight -
-//     toolbarHeight -
-//     footerHeight -
-//     errorsHeight -
-//     2;
-//   return finalHeight;
-// };
