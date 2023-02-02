@@ -49,7 +49,7 @@ export default class TracebilityReportUtils {
     }
   }
 
-  calculateHeight = (errors): number => {
+  calculateCloudHeight = (errors): number => {
     const headingHeight = 40 + 8; // 8: margin top
     const toolbarHeight = 94 + 8; // 8: table top margin
     const footerHeight = 32 + 8 + 8;
@@ -87,9 +87,9 @@ export default class TracebilityReportUtils {
     if (this.api.isServer) {
       finalHeight = this.calculateServerHeight(errors);
     } else {
-      finalHeight = this.calculateHeight(errors);
+      finalHeight = this.calculateCloudHeight(errors);
     }
-    return finalHeight < 10 ? 10 : finalHeight;
+    return finalHeight < 200 ? 200 : finalHeight;
   };
 
   calculateTreeHeight = (errors): number => {
@@ -97,9 +97,9 @@ export default class TracebilityReportUtils {
     if (this.api.isServer) {
       finalHeight = this.calculateServerHeight(errors) - 42;
     } else {
-      finalHeight = calculateHeight(errors) - 42;
+      finalHeight = this.calculateCloudHeight(errors) - 42;
     }
-    return finalHeight < 10 ? 10 : finalHeight;
+    return finalHeight < 200 ? 200 : finalHeight;
   };
 }
 
@@ -196,18 +196,18 @@ export const orderSelectedIds = (
   return newSelectedIds;
 };
 
-export const calculateHeight = (errors): number => {
-  const headingHeight = 40 + 8; // 8: margin top
-  const toolbarHeight = 94 + 8; // 8: table top margin
-  const footerHeight = 32 + 8 + 8;
-  const // more button 8: margin top and bottom
-    errorsHeight = errors?.length > 0 ? (52 + 8) * errors.length : 0;
-  const finalHeight =
-    getScreenHeight() -
-    headingHeight -
-    toolbarHeight -
-    footerHeight -
-    errorsHeight -
-    2;
-  return finalHeight;
-};
+// export const calculateHeight = (errors): number => {
+//   const headingHeight = 40 + 8; // 8: margin top
+//   const toolbarHeight = 94 + 8; // 8: table top margin
+//   const footerHeight = 32 + 8 + 8;
+//   const // more button 8: margin top and bottom
+//     errorsHeight = errors?.length > 0 ? (52 + 8) * errors.length : 0;
+//   const finalHeight =
+//     getScreenHeight() -
+//     headingHeight -
+//     toolbarHeight -
+//     footerHeight -
+//     errorsHeight -
+//     2;
+//   return finalHeight;
+// };
