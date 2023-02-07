@@ -30,7 +30,7 @@ export const MaxWidthContainer = styled.div`
 export interface Props {
   tableFields: IssueType[] | IssueLinkType[];
   selectedTableFieldIds: string[];
-  selectedIssueInCellIds: string[];
+  selectedSettingsDropdownIds: string[];
   issueFieldIds: string[];
   issue: IssueWithSortedLinks;
   rowSno: number;
@@ -41,7 +41,7 @@ export const IssueTypeRow = ({
   issue,
   rowSno,
   selectedTableFieldIds,
-  selectedIssueInCellIds,
+  selectedSettingsDropdownIds,
 }: Props): JSX.Element[] => {
   const cells = [];
   // push issue cell into row
@@ -87,7 +87,7 @@ export const IssueTypeRow = ({
       issueCell = (
         <Td key={typeId}>
           <IssueCell
-            selectedIssueInCellIds={selectedIssueInCellIds}
+            selectedSettingsDropdownIds={selectedSettingsDropdownIds}
             issueCards={issueCards}
           ></IssueCell>
         </Td>
