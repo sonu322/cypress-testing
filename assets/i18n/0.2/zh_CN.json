@@ -19,8 +19,6 @@
   "otpl.lxp.traceability-report.fetch-limit-dropdown.name": "Fetch Limit",
   "otpl.lxp.traceability-report.load-more-issues-button.name": "加载更多事务",
   "otpl.lxp.traceability-report.toolbar.tableFields.name": "表字段",
-  "otpl.lxp.traceability-report.toolbar.settingsDropdown.displayAllIssueCards": "显示所有事务卡",
-  "otpl.lxp.traceability-report.toolbar.settingsDropdown.autoHideEmptyColumns": "自动隐藏空列",
   "otpl.lxp.traceability-report.select-filter.text": "请选择筛选条件查看报告",
   "otpl.lxp.traceability-report.tree-view.name": "树视图",
   "otpl.lxp.traceability-report.tree-view.orphans-tree-branch-name": "孤儿问题",
