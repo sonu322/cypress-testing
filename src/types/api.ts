@@ -144,7 +144,7 @@ export default interface LXPAPI {
   getIssueLinkTypes: () => Promise<IssueLinkType[]>;
 
   getIssueFields: () => Promise<IssueField[]>;
-
+  isServer?: boolean;
   getIssueWithLinks: (
     fields: IssueField[],
     issueId?: string
