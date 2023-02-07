@@ -18,10 +18,12 @@ fs.mkdirSync(nonAsciiDist);
   in a single directory.
 */
 // convert json to properties file
-jsonToProps.process({config: {
-  src: "./assets/i18n/0.2", // change the version folder name when version is upgraded
-  dist: nonAsciiDist
-}}); // this method is not synchronous, so we used setTimeout below.
+jsonToProps.process({
+  config: {
+    src: "./assets/i18n/0.3", // change the version folder name when version is upgraded
+    dist: nonAsciiDist,
+  },
+}); // this method is not synchronous, so we used setTimeout below.
 
 const files = [
   "de_DE",

@@ -11,7 +11,7 @@ import {
 import { IssueTypeRow } from "./IssueTypeRow";
 import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
 import { APIContext } from "../../context/api";
-
+import { autoHideEmptyColumnsId } from "../../constants/traceabilityReport";
 const Container = styled.div`
   width: 100%;
   // height: 100%;
@@ -37,7 +37,7 @@ interface Props {
   filteredIssues: IssueWithSortedLinks[];
   tableFields: IssueType[] | IssueLinkType[];
   selectedTableFieldIds: string[];
-  selectedIssueInCellIds: string[];
+  selectedSettingsDropdownIds: string[];
   issueFieldIds: string[];
   isIssueTypeReport: boolean;
   errors: any[];
@@ -46,7 +46,7 @@ export const Report = ({
   filteredIssues,
   tableFields,
   selectedTableFieldIds,
-  selectedIssueInCellIds,
+  selectedSettingsDropdownIds,
   issueFieldIds,
   isIssueTypeReport,
   errors,
@@ -55,6 +55,40 @@ export const Report = ({
   const traceabilityUtils = new TracebilityReportUtils(api);
   const initialHeight = traceabilityUtils.calculateTableHeight(errors);
   const [tableHeight, setTableHeight] = useState(initialHeight);
+  const autoHideEmptyColsSelected = selectedSettingsDropdownIds.includes(
+    autoHideEmptyColumnsId
+  );
+  const columnsToDisplay = [];
+  if (autoHideEmptyColsSelected) {
+    filteredIssues.forEach((issue) => {
+      Object.keys(issue.sortedLinks).forEach((key) => {
+        if (
+          issue.sortedLinks[key] !== undefined &&
+          issue.sortedLinks[key].length > 0
+        ) {
+          if (isIssueTypeReport) {
+            if (!columnsToDisplay.includes(issue.sortedLinks[key][0].type.id)) {
+              if (
+                selectedTableFieldIds.includes(
+                  issue.sortedLinks[key][0].type.id
+                )
+              ) {
+                columnsToDisplay.push(issue.sortedLinks[key][0].type.id);
+              }
+            }
+          } else {
+            if (!columnsToDisplay.includes(key)) {
+              if (selectedTableFieldIds.includes(key)) {
+                columnsToDisplay.push(key);
+              }
+            }
+          }
+        }
+      });
+    });
+  } else {
+    columnsToDisplay.push(...selectedTableFieldIds);
+  }
 
   useEffect(() => {
     const resizeHandler = (): void => {
@@ -74,7 +108,7 @@ export const Report = ({
     <Container style={{ maxHeight: tableHeight }}>
       <Table>
         <ReportHeader
-          selectedFieldIds={selectedTableFieldIds}
+          selectedFieldIds={columnsToDisplay}
           fields={tableFields}
         />
         <tbody>
@@ -82,16 +116,16 @@ export const Report = ({
             <BorderTr key={`${issue.issueKey}`}>
               {isIssueTypeReport ? (
                 <IssueTypeRow
-                  selectedIssueInCellIds={selectedIssueInCellIds}
-                  selectedTableFieldIds={selectedTableFieldIds}
+                  selectedSettingsDropdownIds={selectedSettingsDropdownIds}
+                  selectedTableFieldIds={columnsToDisplay}
                   issueFieldIds={issueFieldIds}
                   issue={issue}
                   rowSno={index + 1}
                 />
               ) : (
                 <LinkTypeRow
-                  selectedIssueInCellIds={selectedIssueInCellIds}
-                  selectedTableFieldIds={selectedTableFieldIds}
+                  selectedSettingsDropdownIds={selectedSettingsDropdownIds}
+                  selectedTableFieldIds={columnsToDisplay}
                   issueFieldIds={issueFieldIds}
                   issue={issue}
                   rowSno={index + 1}
