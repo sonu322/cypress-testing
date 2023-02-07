@@ -17,8 +17,7 @@
       "en-US": "/i18n/0.2/en_US.json",
       "de-DE": "/i18n/0.2/de_DE.json",
       "es-ES": "/i18n/0.2/es_ES.json",
-      "fr-FR": "/i18n/0.2/fr_FR.json",
-      "zh-CN": "/i18n/0.2/zh_CN.json"
+      "fr-FR": "/i18n/0.2/fr_FR.json"
     }
   },
   "authentication": {

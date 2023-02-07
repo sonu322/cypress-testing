@@ -26,6 +26,7 @@ const BorderTr = styled.tr`
 `;
 const Table = styled.table`
   border: 1px solid ${colors.N40};
+  border-collapse: collapse;
 `;
 
 // @ts-expect-error
