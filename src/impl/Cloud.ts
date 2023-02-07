@@ -70,8 +70,11 @@ export default class APIImpl implements LXPAPI {
     "issuetype",
   ];
 
-  constructor(api: JiraAPI) {
+  isServer: boolean;
+
+  constructor(api: JiraAPI, isServer: boolean = false) {
     this.api = api;
+    this.isServer = isServer;
   }
 
   hasValidLicense(): boolean {
@@ -359,12 +362,19 @@ export default class APIImpl implements LXPAPI {
       let linkedIssues: Issue[] = [];
       // add epic children to issue
       if (issue.type.id === "epic" || issue.type.id === "initiative") {
-        const childIssuesData = await this.getChildIssues(issue, fields, issue.type.id === "epic");
+        const childIssuesData = await this.getChildIssues(
+          issue,
+          fields,
+          issue.type.id === "epic"
+        );
         this._addEpicChildrenToLinks(issue, childIssuesData.data);
         linkedIssues = childIssuesData.data;
       }
       if (linkedIds?.length > 0) {
-        const result = await this.searchIssues(`id in (${linkedIds.join(",")})`, fields);
+        const result = await this.searchIssues(
+          `id in (${linkedIds.join(",")})`,
+          fields
+        );
         linkedIssues = linkedIssues.concat(result.data);
       }
 
@@ -390,7 +400,10 @@ export default class APIImpl implements LXPAPI {
       }
       const linkedIssuesMap = {};
       if (allLinkIds.length > 0) {
-        const allLinkedIssues = await this.searchIssuesByIds(allLinkIds, fields);
+        const allLinkedIssues = await this.searchIssuesByIds(
+          allLinkIds,
+          fields
+        );
         for (const linkedIssue of allLinkedIssues) {
           linkedIssuesMap[linkedIssue.id] = linkedIssue;
         }
@@ -407,7 +420,11 @@ export default class APIImpl implements LXPAPI {
         }
         // add epic children to issue
         if (issue.type.id === "epic" || issue.type.id === "initiative") {
-          const childIssuesData = await this.getChildIssues(issue, fields, issue.type.id === "epic");
+          const childIssuesData = await this.getChildIssues(
+            issue,
+            fields,
+            issue.type.id === "epic"
+          );
           this._addEpicChildrenToLinks(issue, childIssuesData.data);
           linkedIssues = linkedIssues.concat(childIssuesData.data);
         }
@@ -671,7 +688,9 @@ export default class APIImpl implements LXPAPI {
       );
     });
 
-    const initiativeIssues = issues.filter((issue) => issue.type.id === "initiative");
+    const initiativeIssues = issues.filter(
+      (issue) => issue.type.id === "initiative"
+    );
     initiativeIssues.forEach((initiative) => {
       jqlComponents.push(
         `"${Constants.PARENT_LINK_FLD}" = ${initiative.issueKey}`
@@ -708,7 +727,9 @@ export default class APIImpl implements LXPAPI {
         sortedLinks[CustomLinkType.CHILD_ISSUES] = linkedIssues.filter(
           (linkedIssue) => {
             const parent = linkedIssue.links?.find(
-              (issue) => issue.linkTypeId === CustomLinkType.PARENT && linkedIssue.type.id !== "subtask"
+              (issue) =>
+                issue.linkTypeId === CustomLinkType.PARENT &&
+                linkedIssue.type.id !== "subtask"
             );
             if (parent?.issueId === issue.id) {
               return true;
@@ -767,62 +788,68 @@ export default class APIImpl implements LXPAPI {
   ): Promise<{ data: IssueWithLinkedIssues[]; total: number }> {
     try {
       const isOrderingJqlRegex = /order*/;
-      const shouldOmitPrefix =
-        jql?.length === 0 || isOrderingJqlRegex.test(jql);
-      const jqlPrefix = shouldOmitPrefix ? "" : "and";
-      const onlyOrphansJql = `issueLinkType is EMPTY and parent is EMPTY and "Epic Link" is EMPTY ${jqlPrefix} ${jql}`;
 
+      let orphansSearchJql: string;
+      if (this.isServer) {
+        orphansSearchJql = jql;
+      } else {
+        const shouldOmitPrefix =
+          jql?.length === 0 || isOrderingJqlRegex.test(jql);
+        const jqlPrefix = shouldOmitPrefix ? "" : "and";
+        orphansSearchJql = `issueLinkType is EMPTY and parent is EMPTY and "Epic Link" is EMPTY ${jqlPrefix} ${jql}`;
+      }
       const searchResult = await this.searchIssues(
-        onlyOrphansJql,
+        orphansSearchJql,
         fields,
         start,
         max
       );
 
-      const orphansWithoutChildren = searchResult.data.filter(
-        (issue) => issue.links === undefined || issue.links.length === 0
-      );
-      const epics = orphansWithoutChildren.filter(
-        (issue) => issue.type.name === "Epic"
-      );
-      const issuesWithoutEpics = orphansWithoutChildren.filter(
-        (issue) => issue.type.name !== "Epic"
-      );
-      const removeChildrenPromises = epics.map(
-        async (epic) =>
-          await this.getChildIssues(epic, fields, true).then((response) => {
-            if (response.total === 0) {
-              return true;
-            } else {
-              return false;
+      if (searchResult.data !== undefined) {
+        const orphansWithoutChildren = searchResult.data.filter(
+          (issue) => issue.links === undefined || issue.links.length === 0
+        ); // in case of server, it removes all links
+        const epics = orphansWithoutChildren.filter(
+          (issue) => issue.type.name === "Epic"
+        );
+        const issuesWithoutEpics = orphansWithoutChildren.filter(
+          (issue) => issue.type.name !== "Epic"
+        );
+        const removeChildrenPromises = epics.map(
+          async (epic) =>
+            await this.getChildIssues(epic, fields, true).then((response) => {
+              if (response.total === 0) {
+                return true;
+              } else {
+                return false;
+              }
+            })
+        );
+
+        const responses = await Promise.all(removeChildrenPromises);
+        const epicsWithoutChildren = [];
+        if (epics.length === 0 || responses !== undefined) {
+          for (let i = 0; i < epics.length; i++) {
+            if (responses[i]) {
+              epicsWithoutChildren.push(epics[i]);
             }
-          })
-      );
-
-      const responses = await Promise.all(removeChildrenPromises);
-      const epicsWithoutChildren = [];
-      if (epics.length === 0 || responses !== undefined) {
-        for (let i = 0; i < epics.length; i++) {
-          if (responses[i]) {
-            epicsWithoutChildren.push(epics[i]);
           }
-        }
-        const orphansAndEpicsWithoutChildren =
-          epicsWithoutChildren.concat(issuesWithoutEpics);
-        // TODO: if we add optiton to make orphans fetch more than 100 issues, add handling
+          const orphansAndEpicsWithoutChildren =
+            epicsWithoutChildren.concat(issuesWithoutEpics);
+          // TODO: if we add optiton to make orphans fetch more than 100 issues, add handling
 
-        const issueWithLinkedIssues: IssueWithLinkedIssues[] =
-          orphansAndEpicsWithoutChildren.map((issue) => ({
-            ...issue,
-            linkedIssues: [],
-          }));
-        return { data: issueWithLinkedIssues, total: searchResult.total };
+          const issueWithLinkedIssues: IssueWithLinkedIssues[] =
+            orphansAndEpicsWithoutChildren.map((issue) => ({
+              ...issue,
+              linkedIssues: [],
+            }));
+          return { data: issueWithLinkedIssues, total: searchResult.total };
+        }
       }
     } catch (error) {
       console.log(error);
       throwError("otpl.lxp.api.search-issues-error");
     }
-
   }
 
   private _convertFilter(filter: JiraFilter): Filter {
@@ -880,7 +907,9 @@ export default class APIImpl implements LXPAPI {
     return await this.api.getAutoCompleteData();
   }
 
-  async getAutoCompleteSuggestions(query: string): Promise<JiraAutoCompleteSuggestionsResult> {
+  async getAutoCompleteSuggestions(
+    query: string
+  ): Promise<JiraAutoCompleteSuggestionsResult> {
     return await this.api.getAutoCompleteSuggestions(query);
   }
 }
