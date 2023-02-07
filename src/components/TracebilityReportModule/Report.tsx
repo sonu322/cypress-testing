@@ -56,15 +56,12 @@ export const Report = ({
   const columnsToDisplay = [];
   if (autoHideEmptyColsSelected) {
     filteredIssues.forEach((issue) => {
-      console.log(issue.sortedLinks);
       Object.keys(issue.sortedLinks).forEach((key) => {
         if (
           issue.sortedLinks[key] !== undefined &&
           issue.sortedLinks[key].length > 0
         ) {
           if (isIssueTypeReport) {
-            console.log(columnsToDisplay, key, issue.sortedLinks[key]);
-
             if (!columnsToDisplay.includes(issue.sortedLinks[key][0].type.id)) {
               if (
                 selectedTableFieldIds.includes(
