@@ -18,7 +18,11 @@ import {
   orderSelectedIds,
 } from "../../util/tracebilityReportsUtils";
 import { getKeyValues } from "../../util/common";
-import { viewTabs } from "../../constants/traceabilityReport";
+import {
+  autoHideEmptyColumnsId,
+  reportCellOptions,
+  viewTabs,
+} from "../../constants/traceabilityReport";
 import { TreeReportToolbar } from "./TreeReportToolbar";
 import { TreeFilterContext } from "../../context/treeFilterContext";
 import TreeUtils from "../../util/TreeUtils";
@@ -33,9 +37,6 @@ const GrowContainer = styled.div`
   flex-grow: 1;
   display: flex;
 `;
-const cellOptions = [
-  { id: "Display All issue cards", name: "Display All issue cards" },
-];
 
 interface Props {
   showCustomJQLEditor?: any;
@@ -48,9 +49,8 @@ export const TracebilityReportModule = ({
   const treeFilterContext = useContext(TreeFilterContext);
   const [isOrphansBranchPresent, setIsOrphansBranchPresent] = useState(false);
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
-  const [selectedIssueInCellIds, updateSelectedIssueInCellIds] = useState<
-    string[]
-  >([]);
+  const [selectedSettingsDropdownIds, setSelectedSettingsDropdownIds] =
+    useState<string[]>([autoHideEmptyColumnsId]);
   const [filteredIssues, setFilteredIssues] = useState<
     IssueWithSortedLinks[] | null
   >(null);
@@ -178,9 +178,9 @@ export const TracebilityReportModule = ({
         bottomBar={
           <>
             <Toolbar
-              selectedIssueInCellIds={selectedIssueInCellIds}
-              updateSelectedIssueInCellIds={updateSelectedIssueInCellIds}
-              issueInCell={cellOptions}
+              selectedSettingsDropdownIds={selectedSettingsDropdownIds}
+              setSelectedSettingsDropdownIds={setSelectedSettingsDropdownIds}
+              settingsDropdown={reportCellOptions}
               selectedJQLString={selectedJQLString}
               setSelectedJQLString={setSelectedJQLString}
               issueCardOptions={issueFields}
@@ -231,7 +231,7 @@ export const TracebilityReportModule = ({
           clearAllErrors={clearAllErrors}
           issueFields={issueFields}
           selectedIssueFieldIds={selectedIssueFieldIds}
-          selectedIssueInCellIds={selectedIssueInCellIds}
+          selectedSettingsDropdownIds={selectedSettingsDropdownIds}
           tableFields={tableFields}
           selectedTableFieldIds={emptyEqualsAllTableIds}
           filteredIssues={filteredIssues}

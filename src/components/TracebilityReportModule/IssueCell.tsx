@@ -3,14 +3,15 @@ import { useState, useEffect } from "react";
 import Button from "@atlaskit/button";
 import { MaxWidthContainer } from "./IssueTypeRow";
 import styled from "styled-components";
+import { displayAllIssueCardsId } from "../../constants/traceabilityReport";
 export interface Props {
-  selectedIssueInCellIds: string[];
+  selectedSettingsDropdownIds: string[];
 }
 
 const ButtonContainer = styled.div`
   margin-top: 8px;
 `;
-export const IssueCell = ({ selectedIssueInCellIds, issueCards }) => {
+export const IssueCell = ({ selectedSettingsDropdownIds, issueCards }) => {
   const [areAllIssuesVisible, setAreAllIssuesVisible] = useState(false);
   let issueCardsToShow = [];
   if (issueCards.length > 3) {
@@ -27,15 +28,15 @@ export const IssueCell = ({ selectedIssueInCellIds, issueCards }) => {
       setAreAllIssuesVisible(!areAllIssuesVisible);
     }
   };
-  selectedIssueInCellIds.every((issueId) => {
-    if (issueId == "Display All issue cards") {
+  selectedSettingsDropdownIds.forEach((issueId) => {
+    if (issueId == displayAllIssueCardsId) {
       issueCardsToShow = issueCards;
       return false;
     }
   });
   useEffect(() => {
     setAreAllIssuesVisible(false);
-  }, [selectedIssueInCellIds]);
+  }, [selectedSettingsDropdownIds]);
   return (
     <div>
       <MaxWidthContainer>{issueCardsToShow}</MaxWidthContainer>
