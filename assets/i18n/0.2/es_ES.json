@@ -15,8 +15,6 @@
   "otpl.lxp.traceability-report.toolbar.jqlDialogOptions.submitText": "Usar filtro",
   "otpl.lxp.traceability-report.toolbar.jqlDialogOptions.cancelText": "Cancelar",
   "otpl.lxp.traceability-report.toolbar.tableFields.name": "Campos de tabla",
-  "otpl.lxp.traceability-report.toolbar.settingsDropdown.displayAllIssueCards": "Mostrar todas las tarjetas de emisión",
-  "otpl.lxp.traceability-report.toolbar.settingsDropdown.autoHideEmptyColumns": "Ocultar automáticamente las columnas vacías",
   "otpl.lxp.traceability-report.fetch-limit-dropdown.name": "Fetch Limit",
   "otpl.lxp.traceability-report.load-more-issues-button.name": "cargar más incidencias",
   "otpl.lxp.traceability-report.select-filter.text": "Seleccione el filtro para ver el informe",
