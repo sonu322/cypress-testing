@@ -57,18 +57,25 @@ export const Report = ({
   if (autoHideEmptyColsSelected) {
     filteredIssues.forEach((issue) => {
       Object.keys(issue.sortedLinks).forEach((key) => {
-        if (isIssueTypeReport) {
-          if (!columnsToDisplay.includes(issue.sortedLinks[key][0].type.id)) {
-            if (
-              selectedTableFieldIds.includes(issue.sortedLinks[key][0].type.id)
-            ) {
-              columnsToDisplay.push(issue.sortedLinks[key][0].type.id);
+        if (
+          issue.sortedLinks[key] !== undefined &&
+          issue.sortedLinks[key].length > 0
+        ) {
+          if (isIssueTypeReport) {
+            if (!columnsToDisplay.includes(issue.sortedLinks[key][0].type.id)) {
+              if (
+                selectedTableFieldIds.includes(
+                  issue.sortedLinks[key][0].type.id
+                )
+              ) {
+                columnsToDisplay.push(issue.sortedLinks[key][0].type.id);
+              }
             }
-          }
-        } else {
-          if (!columnsToDisplay.includes(key)) {
-            if (selectedTableFieldIds.includes(key)) {
-              columnsToDisplay.push(key);
+          } else {
+            if (!columnsToDisplay.includes(key)) {
+              if (selectedTableFieldIds.includes(key)) {
+                columnsToDisplay.push(key);
+              }
             }
           }
         }
