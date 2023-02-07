@@ -17,8 +17,8 @@ import {
 import { getQueryParam } from "../../util/index";
 
 export default class JiraCloudImpl implements JiraAPI {
-  // @ts-ignore
-  private _AP: any = AP;
+  // @ts-expect-error
+  readonly private _AP: any = AP;
 
   isJiraCloud(): boolean {
     return true;
@@ -26,16 +26,16 @@ export default class JiraCloudImpl implements JiraAPI {
 
   hasValidLicense(): boolean {
     const lic = getQueryParam("lic");
-    return !(lic && "none" === lic);
+    return !(lic && lic === "none");
   }
 
   getJiraBaseURL(): string {
-    return getQueryParam("xdm_e") as string;
+    return getQueryParam("xdm_e");
   }
 
   async getMyself(): Promise<JiraMyself> {
-    let response = await this._AP.request("/rest/api/3/myself");
-    return response.body && JSON.parse(response.body);
+    const response = await this._AP.request("/rest/api/3/myself");
+    return response?.body && JSON.parse(response.body);
   }
 
   async getPriorities(): Promise<JiraIssuePriorityFull[]> {

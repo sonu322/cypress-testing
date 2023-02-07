@@ -78,6 +78,10 @@ export default class APIImpl implements LXPAPI {
     return this.api.hasValidLicense();
   }
 
+  isJiraCloud(): boolean {
+    return this.api.isJiraCloud();
+  }
+
   getJiraBaseURL(): string {
     return this.api.getJiraBaseURL();
   }
