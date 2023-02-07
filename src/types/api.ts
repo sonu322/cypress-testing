@@ -1,4 +1,8 @@
-import { HelpLinks, JiraAutoCompleteResult, JiraAutoCompleteSuggestionsResult } from "./jira";
+import {
+  HelpLinks,
+  JiraAutoCompleteResult,
+  JiraAutoCompleteSuggestionsResult,
+} from "./jira";
 export type ID = string;
 
 export interface IssueOption {
@@ -90,8 +94,7 @@ export interface IssueType extends IssueOption {
   iconUrl: string;
 }
 
-export interface IssueLinkType extends IssueOption {
-}
+export interface IssueLinkType extends IssueOption {}
 
 export interface Filter {
   expand: string;
@@ -119,12 +122,12 @@ export enum CustomLinkType {
 export enum Labels {
   CHILD_ISSUES = "Child issues",
   SUBTASKS = "Subtasks",
-  PARENT = "Parent"
+  PARENT = "Parent",
 }
 
 export enum Constants {
   EPIC_LINK_FLD = "Epic Link",
-  PARENT_LINK_FLD = "Parent Link"
+  PARENT_LINK_FLD = "Parent Link",
 }
 
 export default interface LXPAPI {
@@ -185,4 +188,4 @@ export default interface LXPAPI {
   getAutoCompleteSuggestions: (
     query: string
   ) => Promise<JiraAutoCompleteSuggestionsResult>;
-};
+}
