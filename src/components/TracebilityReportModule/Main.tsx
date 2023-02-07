@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { LoadingButton } from "@atlaskit/button";
+// import Pagination from "@atlaskit/pagination";
+import { TablePagination } from "./TablePagination";
 import Spinner from "@atlaskit/spinner";
 import { APIContext } from "../../context/api";
 import styled from "styled-components";
@@ -84,6 +86,12 @@ export const Main = ({
 }: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  console.log(currentPage, "currentPage from main file");
+  const updateCurrentPage = (page: number) => {
+    setCurrentPage(page);
+  };
+
   const [selectedLimitOptionId, setSelectedLimitOptionId] = useState(
     DEFAULT_ROWS_PER_PAGE
   );
@@ -130,6 +138,20 @@ export const Main = ({
       undefined
     );
   };
+  // const indexOfLastIssue = currentPage * DEFAULT_ROWS_PER_PAGE;
+  // const indexOfFirstIssue = indexOfLastIssue - DEFAULT_ROWS_PER_PAGE;
+  // const currentIssues = filteredIssues.slice(
+  //   indexOfFirstIssue,
+  //   indexOfLastIssue
+  // );
+
+  // useEffect(() => {
+  //   if (currentIssues.length === 0) {
+  //     fetchMoreIssues();
+
+  //   }
+  // }, [currentPage]);
+
   const isIssueTypeReport = selectedViewTab === "issuetype-view";
   const isTreeReport = selectedViewTab === "tree-view";
   if (areIssuesLoading) {
@@ -146,6 +168,18 @@ export const Main = ({
         </FullHeightContainer>
       );
     }
+    const indexOfLastIssue = currentPage * DEFAULT_ROWS_PER_PAGE;
+    const indexOfFirstIssue = indexOfLastIssue - DEFAULT_ROWS_PER_PAGE;
+    const currentIssues = filteredIssues.slice(
+      indexOfFirstIssue,
+      indexOfLastIssue
+    );
+
+    // useEffect(() => {
+    //   if (currentIssues.length === 0) {
+    //     fetchMoreIssues();
+    //   }
+    // }, [currentPage]);
     return (
       <Container>
         <TableContainer>
@@ -167,7 +201,8 @@ export const Main = ({
             />
           ) : (
             <Report
-              filteredIssues={filteredIssues}
+              // filteredIssues={filteredIssues}
+              filteredIssues={currentIssues}
               issueFieldIds={selectedIssueFieldIds}
               tableFields={tableFields}
               selectedTableFieldIds={selectedTableFieldIds}
@@ -188,13 +223,20 @@ export const Main = ({
             setSelectedOptionId={setSelectedLimitOptionId}
           />
           &nbsp;
-          <LoadingButton
+          {/* <LoadingButton
             isLoading={areMoreIssuesLoading}
             isDisabled={filteredIssues.length >= totalNumberOfIssues}
             onClick={fetchMoreIssues}
           >
             {t("otpl.lxp.traceability-report.load-more-issues-button.name")}
-          </LoadingButton>
+          </LoadingButton> */}
+          {/* <Pagination pages={pageNumbers}></Pagination> */}
+          <TablePagination
+            currentPage={currentPage}
+            updateCurrentPage={updateCurrentPage}
+            totalNumberOfIssues={totalNumberOfIssues}
+            issuePerPage={DEFAULT_ROWS_PER_PAGE}
+          ></TablePagination>
         </MarginAddedContainer>
       </Container>
     );
