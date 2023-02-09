@@ -70,7 +70,20 @@ export const TracebilityReportModule = ({
   const [areIssuesLoading, setAreIssuesLoading] = useState(false);
   const [errors, setErrors] = useState<unknown[]>([]);
   const [isToggleOrphansLoading, setIsToggleOrphansLoading] = useState(false);
-  const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>(0);
+  const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>();
+
+  useEffect(() => {
+    if (selectedTabIndex !== undefined) {
+      AP.cookie.save("lastSavedReportTypeIndex", selectedTabIndex, 1);
+    }
+  }, [selectedTabIndex]);
+  useEffect(() => {
+    AP.cookie.read("lastSavedReportTypeIndex", (lastSavedReportTypeIndex) => {
+      const typeFixedlastSavedReportTypeIndex = lastSavedReportTypeIndex * 1;
+      setSelectedTabIndex(typeFixedlastSavedReportTypeIndex);
+    });
+  }, []);
+  console.log("selectedTabIndex from outside", selectedTabIndex);
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
   const [tree, setTree] = useState(treeUtils.getRootTree());
