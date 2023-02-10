@@ -10,6 +10,37 @@ export const getKeyValues = (
   return objArray.map((obj) => obj[key]);
 };
 // TODO: add types so that, all objects contain the selected key property
+
+export const handleSetItemInSavedReportConfig = (
+  key: string,
+  value: any
+): void => {
+  const lastSavedReportConfig = getItemInLocalStorage("lastSavedReportConfig");
+  let newReportConfig: Object;
+  if (lastSavedReportConfig !== null || lastSavedReportConfig !== undefined) {
+    newReportConfig = { ...lastSavedReportConfig, [key]: value };
+  } else {
+    newReportConfig = {
+      [key]: value,
+    };
+  }
+  console.log("setting in local storage");
+  setItemInLocalStorage("lastSavedReportConfig", newReportConfig);
+};
+
+export const getItemInLocalStorage = (key: string): any => {
+  const strigifiedLastSavedReportConfig = window.localStorage.getItem(key);
+  const lastSavedReportConfig: Object = JSON.parse(
+    strigifiedLastSavedReportConfig
+  );
+  return lastSavedReportConfig;
+};
+
+export const setItemInLocalStorage = (key: string, value: any): void => {
+  window.localStorage.setItem(key, JSON.stringify(value));
+};
+
+
 export const getKeyMap = (
   map: Map<
     string,
