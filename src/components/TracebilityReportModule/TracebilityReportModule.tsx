@@ -17,7 +17,11 @@ import {
   exportReport,
   orderSelectedIds,
 } from "../../util/tracebilityReportsUtils";
-import { getKeyValues } from "../../util/common";
+import {
+  getItemInLocalStorage,
+  getKeyValues,
+  handleSetItemInSavedReportConfig,
+} from "../../util/common";
 import {
   autoHideEmptyColumnsId,
   reportCellOptions,
@@ -74,21 +78,13 @@ export const TracebilityReportModule = ({
 
   useEffect(() => {
     if (selectedTabIndex !== undefined) {
-      const lastSavedReportConfig = {
-        selectedTabIndex,
-      };
-      console.log("setting in local storage");
-      window.localStorage.setItem(
-        "lastSavedReportConfig",
-        JSON.stringify(lastSavedReportConfig)
-      );
+      handleSetItemInSavedReportConfig("selectedTabIndex", selectedTabIndex);
     }
   }, [selectedTabIndex]);
   useEffect(() => {
-    const strigifiedLastSavedReportConfig = window.localStorage.getItem(
+    const lastSavedReportConfig = getItemInLocalStorage(
       "lastSavedReportConfig"
     );
-    const lastSavedReportConfig = JSON.parse(strigifiedLastSavedReportConfig);
     console.log(lastSavedReportConfig);
     if (Boolean(lastSavedReportConfig)) {
       setSelectedTabIndex(lastSavedReportConfig.selectedTabIndex);
