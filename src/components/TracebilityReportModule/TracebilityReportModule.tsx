@@ -82,12 +82,22 @@ export const TracebilityReportModule = ({
     }
   }, [selectedTabIndex]);
   useEffect(() => {
+    if (selectedJQLString !== undefined && selectedJQLString !== null) {
+      console.log(selectedJQLString);
+      handleSetItemInSavedReportConfig("selectedJQLString", selectedJQLString);
+    }
+  }, [selectedJQLString]);
+  useEffect(() => {
     const lastSavedReportConfig = getItemInLocalStorage(
       "lastSavedReportConfig"
     );
     console.log(lastSavedReportConfig);
     if (Boolean(lastSavedReportConfig)) {
-      setSelectedTabIndex(lastSavedReportConfig.selectedTabIndex);
+      if (Boolean(lastSavedReportConfig.selectedTabIndex)) {
+        setSelectedTabIndex(lastSavedReportConfig.selectedTabIndex);
+      }
+
+      setSelectedJQLString(lastSavedReportConfig.selectedJQLString);
     } else {
       console.log("set in else");
       setSelectedTabIndex(0);
