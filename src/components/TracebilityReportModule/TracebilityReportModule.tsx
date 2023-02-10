@@ -74,14 +74,28 @@ export const TracebilityReportModule = ({
 
   useEffect(() => {
     if (selectedTabIndex !== undefined) {
-      AP.cookie.save("lastSavedReportTypeIndex", selectedTabIndex, 1);
+      const lastSavedReportConfig = {
+        selectedTabIndex,
+      };
+      console.log("setting in local storage");
+      window.localStorage.setItem(
+        "lastSavedReportConfig",
+        JSON.stringify(lastSavedReportConfig)
+      );
     }
   }, [selectedTabIndex]);
   useEffect(() => {
-    AP.cookie.read("lastSavedReportTypeIndex", (lastSavedReportTypeIndex) => {
-      const typeFixedlastSavedReportTypeIndex = lastSavedReportTypeIndex * 1;
-      setSelectedTabIndex(typeFixedlastSavedReportTypeIndex);
-    });
+    const strigifiedLastSavedReportConfig = window.localStorage.getItem(
+      "lastSavedReportConfig"
+    );
+    const lastSavedReportConfig = JSON.parse(strigifiedLastSavedReportConfig);
+    console.log(lastSavedReportConfig);
+    if (Boolean(lastSavedReportConfig)) {
+      setSelectedTabIndex(lastSavedReportConfig.selectedTabIndex);
+    } else {
+      console.log("set in else");
+      setSelectedTabIndex(0);
+    }
   }, []);
   console.log("selectedTabIndex from outside", selectedTabIndex);
   const api = useContext(APIContext);
