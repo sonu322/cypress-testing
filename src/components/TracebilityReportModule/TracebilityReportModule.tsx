@@ -88,6 +88,20 @@ export const TracebilityReportModule = ({
     }
   }, [selectedJQLString]);
   useEffect(() => {
+    if (selectedIssueTypeIds?.length > 0) {
+      handleSetItemInSavedReportConfig(
+        "selectedIssueTypeIds",
+        selectedIssueTypeIds
+      );
+    }
+    if (selectedLinkTypeIds?.length > 0) {
+      handleSetItemInSavedReportConfig(
+        "selectedLinkTypeIds",
+        selectedLinkTypeIds
+      );
+    }
+  }, [selectedIssueTypeIds, selectedLinkTypeIds]);
+  useEffect(() => {
     const lastSavedReportConfig = getItemInLocalStorage(
       "lastSavedReportConfig"
     );
@@ -152,9 +166,32 @@ export const TracebilityReportModule = ({
         // setting state - table field options
 
         setIssueTypes(issueTypes);
-        setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
+        const lastSavedReportConfig = getItemInLocalStorage(
+          "lastSavedReportConfig"
+        );
         setLinkTypes(linkTypes);
-        setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
+        if (
+          lastSavedReportConfig?.selectedIssueTypeIds &&
+          lastSavedReportConfig?.selectedIssueTypeIds.length > 0
+        ) {
+          console.log("setting!");
+          console.log(lastSavedReportConfig.selectedIssueTypeIds);
+          setSelectedIssueTypeIds(lastSavedReportConfig.selectedIssueTypeIds);
+        } else {
+          setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
+        }
+        if (
+          Boolean(
+            lastSavedReportConfig?.selectedLinkTypeIds &&
+              lastSavedReportConfig?.selectedLinkTypeIds.length > 0
+          )
+        ) {
+          console.log("setting!");
+          console.log(lastSavedReportConfig.selectedLinkTypeIds);
+          setSelectedLinkTypeIds(lastSavedReportConfig.selectedLinkTypeIds);
+        } else {
+          setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
+        }
 
         // loading state
         setAreOptionsLoading(false);
