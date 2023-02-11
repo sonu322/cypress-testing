@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import { LinkTypeRow } from "./LinkTypeRow";
@@ -9,7 +9,8 @@ import {
   IssueWithSortedLinks,
 } from "../../types/api";
 import { IssueTypeRow } from "./IssueTypeRow";
-import { getScreenHeight } from "../../util/common";
+import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
+import { APIContext } from "../../context/api";
 import { autoHideEmptyColumnsId } from "../../constants/traceabilityReport";
 const Container = styled.div`
   width: 100%;
@@ -26,6 +27,7 @@ const BorderTr = styled.tr`
 `;
 const Table = styled.table`
   border: 1px solid ${colors.N40};
+  border-collapse: collapse;
 `;
 
 // @ts-expect-error
@@ -51,6 +53,10 @@ export const Report = ({
   errors,
   serialNo,
 }: Props): JSX.Element => {
+  const api = useContext(APIContext);
+  const traceabilityUtils = new TracebilityReportUtils(api);
+  const initialHeight = traceabilityUtils.calculateTableHeight(errors);
+  const [tableHeight, setTableHeight] = useState(initialHeight);
   const autoHideEmptyColsSelected = selectedSettingsDropdownIds.includes(
     autoHideEmptyColumnsId
   );
@@ -58,18 +64,25 @@ export const Report = ({
   if (autoHideEmptyColsSelected) {
     filteredIssues.forEach((issue) => {
       Object.keys(issue.sortedLinks).forEach((key) => {
-        if (isIssueTypeReport) {
-          if (!columnsToDisplay.includes(issue.sortedLinks[key][0].type.id)) {
-            if (
-              selectedTableFieldIds.includes(issue.sortedLinks[key][0].type.id)
-            ) {
-              columnsToDisplay.push(issue.sortedLinks[key][0].type.id);
+        if (
+          issue.sortedLinks[key] !== undefined &&
+          issue.sortedLinks[key].length > 0
+        ) {
+          if (isIssueTypeReport) {
+            if (!columnsToDisplay.includes(issue.sortedLinks[key][0].type.id)) {
+              if (
+                selectedTableFieldIds.includes(
+                  issue.sortedLinks[key][0].type.id
+                )
+              ) {
+                columnsToDisplay.push(issue.sortedLinks[key][0].type.id);
+              }
             }
-          }
-        } else {
-          if (!columnsToDisplay.includes(key)) {
-            if (selectedTableFieldIds.includes(key)) {
-              columnsToDisplay.push(key);
+          } else {
+            if (!columnsToDisplay.includes(key)) {
+              if (selectedTableFieldIds.includes(key)) {
+                columnsToDisplay.push(key);
+              }
             }
           }
         }
@@ -79,25 +92,6 @@ export const Report = ({
     columnsToDisplay.push(...selectedTableFieldIds);
   }
 
-  // TODO: probably we may improve this calculation
-  const calculateTableHeight = (errors): number => {
-    const headingHeight = 40 + 8; // 8: margin top
-    const toolbarHeight = 94 + 8; // 8: table top margin
-    const footerHeight = 32 + 8 + 8;
-    const // more button 8: margin top and bottom
-      errorsHeight = errors?.length > 0 ? (52 + 8) * errors.length : 0;
-    const finalHeight =
-      getScreenHeight() -
-      headingHeight -
-      toolbarHeight -
-      footerHeight -
-      errorsHeight -
-      2;
-    return finalHeight < 200 ? 200 : finalHeight;
-  };
-
-  const [tableHeight, setTableHeight] = useState(calculateTableHeight(errors));
-
   useEffect(() => {
     const resizeHandler = (): void => {
       setTableHeight(() => {
@@ -105,7 +99,7 @@ export const Report = ({
           _AP.sizeToParent();
         }
 
-        return calculateTableHeight(errors);
+        return traceabilityUtils.calculateTableHeight(errors);
       });
     };
     window.addEventListener("resize", resizeHandler);
