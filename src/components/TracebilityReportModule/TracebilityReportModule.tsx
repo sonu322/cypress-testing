@@ -22,6 +22,7 @@ import {
   autoHideEmptyColumnsId,
   reportCellOptions,
   viewTabs,
+  // exportReportOptions,
 } from "../../constants/traceabilityReport";
 import { TreeReportToolbar } from "./TreeReportToolbar";
 import { TreeFilterContext } from "../../context/treeFilterContext";
@@ -51,6 +52,7 @@ export const TracebilityReportModule = ({
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
   const [selectedSettingsDropdownIds, setSelectedSettingsDropdownIds] =
     useState<string[]>([autoHideEmptyColumnsId]);
+  // const [exportDropdownIds, setExportDropdownIds] = useState<string[]>([]);
   const [filteredIssues, setFilteredIssues] = useState<
     IssueWithSortedLinks[] | null
   >(null);
@@ -181,6 +183,9 @@ export const TracebilityReportModule = ({
               selectedSettingsDropdownIds={selectedSettingsDropdownIds}
               setSelectedSettingsDropdownIds={setSelectedSettingsDropdownIds}
               settingsDropdown={reportCellOptions}
+              // exportDropdownIds={exportDropdownIds}
+              // setExportDropdownIds={setExportDropdownIds}
+              // exportDropdownOptions={exportReportOptions}
               selectedJQLString={selectedJQLString}
               setSelectedJQLString={setSelectedJQLString}
               issueCardOptions={issueFields}
