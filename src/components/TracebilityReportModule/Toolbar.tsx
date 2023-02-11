@@ -56,6 +56,9 @@ interface Props {
   selectedTabIndex: SelectedType;
   showCustomJQLEditor: any;
   selectedViewTab: string;
+  // exportDropdownOptions: any;
+  // exportDropdownIds: string[];
+  // setExportDropdownIds: (ids: string[]) => void;
 }
 
 export const Toolbar = ({
@@ -77,7 +80,10 @@ export const Toolbar = ({
   selectedTabIndex,
   showCustomJQLEditor,
   selectedViewTab,
-}: Props): JSX.Element => {
+}: // exportDropdownOptions,
+// exportDropdownIds,
+// setExportDropdownIds,
+Props): JSX.Element => {
   const { t } = useTranslation();
   const api = useContext(APIContext);
   const helpLinkUrl = api.getHelpLinks().traceability;
@@ -132,6 +138,9 @@ export const Toolbar = ({
               description={t("otpl.lxp.toolbar.export-csv.title")}
               exportContent={exportReport}
               isDisabled={isExportDisabled}
+              // options={exportDropdownOptions}
+              // selectedExportOptions={exportDropdownIds}
+              // updateSelectedExportOptions={setExportDropdownIds}
             />
             <HelpLink
               description={t("otpl.lxp.common.get-help")}

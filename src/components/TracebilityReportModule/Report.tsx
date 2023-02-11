@@ -39,6 +39,7 @@ interface Props {
   issueFieldIds: string[];
   isIssueTypeReport: boolean;
   errors: any[];
+  serialNo: number;
 }
 export const Report = ({
   filteredIssues,
@@ -48,6 +49,7 @@ export const Report = ({
   issueFieldIds,
   isIssueTypeReport,
   errors,
+  serialNo,
 }: Props): JSX.Element => {
   const autoHideEmptyColsSelected = selectedSettingsDropdownIds.includes(
     autoHideEmptyColumnsId
@@ -126,7 +128,8 @@ export const Report = ({
                   selectedTableFieldIds={columnsToDisplay}
                   issueFieldIds={issueFieldIds}
                   issue={issue}
-                  rowSno={index + 1}
+                  rowSno={index + serialNo}
+                  // rowSno={index + 1}
                 />
               ) : (
                 <LinkTypeRow
@@ -134,7 +137,8 @@ export const Report = ({
                   selectedTableFieldIds={columnsToDisplay}
                   issueFieldIds={issueFieldIds}
                   issue={issue}
-                  rowSno={index + 1}
+                  rowSno={index + serialNo}
+                  // rowSno={index + 1}
                 />
               )}
             </BorderTr>

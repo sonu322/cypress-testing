@@ -89,7 +89,16 @@ export const Main = ({
   const [currentPage, setCurrentPage] = useState(1);
   console.log(currentPage, "currentPage from main file");
   const updateCurrentPage = (page: number) => {
+    // if (filteredIssues != null) {
+    //   const startIndex = (currentPage - 1) * DEFAULT_ROWS_PER_PAGE;
+    //   const endIndex = startIndex + DEFAULT_ROWS_PER_PAGE;
+    //   if (filteredIssues.length < endIndex) {
+    //     fetchMoreIssues();
+    //   }
+    // }
+    areMoreIssuesLoading && setAreMoreIssuesLoading(true);
     setCurrentPage(page);
+    setAreMoreIssuesLoading(false);
   };
 
   const [selectedLimitOptionId, setSelectedLimitOptionId] = useState(
@@ -105,6 +114,7 @@ export const Main = ({
   const updateIssues = (issues: IssueWithSortedLinks[]): void => {
     setFilteredIssues(issues);
   };
+  const serialNo = 20 * (currentPage - 1) + 1;
   const tracebilityReportUtils = new TracebilityReportUtils(api);
   useEffect(() => {
     if (selectedJqlString !== null) {
@@ -123,6 +133,15 @@ export const Main = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedJqlString]);
+  useEffect(() => {
+    if (filteredIssues != null) {
+      const startIndex = (currentPage - 1) * DEFAULT_ROWS_PER_PAGE;
+      const endIndex = startIndex + DEFAULT_ROWS_PER_PAGE;
+      if (filteredIssues.length < endIndex) {
+        fetchMoreIssues();
+      }
+    }
+  }, [currentPage]);
 
   const fetchMoreIssues = (): void => {
     const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
@@ -138,20 +157,6 @@ export const Main = ({
       undefined
     );
   };
-  // const indexOfLastIssue = currentPage * DEFAULT_ROWS_PER_PAGE;
-  // const indexOfFirstIssue = indexOfLastIssue - DEFAULT_ROWS_PER_PAGE;
-  // const currentIssues = filteredIssues.slice(
-  //   indexOfFirstIssue,
-  //   indexOfLastIssue
-  // );
-
-  // useEffect(() => {
-  //   if (currentIssues.length === 0) {
-  //     fetchMoreIssues();
-
-  //   }
-  // }, [currentPage]);
-
   const isIssueTypeReport = selectedViewTab === "issuetype-view";
   const isTreeReport = selectedViewTab === "tree-view";
   if (areIssuesLoading) {
@@ -168,18 +173,19 @@ export const Main = ({
         </FullHeightContainer>
       );
     }
-    const indexOfLastIssue = currentPage * DEFAULT_ROWS_PER_PAGE;
-    const indexOfFirstIssue = indexOfLastIssue - DEFAULT_ROWS_PER_PAGE;
+    // const indexOfLastIssue = currentPage * DEFAULT_ROWS_PER_PAGE;
+    // const indexOfFirstIssue = indexOfLastIssue - DEFAULT_ROWS_PER_PAGE;
+    // const currentIssues = filteredIssues.slice(
+    //   indexOfFirstIssue,
+    //   indexOfLastIssue
+    // );
     const currentIssues = filteredIssues.slice(
-      indexOfFirstIssue,
-      indexOfLastIssue
+      (currentPage - 1) * DEFAULT_ROWS_PER_PAGE,
+      currentPage * DEFAULT_ROWS_PER_PAGE
     );
 
-    // useEffect(() => {
-    //   if (currentIssues.length === 0) {
-    //     fetchMoreIssues();
-    //   }
-    // }, [currentPage]);
+    // const serialNo = 20 * (currentPage - 1) + 1;
+    console.log(currentIssues, "currentIssues from main file");
     return (
       <Container>
         <TableContainer>
@@ -202,6 +208,7 @@ export const Main = ({
           ) : (
             <Report
               // filteredIssues={filteredIssues}
+              serialNo={serialNo}
               filteredIssues={currentIssues}
               issueFieldIds={selectedIssueFieldIds}
               tableFields={tableFields}
