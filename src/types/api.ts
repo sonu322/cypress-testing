@@ -138,6 +138,8 @@ export enum Constants {
 export default interface LXPAPI {
   hasValidLicense: () => boolean;
 
+  isJiraCloud: () => boolean;
+
   getJiraBaseURL: () => string;
 
   getPriorities: () => Promise<IssuePriority[]>;
@@ -147,7 +149,7 @@ export default interface LXPAPI {
   getIssueLinkTypes: () => Promise<IssueLinkType[]>;
 
   getIssueFields: () => Promise<IssueField[]>;
-
+  isServer?: boolean;
   getIssueWithLinks: (
     fields: IssueField[],
     issueId?: string

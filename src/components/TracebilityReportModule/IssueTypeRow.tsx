@@ -28,7 +28,6 @@ export const MaxWidthContainer = styled.div`
 `;
 
 export interface Props {
-  tableFields: IssueType[] | IssueLinkType[];
   selectedTableFieldIds: string[];
   selectedSettingsDropdownIds: string[];
   issueFieldIds: string[];

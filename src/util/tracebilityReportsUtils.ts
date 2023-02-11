@@ -5,7 +5,7 @@ import LXPAPI, {
   IssueType,
   IssueWithSortedLinks,
 } from "../types/api";
-import { getUniqueValues } from "./common";
+import { getUniqueValues, getScreenHeight } from "./common";
 import { download, toTitleCase } from "./index";
 
 export default class TracebilityReportUtils {
@@ -48,6 +48,59 @@ export default class TracebilityReportUtils {
       handleError(error);
     }
   }
+
+  calculateCloudHeight = (errors): number => {
+    const headingHeight = 40 + 8; // 8: margin top
+    const toolbarHeight = 94 + 8; // 8: table top margin
+    const footerHeight = 32 + 8 + 8;
+    const // more button 8: margin top and bottom
+      errorsHeight = errors?.length > 0 ? (52 + 8) * errors.length : 0;
+    const finalHeight =
+      getScreenHeight() -
+      headingHeight -
+      toolbarHeight -
+      footerHeight -
+      errorsHeight -
+      2;
+    return finalHeight;
+  };
+
+  calculateServerHeight = (errors): number => {
+    const headingHeight = 81 + 80 + 80 + 8; // 8: margin top
+    const toolbarHeight = 94 + 8; // 8: table top margin
+    const footerHeight = 91;
+    const // more button 8: margin top and bottom
+      errorsHeight = errors?.length > 0 ? (52 + 8) * errors.length : 0;
+    const finalHeight =
+      getScreenHeight() -
+      headingHeight -
+      toolbarHeight -
+      footerHeight -
+      errorsHeight -
+      2;
+    return finalHeight;
+  };
+
+  // TODO: probably we may improve this calculation
+  calculateTableHeight = (errors): number => {
+    let finalHeight: number;
+    if (this.api.isServer) {
+      finalHeight = this.calculateServerHeight(errors);
+    } else {
+      finalHeight = this.calculateCloudHeight(errors);
+    }
+    return finalHeight < 200 ? 200 : finalHeight;
+  };
+
+  calculateTreeHeight = (errors): number => {
+    let finalHeight: number;
+    if (this.api.isServer) {
+      finalHeight = this.calculateServerHeight(errors) - 42;
+    } else {
+      finalHeight = this.calculateCloudHeight(errors) - 42;
+    }
+    return finalHeight < 200 ? 200 : finalHeight;
+  };
 }
 
 const processByLinkType = (

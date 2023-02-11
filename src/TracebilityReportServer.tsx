@@ -13,7 +13,7 @@ const render = async (): Promise<void> => {
 
   if (App) {
     const jiraServer = new JiraServerImpl(App);
-    const api = new APIImpl(jiraServer);
+    const api = new APIImpl(jiraServer, true);
     ReactDOM.render(
       <APIContext.Provider value={api}>
         <TracebilityReport />

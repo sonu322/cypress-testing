@@ -15,6 +15,7 @@ import TreeUtils from "../../util/TreeUtils";
 
 export const TreeFilterContextProvider = ({ children }): JSX.Element => {
   const api = useContext(APIContext);
+  // TODO: fix type
   const treeUtils = new TreeUtils(api);
 
   const [isLoading, setIsLoading] = useState(true);

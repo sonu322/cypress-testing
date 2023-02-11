@@ -226,7 +226,7 @@ export const TracebilityReportModule = ({
           </>
         }
       >
-        {title}
+        {api.isJiraCloud() && title}
       </PageHeader>
       {allErrors.length > 0 && <ErrorsList errors={errors} />}
       <GrowContainer>

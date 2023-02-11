@@ -16,6 +16,10 @@ export default class UnknownImpl implements LXPAPI {
     throw new Error("Method not implemented.");
   }
 
+  isJiraCloud(): boolean {
+    throw new Error("Method not implemented.");
+  }
+
   getJiraBaseURL(): string {
     throw new Error("Method not implemented.");
   }

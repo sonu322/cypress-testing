@@ -6,11 +6,11 @@ import {
   IssueTreeFilter,
   IssueWithSortedLinks,
 } from "../../types/api";
-import { getScreenHeight } from "../../util/common";
 import { IssueTreeMultiNode } from "../IssueTreeModule/IssueTreeMultiNode";
 import { APIContext } from "../../context/api";
 import TreeUtils from "../../util/TreeUtils";
 import { AtlasTree } from "../../types/app";
+import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
 
 const Container = styled.div`
   width: 100%;
@@ -18,6 +18,10 @@ const Container = styled.div`
   border: 1px solid ${colors.N40};
   border-radius: 10px;
 `;
+
+// @ts-expect-error
+const _AP: any = typeof AP !== "undefined" ? AP : null;
+
 interface Props {
   filteredIssues: IssueWithSortedLinks[];
   selectedIssueFieldIds: string[];
@@ -48,32 +52,19 @@ export const TreeReport = ({
   updateIsToggleOrphansLoading,
   isToggleOrphansLoading,
 }: Props): JSX.Element => {
-  // TODO: probably we may improve this calculation
-  const calculateTableHeight = (errors) => {
-    const headingHeight = 40 + 8; // 8: margin top
-    const toolbarHeight = 94 + 8 + 42; // 8: table top margin
-    const footerHeight = 32 + 8 + 8;
-    const // more button 8: margin top and bottom
-      errorsHeight = errors && errors.length ? (52 + 8) * errors.length : 0;
-    const finalHeight =
-      getScreenHeight() -
-      headingHeight -
-      toolbarHeight -
-      footerHeight -
-      errorsHeight -
-      2;
-    return finalHeight < 200 ? 200 : finalHeight;
-  };
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
+  const traceabilityReportUtils = new TracebilityReportUtils(api);
 
-  const [tableHeight, setTableHeight] = useState(calculateTableHeight(errors));
+  const initialHeight = traceabilityReportUtils.calculateTreeHeight(errors);
+  const [tableHeight, setTableHeight] = useState(initialHeight);
   useEffect(() => {
     const resizeHandler = () => {
       setTableHeight((prevHeight) => {
-        // @ts-expect-error
-        AP.sizeToParent();
-        return calculateTableHeight(errors);
+        if (_AP !== null) {
+          _AP.sizeToParent();
+        }
+        return traceabilityReportUtils.calculateTreeHeight(errors);
       });
     };
     window.addEventListener("resize", resizeHandler);
