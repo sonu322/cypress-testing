@@ -8,6 +8,7 @@ export const treeFilterDropdowns = [
 ];
 
 export const lastSavedReportConfigKey = "lastSavedReportConfig";
+export const lastSavedTreeConfigKey = "lastSavedTreeConfig";
 
 export const emptyTreeFilter: IssueTreeFilter = {
   priorities: [],
