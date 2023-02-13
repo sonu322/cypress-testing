@@ -43,6 +43,36 @@ export const handleGetItemInSavedReportConfig = (
   return lastSavedReportConfig[key];
 };
 
+export const handleSetItemInSavedTreeConfig = (
+  key: string,
+  value: any
+): void => {
+  const lastSavedReportConfig = getItemInLocalStorage(lastSavedReportConfigKey);
+  let newReportConfig: Object;
+  if (lastSavedReportConfig !== null || lastSavedReportConfig !== undefined) {
+    newReportConfig = { ...lastSavedReportConfig, [key]: value };
+  } else {
+    newReportConfig = {
+      [key]: value,
+    };
+  }
+  console.log(
+    "setting in local storage",
+    lastSavedReportConfigKey,
+    newReportConfig
+  );
+  setItemInLocalStorage(lastSavedReportConfigKey, newReportConfig);
+};
+
+export const handleGetItemInSavedTreeConfig = (
+  key: string
+): LastSavedReportConfig => {
+  const lastSavedReportConfig: LastSavedReportConfig = getItemInLocalStorage(
+    lastSavedReportConfigKey
+  );
+  return lastSavedReportConfig[key];
+};
+
 export const getItemInLocalStorage = (key: string): any => {
   const strigifiedLastSavedReportConfig = window.localStorage.getItem(key);
   const lastSavedReportConfig = JSON.parse(strigifiedLastSavedReportConfig);
@@ -52,6 +82,8 @@ export const getItemInLocalStorage = (key: string): any => {
 export const setItemInLocalStorage = (key: string, value: any): void => {
   window.localStorage.setItem(key, JSON.stringify(value));
 };
+
+
 
 
 export const getKeyMap = (

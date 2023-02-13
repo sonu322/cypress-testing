@@ -11,9 +11,16 @@ import {
   IssueTreeFilter,
   IssueType,
 } from "../../types/api";
+import {
+  getItemInLocalStorage,
+  setItemInLocalStorage,
+} from "../../util/common";
 import TreeUtils from "../../util/TreeUtils";
 
-export const TreeFilterContextProvider = ({ children }): JSX.Element => {
+export const TreeFilterContextProvider = ({
+  children,
+  localStorageKey,
+}): JSX.Element => {
   const api = useContext(APIContext);
   // TODO: fix type
   const treeUtils = new TreeUtils(api);
@@ -24,12 +31,8 @@ export const TreeFilterContextProvider = ({ children }): JSX.Element => {
     priorities: IssuePriority[];
     issueTypes: IssueType[];
     linkTypes: IssueLinkType[];
-  }>({ priorities: [], issueTypes: [], linkTypes: [] });
-  const [filter, setFilter] = useState<IssueTreeFilter>({
-    priorities: [],
-    issueTypes: [],
-    linkTypes: [],
-  });
+  }>();
+  const [filter, setFilter] = useState<IssueTreeFilter>();
   const updateFilter = (
     filter:
       | {
@@ -40,6 +43,28 @@ export const TreeFilterContextProvider = ({ children }): JSX.Element => {
       | ((prevFilter: IssueTreeFilter) => IssueTreeFilter)
   ): void => {
     setFilter(filter);
+  };
+
+  const updateLastSavedInLocalStorage = (newFilter: IssueTreeFilter): void => {
+    console.log("new filter set in local storage", newFilter);
+    if (newFilter !== undefined) {
+      console.log("new filter being set in local storage");
+      const lastSavedConfig = getItemInLocalStorage(localStorageKey);
+      const newSavedConfig = { ...lastSavedConfig, treeFilter: newFilter };
+      setItemInLocalStorage(localStorageKey, newSavedConfig);
+    }
+  };
+  const assignLastSavedTreeFilter = (): void => {
+    console.log("setting filter");
+    const lastSavedConfig = getItemInLocalStorage(localStorageKey);
+    console.log("lastsavedconfig", lastSavedConfig);
+    if (lastSavedConfig?.treeFilter !== undefined) {
+      console.log("setting last");
+      setFilter(lastSavedConfig.treeFilter);
+    } else {
+      console.log("setting default");
+      setFilter({ priorities: [], issueTypes: [], linkTypes: [] });
+    }
   };
 
   const updateOptions = (options: {
@@ -58,13 +83,31 @@ export const TreeFilterContextProvider = ({ children }): JSX.Element => {
   };
 
   useEffect(() => {
+    console.log(localStorageKey);
+    const handleInitialUpdateFilter = (newFilter: IssueTreeFilter): void => {
+      console.log("handle initial updater called");
+      console.log("newfilter", newFilter);
+      const lastSavedConfig = getItemInLocalStorage(localStorageKey);
+      if (
+        lastSavedConfig?.treeFilter !== undefined ||
+        lastSavedConfig?.treeFilter !== null
+      ) {
+        assignLastSavedTreeFilter();
+      } else {
+        console.log("setting new defautl filter");
+        updateFilter(newFilter);
+      }
+    };
     void treeUtils.loadTreeFilterDropdownsData(
-      updateFilter,
+      handleInitialUpdateFilter,
       updateOptions,
       updateIsLoading,
       handleNewError
     );
   }, []);
+  useEffect(() => {
+    updateLastSavedInLocalStorage(filter);
+  }, [filter]);
   const contextValue: TreeFilterContextValue = {
     errors,
     handleError: handleNewError,
