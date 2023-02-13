@@ -39,3 +39,12 @@ export interface AtlasTreeNode {
   data: IssueWithLinkedIssues | Issue | LinkTypeTreeNode | ButtonTypeTreeNode;
   isTogglerDisabled?: boolean;
 }
+
+
+export interface LastSavedReportConfig {
+  selectedTabIndex?: number; // convert to enum of tabs
+  selectedJQLString?: string;
+  selectedIssueTypeIds?: string[];
+  selectedLinkTypeIds?: string[];
+  selectedIssueFieldIds?: string[];
+}

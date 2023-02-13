@@ -30,6 +30,8 @@ import {
 import { TreeReportToolbar } from "./TreeReportToolbar";
 import { TreeFilterContext } from "../../context/treeFilterContext";
 import TreeUtils from "../../util/TreeUtils";
+import { lastSavedReportConfigKey } from "../../constants/common";
+import { LastSavedReportConfig } from "../../types/app";
 
 const FullWidthContainer = styled.div`
   width: 100%;
@@ -88,6 +90,7 @@ export const TracebilityReportModule = ({
   }, [selectedJQLString]);
   useEffect(() => {
     if (selectedIssueTypeIds?.length > 0) {
+      // TODO: remove length condition
       handleSetItemInSavedReportConfig(
         "selectedIssueTypeIds",
         selectedIssueTypeIds
@@ -111,11 +114,11 @@ export const TracebilityReportModule = ({
   }, [selectedIssueFieldIds]);
 
   useEffect(() => {
-    const lastSavedReportConfig = getItemInLocalStorage(
-      "lastSavedReportConfig"
+    const lastSavedReportConfig: LastSavedReportConfig = getItemInLocalStorage(
+      lastSavedReportConfigKey
     );
     console.log(lastSavedReportConfig);
-    if (Boolean(lastSavedReportConfig)) {
+    if (lastSavedReportConfig !== undefined && lastSavedReportConfig !== null) {
       if (
         lastSavedReportConfig.selectedTabIndex !== undefined &&
         lastSavedReportConfig.selectedTabIndex !== null
@@ -176,9 +179,8 @@ export const TracebilityReportModule = ({
         // setting state - table field options
 
         setIssueTypes(issueTypes);
-        const lastSavedReportConfig = getItemInLocalStorage(
-          "lastSavedReportConfig"
-        );
+        const lastSavedReportConfig: LastSavedReportConfig =
+          getItemInLocalStorage(lastSavedReportConfigKey);
         setLinkTypes(linkTypes);
         if (
           lastSavedReportConfig?.selectedIssueTypeIds !== undefined &&
@@ -192,22 +194,14 @@ export const TracebilityReportModule = ({
           setSelectedIssueFieldIds(selectedFieldIds);
         }
 
-        if (
-          lastSavedReportConfig?.selectedIssueTypeIds &&
-          lastSavedReportConfig?.selectedIssueTypeIds.length > 0
-        ) {
+        if (lastSavedReportConfig.selectedIssueTypeIds?.length > 0) {
           console.log("setting!");
           console.log(lastSavedReportConfig.selectedIssueTypeIds);
           setSelectedIssueTypeIds(lastSavedReportConfig.selectedIssueTypeIds);
         } else {
           setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
         }
-        if (
-          Boolean(
-            lastSavedReportConfig?.selectedLinkTypeIds &&
-              lastSavedReportConfig?.selectedLinkTypeIds.length > 0
-          )
-        ) {
+        if (lastSavedReportConfig?.selectedLinkTypeIds?.length > 0) {
           console.log("setting!");
           console.log(lastSavedReportConfig.selectedLinkTypeIds);
           setSelectedLinkTypeIds(lastSavedReportConfig.selectedLinkTypeIds);
