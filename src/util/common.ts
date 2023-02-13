@@ -1,6 +1,8 @@
 // writing all new common utils here.
 import { ThemeAppearance } from "@atlaskit/lozenge";
+import { lastSavedReportConfigKey } from "../constants/common";
 import { IssueStatus } from "../types/api";
+import { LastSavedReportConfig } from "../types/app";
 export const getKeyValues = (
   objArray: Array<{
     [key: string]: any;
@@ -15,7 +17,7 @@ export const handleSetItemInSavedReportConfig = (
   key: string,
   value: any
 ): void => {
-  const lastSavedReportConfig = getItemInLocalStorage("lastSavedReportConfig");
+  const lastSavedReportConfig = getItemInLocalStorage(lastSavedReportConfigKey);
   let newReportConfig: Object;
   if (lastSavedReportConfig !== null || lastSavedReportConfig !== undefined) {
     newReportConfig = { ...lastSavedReportConfig, [key]: value };
@@ -24,15 +26,26 @@ export const handleSetItemInSavedReportConfig = (
       [key]: value,
     };
   }
-  console.log("setting in local storage");
-  setItemInLocalStorage("lastSavedReportConfig", newReportConfig);
+  console.log(
+    "setting in local storage",
+    lastSavedReportConfigKey,
+    newReportConfig
+  );
+  setItemInLocalStorage(lastSavedReportConfigKey, newReportConfig);
+};
+
+export const handleGetItemInSavedReportConfig = (
+  key: string
+): LastSavedReportConfig => {
+  const lastSavedReportConfig: LastSavedReportConfig = getItemInLocalStorage(
+    lastSavedReportConfigKey
+  );
+  return lastSavedReportConfig[key];
 };
 
 export const getItemInLocalStorage = (key: string): any => {
   const strigifiedLastSavedReportConfig = window.localStorage.getItem(key);
-  const lastSavedReportConfig: Object = JSON.parse(
-    strigifiedLastSavedReportConfig
-  );
+  const lastSavedReportConfig = JSON.parse(strigifiedLastSavedReportConfig);
   return lastSavedReportConfig;
 };
 
