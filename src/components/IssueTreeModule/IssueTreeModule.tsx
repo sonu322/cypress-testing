@@ -18,9 +18,8 @@ export const IssueTreeModule = () => {
   const [errors, setErrors] = useState([]);
   const [tree, setTree] = useState(treeUtils.getRootTree());
   const [issueFields, setIssueFields] = useState<IssueField[]>([]);
-  const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState<string[]>(
-    []
-  );
+  const [selectedIssueFieldIds, setSelectedIssueFieldIds] =
+    useState<string[]>();
   const updateSelectedIssueFieldIds = (
     selectedIssueFieldIds: string[]
   ): void => {

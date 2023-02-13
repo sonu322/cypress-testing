@@ -62,9 +62,8 @@ export const TracebilityReportModule = ({
     null
   );
   const [issueFields, setIssueFields] = useState<IssueField[]>([]);
-  const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState<string[]>(
-    []
-  );
+  const [selectedIssueFieldIds, setSelectedIssueFieldIds] =
+    useState<string[]>();
   const [issueTypes, setIssueTypes] = useState<IssueType[]>([]);
   const [selectedIssueTypeIds, setSelectedIssueTypeIds] = useState<string[]>(
     []
@@ -101,13 +100,26 @@ export const TracebilityReportModule = ({
       );
     }
   }, [selectedIssueTypeIds, selectedLinkTypeIds]);
+
+  useEffect(() => {
+    if (selectedIssueFieldIds !== undefined) {
+      handleSetItemInSavedReportConfig(
+        "selectedIssueFieldIds",
+        selectedIssueFieldIds
+      );
+    }
+  }, [selectedIssueFieldIds]);
+
   useEffect(() => {
     const lastSavedReportConfig = getItemInLocalStorage(
       "lastSavedReportConfig"
     );
     console.log(lastSavedReportConfig);
     if (Boolean(lastSavedReportConfig)) {
-      if (Boolean(lastSavedReportConfig.selectedTabIndex)) {
+      if (
+        lastSavedReportConfig.selectedTabIndex !== undefined &&
+        lastSavedReportConfig.selectedTabIndex !== null
+      ) {
         setSelectedTabIndex(lastSavedReportConfig.selectedTabIndex);
       }
 
@@ -160,8 +172,6 @@ export const TracebilityReportModule = ({
         const fields = result[2];
         setIssueFields(fields);
         // setting state - selected field ids
-        const selectedFieldIds = getKeyValues(fields, "id");
-        setSelectedIssueFieldIds(selectedFieldIds);
 
         // setting state - table field options
 
@@ -170,6 +180,18 @@ export const TracebilityReportModule = ({
           "lastSavedReportConfig"
         );
         setLinkTypes(linkTypes);
+        if (
+          lastSavedReportConfig?.selectedIssueTypeIds !== undefined &&
+          lastSavedReportConfig?.selectedIssueTypeIds !== null
+        ) {
+          console.log("setting! issue fields");
+          console.log(lastSavedReportConfig.selectedIssueFieldIds);
+          setSelectedIssueFieldIds(lastSavedReportConfig.selectedIssueFieldIds);
+        } else {
+          const selectedFieldIds = getKeyValues(fields, "id");
+          setSelectedIssueFieldIds(selectedFieldIds);
+        }
+
         if (
           lastSavedReportConfig?.selectedIssueTypeIds &&
           lastSavedReportConfig?.selectedIssueTypeIds.length > 0
