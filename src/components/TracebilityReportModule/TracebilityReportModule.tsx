@@ -91,6 +91,7 @@ export const TracebilityReportModule = ({
   }, [selectedJQLString]);
   useEffect(() => {
     if (selectedIssueTypeIds?.length > 0) {
+      console.log("setting selected issue type ids in store");
       // TODO: remove length condition
       handleSetItemInSavedReportConfig(
         "selectedIssueTypeIds",
