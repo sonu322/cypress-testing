@@ -42,7 +42,7 @@ export const IssueTreeModule = () => {
 console.log("from child", treeFilterContext.filter);
 
 useEffect(() => {
-  if (selectedIssueFieldIds !== undefined) {
+  if (selectedIssueFieldIds !== undefined && selectedIssueFieldIds !== null) {
     treeUtils.handleSetItemInSavedTreeConfig(
       "selectedIssueFieldIds",
       selectedIssueFieldIds
@@ -54,12 +54,14 @@ useEffect(() => {
   const updateInitialSelectedIssueFields = (
     newSelectedIssueFieldIds: string[]
   ): void => {
+    console.log("called updateinitial");
     const savedSelectedIssueFieldIds: string[] =
       treeUtils.handleGetItemInSavedTreeConfig("selectedIssueFieldIds");
     if (
       savedSelectedIssueFieldIds !== undefined &&
       savedSelectedIssueFieldIds !== null
     ) {
+      console.log("using saved filter");
       updateSelectedIssueFieldIds(savedSelectedIssueFieldIds);
     } else {
       updateSelectedIssueFieldIds(newSelectedIssueFieldIds);
