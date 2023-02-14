@@ -47,6 +47,7 @@ export interface LastSavedReportConfig {
   selectedLinkTypeIds?: string[];
   selectedIssueFieldIds?: string[];
   treeFilter?: IssueTreeFilter;
+  isOrphansBranchPresent?: boolean;
 }
 
 export interface LastSavedTreeConfig {

@@ -53,7 +53,8 @@ export const TracebilityReportModule = ({
 }: Props): JSX.Element => {
   const { t } = useTranslation();
   const treeFilterContext = useContext(TreeFilterContext);
-  const [isOrphansBranchPresent, setIsOrphansBranchPresent] = useState(false);
+  const [isOrphansBranchPresent, setIsOrphansBranchPresent] =
+    useState<Boolean>();
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
   const [selectedSettingsDropdownIds, setSelectedSettingsDropdownIds] =
     useState<string[]>([autoHideEmptyColumnsId]);
@@ -127,21 +128,33 @@ export const TracebilityReportModule = ({
       ) {
         setSelectedTabIndex(lastSavedReportConfig.selectedTabIndex);
       }
-
       setSelectedJQLString(lastSavedReportConfig.selectedJQLString);
+      if (lastSavedReportConfig.isOrphansBranchPresent !== undefined) {
+        setIsOrphansBranchPresent(lastSavedReportConfig.isOrphansBranchPresent);
+      } else {
+        setIsOrphansBranchPresent(false);
+      }
     } else {
       console.log("set in else");
       setSelectedTabIndex(0);
+      setIsOrphansBranchPresent(false);
     }
   }, []);
+
   console.log("selectedTabIndex from outside", selectedTabIndex);
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
   const [tree, setTree] = useState(treeUtils.getRootTree());
   const updateIsOrphansBranchPresent = (
-    isOrphansBranchPresent: boolean
+    newIsOrphansBranchPresent: boolean
   ): void => {
-    setIsOrphansBranchPresent(isOrphansBranchPresent);
+    setIsOrphansBranchPresent(newIsOrphansBranchPresent);
+    if (newIsOrphansBranchPresent !== undefined) {
+      handleSetItemInSavedReportConfig(
+        "isOrphansBranchPresent",
+        newIsOrphansBranchPresent
+      );
+    }
   };
   const updateFilteredKeyOptions = (
     key: string,
