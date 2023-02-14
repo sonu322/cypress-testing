@@ -17,6 +17,7 @@ import {
   AtlasTree,
   AtlasTreeNode,
   ButtonTypeTreeNode,
+  LastSavedTreeConfig,
   LinkTypeTreeNode,
   TreeNodeType,
 } from "../types/app";
@@ -25,6 +26,8 @@ import {
   orphansMaxResults,
   orphansTreeBranchName,
 } from "../constants/traceabilityReport";
+import { getItemInLocalStorage, setItemInLocalStorage } from "./common";
+import { lastSavedTreeConfigKey } from "../constants/common";
 
 // root node
 const root: AtlasTree = {
@@ -62,6 +65,35 @@ export default class TreeUtils {
       return issueId;
     } else {
       return "";
+    }
+  };
+
+  handleSetItemInSavedTreeConfig = (key: string, value: any): void => {
+    const lastSavedTreeConfig = getItemInLocalStorage(lastSavedTreeConfigKey);
+    let newReportConfig: Object;
+    if (lastSavedTreeConfig !== null || lastSavedTreeConfig !== undefined) {
+      newReportConfig = { ...lastSavedTreeConfig, [key]: value };
+    } else {
+      newReportConfig = {
+        [key]: value,
+      };
+    }
+    console.log(
+      "setting in local storage",
+      lastSavedTreeConfigKey,
+      newReportConfig
+    );
+    setItemInLocalStorage(lastSavedTreeConfigKey, newReportConfig);
+  };
+
+  handleGetItemInSavedTreeConfig = (key: string): any => {
+    const lastSavedTreeConfig: LastSavedTreeConfig = getItemInLocalStorage(
+      lastSavedTreeConfigKey
+    );
+    if (lastSavedTreeConfig !== undefined && lastSavedTreeConfig !== null) {
+      return lastSavedTreeConfig[key];
+    } else {
+      return undefined;
     }
   };
 

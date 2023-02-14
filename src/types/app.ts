@@ -48,3 +48,8 @@ export interface LastSavedReportConfig {
   selectedIssueFieldIds?: string[];
   treeFilter?: IssueTreeFilter;
 }
+
+export interface LastSavedTreeConfig {
+  selectedIssueFieldIds?: string[];
+  treeFilter?: IssueTreeFilter;
+}
