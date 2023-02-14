@@ -86,6 +86,7 @@ export const TracebilityReportModule = ({
     if (selectedJQLString !== undefined && selectedJQLString !== null) {
       console.log(selectedJQLString);
       handleSetItemInSavedReportConfig("selectedJQLString", selectedJQLString);
+      // TODO: fix - if nothing is selected, automatically o length jql is selected
     }
   }, [selectedJQLString]);
   useEffect(() => {
@@ -105,7 +106,7 @@ export const TracebilityReportModule = ({
   }, [selectedIssueTypeIds, selectedLinkTypeIds]);
 
   useEffect(() => {
-    if (selectedIssueFieldIds !== undefined) {
+    if (selectedIssueFieldIds !== undefined && selectedIssueFieldIds !== null) {
       handleSetItemInSavedReportConfig(
         "selectedIssueFieldIds",
         selectedIssueFieldIds
@@ -256,6 +257,21 @@ export const TracebilityReportModule = ({
   const title = t("otpl.lxp.traceability-report.name");
   const selectedViewTab = viewTabs.tabs[selectedTabIndex].id;
   const isTreeReport = selectedViewTab === "tree-view";
+  let areTreeNecessitiesPresent = false;
+  if (treeFilterContext !== undefined && treeFilterContext !== null) {
+    if (
+      treeFilterContext.options !== undefined &&
+      treeFilterContext.options !== null
+    ) {
+      if (
+        treeFilterContext.filter !== undefined &&
+        treeFilterContext.filter !== null
+      ) {
+        areTreeNecessitiesPresent = true;
+      }
+    }
+  }
+
   const allErrors = errors.concat(treeFilterContext.errors);
 
   return (
@@ -294,7 +310,7 @@ export const TracebilityReportModule = ({
               handleTabOptionSelect={handleTabOptionSelect}
               selectedTabIndex={selectedTabIndex}
             />
-            {isTreeReport && (
+            {isTreeReport && areTreeNecessitiesPresent && (
               <TreeReportToolbar
                 options={treeFilterContext.options}
                 filter={treeFilterContext.filter}

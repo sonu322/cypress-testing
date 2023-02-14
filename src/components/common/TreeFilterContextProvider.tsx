@@ -42,28 +42,15 @@ export const TreeFilterContextProvider = ({
         }
       | ((prevFilter: IssueTreeFilter) => IssueTreeFilter)
   ): void => {
+    console.log("filter from update filter", filter);
     setFilter(filter);
   };
 
   const updateLastSavedInLocalStorage = (newFilter: IssueTreeFilter): void => {
-    console.log("new filter set in local storage", newFilter);
     if (newFilter !== undefined) {
-      console.log("new filter being set in local storage");
       const lastSavedConfig = getItemInLocalStorage(localStorageKey);
       const newSavedConfig = { ...lastSavedConfig, treeFilter: newFilter };
       setItemInLocalStorage(localStorageKey, newSavedConfig);
-    }
-  };
-  const assignLastSavedTreeFilter = (): void => {
-    console.log("setting filter");
-    const lastSavedConfig = getItemInLocalStorage(localStorageKey);
-    console.log("lastsavedconfig", lastSavedConfig);
-    if (lastSavedConfig?.treeFilter !== undefined) {
-      console.log("setting last");
-      setFilter(lastSavedConfig.treeFilter);
-    } else {
-      console.log("setting default");
-      setFilter({ priorities: [], issueTypes: [], linkTypes: [] });
     }
   };
 
@@ -85,16 +72,21 @@ export const TreeFilterContextProvider = ({
   useEffect(() => {
     console.log(localStorageKey);
     const handleInitialUpdateFilter = (newFilter: IssueTreeFilter): void => {
-      console.log("handle initial updater called");
-      console.log("newfilter", newFilter);
-      const lastSavedConfig = getItemInLocalStorage(localStorageKey);
-      if (
-        lastSavedConfig?.treeFilter !== undefined ||
-        lastSavedConfig?.treeFilter !== null
-      ) {
-        assignLastSavedTreeFilter();
+      const store = getItemInLocalStorage(localStorageKey);
+      console.log("from handleInitialUpdateFilter");
+      console.log(store);
+      if (store !== null) {
+        console.log("store is not null");
+        const storedFilter = store.treeFilter;
+        if (storedFilter !== undefined && storedFilter !== null) {
+          console.log("tree filter is not null");
+          console.log(store.treeFilter);
+          updateFilter(store.treeFilter);
+        } else {
+          console.log("setting normal filter");
+          updateFilter(newFilter);
+        }
       } else {
-        console.log("setting new defautl filter");
         updateFilter(newFilter);
       }
     };
