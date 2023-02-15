@@ -115,7 +115,6 @@ export const IssueTree = ({
   const onCollapse = (itemId: string): void => {
     treeUtils.collapseNode(itemId, setTree);
   };
- console.log("this is new");
  if (tree?.items !== undefined) {
    return (
      <Container>

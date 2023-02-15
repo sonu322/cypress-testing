@@ -42,7 +42,6 @@ export const TreeFilterContextProvider = ({
         }
       | ((prevFilter: IssueTreeFilter) => IssueTreeFilter)
   ): void => {
-    console.log("filter from update filter", filter);
     setFilter(filter);
   };
 
@@ -70,20 +69,13 @@ export const TreeFilterContextProvider = ({
   };
 
   useEffect(() => {
-    console.log(localStorageKey);
     const handleInitialUpdateFilter = (newFilter: IssueTreeFilter): void => {
       const store = getItemInLocalStorage(localStorageKey);
-      console.log("from handleInitialUpdateFilter");
-      console.log(store);
       if (store !== null) {
-        console.log("store is not null");
         const storedFilter = store.treeFilter;
         if (storedFilter !== undefined && storedFilter !== null) {
-          console.log("tree filter is not null");
-          console.log(store.treeFilter);
           updateFilter(store.treeFilter);
         } else {
-          console.log("setting normal filter");
           updateFilter(newFilter);
         }
       } else {

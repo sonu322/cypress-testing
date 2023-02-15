@@ -85,14 +85,12 @@ export const TracebilityReportModule = ({
   }, [selectedTabIndex]);
   useEffect(() => {
     if (selectedJQLString !== undefined && selectedJQLString !== null) {
-      console.log(selectedJQLString);
       handleSetItemInSavedReportConfig("selectedJQLString", selectedJQLString);
       // TODO: fix - if nothing is selected, automatically o length jql is selected
     }
   }, [selectedJQLString]);
   useEffect(() => {
     if (selectedIssueTypeIds?.length > 0) {
-      console.log("setting selected issue type ids in store");
       // TODO: remove length condition
       handleSetItemInSavedReportConfig(
         "selectedIssueTypeIds",
@@ -120,7 +118,6 @@ export const TracebilityReportModule = ({
     const lastSavedReportConfig: LastSavedReportConfig = getItemInLocalStorage(
       lastSavedReportConfigKey
     );
-    console.log(lastSavedReportConfig);
     if (lastSavedReportConfig !== undefined && lastSavedReportConfig !== null) {
       if (
         lastSavedReportConfig.selectedTabIndex !== undefined &&
@@ -135,13 +132,11 @@ export const TracebilityReportModule = ({
         setIsOrphansBranchPresent(false);
       }
     } else {
-      console.log("set in else");
       setSelectedTabIndex(0);
       setIsOrphansBranchPresent(false);
     }
   }, []);
 
-  console.log("selectedTabIndex from outside", selectedTabIndex);
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
   const [tree, setTree] = useState(treeUtils.getRootTree());
@@ -201,8 +196,6 @@ export const TracebilityReportModule = ({
           lastSavedReportConfig?.selectedIssueTypeIds !== undefined &&
           lastSavedReportConfig?.selectedIssueTypeIds !== null
         ) {
-          console.log("setting! issue fields");
-          console.log(lastSavedReportConfig.selectedIssueFieldIds);
           setSelectedIssueFieldIds(lastSavedReportConfig.selectedIssueFieldIds);
         } else {
           const selectedFieldIds = getKeyValues(fields, "id");
@@ -210,15 +203,11 @@ export const TracebilityReportModule = ({
         }
 
         if (lastSavedReportConfig.selectedIssueTypeIds?.length > 0) {
-          console.log("setting!");
-          console.log(lastSavedReportConfig.selectedIssueTypeIds);
           setSelectedIssueTypeIds(lastSavedReportConfig.selectedIssueTypeIds);
         } else {
           setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
         }
         if (lastSavedReportConfig?.selectedLinkTypeIds?.length > 0) {
-          console.log("setting!");
-          console.log(lastSavedReportConfig.selectedLinkTypeIds);
           setSelectedLinkTypeIds(lastSavedReportConfig.selectedLinkTypeIds);
         } else {
           setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
