@@ -13,26 +13,7 @@ export const getKeyValues = (
 };
 // TODO: add types so that, all objects contain the selected key property
 
-export const handleSetItemInSavedReportConfig = (
-  key: string,
-  value: any
-): void => {
-  const lastSavedReportConfig = getItemInLocalStorage(lastSavedReportConfigKey);
-  let newReportConfig: Object;
-  if (lastSavedReportConfig !== null || lastSavedReportConfig !== undefined) {
-    newReportConfig = { ...lastSavedReportConfig, [key]: value };
-  } else {
-    newReportConfig = {
-      [key]: value,
-    };
-  }
-  console.log(
-    "setting in local storage",
-    lastSavedReportConfigKey,
-    newReportConfig
-  );
-  setItemInLocalStorage(lastSavedReportConfigKey, newReportConfig);
-};
+
 
 export const handleGetItemInSavedReportConfig = (
   key: string

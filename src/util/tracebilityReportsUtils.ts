@@ -1,3 +1,4 @@
+import { lastSavedReportConfigKey } from "../constants/common";
 import LXPAPI, {
   Issue,
   IssueField,
@@ -5,7 +6,12 @@ import LXPAPI, {
   IssueType,
   IssueWithSortedLinks,
 } from "../types/api";
-import { getUniqueValues, getScreenHeight } from "./common";
+import {
+  getUniqueValues,
+  getScreenHeight,
+  getItemInLocalStorage,
+  setItemInLocalStorage,
+} from "./common";
 import { download, toTitleCase } from "./index";
 
 export default class TracebilityReportUtils {
@@ -121,6 +127,27 @@ const processByLinkType = (
     rowItems.push(rowItemString);
   });
   return rowItems;
+};
+
+export const handleSetItemInSavedReportConfig = (
+  key: string,
+  value: any
+): void => {
+  const lastSavedReportConfig = getItemInLocalStorage(lastSavedReportConfigKey);
+  let newReportConfig: Object;
+  if (lastSavedReportConfig !== null || lastSavedReportConfig !== undefined) {
+    newReportConfig = { ...lastSavedReportConfig, [key]: value };
+  } else {
+    newReportConfig = {
+      [key]: value,
+    };
+  }
+  console.log(
+    "setting in local storage",
+    lastSavedReportConfigKey,
+    newReportConfig
+  );
+  setItemInLocalStorage(lastSavedReportConfigKey, newReportConfig);
 };
 
 const processByIssueType = (

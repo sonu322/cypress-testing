@@ -15,13 +15,10 @@ import { Main } from "./Main";
 import { ErrorsList } from "../common/ErrorsList";
 import {
   exportReport,
+  handleSetItemInSavedReportConfig,
   orderSelectedIds,
 } from "../../util/tracebilityReportsUtils";
-import {
-  getItemInLocalStorage,
-  getKeyValues,
-  handleSetItemInSavedReportConfig,
-} from "../../util/common";
+import { getItemInLocalStorage, getKeyValues } from "../../util/common";
 import {
   autoHideEmptyColumnsId,
   reportCellOptions,
