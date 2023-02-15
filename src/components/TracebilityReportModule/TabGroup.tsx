@@ -19,12 +19,10 @@ export const TabGroup = ({
   selectedTabIndex,
   id,
 }: Props): JSX.Element => {
-  console.log(selectedTabIndex, "from tab group");
   const onChange = (tabIndex: SelectedType): void => {
     handleOptionSelect(tabIndex);
   };
   if (selectedTabIndex !== undefined) {
-    console.log(selectedTabIndex, "from inside return");
     return (
       <Tabs id={id} onChange={onChange} selected={selectedTabIndex}>
         <TabList>

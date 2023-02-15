@@ -39,42 +39,39 @@ export const IssueTreeModule = () => {
   const clearAllErrors = (): void => {
     setErrors([]);
   };
-console.log("from child", treeFilterContext.filter);
 
-useEffect(() => {
-  if (selectedIssueFieldIds !== undefined && selectedIssueFieldIds !== null) {
-    treeUtils.handleSetItemInSavedTreeConfig(
-      "selectedIssueFieldIds",
-      selectedIssueFieldIds
-    );
-  }
-}, [selectedIssueFieldIds]);
-
-useEffect(() => {
-  const updateInitialSelectedIssueFields = (
-    newSelectedIssueFieldIds: string[]
-  ): void => {
-    console.log("called updateinitial");
-    const savedSelectedIssueFieldIds: string[] =
-      treeUtils.handleGetItemInSavedTreeConfig("selectedIssueFieldIds");
-    if (
-      savedSelectedIssueFieldIds !== undefined &&
-      savedSelectedIssueFieldIds !== null
-    ) {
-      console.log("using saved filter");
-      updateSelectedIssueFieldIds(savedSelectedIssueFieldIds);
-    } else {
-      updateSelectedIssueFieldIds(newSelectedIssueFieldIds);
+  useEffect(() => {
+    if (selectedIssueFieldIds !== undefined && selectedIssueFieldIds !== null) {
+      treeUtils.handleSetItemInSavedTreeConfig(
+        "selectedIssueFieldIds",
+        selectedIssueFieldIds
+      );
     }
-  };
-  void treeUtils.loadToolbarData(
-    updateInitialSelectedIssueFields,
-    updateIssueFields,
-    updateIsLoading,
-    handleNewError
-  );
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, []);
+  }, [selectedIssueFieldIds]);
+
+  useEffect(() => {
+    const updateInitialSelectedIssueFields = (
+      newSelectedIssueFieldIds: string[]
+    ): void => {
+      const savedSelectedIssueFieldIds: string[] =
+        treeUtils.handleGetItemInSavedTreeConfig("selectedIssueFieldIds");
+      if (
+        savedSelectedIssueFieldIds !== undefined &&
+        savedSelectedIssueFieldIds !== null
+      ) {
+        updateSelectedIssueFieldIds(savedSelectedIssueFieldIds);
+      } else {
+        updateSelectedIssueFieldIds(newSelectedIssueFieldIds);
+      }
+    };
+    void treeUtils.loadToolbarData(
+      updateInitialSelectedIssueFields,
+      updateIssueFields,
+      updateIsLoading,
+      handleNewError
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const updateFilteredKeyOptions = (
     key: string,
