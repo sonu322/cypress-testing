@@ -66,11 +66,9 @@ export const TracebilityReportModule = ({
   const [selectedIssueFieldIds, setSelectedIssueFieldIds] =
     useState<string[]>();
   const [issueTypes, setIssueTypes] = useState<IssueType[]>([]);
-  const [selectedIssueTypeIds, setSelectedIssueTypeIds] = useState<string[]>(
-    []
-  );
+  const [selectedIssueTypeIds, setSelectedIssueTypeIds] = useState<string[]>();
   const [linkTypes, setLinkTypes] = useState<IssueLinkType[]>([]);
-  const [selectedLinkTypeIds, setSelectedLinkTypeIds] = useState<string[]>([]);
+  const [selectedLinkTypeIds, setSelectedLinkTypeIds] = useState<string[]>();
   const [areIssuesLoading, setAreIssuesLoading] = useState(false);
   const [errors, setErrors] = useState<unknown[]>([]);
   const [isToggleOrphansLoading, setIsToggleOrphansLoading] = useState(false);
@@ -88,14 +86,17 @@ export const TracebilityReportModule = ({
     }
   }, [selectedJQLString]);
   useEffect(() => {
-    if (selectedIssueTypeIds?.length > 0) {
+    if (
+      selectedIssueTypeIds !== undefined &&
+      selectedIssueTypeIds.length >= 0
+    ) {
       // TODO: remove length condition
       handleSetItemInSavedReportConfig(
         "selectedIssueTypeIds",
         selectedIssueTypeIds
       );
     }
-    if (selectedLinkTypeIds?.length > 0) {
+    if (selectedLinkTypeIds !== undefined && selectedLinkTypeIds.length >= 0) {
       handleSetItemInSavedReportConfig(
         "selectedLinkTypeIds",
         selectedLinkTypeIds
@@ -200,12 +201,18 @@ export const TracebilityReportModule = ({
           setSelectedIssueFieldIds(selectedFieldIds);
         }
 
-        if (lastSavedReportConfig.selectedIssueTypeIds?.length > 0) {
+        if (
+          lastSavedReportConfig.selectedIssueTypeIds !== undefined &&
+          lastSavedReportConfig.selectedIssueTypeIds !== null
+        ) {
           setSelectedIssueTypeIds(lastSavedReportConfig.selectedIssueTypeIds);
         } else {
           setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
         }
-        if (lastSavedReportConfig?.selectedLinkTypeIds?.length > 0) {
+        if (
+          lastSavedReportConfig?.selectedLinkTypeIds !== undefined &&
+          lastSavedReportConfig?.selectedLinkTypeIds !== null
+        ) {
           setSelectedLinkTypeIds(lastSavedReportConfig.selectedLinkTypeIds);
         } else {
           setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
