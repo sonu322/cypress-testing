@@ -79,7 +79,6 @@ export const TracebilityReportModule = ({
   useEffect(() => {
     if (selectedJQLString !== undefined) {
       handleSetItemInSavedReportConfig("selectedJQLString", selectedJQLString);
-      // TODO: fix - if nothing is selected, automatically o length jql is selected
     }
   }, [selectedJQLString]);
   useEffect(() => {
@@ -87,7 +86,6 @@ export const TracebilityReportModule = ({
       selectedIssueTypeIds !== undefined &&
       selectedIssueTypeIds.length >= 0
     ) {
-      // TODO: remove length condition
       handleSetItemInSavedReportConfig(
         "selectedIssueTypeIds",
         selectedIssueTypeIds
