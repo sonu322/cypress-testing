@@ -61,9 +61,7 @@ export const TracebilityReportModule = ({
   const [filteredIssues, setFilteredIssues] = useState<
     IssueWithSortedLinks[] | null
   >(null);
-  const [selectedJQLString, setSelectedJQLString] = useState<string | null>(
-    null
-  );
+  const [selectedJQLString, setSelectedJQLString] = useState<string | null>();
   const [issueFields, setIssueFields] = useState<IssueField[]>([]);
   const [selectedIssueFieldIds, setSelectedIssueFieldIds] =
     useState<string[]>();
@@ -84,7 +82,7 @@ export const TracebilityReportModule = ({
     }
   }, [selectedTabIndex]);
   useEffect(() => {
-    if (selectedJQLString !== undefined && selectedJQLString !== null) {
+    if (selectedJQLString !== undefined) {
       handleSetItemInSavedReportConfig("selectedJQLString", selectedJQLString);
       // TODO: fix - if nothing is selected, automatically o length jql is selected
     }
