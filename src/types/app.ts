@@ -1,4 +1,4 @@
-import { ID, Issue, IssueWithLinkedIssues } from "./api";
+import { ID, Issue, IssueTreeFilter, IssueWithLinkedIssues } from "./api";
 
 export interface AtlasTree {
   rootId: string;
@@ -38,4 +38,19 @@ export interface AtlasTreeNode {
   parentIssueId: ID;
   data: IssueWithLinkedIssues | Issue | LinkTypeTreeNode | ButtonTypeTreeNode;
   isTogglerDisabled?: boolean;
+}
+
+export interface LastSavedReportConfig {
+  selectedTabIndex?: number; // convert to enum of tabs
+  selectedJQLString?: string;
+  selectedIssueTypeIds?: string[];
+  selectedLinkTypeIds?: string[];
+  selectedIssueFieldIds?: string[];
+  treeFilter?: IssueTreeFilter;
+  isOrphansBranchPresent?: boolean;
+}
+
+export interface LastSavedTreeConfig {
+  selectedIssueFieldIds?: string[];
+  treeFilter?: IssueTreeFilter;
 }

@@ -99,7 +99,7 @@ export const Main = ({
   };
   const tracebilityReportUtils = new TracebilityReportUtils(api);
   useEffect(() => {
-    if (selectedJqlString !== null) {
+    if (selectedJqlString !== undefined && selectedJqlString !== null) {
       const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
       void tracebilityReportUtils.populateIssues(
         selectedJqlString,
