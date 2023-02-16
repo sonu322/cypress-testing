@@ -1,6 +1,8 @@
 // writing all new common utils here.
 import { ThemeAppearance } from "@atlaskit/lozenge";
+import { lastSavedReportConfigKey } from "../constants/common";
 import { IssueStatus } from "../types/api";
+import { LastSavedReportConfig } from "../types/app";
 export const getKeyValues = (
   objArray: Array<{
     [key: string]: any;
@@ -10,6 +12,33 @@ export const getKeyValues = (
   return objArray.map((obj) => obj[key]);
 };
 // TODO: add types so that, all objects contain the selected key property
+
+
+
+export const handleGetItemInSavedReportConfig = (
+  key: string
+): LastSavedReportConfig => {
+  const lastSavedReportConfig: LastSavedReportConfig = getItemInLocalStorage(
+    lastSavedReportConfigKey
+  );
+  return lastSavedReportConfig[key];
+};
+
+
+
+export const getItemInLocalStorage = (key: string): any => {
+  const strigifiedLastSavedReportConfig = window.localStorage.getItem(key);
+  const lastSavedReportConfig = JSON.parse(strigifiedLastSavedReportConfig);
+  return lastSavedReportConfig;
+};
+
+export const setItemInLocalStorage = (key: string, value: any): void => {
+  window.localStorage.setItem(key, JSON.stringify(value));
+};
+
+
+
+
 export const getKeyMap = (
   map: Map<
     string,
