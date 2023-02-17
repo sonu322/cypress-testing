@@ -103,7 +103,8 @@ export default class TracebilityReportUtils {
     if (this.api.isServer) {
       finalHeight = this.calculateServerHeight(errors) - 42;
     } else {
-      finalHeight = this.calculateCloudHeight(errors) - 42;
+      finalHeight =
+        this.calculateCloudHeight(errors) + 24 - 42 - 8 - 8 - 30 - 8; 
     }
     return finalHeight < 200 ? 200 : finalHeight;
   };
