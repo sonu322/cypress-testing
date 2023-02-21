@@ -89,7 +89,7 @@ export default class TracebilityReportUtils {
       allMessagesHeight -
       2;
     return finalHeight;
-  };;
+  };
 
   // TODO: probably we may improve this calculation
   calculateTableHeight = (errors): number => {
