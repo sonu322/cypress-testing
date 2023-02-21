@@ -74,12 +74,10 @@ export default class TracebilityReportUtils {
   calculateServerHeight = (errors): number => {
     const headingHeight = 41 + 80 + 80 + 8; // 8: margin top
     const toolbarHeight = 94 + 8; // 8: table top margin
-    const footerHeight = 91;
     const // more button 8: margin top and bottom
       errorsHeight = errors?.length > 0 ? (52 + 8) * errors.length : 0;
     const allBanners = document.getElementsByClassName("aui-banner");
     const allMessages = document.getElementsByClassName("aui-message");
-    console.log("all banners length", allBanners.length);
     const allBannersHeight = 40 * allBanners.length;
     const allMessagesHeight = 40 * allMessages.length;
     const finalHeight =
@@ -107,7 +105,7 @@ export default class TracebilityReportUtils {
   calculateTreeHeight = (errors): number => {
     let finalHeight: number;
     if (this.api.isServer) {
-      finalHeight = this.calculateServerHeight(errors) - 42 - 8 - 8 - 30 - 8;
+      finalHeight = this.calculateServerHeight(errors) - 42 - 8 - 8 - 8 - 8;
     } else {
       finalHeight =
         this.calculateCloudHeight(errors) + 24 - 42 - 8 - 8 - 30 - 8;
@@ -149,11 +147,6 @@ export const handleSetItemInSavedReportConfig = (
       [key]: value,
     };
   }
-  console.log(
-    "setting in local storage",
-    lastSavedReportConfigKey,
-    newReportConfig
-  );
   setItemInLocalStorage(lastSavedReportConfigKey, newReportConfig);
 };
 
