@@ -78,11 +78,6 @@ export default class TreeUtils {
         [key]: value,
       };
     }
-    console.log(
-      "setting in local storage",
-      lastSavedTreeConfigKey,
-      newReportConfig
-    );
     setItemInLocalStorage(lastSavedTreeConfigKey, newReportConfig);
   };
 

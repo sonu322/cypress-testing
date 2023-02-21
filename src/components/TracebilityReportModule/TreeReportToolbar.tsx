@@ -58,7 +58,7 @@ export const TreeReportToolbar = ({
 
   return (
     <ToolbarContainer>
-      <Heading level={"h600"}>{treeToolBarHeading}</Heading>
+      <Heading level={"h300"}>{treeToolBarHeading}</Heading>
       <FlexContainer>
         <TreeFilterDropdowns
           options={options}
