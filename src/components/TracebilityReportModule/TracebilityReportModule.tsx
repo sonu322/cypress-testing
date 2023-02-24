@@ -138,6 +138,11 @@ export const TracebilityReportModule = ({
     newIsOrphansBranchPresent: boolean
   ): void => {
     setIsOrphansBranchPresent(newIsOrphansBranchPresent);
+    if (newIsOrphansBranchPresent) {
+      setIsToggleOrphansLoading(true);
+      setTree((tree) => treeUtils.addOrphansBranch(tree));
+      setIsToggleOrphansLoading(false);
+    }
     if (newIsOrphansBranchPresent !== undefined) {
       handleSetItemInSavedReportConfig(
         "isOrphansBranchPresent",
