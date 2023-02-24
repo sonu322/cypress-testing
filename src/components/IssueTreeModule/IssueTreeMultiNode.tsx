@@ -13,7 +13,6 @@ import {
   orphansTreeBranchName,
 } from "../../constants/traceabilityReport";
 import { APIContext } from "../../context/api";
-import { mutateTree } from "@atlaskit/tree";
 
 export interface Props {
   tree: AtlasTree;
@@ -29,7 +28,6 @@ export interface Props {
   selectedJqlString: string;
   isToggleOrphansLoading: boolean;
   updateIsToggleOrphansLoading: (isToggleOrphansLoading: boolean) => void;
-  areMoreIssuesLoading: boolean;
   selectedLimitOptionId: number;
 }
 
@@ -47,7 +45,6 @@ export const IssueTreeMultiNode = ({
   selectedJqlString,
   isToggleOrphansLoading,
   updateIsToggleOrphansLoading,
-  areMoreIssuesLoading,
   selectedLimitOptionId,
 }: Props): JSX.Element => {
   const api = useContext(APIContext);

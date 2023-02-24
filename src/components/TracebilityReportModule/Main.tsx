@@ -166,7 +166,6 @@ export const Main = ({
               setTree={setTree}
               isToggleOrphansLoading={isToggleOrphansLoading}
               updateIsToggleOrphansLoading={updateIsToggleOrphansLoading}
-              areMoreIssuesLoading={areMoreIssuesLoading}
               selectedLimitOptionId={selectedLimitOptionId}
             />
           ) : (
