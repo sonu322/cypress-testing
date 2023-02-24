@@ -90,9 +90,22 @@ export const Main = ({
   const { t } = useTranslation();
   const api = useContext(APIContext);
   const addMoreIssues = (issues: IssueWithSortedLinks[]): void => {
+    console.log(
+      "OLD ISSUS =============",
+      filteredIssues,
+      filteredIssues.length
+    );
+    console.log("NEW TO BE ADDED ISSUES", issues, issues.length);
     const newIssues = filteredIssues ?? [];
-    const updatedIssues = newIssues.concat(issues);
-    setFilteredIssues(updatedIssues);
+    if (issues?.length > 0) {
+      const updatedIssues = newIssues.concat(issues);
+      console.log(
+        " UPDATED ISSUS =============",
+        updatedIssues,
+        updatedIssues.length
+      );
+      setFilteredIssues(updatedIssues);
+    }
   };
   const updateIssues = (issues: IssueWithSortedLinks[]): void => {
     setFilteredIssues(issues);
@@ -164,6 +177,8 @@ export const Main = ({
               setTree={setTree}
               isToggleOrphansLoading={isToggleOrphansLoading}
               updateIsToggleOrphansLoading={updateIsToggleOrphansLoading}
+              areMoreIssuesLoading={areMoreIssuesLoading}
+              selectedLimitOptionId={selectedLimitOptionId}
             />
           ) : (
             <Report

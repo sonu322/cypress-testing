@@ -11,6 +11,8 @@ import {
   IssueType,
 } from "../../types/api";
 import { useTranslation } from "react-i18next";
+import TreeUtils from "../../util/TreeUtils";
+import { APIContext } from "../../context/api";
 const FlexContainer = styled.div`
   display: flex;
   gap: 4px;

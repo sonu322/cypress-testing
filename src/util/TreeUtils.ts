@@ -293,6 +293,54 @@ export default class TreeUtils {
     }
   }
 
+  addNewNodes(
+    handleError,
+    filteredIssues: IssueWithSortedLinks[],
+    prevTree: AtlasTree,
+    shouldShowOrphans: boolean
+  ): AtlasTree {
+    try {
+      let tree = this.cloneTree(prevTree);
+      const filteredIssuesWithLinks: IssueWithLinkedIssues[] =
+        filteredIssues.map((filteredIssue) => {
+          let linkedIssues = [];
+          Object.values(filteredIssue.sortedLinks).forEach((issuesOfType) => {
+            linkedIssues = linkedIssues.concat(issuesOfType);
+          });
+
+          const issueWithLinkedIssues = {
+            ...filteredIssue,
+            linkedIssues,
+          };
+          delete issueWithLinkedIssues.sortedLinks;
+          return issueWithLinkedIssues;
+        });
+
+      tree.items[this.ROOT_ID].children = [];
+      filteredIssuesWithLinks.forEach((issueWithLinks) => {
+        const node = this.createTreeNode(
+          tree,
+          "",
+          issueWithLinks,
+          null,
+          TreeNodeType.IssueNode,
+          false,
+          false
+        );
+        const nodeId = node.id;
+        tree.items[this.ROOT_ID].children.push(nodeId);
+      });
+      if (shouldShowOrphans) {
+        tree = this.addOrphansBranch(tree);
+        return tree;
+      }
+      return tree;
+    } catch (err) {
+      console.error(err);
+      handleError(err);
+    }
+  }
+
   removeOrphansBranch(tree: AtlasTree): AtlasTree {
     let newTree = this.cloneTree(tree);
     const rootNode = tree.items[this.ROOT_ID];
