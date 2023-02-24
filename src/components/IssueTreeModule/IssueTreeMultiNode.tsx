@@ -67,8 +67,6 @@ export const IssueTreeMultiNode = ({
 
     if (filteredIssues !== undefined && filteredIssues.length > 0) {
       if (filteredIssues.length <= selectedLimitOptionId) {
-        console.log("init tree called");
-        console.log(filteredIssues.length, selectedLimitOptionId);
         void initTree();
       }
     }
@@ -79,18 +77,13 @@ export const IssueTreeMultiNode = ({
   useEffect(() => {
     if (filteredIssues?.length > selectedLimitOptionId) {
       setTree((prevTree) => {
-        console.log("prevtree", prevTree);
         let shouldShowOrphansBranch = false;
         const isOrphansBranchPreviouslyPresent = prevTree.items[
           treeUtils.ROOT_ID
         ]?.children?.includes(`/${orphansTreeBranchName}`);
         if (isOrphansBranchPresent) {
-          console.log("isorphansbranchpresent", isOrphansBranchPresent);
-          console.log(prevTree.items);
           if (isOrphansBranchPreviouslyPresent) {
-            console.log("isorphansbranchpreviouslypresent");
             if (prevTree.items[`/${orphansTreeBranchName}`] !== undefined) {
-              console.log("prevTree.items!== undefined");
               shouldShowOrphansBranch = true;
             }
           }
@@ -108,16 +101,13 @@ export const IssueTreeMultiNode = ({
 
   useEffect(() => {
     if (tree !== undefined) {
-      console.log("tree is not undefined");
       const rootNode = tree.items[treeUtils.ROOT_ID];
       const orphansTreeBranchId = `/${orphansTreeBranchName}`;
       if (isOrphansBranchPresent) {
         if (tree.items[orphansTreeBranchId] !== undefined) {
-          console.log("orphans branch present");
           updateIsToggleOrphansLoading(true);
           setTree((tree) => {
             if (tree?.items !== undefined) {
-              console.log(tree.items);
               const isOrphanBranchHidden = !tree?.items[
                 treeUtils.ROOT_ID
               ]?.children?.includes(`/${orphansTreeBranchName}`);
@@ -189,9 +179,6 @@ export const IssueTreeMultiNode = ({
       tree.items[orphansTreeBranchId] === undefined &&
       isOrphansBranchPresent
     ) {
-      console.log("calling init orphnas");
-      console.log(tree.items[orphansTreeBranchId]);
-      console.log(tree.items[orphansTreeBranchId], "orphans tree branch id");
       updateIsToggleOrphansLoading(true);
       void initOrphans().then(() => {
         updateIsToggleOrphansLoading(false);

@@ -90,20 +90,9 @@ export const Main = ({
   const { t } = useTranslation();
   const api = useContext(APIContext);
   const addMoreIssues = (issues: IssueWithSortedLinks[]): void => {
-    console.log(
-      "OLD ISSUS =============",
-      filteredIssues,
-      filteredIssues.length
-    );
-    console.log("NEW TO BE ADDED ISSUES", issues, issues.length);
     const newIssues = filteredIssues ?? [];
     if (issues?.length > 0) {
       const updatedIssues = newIssues.concat(issues);
-      console.log(
-        " UPDATED ISSUS =============",
-        updatedIssues,
-        updatedIssues.length
-      );
       setFilteredIssues(updatedIssues);
     }
   };
