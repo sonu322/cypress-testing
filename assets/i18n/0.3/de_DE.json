@@ -42,6 +42,7 @@
   "otpl.lxp.api.filters-error": "Fehler beim Abrufen von vorgangfiltern",
   "otpl.lxp.api.filter-tree-error": "Fehler beim Filtern von Vorgänge",
   "otpl.lxp.api.add-node-children-error": "Fehler beim Hinzufügen von untergeordneten vorgängen",
+  "otpl.lxp.traceability-report.tree-view.tree-toolbar-heading": "Verknüpfte vorgänge filtern",
   "otpl.lxp.api.project-error": "Projekt nicht gefunden.",
   "otpl.lxp.jira.current-issuekey-error": "Fehler beim Abrufen des aktuellen vorgangschlüssels.",
   "otpl.lxp.link-issue-tab-panel.name": "Verknüpfte Vorgänge",

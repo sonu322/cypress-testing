@@ -28,6 +28,7 @@ export interface Props {
   selectedJqlString: string;
   isToggleOrphansLoading: boolean;
   updateIsToggleOrphansLoading: (isToggleOrphansLoading: boolean) => void;
+  selectedLimitOptionId: number;
 }
 
 export const IssueTreeMultiNode = ({
@@ -44,6 +45,7 @@ export const IssueTreeMultiNode = ({
   selectedJqlString,
   isToggleOrphansLoading,
   updateIsToggleOrphansLoading,
+  selectedLimitOptionId,
 }: Props): JSX.Element => {
   const api = useContext(APIContext);
   const fieldMap = {};
@@ -53,44 +55,78 @@ export const IssueTreeMultiNode = ({
 
   useEffect(() => {
     const initTree = async (): Promise<void> => {
-      let newTree = treeUtils.initMultiNodeTree(handleError, filteredIssues);
-      setTree(newTree);
+      const itemsTree = treeUtils.initMultiNodeTree(
+        handleError,
+        filteredIssues
+      );
+      setTree(itemsTree);
     };
 
-    void initTree();
+    if (filteredIssues !== undefined && filteredIssues.length > 0) {
+      if (filteredIssues.length <= selectedLimitOptionId) {
+        void initTree();
+      }
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedJqlString, filteredIssues]);
+
+  useEffect(() => {
+    if (filteredIssues?.length > selectedLimitOptionId) {
+      setTree((prevTree) => {
+        let shouldShowOrphansBranch = false;
+        const isOrphansBranchPreviouslyPresent = prevTree.items[
+          treeUtils.ROOT_ID
+        ]?.children?.includes(`/${orphansTreeBranchName}`);
+        if (isOrphansBranchPresent) {
+          if (isOrphansBranchPreviouslyPresent) {
+            if (prevTree.items[`/${orphansTreeBranchName}`] !== undefined) {
+              shouldShowOrphansBranch = true;
+            }
+          }
+        }
+        const newTree = treeUtils.addNewNodes(
+          handleError,
+          filteredIssues,
+          prevTree,
+          shouldShowOrphansBranch
+        );
+        return newTree;
+      });
+    }
   }, [filteredIssues]);
 
   useEffect(() => {
-    const rootNode = tree.items[treeUtils.ROOT_ID];
-    const orphansTreeBranchId = `/${orphansTreeBranchName}`;
-    if (isOrphansBranchPresent) {
-      if (tree.items[orphansTreeBranchId] !== undefined) {
-        updateIsToggleOrphansLoading(true);
-
-        setTree((tree) => {
-          const isOrphanBranchHidden = !tree.items[
-            treeUtils.ROOT_ID
-          ]?.children?.includes(`/${orphansTreeBranchName}`);
-
-          if (isToggleOrphansLoading === true && isOrphanBranchHidden) {
-            const newTree = treeUtils.addOrphansBranch(tree);
+    if (tree !== undefined) {
+      const rootNode = tree.items[treeUtils.ROOT_ID];
+      const orphansTreeBranchId = `/${orphansTreeBranchName}`;
+      if (isOrphansBranchPresent) {
+        if (tree.items[orphansTreeBranchId] !== undefined) {
+          updateIsToggleOrphansLoading(true);
+          setTree((tree) => {
+            if (tree?.items !== undefined) {
+              const isOrphanBranchHidden = !tree?.items[
+                treeUtils.ROOT_ID
+              ]?.children?.includes(`/${orphansTreeBranchName}`);
+              if (isToggleOrphansLoading && isOrphanBranchHidden) {
+                const newTree = treeUtils.addOrphansBranch(tree);
+                return newTree;
+              } else {
+                return tree;
+              }
+            }
+          });
+        }
+      } else {
+        if (rootNode.children.includes(orphansTreeBranchId)) {
+          setTree((tree) => {
+            const newTree = treeUtils.removeOrphansBranch(tree);
             return newTree;
-          } else {
-            return tree;
-          }
-        });
-      }
-    } else {
-      if (rootNode.children.includes(orphansTreeBranchId)) {
-        setTree((tree) => {
-          const newTree = treeUtils.removeOrphansBranch(tree);
-          return newTree;
-        });
+          });
+        }
       }
     }
-  }, [isOrphansBranchPresent]);
+  }, [isOrphansBranchPresent, tree]);
 
   useEffect(() => {
     const isOrphansBranchVisible = tree?.items[
@@ -112,14 +148,21 @@ export const IssueTreeMultiNode = ({
         );
 
         setTree((tree) => {
-          const newTree = treeUtils.initOrphanBranch(
-            searchResult.data,
-            searchResult.total,
-            tree,
+          const isOrphanBranchHidden = !tree.items[
+            treeUtils.ROOT_ID
+          ]?.children?.includes(`/${orphansTreeBranchName}`);
 
-            handleError
-          );
-          return newTree;
+          if (isOrphanBranchHidden) {
+            const newTree = treeUtils.initOrphanBranch(
+              searchResult.data,
+              searchResult.total,
+              tree,
+              handleError
+            );
+            return newTree;
+          } else {
+            return tree;
+          }
         });
       } catch (e) {
         handleError(e);
@@ -129,6 +172,7 @@ export const IssueTreeMultiNode = ({
     const orphansTreeBranchId = `/
     ${orphansTreeBranchName}`;
     if (
+      tree !== undefined &&
       tree.items[orphansTreeBranchId] === undefined &&
       isOrphansBranchPresent
     ) {
@@ -138,7 +182,7 @@ export const IssueTreeMultiNode = ({
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOrphansBranchPresent, filteredIssues]);
+  }, [isOrphansBranchPresent, selectedJqlString]);
   return (
     <IssueTree
       tree={tree}
