@@ -36,6 +36,7 @@ interface Props {
   setTree: React.Dispatch<React.SetStateAction<AtlasTree>>;
   isToggleOrphansLoading: boolean;
   updateIsToggleOrphansLoading: (isToggleOrphansLoading: boolean) => void;
+  selectedLimitOptionId: number;
 }
 export const TreeReport = ({
   selectedJqlString,
@@ -51,6 +52,7 @@ export const TreeReport = ({
   setTree,
   updateIsToggleOrphansLoading,
   isToggleOrphansLoading,
+  selectedLimitOptionId,
 }: Props): JSX.Element => {
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
@@ -88,6 +90,7 @@ export const TreeReport = ({
         selectedJqlString={selectedJqlString}
         isToggleOrphansLoading={isToggleOrphansLoading}
         updateIsToggleOrphansLoading={updateIsToggleOrphansLoading}
+        selectedLimitOptionId={selectedLimitOptionId}
       />
     </Container>
   );

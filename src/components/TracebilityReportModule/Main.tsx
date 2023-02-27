@@ -91,8 +91,10 @@ export const Main = ({
   const api = useContext(APIContext);
   const addMoreIssues = (issues: IssueWithSortedLinks[]): void => {
     const newIssues = filteredIssues ?? [];
-    const updatedIssues = newIssues.concat(issues);
-    setFilteredIssues(updatedIssues);
+    if (issues?.length > 0) {
+      const updatedIssues = newIssues.concat(issues);
+      setFilteredIssues(updatedIssues);
+    }
   };
   const updateIssues = (issues: IssueWithSortedLinks[]): void => {
     setFilteredIssues(issues);
@@ -164,6 +166,7 @@ export const Main = ({
               setTree={setTree}
               isToggleOrphansLoading={isToggleOrphansLoading}
               updateIsToggleOrphansLoading={updateIsToggleOrphansLoading}
+              selectedLimitOptionId={selectedLimitOptionId}
             />
           ) : (
             <Report
