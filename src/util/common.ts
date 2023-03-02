@@ -1,6 +1,6 @@
 // writing all new common utils here.
 import { ThemeAppearance } from "@atlaskit/lozenge";
-import { IssueStatus } from "../types/api";
+import { Issue, IssueField, IssueStatus } from "../types/api";
 export const getKeyValues = (
   objArray: Array<{
     [key: string]: any;
@@ -49,7 +49,7 @@ export const getScreenHeight = (): number => {
 };
 
 export const getStatusAppearance = (status: IssueStatus): ThemeAppearance => {
-  if(status === null || status === undefined) return "default";
+  if (status === null || status === undefined) return "default";
   const known: ThemeAppearance[] = [
     "default", // gray
     "inprogress", // blue
@@ -89,23 +89,68 @@ export const getStatusAppearance = (status: IssueStatus): ThemeAppearance => {
   return type;
 };
 
-export const getAppRoot = (): Promise<HTMLElement>  => {
+export const getAppRoot = (): Promise<HTMLElement> => {
   let root = document.getElementById("lxp-container-root");
-  if(root) return Promise.resolve(root);
+  if (root) return Promise.resolve(root);
   else {
     return new Promise((resolve) => {
       let counter = 0;
       const interval = setInterval(() => {
         counter++;
         root = document.getElementById("lxp-container-root");
-        if(root){
+        if (root) {
           clearInterval(interval);
           resolve(root);
-        } else if(counter > 20){
+        } else if (counter > 20) {
           clearInterval(interval);
           resolve(null);
         }
       }, 50);
     });
   }
+};
+
+export const addIssueDetails = (issue: Issue, issueFields: IssueField[], selectedIssueFieldIds: string[], rowItems): void => {
+  issueFields.forEach((issueField) => {
+    if (selectedIssueFieldIds.includes(issueField.id)) {
+      let value = "";
+      if (issueField.id === "issueType") {
+        value = issue.type?.name;
+      } else if (issueField.id === "priority") {
+        value = issue.priority?.name;
+      } else if (issueField.id === "storyPoints") {
+        value = (isNaN(issue.storyPoints) || issue.storyPoints === null) ?
+          "" : String(issue.storyPoints);
+      } else if (issueField.id === "fixVersions") {
+        value = "";
+        let i = 0;
+        issue.fixVersions.forEach((fixVersion) => {
+          if (i > 0) {
+            value += ", ";
+          }
+          value += fixVersion?.name;
+          i++;
+        });
+      } else if (issueField.id === "status") {
+        value = issue.status?.name;
+      } else if (issueField.id === "assignee") {
+        const assignee = issue.assignee?.displayName;
+        value = assignee !== undefined ? assignee : "";
+      } else if (issueField.id === "summary") {
+        value = issue.summary;
+      }
+      rowItems.push(value);
+    }
+  });
+};
+
+const escapeCSVCell = (cell: string, hasQuotes: boolean): string => {
+  if (typeof cell === "string") {
+    cell = cell.replace(/"/g, "\"\"");
+  }
+  return hasQuotes ? `"${cell}"` : cell.toString();
+};
+
+export const toCSV = (array, hasQuotes: boolean): any => {
+  return array.map((row) => row.map((cell) => escapeCSVCell(cell, hasQuotes)).join(",")).join("\n");
 };
