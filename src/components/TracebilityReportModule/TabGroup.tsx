@@ -22,15 +22,19 @@ export const TabGroup = ({
   const onChange = (tabIndex: SelectedType): void => {
     handleOptionSelect(tabIndex);
   };
-  return (
-    <Tabs id={id} onChange={onChange} selected={selectedTabIndex}>
-      <TabList>
-        {options.map((option) => (
-          <TooltipContainer key={option.name} content={option.description}>
-            <Tab>{option.name}</Tab>
-          </TooltipContainer>
-        ))}
-      </TabList>
-    </Tabs>
-  );
+  if (selectedTabIndex !== undefined) {
+    return (
+      <Tabs id={id} onChange={onChange} selected={selectedTabIndex}>
+        <TabList>
+          {options.map((option) => (
+            <TooltipContainer key={option.name} content={option.description}>
+              <Tab>{option.name}</Tab>
+            </TooltipContainer>
+          ))}
+        </TabList>
+      </Tabs>
+    );
+  } else {
+    return <span>loading</span>;
+  }
 };

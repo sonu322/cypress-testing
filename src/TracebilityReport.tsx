@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import LicenseContainer from "./components/common/LicenseContainer";
 import { TreeFilterContextProvider } from "./components/common/TreeFilterContextProvider";
 import { TracebilityReportModule } from "./components/TracebilityReportModule/TracebilityReportModule";
+import { lastSavedReportConfigKey } from "./constants/common";
 import { APIContext } from "./context/api";
 
 interface Props {
@@ -25,7 +26,7 @@ const TracebilityReport = ({ showCustomJQLEditor }: Props): JSX.Element => {
   }, [api, i18n]);
   if (api.hasValidLicense()) {
     return (
-      <TreeFilterContextProvider>
+      <TreeFilterContextProvider localStorageKey={lastSavedReportConfigKey}>
         <TracebilityReportModule
           showCustomJQLEditor={showCustomJQLEditor}
         ></TracebilityReportModule>

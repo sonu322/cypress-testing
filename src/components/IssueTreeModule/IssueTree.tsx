@@ -75,7 +75,11 @@ export const IssueTree = ({
 
   useEffect(() => {
     setTree((tree) => {
-      if (tree?.items !== undefined && selectedIssueFieldIds !== undefined) {
+      if (
+        tree?.items !== undefined &&
+        selectedIssueFieldIds !== undefined &&
+        selectedIssueFieldIds !== null
+      ) {
         return treeUtils.cloneTree(tree);
       }
     });
@@ -111,32 +115,31 @@ export const IssueTree = ({
   const onCollapse = (itemId: string): void => {
     treeUtils.collapseNode(itemId, setTree);
   };
-
-  if (tree?.items !== undefined) {
-    return (
-      <Container>
-        <Tree
-          tree={tree}
-          renderItem={({ ...props }) => {
-            return (
-              // @ts-expect-error
-              <IssueItem
-                {...props}
-                selectedIssueFieldIds={selectedIssueFieldIds}
-                selectedJqlString={selectedJqlString}
-                issueFields={issueFields}
-                setTree={setTree}
-                handleError={handleError}
-              />
-            );
-          }}
-          onExpand={onExpand}
-          onCollapse={onCollapse}
-          isDragEnabled={false}
-        />
-      </Container>
-    );
-  } else {
-    return <em>{loadingText}</em>;
-  }
+ if (tree?.items !== undefined) {
+   return (
+     <Container>
+       <Tree
+         tree={tree}
+         renderItem={({ ...props }) => {
+           return (
+             // @ts-expect-error
+             <IssueItem
+               {...props}
+               selectedIssueFieldIds={selectedIssueFieldIds}
+               selectedJqlString={selectedJqlString}
+               issueFields={issueFields}
+               setTree={setTree}
+               handleError={handleError}
+             />
+           );
+         }}
+         onExpand={onExpand}
+         onCollapse={onCollapse}
+         isDragEnabled={false}
+       />
+     </Container>
+   );
+ } else {
+   return <em>{loadingText}</em>;
+ }
 };

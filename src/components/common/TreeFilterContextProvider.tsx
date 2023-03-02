@@ -11,9 +11,16 @@ import {
   IssueTreeFilter,
   IssueType,
 } from "../../types/api";
+import {
+  getItemInLocalStorage,
+  setItemInLocalStorage,
+} from "../../util/common";
 import TreeUtils from "../../util/TreeUtils";
 
-export const TreeFilterContextProvider = ({ children }): JSX.Element => {
+export const TreeFilterContextProvider = ({
+  children,
+  localStorageKey,
+}): JSX.Element => {
   const api = useContext(APIContext);
   // TODO: fix type
   const treeUtils = new TreeUtils(api);
@@ -24,12 +31,8 @@ export const TreeFilterContextProvider = ({ children }): JSX.Element => {
     priorities: IssuePriority[];
     issueTypes: IssueType[];
     linkTypes: IssueLinkType[];
-  }>({ priorities: [], issueTypes: [], linkTypes: [] });
-  const [filter, setFilter] = useState<IssueTreeFilter>({
-    priorities: [],
-    issueTypes: [],
-    linkTypes: [],
-  });
+  }>();
+  const [filter, setFilter] = useState<IssueTreeFilter>();
   const updateFilter = (
     filter:
       | {
@@ -40,6 +43,14 @@ export const TreeFilterContextProvider = ({ children }): JSX.Element => {
       | ((prevFilter: IssueTreeFilter) => IssueTreeFilter)
   ): void => {
     setFilter(filter);
+  };
+
+  const updateLastSavedInLocalStorage = (newFilter: IssueTreeFilter): void => {
+    if (newFilter !== undefined) {
+      const lastSavedConfig = getItemInLocalStorage(localStorageKey);
+      const newSavedConfig = { ...lastSavedConfig, treeFilter: newFilter };
+      setItemInLocalStorage(localStorageKey, newSavedConfig);
+    }
   };
 
   const updateOptions = (options: {
@@ -58,13 +69,29 @@ export const TreeFilterContextProvider = ({ children }): JSX.Element => {
   };
 
   useEffect(() => {
+    const handleInitialUpdateFilter = (newFilter: IssueTreeFilter): void => {
+      const store = getItemInLocalStorage(localStorageKey);
+      if (store !== null) {
+        const storedFilter = store.treeFilter;
+        if (storedFilter !== undefined && storedFilter !== null) {
+          updateFilter(store.treeFilter);
+        } else {
+          updateFilter(newFilter);
+        }
+      } else {
+        updateFilter(newFilter);
+      }
+    };
     void treeUtils.loadTreeFilterDropdownsData(
-      updateFilter,
+      handleInitialUpdateFilter,
       updateOptions,
       updateIsLoading,
       handleNewError
     );
   }, []);
+  useEffect(() => {
+    updateLastSavedInLocalStorage(filter);
+  }, [filter]);
   const contextValue: TreeFilterContextValue = {
     errors,
     handleError: handleNewError,
