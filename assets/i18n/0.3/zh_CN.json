@@ -58,6 +58,7 @@
   "otpl.lxp.traceability-report.name": "链接浏览器 - 可追溯性报告",
   "otpl.lxp.traceability-report.label": "链接浏览器 - 可追溯性报告",
   "otpl.lxp.traceability-report.description": "端到端的可追溯性报告以易于理解的表格格式显示 Jira 问题及其相关问题。",
+  "otpl.lxp.traceability-report.tree-view.tree-toolbar-heading": "使用下一级过滤器过滤链接的问题",
   "otpl.lxp.common.issue.assignee": "经办人",
   "otpl.lxp.common.issue.priority": "优先",
   "otpl.lxp.common.unassigned": "未分配",

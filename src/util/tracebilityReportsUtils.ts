@@ -1,3 +1,4 @@
+import { lastSavedReportConfigKey } from "../constants/common";
 import LXPAPI, {
   Issue,
   IssueField,
@@ -5,7 +6,14 @@ import LXPAPI, {
   IssueType,
   IssueWithSortedLinks,
 } from "../types/api";
-import { getUniqueValues, getScreenHeight, addIssueDetails, toCSV } from "./common";
+import {
+  getUniqueValues,
+  getScreenHeight,
+  getItemInLocalStorage,
+  setItemInLocalStorage,
+  addIssueDetails,
+  toCSV,
+} from "./common";
 import { download, toTitleCase } from "./index";
 
 export default class TracebilityReportUtils {
@@ -66,17 +74,21 @@ export default class TracebilityReportUtils {
   };
 
   calculateServerHeight = (errors): number => {
-    const headingHeight = 81 + 80 + 80 + 8; // 8: margin top
+    const headingHeight = 41 + 80 + 80 + 8; // 8: margin top
     const toolbarHeight = 94 + 8; // 8: table top margin
-    const footerHeight = 91;
     const // more button 8: margin top and bottom
       errorsHeight = errors?.length > 0 ? (52 + 8) * errors.length : 0;
+    const allBanners = document.getElementsByClassName("aui-banner");
+    const allMessages = document.getElementsByClassName("aui-message");
+    const allBannersHeight = 40 * allBanners.length;
+    const allMessagesHeight = 40 * allMessages.length;
     const finalHeight =
       getScreenHeight() -
       headingHeight -
       toolbarHeight -
-      footerHeight -
       errorsHeight -
+      allBannersHeight -
+      allMessagesHeight -
       2;
     return finalHeight;
   };
@@ -95,9 +107,10 @@ export default class TracebilityReportUtils {
   calculateTreeHeight = (errors): number => {
     let finalHeight: number;
     if (this.api.isServer) {
-      finalHeight = this.calculateServerHeight(errors) - 42;
+      finalHeight = this.calculateServerHeight(errors) - 42 - 8 - 8 - 8 - 8;
     } else {
-      finalHeight = this.calculateCloudHeight(errors) - 42;
+      finalHeight =
+        this.calculateCloudHeight(errors) + 24 - 42 - 8 - 8 - 30 - 8;
     }
     return finalHeight < 200 ? 200 : finalHeight;
   };
@@ -121,6 +134,22 @@ const processByLinkType = (
     rowItems.push(rowItemString);
   });
   return rowItems;
+};
+
+export const handleSetItemInSavedReportConfig = (
+  key: string,
+  value: any
+): void => {
+  const lastSavedReportConfig = getItemInLocalStorage(lastSavedReportConfigKey);
+  let newReportConfig: Object;
+  if (lastSavedReportConfig !== null || lastSavedReportConfig !== undefined) {
+    newReportConfig = { ...lastSavedReportConfig, [key]: value };
+  } else {
+    newReportConfig = {
+      [key]: value,
+    };
+  }
+  setItemInLocalStorage(lastSavedReportConfigKey, newReportConfig);
 };
 
 const processByIssueType = (

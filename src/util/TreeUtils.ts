@@ -17,6 +17,7 @@ import {
   AtlasTree,
   AtlasTreeNode,
   ButtonTypeTreeNode,
+  LastSavedTreeConfig,
   LinkTypeTreeNode,
   TreeNodeType,
 } from "../types/app";
@@ -25,7 +26,8 @@ import {
   orphansMaxResults,
   orphansTreeBranchName,
 } from "../constants/traceabilityReport";
-import { addIssueDetails, toCSV } from "./common";
+import { getItemInLocalStorage, setItemInLocalStorage, addIssueDetails, toCSV } from "./common";
+import { lastSavedTreeConfigKey } from "../constants/common";
 
 // root node
 const root: AtlasTree = {
@@ -63,6 +65,30 @@ export default class TreeUtils {
       return issueId;
     } else {
       return "";
+    }
+  };
+
+  handleSetItemInSavedTreeConfig = (key: string, value: any): void => {
+    const lastSavedTreeConfig = getItemInLocalStorage(lastSavedTreeConfigKey);
+    let newReportConfig: Object;
+    if (lastSavedTreeConfig !== null || lastSavedTreeConfig !== undefined) {
+      newReportConfig = { ...lastSavedTreeConfig, [key]: value };
+    } else {
+      newReportConfig = {
+        [key]: value,
+      };
+    }
+    setItemInLocalStorage(lastSavedTreeConfigKey, newReportConfig);
+  };
+
+  handleGetItemInSavedTreeConfig = (key: string): any => {
+    const lastSavedTreeConfig: LastSavedTreeConfig = getItemInLocalStorage(
+      lastSavedTreeConfigKey
+    );
+    if (lastSavedTreeConfig !== undefined && lastSavedTreeConfig !== null) {
+      return lastSavedTreeConfig[key];
+    } else {
+      return undefined;
     }
   };
 
@@ -260,6 +286,54 @@ export default class TreeUtils {
         tree.items[this.ROOT_ID].children.push(nodeId);
       });
 
+      return tree;
+    } catch (err) {
+      console.error(err);
+      handleError(err);
+    }
+  }
+
+  addNewNodes(
+    handleError,
+    filteredIssues: IssueWithSortedLinks[],
+    prevTree: AtlasTree,
+    shouldShowOrphans: boolean
+  ): AtlasTree {
+    try {
+      let tree = this.cloneTree(prevTree);
+      const filteredIssuesWithLinks: IssueWithLinkedIssues[] =
+        filteredIssues.map((filteredIssue) => {
+          let linkedIssues = [];
+          Object.values(filteredIssue.sortedLinks).forEach((issuesOfType) => {
+            linkedIssues = linkedIssues.concat(issuesOfType);
+          });
+
+          const issueWithLinkedIssues = {
+            ...filteredIssue,
+            linkedIssues,
+          };
+          delete issueWithLinkedIssues.sortedLinks;
+          return issueWithLinkedIssues;
+        });
+
+      tree.items[this.ROOT_ID].children = [];
+      filteredIssuesWithLinks.forEach((issueWithLinks) => {
+        const node = this.createTreeNode(
+          tree,
+          "",
+          issueWithLinks,
+          null,
+          TreeNodeType.IssueNode,
+          false,
+          false
+        );
+        const nodeId = node.id;
+        tree.items[this.ROOT_ID].children.push(nodeId);
+      });
+      if (shouldShowOrphans) {
+        tree = this.addOrphansBranch(tree);
+        return tree;
+      }
       return tree;
     } catch (err) {
       console.error(err);
