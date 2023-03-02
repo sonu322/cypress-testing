@@ -192,11 +192,13 @@ export const TracebilityReportModule = ({
               tableFields={tableFields}
               exportReport={() => {
                 if (isTreeReport) {
-                  treeUtils.exportMultiTree(tree);
+                  treeUtils.exportTree(tree, issueFields, selectedIssueFieldIds);
                 } else {
                   exportReport(
-                    tableFields,
-                    emptyEqualsAllTableIds,
+                    selectedTableFieldIds,
+                    linkTypes,
+                    issueFields,
+                    selectedIssueFieldIds,
                     filteredIssues,
                     isIssueTypeReport
                   );

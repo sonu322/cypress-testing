@@ -71,7 +71,7 @@ export const IssueTreeModule = () => {
       )}
 
       <Toolbar
-        exportTree={() => treeUtils.exportTree(tree)}
+        exportTree={() => treeUtils.exportTree(tree, issueFields, selectedIssueFieldIds)}
         isExportDisabled={
           tree?.items !== undefined && Object.keys(tree.items).length <= 1
         }

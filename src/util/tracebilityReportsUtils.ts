@@ -5,7 +5,7 @@ import LXPAPI, {
   IssueType,
   IssueWithSortedLinks,
 } from "../types/api";
-import { getUniqueValues, getScreenHeight } from "./common";
+import { getUniqueValues, getScreenHeight, addIssueDetails, toCSV } from "./common";
 import { download, toTitleCase } from "./index";
 
 export default class TracebilityReportUtils {
@@ -148,42 +148,103 @@ const processByIssueType = (
   return rowItems;
 };
 
+const getLinkedIssuesByType = (issue: IssueWithSortedLinks, selectedTableFieldIds: string[]): any => {
+  const result = {};
+  for (const linkId in issue.sortedLinks) {
+    const issues = issue.sortedLinks[linkId];
+    issues.forEach((linkedIssue) => {
+      const type = linkedIssue.type.id;
+      if (selectedTableFieldIds.includes(type)) {
+        if (result[type] === undefined) {
+          result[type] = [];
+        }
+        result[type].push({ ...linkedIssue, linkId });
+      }
+    });
+  }
+  return result;
+};
+
+const getLinkedIssuesByLink = (issue: IssueWithSortedLinks, selectedTableFieldIds: string[]): any => {
+  const result = {};
+  for (const linkId in issue.sortedLinks) {
+    if (selectedTableFieldIds.includes(linkId)) {
+      result[linkId] = issue.sortedLinks[linkId];
+    }
+  }
+  return result;
+};
+
 export const exportReport = (
-  tableFields: IssueType[] | IssueLinkType[],
   selectedTableFieldIds: string[],
+  linkTypes: IssueLinkType[],
+  issueFields: IssueField[],
+  selectedIssueFieldIds: string[],
   filteredIssues: IssueWithSortedLinks[],
   isIssueTypeReport: boolean
 ): void => {
-  let content = "";
-  const headerItems = ["Issue"];
-  tableFields.forEach((tableField) => {
-    if (selectedTableFieldIds.includes(tableField.id)) {
-      headerItems.push(`"${toTitleCase(tableField.name)}"`);
+  const linkMap = {};
+  for (const linkType of linkTypes) {
+    linkMap[linkType.id] = linkType.name;
+  }
+  const content = [];
+  let headerItems = ["Issue Key"];
+  const labels = [];
+  issueFields.forEach((issueField) => {
+    if (selectedIssueFieldIds.includes(issueField.id)) {
+      headerItems.push(issueField.name);
+      labels.push(issueField.name);
     }
   });
-  let header = headerItems.toString();
-  header = header += "\n";
-  content += header;
+  headerItems.push("Link");
+  headerItems.push("Issue Key");
+  headerItems = headerItems.concat(labels);
+  content.push(headerItems);
 
   filteredIssues.forEach((issue) => {
-    let rowItems = [];
+    let rowItems = [issue.issueKey];
+    addIssueDetails(issue, issueFields, selectedIssueFieldIds, rowItems);
+    let result = null;
     if (isIssueTypeReport) {
-      rowItems = processByIssueType(selectedTableFieldIds, issue);
+      result = getLinkedIssuesByType(issue, selectedTableFieldIds);
     } else {
-      rowItems = processByLinkType(selectedTableFieldIds, issue);
+      result = getLinkedIssuesByLink(issue, selectedTableFieldIds);
     }
-    rowItems.unshift(`"${issue.issueKey}"`);
-
-    let rowContent = rowItems.toString();
-    rowContent = rowContent += "\n";
-    content += rowContent;
+    const keys = Object.keys(result);
+    if (keys.length > 0) {
+      let i = 0;
+      for (let linkId in result) {
+        const issues = result[linkId];
+        for (const linkedIssue of issues) {
+          linkId = linkedIssue.linkId !== undefined ? linkedIssue.linkId : linkId;
+          if (i > 0) {
+            for (let j = 0; j < selectedIssueFieldIds.length; j++) {
+              rowItems.push("");
+            }
+          }
+          rowItems.push(toTitleCase(linkMap[linkId]));
+          rowItems.push(linkedIssue.issueKey);
+          addIssueDetails(linkedIssue, issueFields, selectedIssueFieldIds, rowItems);
+          content.push(rowItems);
+          rowItems = [""];
+          i++;
+        }
+      }
+    } else {
+      rowItems.push("");
+      rowItems.push("");
+      for (let j = 0; j < labels.length; j++) {
+        rowItems.push("");
+      }
+      content.push(rowItems);
+    }
   });
-  download("csv", content);
+  download("csv", toCSV(content, true));
 };
 
 export const orderSelectedIds = (
   selectedIds: string[],
-  referenceList: Array<{ id: string; [key: string]: any }>
+  referenceList: Array<{ id: string;[key: string]: any }>
 ): string[] => {
   const newSelectedIds: string[] = [];
   if (selectedIds.length > 0) {

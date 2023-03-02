@@ -13,69 +13,10 @@ export const UUID = () => {
   return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4();
 };
 
-export const csv = function (rows, header) {
-  let content = "";
-  if (header) {
-    content += `"indent","key","link","summary","type","status","priorty"\n`;
-  } else {
-    content += `"","","","","","",""\n`;
-  }
-
-  rows.forEach((row) => {
-    const { indent, key, link, summary, type, status, priority } = row;
-    content += `"${indent}","${key}","${link}","${summary}","${type}","${status}","${priority}"\n`;
-  });
-
-  return content;
-};
-export const reportCsv = function (classifieds, links) {
-  links.unshift("subtasks");
-  let content = "";
-  let headerLinks = ["Issue", "Parent"];
-  links.forEach((link) => {
-    headerLinks.push(`"${toTitleCase(link)}"`);
-  });
-  let header = headerLinks.toString();
-  header = header += "\n";
-  content += header;
-
-  classifieds.forEach((classified) => {
-    const rowItems = [];
-    links.forEach((link) => {
-      let item = [];
-      if (classified[link] && classified[link].length > 0) {
-        classified[link].forEach((issue) => {
-          if (issue && issue.key) {
-            item.push(issue.key);
-          } else {
-            item.push("err");
-          }
-        });
-        item = item.toString();
-      } else {
-        item = "--";
-      }
-      rowItems.push(`"${item}"`);
-    });
-
-    if (classified.parent) {
-      rowItems.unshift(`"${classified.parent.key}"`);
-    } else {
-      rowItems.unshift("--");
-    }
-    rowItems.unshift(`"${classified.issue.key}"`);
-
-    let rowContent = rowItems.toString();
-    rowContent = rowContent += "\n";
-    content += rowContent;
-  });
-  return content;
-};
-
 export const download = (type, content) => {
   let source = null;
   let file = null;
-  if ("csv" === type) {
+  if (type === "csv") {
     source = `data:text/csv;charset=utf-8,${encodeURIComponent(content)}`;
     file = "links-explorer.csv";
   }
