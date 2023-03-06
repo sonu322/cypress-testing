@@ -22,7 +22,9 @@ import {
   autoHideEmptyColumnsId,
   reportCellOptions,
   viewTabs,
-  // exportReportOptions,
+  exportReportOptions,
+  exportAllRecordsId,
+  exportCurrentPageId,
 } from "../../constants/traceabilityReport";
 import { TreeReportToolbar } from "./TreeReportToolbar";
 import { TreeFilterContext } from "../../context/treeFilterContext";
@@ -42,6 +44,7 @@ const GrowContainer = styled.div`
 interface Props {
   showCustomJQLEditor?: any;
 }
+const DEFAULT_ROWS_PER_PAGE = 20;
 
 export const TracebilityReportModule = ({
   showCustomJQLEditor,
@@ -52,7 +55,7 @@ export const TracebilityReportModule = ({
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
   const [selectedSettingsDropdownIds, setSelectedSettingsDropdownIds] =
     useState<string[]>([autoHideEmptyColumnsId]);
-  // const [exportDropdownIds, setExportDropdownIds] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const [filteredIssues, setFilteredIssues] = useState<
     IssueWithSortedLinks[] | null
   >(null);
@@ -173,7 +176,34 @@ export const TracebilityReportModule = ({
   const selectedViewTab = viewTabs.tabs[selectedTabIndex].id;
   const isTreeReport = selectedViewTab === "tree-view";
   const allErrors = errors.concat(treeFilterContext.errors);
-
+  const exportAction = (clickOption) => {
+    if (clickOption === exportAllRecordsId) {
+      if (isTreeReport) {
+        treeUtils.exportMultiTree(tree);
+      } else {
+        exportReport(
+          tableFields,
+          emptyEqualsAllTableIds,
+          filteredIssues,
+          isIssueTypeReport
+        );
+      }
+    } else if (clickOption === exportCurrentPageId) {
+      if (isTreeReport) {
+        treeUtils.exportMultiTree(tree);
+      } else {
+        const startIndex = (currentPage - 1) * DEFAULT_ROWS_PER_PAGE;
+        const endIndex = startIndex + DEFAULT_ROWS_PER_PAGE;
+        const currentPageIssues = filteredIssues.slice(startIndex, endIndex);
+        exportReport(
+          tableFields,
+          emptyEqualsAllTableIds,
+          currentPageIssues,
+          isIssueTypeReport
+        );
+      }
+    }
+  };
   return (
     <FullWidthContainer>
       <PageHeader
@@ -183,9 +213,8 @@ export const TracebilityReportModule = ({
               selectedSettingsDropdownIds={selectedSettingsDropdownIds}
               setSelectedSettingsDropdownIds={setSelectedSettingsDropdownIds}
               settingsDropdown={reportCellOptions}
-              // exportDropdownIds={exportDropdownIds}
-              // setExportDropdownIds={setExportDropdownIds}
-              // exportDropdownOptions={exportReportOptions}
+              exportReport={exportAction}
+              exportDropdownOptions={exportReportOptions}
               selectedJQLString={selectedJQLString}
               setSelectedJQLString={setSelectedJQLString}
               issueCardOptions={issueFields}
@@ -195,18 +224,6 @@ export const TracebilityReportModule = ({
               selectedTableFieldIds={selectedTableFieldIds}
               updateSelectedTableFieldIds={updateSelectedTableFieldIds}
               tableFields={tableFields}
-              exportReport={() => {
-                if (isTreeReport) {
-                  treeUtils.exportMultiTree(tree);
-                } else {
-                  exportReport(
-                    tableFields,
-                    emptyEqualsAllTableIds,
-                    filteredIssues,
-                    isIssueTypeReport
-                  );
-                }
-              }}
               showCustomJQLEditor={showCustomJQLEditor}
               isExportDisabled={isExportDisabled}
               handleNewError={handleNewError}
@@ -232,6 +249,9 @@ export const TracebilityReportModule = ({
       <GrowContainer>
         <Main
           selectedJqlString={selectedJQLString}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          DEFAULT_ROWS_PER_PAGE={DEFAULT_ROWS_PER_PAGE}
           handleNewError={handleNewError}
           clearAllErrors={clearAllErrors}
           issueFields={issueFields}

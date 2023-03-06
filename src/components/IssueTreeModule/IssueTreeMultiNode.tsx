@@ -50,7 +50,6 @@ export const IssueTreeMultiNode = ({
   issueFields.forEach((field) => {
     fieldMap[field.id] = field;
   });
-
   useEffect(() => {
     const initTree = async (): Promise<void> => {
       let newTree = treeUtils.initMultiNodeTree(handleError, filteredIssues);
