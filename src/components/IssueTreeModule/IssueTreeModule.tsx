@@ -18,9 +18,8 @@ export const IssueTreeModule = () => {
   const [errors, setErrors] = useState([]);
   const [tree, setTree] = useState(treeUtils.getRootTree());
   const [issueFields, setIssueFields] = useState<IssueField[]>([]);
-  const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState<string[]>(
-    []
-  );
+  const [selectedIssueFieldIds, setSelectedIssueFieldIds] =
+    useState<string[]>();
   const updateSelectedIssueFieldIds = (
     selectedIssueFieldIds: string[]
   ): void => {
@@ -42,8 +41,31 @@ export const IssueTreeModule = () => {
   };
 
   useEffect(() => {
+    if (selectedIssueFieldIds !== undefined && selectedIssueFieldIds !== null) {
+      treeUtils.handleSetItemInSavedTreeConfig(
+        "selectedIssueFieldIds",
+        selectedIssueFieldIds
+      );
+    }
+  }, [selectedIssueFieldIds]);
+
+  useEffect(() => {
+    const updateInitialSelectedIssueFields = (
+      newSelectedIssueFieldIds: string[]
+    ): void => {
+      const savedSelectedIssueFieldIds: string[] =
+        treeUtils.handleGetItemInSavedTreeConfig("selectedIssueFieldIds");
+      if (
+        savedSelectedIssueFieldIds !== undefined &&
+        savedSelectedIssueFieldIds !== null
+      ) {
+        updateSelectedIssueFieldIds(savedSelectedIssueFieldIds);
+      } else {
+        updateSelectedIssueFieldIds(newSelectedIssueFieldIds);
+      }
+    };
     void treeUtils.loadToolbarData(
-      updateSelectedIssueFieldIds,
+      updateInitialSelectedIssueFields,
       updateIssueFields,
       updateIsLoading,
       handleNewError
@@ -70,42 +92,46 @@ export const IssueTreeModule = () => {
         <ErrorsList errors={errors} />
       )}
 
-      <Toolbar
-        exportTree={() => treeUtils.exportTree(tree)}
-        isExportDisabled={
-          tree?.items !== undefined && Object.keys(tree.items).length <= 1
-        }
-        options={treeFilterContext.options}
-        filter={treeFilterContext.filter}
-        updateFilteredKeyOptions={updateFilteredKeyOptions}
-        filterDropdowns={treeFilterContext.labels}
-        issueCardOptions={issueFields}
-        selectedIssueFieldIds={selectedIssueFieldIds}
-        setSelectedIssueFieldIds={setSelectedIssueFieldIds}
-        collapseAll={() => treeUtils.collapseAll(setTree)}
-        isExpandAllLoading={isExpandAllLoading}
-        expandAll={async () =>
-          await treeUtils.handleExpandAllNodes(
-            treeFilterContext.filter,
-            issueFields,
-            tree,
-            setTree,
-            handleNewError,
-            clearAllErrors,
-            setIsExpandAllLoading
-          )
-        }
-      />
-      <IssueTreeSingleNode
-        tree={tree}
-        treeUtils={treeUtils}
-        setTree={setTree}
-        filter={treeFilterContext.filter}
-        issueFields={issueFields}
-        selectedIssueFieldIds={selectedIssueFieldIds}
-        handleError={handleNewError}
-        clearAllErrors={clearAllErrors}
-      />
+      {treeFilterContext.filter !== undefined && (
+        <>
+          <Toolbar
+            exportTree={() => treeUtils.exportTree(tree, issueFields, selectedIssueFieldIds)}
+            isExportDisabled={
+              tree?.items !== undefined && Object.keys(tree.items).length <= 1
+            }
+            options={treeFilterContext.options}
+            filter={treeFilterContext.filter}
+            updateFilteredKeyOptions={updateFilteredKeyOptions}
+            filterDropdowns={treeFilterContext.labels}
+            issueCardOptions={issueFields}
+            selectedIssueFieldIds={selectedIssueFieldIds}
+            setSelectedIssueFieldIds={setSelectedIssueFieldIds}
+            collapseAll={() => treeUtils.collapseAll(setTree)}
+            isExpandAllLoading={isExpandAllLoading}
+            expandAll={async () =>
+              await treeUtils.handleExpandAllNodes(
+                treeFilterContext.filter,
+                issueFields,
+                tree,
+                setTree,
+                handleNewError,
+                clearAllErrors,
+                setIsExpandAllLoading
+              )
+            }
+          />
+          <IssueTreeSingleNode
+            tree={tree}
+            treeUtils={treeUtils}
+            setTree={setTree}
+            filter={treeFilterContext.filter}
+            issueFields={issueFields}
+            selectedIssueFieldIds={selectedIssueFieldIds}
+            handleError={handleNewError}
+            clearAllErrors={clearAllErrors}
+          />
+        </>
+      )}
     </div>
   );
 };

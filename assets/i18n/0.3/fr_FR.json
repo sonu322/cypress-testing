@@ -43,6 +43,7 @@
   "otpl.lxp.api.filters-error": "Erreur lors de la récupération des filtres de ticket",
   "otpl.lxp.api.filter-tree-error": "Tickets de filtrage des erreurs",
   "otpl.lxp.api.add-node-children-error": "Erreur lors de l'ajout de tickets enfants",
+  "otpl.lxp.traceability-report.tree-view.tree-toolbar-heading": "Filtrer les tickets liés",
   "otpl.lxp.api.project-error": "Projet introuvable.",
   "otpl.lxp.jira.current-issuekey-error": "Erreur lors de la récupération de la clé d’émission actuelle.",
   "otpl.lxp.link-issue-tab-panel.name": "Problèmes liés",

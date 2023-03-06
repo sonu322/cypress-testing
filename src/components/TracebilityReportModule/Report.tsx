@@ -123,7 +123,6 @@ export const Report = ({
                   issueFieldIds={issueFieldIds}
                   issue={issue}
                   rowSno={index + serialNo}
-                  // rowSno={index + 1}
                 />
               ) : (
                 <LinkTypeRow
@@ -132,7 +131,6 @@ export const Report = ({
                   issueFieldIds={issueFieldIds}
                   issue={issue}
                   rowSno={index + serialNo}
-                  // rowSno={index + 1}
                 />
               )}
             </BorderTr>

@@ -23,7 +23,6 @@ export const TablePagination = ({
         selectedIndex={currentPage - 1}
         pages={pageNumbers}
         onChange={(e, page) => {
-          console.log(e, page);
           updateCurrentPage(page);
         }}
       ></AtlasPagination>

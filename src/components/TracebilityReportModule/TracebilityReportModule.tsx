@@ -15,9 +15,10 @@ import { Main } from "./Main";
 import { ErrorsList } from "../common/ErrorsList";
 import TracebilityReportUtils, {
   exportReport,
+  handleSetItemInSavedReportConfig,
   orderSelectedIds,
 } from "../../util/tracebilityReportsUtils";
-import { getKeyValues } from "../../util/common";
+import { getItemInLocalStorage, getKeyValues } from "../../util/common";
 import {
   autoHideEmptyColumnsId,
   reportCellOptions,
@@ -29,6 +30,8 @@ import {
 import { TreeReportToolbar } from "./TreeReportToolbar";
 import { TreeFilterContext } from "../../context/treeFilterContext";
 import TreeUtils from "../../util/TreeUtils";
+import { lastSavedReportConfigKey } from "../../constants/common";
+import { LastSavedReportConfig } from "../../types/app";
 
 const FullWidthContainer = styled.div`
   width: 100%;
@@ -51,7 +54,8 @@ export const TracebilityReportModule = ({
 }: Props): JSX.Element => {
   const { t } = useTranslation();
   const treeFilterContext = useContext(TreeFilterContext);
-  const [isOrphansBranchPresent, setIsOrphansBranchPresent] = useState(false);
+  const [isOrphansBranchPresent, setIsOrphansBranchPresent] =
+    useState<Boolean>();
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
   const [selectedSettingsDropdownIds, setSelectedSettingsDropdownIds] =
     useState<string[]>([autoHideEmptyColumnsId]);
@@ -59,24 +63,79 @@ export const TracebilityReportModule = ({
   const [filteredIssues, setFilteredIssues] = useState<
     IssueWithSortedLinks[] | null
   >(null);
-  const [selectedJQLString, setSelectedJQLString] = useState<string | null>(
-    null
-  );
+  const [selectedJQLString, setSelectedJQLString] = useState<string | null>();
   const [issueFields, setIssueFields] = useState<IssueField[]>([]);
-  const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState<string[]>(
-    []
-  );
+  const [selectedIssueFieldIds, setSelectedIssueFieldIds] =
+    useState<string[]>();
   const [issueTypes, setIssueTypes] = useState<IssueType[]>([]);
-  const [selectedIssueTypeIds, setSelectedIssueTypeIds] = useState<string[]>(
-    []
-  );
+  const [selectedIssueTypeIds, setSelectedIssueTypeIds] = useState<string[]>();
   const [linkTypes, setLinkTypes] = useState<IssueLinkType[]>([]);
-  const [selectedLinkTypeIds, setSelectedLinkTypeIds] = useState<string[]>([]);
+  const [selectedLinkTypeIds, setSelectedLinkTypeIds] = useState<string[]>();
   const [areIssuesLoading, setAreIssuesLoading] = useState(false);
   const [errors, setErrors] = useState<unknown[]>([]);
   const [isToggleOrphansLoading, setIsToggleOrphansLoading] = useState(false);
-  const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>(0);
+  const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>();
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
+
+  useEffect(() => {
+    if (selectedTabIndex !== undefined) {
+      handleSetItemInSavedReportConfig("selectedTabIndex", selectedTabIndex);
+    }
+  }, [selectedTabIndex]);
+  useEffect(() => {
+    if (selectedJQLString !== undefined) {
+      handleSetItemInSavedReportConfig("selectedJQLString", selectedJQLString);
+    }
+  }, [selectedJQLString]);
+  useEffect(() => {
+    if (
+      selectedIssueTypeIds !== undefined &&
+      selectedIssueTypeIds.length >= 0
+    ) {
+      handleSetItemInSavedReportConfig(
+        "selectedIssueTypeIds",
+        selectedIssueTypeIds
+      );
+    }
+    if (selectedLinkTypeIds !== undefined && selectedLinkTypeIds.length >= 0) {
+      handleSetItemInSavedReportConfig(
+        "selectedLinkTypeIds",
+        selectedLinkTypeIds
+      );
+    }
+  }, [selectedIssueTypeIds, selectedLinkTypeIds]);
+
+  useEffect(() => {
+    if (selectedIssueFieldIds !== undefined && selectedIssueFieldIds !== null) {
+      handleSetItemInSavedReportConfig(
+        "selectedIssueFieldIds",
+        selectedIssueFieldIds
+      );
+    }
+  }, [selectedIssueFieldIds]);
+
+  useEffect(() => {
+    const lastSavedReportConfig: LastSavedReportConfig = getItemInLocalStorage(
+      lastSavedReportConfigKey
+    );
+    if (lastSavedReportConfig !== undefined && lastSavedReportConfig !== null) {
+      if (
+        lastSavedReportConfig.selectedTabIndex !== undefined &&
+        lastSavedReportConfig.selectedTabIndex !== null
+      ) {
+        setSelectedTabIndex(lastSavedReportConfig.selectedTabIndex);
+      }
+      setSelectedJQLString(lastSavedReportConfig.selectedJQLString);
+      if (lastSavedReportConfig.isOrphansBranchPresent !== undefined) {
+        setIsOrphansBranchPresent(lastSavedReportConfig.isOrphansBranchPresent);
+      } else {
+        setIsOrphansBranchPresent(false);
+      }
+    } else {
+      setSelectedTabIndex(0);
+      setIsOrphansBranchPresent(false);
+    }
+  }, []);
 
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
@@ -86,9 +145,20 @@ export const TracebilityReportModule = ({
     setSelectedJQLString(jqlString);
   };
   const updateIsOrphansBranchPresent = (
-    isOrphansBranchPresent: boolean
+    newIsOrphansBranchPresent: boolean
   ): void => {
-    setIsOrphansBranchPresent(isOrphansBranchPresent);
+    setIsOrphansBranchPresent(newIsOrphansBranchPresent);
+    if (newIsOrphansBranchPresent) {
+      setIsToggleOrphansLoading(true);
+      setTree((tree) => treeUtils.addOrphansBranch(tree));
+      setIsToggleOrphansLoading(false);
+    }
+    if (newIsOrphansBranchPresent !== undefined) {
+      handleSetItemInSavedReportConfig(
+        "isOrphansBranchPresent",
+        newIsOrphansBranchPresent
+      );
+    }
   };
   const updateFilteredKeyOptions = (
     key: string,
@@ -104,7 +174,6 @@ export const TracebilityReportModule = ({
     setSelectedTabIndex(tabIndex);
   };
   const handleNewError = (err: unknown): void => {
-    console.error(err);
     setErrors((prevErrors) => [...prevErrors, err]);
   };
   const clearAllErrors = (): void => {
@@ -124,21 +193,44 @@ export const TracebilityReportModule = ({
         const fields = result[2];
         setIssueFields(fields);
         // setting state - selected field ids
-        const selectedFieldIds = getKeyValues(fields, "id");
-        setSelectedIssueFieldIds(selectedFieldIds);
 
         // setting state - table field options
 
         setIssueTypes(issueTypes);
-        setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
+        const lastSavedReportConfig: LastSavedReportConfig =
+          getItemInLocalStorage(lastSavedReportConfigKey);
         setLinkTypes(linkTypes);
-        setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
+        if (
+          lastSavedReportConfig?.selectedIssueTypeIds !== undefined &&
+          lastSavedReportConfig?.selectedIssueTypeIds !== null
+        ) {
+          setSelectedIssueFieldIds(lastSavedReportConfig.selectedIssueFieldIds);
+        } else {
+          const selectedFieldIds = getKeyValues(fields, "id");
+          setSelectedIssueFieldIds(selectedFieldIds);
+        }
+
+        if (
+          lastSavedReportConfig.selectedIssueTypeIds !== undefined &&
+          lastSavedReportConfig.selectedIssueTypeIds !== null
+        ) {
+          setSelectedIssueTypeIds(lastSavedReportConfig.selectedIssueTypeIds);
+        } else {
+          setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
+        }
+        if (
+          lastSavedReportConfig?.selectedLinkTypeIds !== undefined &&
+          lastSavedReportConfig?.selectedLinkTypeIds !== null
+        ) {
+          setSelectedLinkTypeIds(lastSavedReportConfig.selectedLinkTypeIds);
+        } else {
+          setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
+        }
 
         // loading state
         setAreOptionsLoading(false);
       } catch (error) {
         setAreOptionsLoading(false);
-        console.error(error);
         handleNewError(error);
       }
     };
@@ -181,6 +273,21 @@ export const TracebilityReportModule = ({
   const title = t("otpl.lxp.traceability-report.name");
   const selectedViewTab = viewTabs.tabs[selectedTabIndex].id;
   const isTreeReport = selectedViewTab === "tree-view";
+  let areTreeNecessitiesPresent = false;
+  if (treeFilterContext !== undefined && treeFilterContext !== null) {
+    if (
+      treeFilterContext.options !== undefined &&
+      treeFilterContext.options !== null
+    ) {
+      if (
+        treeFilterContext.filter !== undefined &&
+        treeFilterContext.filter !== null
+      ) {
+        areTreeNecessitiesPresent = true;
+      }
+    }
+  }
+
   const allErrors = errors.concat(treeFilterContext.errors);
   const updateTotalNumberOfIssues = (totalNumberOfIssues: number): void => {
     setTotalNumberOfIssues(totalNumberOfIssues);
@@ -189,11 +296,13 @@ export const TracebilityReportModule = ({
     // TODO: use enum for exportTypeId
     if (exportTypeId === exportCurrentPageId) {
       if (isTreeReport) {
-        treeUtils.exportMultiTree(tree);
+        treeUtils.exportTree(tree, issueFields, selectedIssueFieldIds);
       } else {
         exportReport(
-          tableFields,
-          emptyEqualsAllTableIds,
+          selectedTableFieldIds,
+          linkTypes,
+          issueFields,
+          selectedIssueFieldIds,
           filteredIssues,
           isIssueTypeReport
         );
@@ -210,12 +319,13 @@ export const TracebilityReportModule = ({
         handleNewError
       );
       exportReport(
-        tableFields,
-        emptyEqualsAllTableIds,
+        selectedTableFieldIds,
+        linkTypes,
+        issueFields,
+        selectedIssueFieldIds,
         allFilteredIssues,
         isIssueTypeReport
       );
-      console.log(allFilteredIssues, "allfilter");
     }
   };
   return (
@@ -244,7 +354,7 @@ export const TracebilityReportModule = ({
               handleTabOptionSelect={handleTabOptionSelect}
               selectedTabIndex={selectedTabIndex}
             />
-            {isTreeReport && (
+            {isTreeReport && areTreeNecessitiesPresent && (
               <TreeReportToolbar
                 options={treeFilterContext.options}
                 filter={treeFilterContext.filter}

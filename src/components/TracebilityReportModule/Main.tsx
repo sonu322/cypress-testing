@@ -134,8 +134,10 @@ export const Main = ({
   const api = useContext(APIContext);
   const addMoreIssues = (issues: IssueWithSortedLinks[]): void => {
     const newIssues = filteredIssues ?? [];
-    const updatedIssues = newIssues.concat(issues);
-    setFilteredIssues(updatedIssues);
+    if (issues?.length > 0) {
+      const updatedIssues = newIssues.concat(issues);
+      setFilteredIssues(updatedIssues);
+    }
   };
   const updateIssues = (issues: IssueWithSortedLinks[]): void => {
     setFilteredIssues(issues);
@@ -143,7 +145,7 @@ export const Main = ({
   const serialNo = 20 * (currentPage - 1) + 1;
   const tracebilityReportUtils = new TracebilityReportUtils(api);
   useEffect(() => {
-    if (selectedJqlString !== null) {
+    if (selectedJqlString !== undefined && selectedJqlString !== null) {
       const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
       setCurrentPage(1);
       void tracebilityReportUtils.populateIssues(
@@ -194,7 +196,6 @@ export const Main = ({
         </FullHeightContainer>
       );
     }
-    console.log(filteredIssues, "filteredIssues");
     return (
       <Container>
         <TableContainer>
@@ -213,6 +214,7 @@ export const Main = ({
               setTree={setTree}
               isToggleOrphansLoading={isToggleOrphansLoading}
               updateIsToggleOrphansLoading={updateIsToggleOrphansLoading}
+              selectedLimitOptionId={selectedLimitOptionId}
             />
           ) : (
             <Report

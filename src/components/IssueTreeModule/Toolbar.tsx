@@ -35,9 +35,22 @@ export const Toolbar = ({
   const { t } = useTranslation();
   const api = useContext(APIContext);
   const helpLinkUrl = api.getHelpLinks().issueTree;
+  let areTreeNecessitiesPresent = false;
+  if (options !== undefined && options !== null) {
+    if (filter !== undefined && filter !== null) {
+      if (issueCardOptions !== undefined && issueCardOptions !== null) {
+        if (
+          selectedIssueFieldIds !== undefined &&
+          selectedIssueFieldIds !== null
+        ) {
+          areTreeNecessitiesPresent = true;
+        }
+      }
+    }
+  }
   return (
     <Container>
-      {options !== undefined && filter !== undefined && (
+      {areTreeNecessitiesPresent && (
         <LeftContainer>
           <TreeFilterDropdowns
             filter={filter}
@@ -62,8 +75,11 @@ export const Toolbar = ({
           description={t("otpl.lxp.toolbar.export-csv.title")}
           exportContent={exportTree}
         />
-        <HelpLink description={t("otpl.lxp.common.get-help")} href={helpLinkUrl} />
+        <HelpLink
+          description={t("otpl.lxp.common.get-help")}
+          href={helpLinkUrl}
+        />
       </ButtonGroup>
-    </Container >
+    </Container>
   );
 };

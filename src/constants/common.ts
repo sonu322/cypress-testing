@@ -7,7 +7,8 @@ export const treeFilterDropdowns = [
   { key: "issueTypes", label: i18n.t("otpl.lxp.toolbar.issue-type.text") },
 ];
 
-
+export const lastSavedReportConfigKey = "lastSavedReportConfig";
+export const lastSavedTreeConfigKey = "lastSavedTreeConfig";
 
 export const emptyTreeFilter: IssueTreeFilter = {
   priorities: [],
