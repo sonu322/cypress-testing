@@ -1,6 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { LoadingButton } from "@atlaskit/button";
-// import Pagination from "@atlaskit/pagination";
 import { TablePagination } from "./TablePagination";
 import Spinner from "@atlaskit/spinner";
 import { APIContext } from "../../context/api";
@@ -29,7 +28,6 @@ const MarginAddedContainer = styled.div`
   margin-top: 8px;
   margin-bottom: 8px;
 `;
-const DEFAULT_ROWS_PER_PAGE = 20;
 const START_INDEX = 0;
 const options = [
   { id: 10, name: "10" },
@@ -38,6 +36,7 @@ const options = [
   { id: 100, name: "100" },
 ];
 interface Props {
+  DEFAULT_ROWS_PER_PAGE: number;
   selectedJqlString: string;
   handleNewError: (err: unknown) => void;
   clearAllErrors: () => void;
@@ -60,9 +59,12 @@ interface Props {
   setTree: React.Dispatch<React.SetStateAction<AtlasTree>>;
   isToggleOrphansLoading: boolean;
   updateIsToggleOrphansLoading: (isToggleOrphansLoading: boolean) => void;
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
 }
 
 export const Main = ({
+  DEFAULT_ROWS_PER_PAGE,
   selectedJqlString,
   handleNewError,
   clearAllErrors,
@@ -83,33 +85,29 @@ export const Main = ({
   setTree,
   isToggleOrphansLoading,
   updateIsToggleOrphansLoading,
+  currentPage,
+  setCurrentPage,
 }: Props): JSX.Element => {
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedLimitOptionId, setSelectedLimitOptionId] = useState(
+    DEFAULT_ROWS_PER_PAGE
+  );
+  const [totalIssuesFetched, setTotalIssuesFetched] = useState(0);
   console.log(currentPage, "currentPage from main file");
   const updateCurrentPage = (page: number) => {
-    // if (filteredIssues != null) {
-    //   const startIndex = (currentPage - 1) * DEFAULT_ROWS_PER_PAGE;
-    //   const endIndex = startIndex + DEFAULT_ROWS_PER_PAGE;
-    //   if (filteredIssues.length < endIndex) {
-    //     fetchMoreIssues();
-    //   }
-    // }
     areMoreIssuesLoading && setAreMoreIssuesLoading(true);
     setCurrentPage(page);
     setAreMoreIssuesLoading(false);
   };
 
-  const [selectedLimitOptionId, setSelectedLimitOptionId] = useState(
-    DEFAULT_ROWS_PER_PAGE
-  );
   const { t } = useTranslation();
   const api = useContext(APIContext);
   const addMoreIssues = (issues: IssueWithSortedLinks[]): void => {
     const newIssues = filteredIssues ?? [];
     const updatedIssues = newIssues.concat(issues);
     setFilteredIssues(updatedIssues);
+    setTotalIssuesFetched(updatedIssues.length);
   };
   const updateIssues = (issues: IssueWithSortedLinks[]): void => {
     setFilteredIssues(issues);
@@ -119,6 +117,8 @@ export const Main = ({
   useEffect(() => {
     if (selectedJqlString !== null) {
       const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
+      setCurrentPage(1);
+      setTotalIssuesFetched(0);
       void tracebilityReportUtils.populateIssues(
         selectedJqlString,
         issueFields,
@@ -141,7 +141,11 @@ export const Main = ({
         fetchMoreIssues();
       }
     }
-  }, [currentPage]);
+  }, [currentPage, totalIssuesFetched]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedViewTab, setCurrentPage]);
 
   const fetchMoreIssues = (): void => {
     const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
@@ -173,19 +177,10 @@ export const Main = ({
         </FullHeightContainer>
       );
     }
-    // const indexOfLastIssue = currentPage * DEFAULT_ROWS_PER_PAGE;
-    // const indexOfFirstIssue = indexOfLastIssue - DEFAULT_ROWS_PER_PAGE;
-    // const currentIssues = filteredIssues.slice(
-    //   indexOfFirstIssue,
-    //   indexOfLastIssue
-    // );
     const currentIssues = filteredIssues.slice(
       (currentPage - 1) * DEFAULT_ROWS_PER_PAGE,
       currentPage * DEFAULT_ROWS_PER_PAGE
     );
-
-    // const serialNo = 20 * (currentPage - 1) + 1;
-    console.log(currentIssues, "currentIssues from main file");
     return (
       <Container>
         <TableContainer>
@@ -207,7 +202,6 @@ export const Main = ({
             />
           ) : (
             <Report
-              // filteredIssues={filteredIssues}
               serialNo={serialNo}
               filteredIssues={currentIssues}
               issueFieldIds={selectedIssueFieldIds}
@@ -220,30 +214,26 @@ export const Main = ({
           )}
         </TableContainer>
         <MarginAddedContainer>
-          <DropdownSingleSelect
-            options={options}
-            dropdownName={
-              t("otpl.lxp.traceability-report.fetch-limit-dropdown.name") +
-              ` (${selectedLimitOptionId})`
-            }
-            selectedOptionId={selectedLimitOptionId}
-            setSelectedOptionId={setSelectedLimitOptionId}
-          />
-          &nbsp;
-          {/* <LoadingButton
-            isLoading={areMoreIssuesLoading}
-            isDisabled={filteredIssues.length >= totalNumberOfIssues}
-            onClick={fetchMoreIssues}
-          >
-            {t("otpl.lxp.traceability-report.load-more-issues-button.name")}
-          </LoadingButton> */}
-          {/* <Pagination pages={pageNumbers}></Pagination> */}
-          <TablePagination
-            currentPage={currentPage}
-            updateCurrentPage={updateCurrentPage}
-            totalNumberOfIssues={totalNumberOfIssues}
-            issuePerPage={DEFAULT_ROWS_PER_PAGE}
-          ></TablePagination>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <DropdownSingleSelect
+              options={options}
+              dropdownName={
+                t("otpl.lxp.traceability-report.fetch-limit-dropdown.name") +
+                ` (${selectedLimitOptionId})`
+              }
+              selectedOptionId={selectedLimitOptionId}
+              setSelectedOptionId={setSelectedLimitOptionId}
+            />
+            <div style={{ marginLeft: "auto" }}>
+              &nbsp;
+              <TablePagination
+                currentPage={currentPage}
+                updateCurrentPage={updateCurrentPage}
+                totalNumberOfIssues={totalNumberOfIssues}
+                issuePerPage={DEFAULT_ROWS_PER_PAGE}
+              ></TablePagination>
+            </div>
+          </div>
         </MarginAddedContainer>
       </Container>
     );

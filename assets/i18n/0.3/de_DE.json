@@ -20,6 +20,8 @@
   "otpl.lxp.traceability-report.toolbar.tableFields.name": "Tabellenfelder",
   "otpl.lxp.traceability-report.toolbar.settingsDropdown.displayAllIssueCards": "Alle Vorgangkarten anzeigen",
   "otpl.lxp.traceability-report.toolbar.settingsDropdown.autoHideEmptyColumns": "Leere Spalten automatisch ausblenden",
+  "otpl.lxp.traceability-report.toolbar.exportDropdown.exportCurrentPage": "Aktuelle Seite exportieren",
+  "otpl.lxp.traceability-report.toolbar.exportDropdown.exportAllRecords": "Alle Datensätze exportieren",
   "otpl.lxp.traceability-report.select-filter.text": "Bitte wählen Sie Filter, um den Bericht anzuzeigen",
   "otpl.lxp.traceability-report.fetch-limit-dropdown.name": "Fetch Limit",
   "otpl.lxp.traceability-report.load-more-issues-button.name": "mehr vorgänge laden",

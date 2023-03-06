@@ -19,6 +19,8 @@
   "otpl.lxp.traceability-report.toolbar.tableFields.name": "Champs de table",
   "otpl.lxp.traceability-report.toolbar.settingsDropdown.displayAllIssueCards": "Afficher toutes les cartes de problème",
   "otpl.lxp.traceability-report.toolbar.settingsDropdown.autoHideEmptyColumns": "Masquer automatiquement les colonnes vides",
+  "otpl.lxp.traceability-report.toolbar.exportDropdown.exportCurrentPage": "Exporter la page actuelle",
+  "otpl.lxp.traceability-report.toolbar.exportDropdown.exportAllRecords": "Exporter tous les enregistrements",
   "otpl.lxp.traceability-report.fetch-limit-dropdown.name": "Fetch Limit",
   "otpl.lxp.traceability-report.load-more-issues-button.name": "Charger d'autres tickets",
   "otpl.lxp.traceability-report.tree-view.name": "Vue du arbre",

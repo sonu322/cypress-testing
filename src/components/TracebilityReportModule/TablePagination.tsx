@@ -1,5 +1,6 @@
 import React from "react";
 import AtlasPagination from "@atlaskit/pagination";
+
 export interface props {
   totalNumberOfIssues: any;
 }
@@ -10,7 +11,6 @@ export const TablePagination = ({
   currentPage,
   updateCurrentPage,
 }) => {
-  // const issuePerPage = 20;
   const pageNumbers = [];
   for (let i = 1; i <= Math.ceil(totalNumberOfIssues / issuePerPage); i++) {
     pageNumbers.push(i);

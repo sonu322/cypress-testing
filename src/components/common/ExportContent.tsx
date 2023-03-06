@@ -1,43 +1,32 @@
 import React from "react";
 import { TooltipContainer } from "./TooltipContainer";
-import ExportIcon from "@atlaskit/icon/glyph/export";
-import Button from "@atlaskit/button";
-// import { Dropdown } from "./Dropdown";
-// import { ExportOptions } from "../../types/api";
+import { DropdownActionMenu } from "./DropdownActionMenu";
+import { ExportOptions } from "../../types/api";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFileExport } from "@fortawesome/free-solid-svg-icons";
 
 interface Props {
   exportContent: () => void;
   description: string;
   isDisabled: boolean;
-  // options: ExportOptions[];
-  // selectedExportOptions: string[];
-  // updateSelectedExportOptions: (ids: string[]) => void;
+  options: ExportOptions[];
+  actionHandler: (id: string) => void;
 }
 
 export const ExportContent = ({
   exportContent,
   description,
   isDisabled,
-}: // options,
-// selectedExportOptions,
-// updateSelectedExportOptions,
-Props): JSX.Element => {
+  options,
+  actionHandler,
+}: Props): JSX.Element => {
   return (
     <TooltipContainer content={description}>
-      <Button
-        appearance="default"
-        iconBefore={<ExportIcon label={description} />}
-        onClick={exportContent}
-        isDisabled={isDisabled}
-      />
-      {/* <Dropdown
-        dropdownName={<ExportIcon label={description} />}
-        // isDisabled={isDisabled}
-        // onClick={exportContent}
+      <DropdownActionMenu
+        dropdownName={<FontAwesomeIcon icon={faFileExport} />}
+        actionHandler={exportContent}
         options={options}
-        selectedOptions={selectedExportOptions}
-        updateSelectedOptions={updateSelectedExportOptions}
-      /> */}
+      />
     </TooltipContainer>
   );
 };
