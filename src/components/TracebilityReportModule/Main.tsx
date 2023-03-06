@@ -95,12 +95,41 @@ export const Main = ({
   );
   const [totalIssuesFetched, setTotalIssuesFetched] = useState(0);
   console.log(currentPage, "currentPage from main file");
-  const updateCurrentPage = (page: number) => {
-    areMoreIssuesLoading && setAreMoreIssuesLoading(true);
-    setCurrentPage(page);
-    setAreMoreIssuesLoading(false);
-  };
+  const updateCurrentPage = (page: number): void => {
+    // areMoreIssuesLoading && setAreMoreIssuesLoading(true);
 
+    setCurrentPage(page);
+    // setAreMoreIssuesLoading(false);
+    const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
+    const startIndex = (page - 1) * selectedLimit;
+    void tracebilityReportUtils.populateIssues(
+      selectedJqlString,
+      issueFields,
+      startIndex,
+      selectedLimit,
+      updateIssues,
+      setAreIssuesLoading,
+      setTotalNumberOfIssues,
+      handleNewError,
+      clearAllErrors
+    );
+  };
+  const updateSelectedLimitOptionId = (limitOptionId: number): void => {
+    setSelectedLimitOptionId(limitOptionId);
+    const selectedLimit = limitOptionId;
+    const startIndex = (currentPage - 1) * selectedLimit;
+    void tracebilityReportUtils.populateIssues(
+      selectedJqlString,
+      issueFields,
+      startIndex,
+      limitOptionId,
+      updateIssues,
+      setAreIssuesLoading,
+      setTotalNumberOfIssues,
+      handleNewError,
+      clearAllErrors
+    );
+  };
   const { t } = useTranslation();
   const api = useContext(APIContext);
   const addMoreIssues = (issues: IssueWithSortedLinks[]): void => {
@@ -114,6 +143,20 @@ export const Main = ({
   };
   const serialNo = 20 * (currentPage - 1) + 1;
   const tracebilityReportUtils = new TracebilityReportUtils(api);
+  // useEffect(() => {
+  //   if (selectedLimitOptionId) {
+  //   void tracebilityReportUtils.populateIssues(
+  //     selectedJqlString,
+  //     issueFields,
+  //     START_INDEX,
+  //     selectedLimitOptionId ,
+  //     updateIssues,
+  //     setAreIssuesLoading,
+  //     setTotalNumberOfIssues,
+  //     handleNewError,
+  //     clearAllErrors
+  //   );
+  // }}, [selectedLimitOptionId]);
   useEffect(() => {
     if (selectedJqlString !== null) {
       const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
@@ -133,15 +176,15 @@ export const Main = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedJqlString]);
-  useEffect(() => {
-    if (filteredIssues != null) {
-      const startIndex = (currentPage - 1) * DEFAULT_ROWS_PER_PAGE;
-      const endIndex = startIndex + DEFAULT_ROWS_PER_PAGE;
-      if (filteredIssues.length < endIndex) {
-        fetchMoreIssues();
-      }
-    }
-  }, [currentPage, totalIssuesFetched]);
+  // useEffect(() => {
+  //   if (filteredIssues != null) {
+  //     const startIndex = (currentPage - 1) * DEFAULT_ROWS_PER_PAGE;
+  //     const endIndex = startIndex + DEFAULT_ROWS_PER_PAGE;
+  //     // if (filteredIssues.length < endIndex) {
+  //     //   fetchMoreIssues();
+  //     // }
+  //   }
+  // }, [currentPage, totalIssuesFetched]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -181,6 +224,7 @@ export const Main = ({
       (currentPage - 1) * DEFAULT_ROWS_PER_PAGE,
       currentPage * DEFAULT_ROWS_PER_PAGE
     );
+    console.log(filteredIssues, "filteredIssues");
     return (
       <Container>
         <TableContainer>
@@ -203,7 +247,7 @@ export const Main = ({
           ) : (
             <Report
               serialNo={serialNo}
-              filteredIssues={currentIssues}
+              filteredIssues={filteredIssues}
               issueFieldIds={selectedIssueFieldIds}
               tableFields={tableFields}
               selectedTableFieldIds={selectedTableFieldIds}
@@ -222,7 +266,7 @@ export const Main = ({
                 ` (${selectedLimitOptionId})`
               }
               selectedOptionId={selectedLimitOptionId}
-              setSelectedOptionId={setSelectedLimitOptionId}
+              updateSelectedOptionId={updateSelectedLimitOptionId}
             />
             <div style={{ marginLeft: "auto" }}>
               &nbsp;
@@ -230,7 +274,7 @@ export const Main = ({
                 currentPage={currentPage}
                 updateCurrentPage={updateCurrentPage}
                 totalNumberOfIssues={totalNumberOfIssues}
-                issuePerPage={DEFAULT_ROWS_PER_PAGE}
+                issuePerPage={selectedLimitOptionId}
               ></TablePagination>
             </div>
           </div>

@@ -79,6 +79,9 @@ export const TracebilityReportModule = ({
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
   const [tree, setTree] = useState(treeUtils.getRootTree());
+  const updateSelectedJQLString = (jqlString: string): void => {
+    setSelectedJQLString(jqlString);
+  };
   const updateIsOrphansBranchPresent = (
     isOrphansBranchPresent: boolean
   ): void => {
@@ -213,10 +216,10 @@ export const TracebilityReportModule = ({
               selectedSettingsDropdownIds={selectedSettingsDropdownIds}
               setSelectedSettingsDropdownIds={setSelectedSettingsDropdownIds}
               settingsDropdown={reportCellOptions}
+              updateSelectedJQLString={updateSelectedJQLString}
               exportReport={exportAction}
               exportDropdownOptions={exportReportOptions}
               selectedJQLString={selectedJQLString}
-              setSelectedJQLString={setSelectedJQLString}
               issueCardOptions={issueFields}
               selectedIssueFieldIds={selectedIssueFieldIds}
               setSelectedIssueFieldIds={setSelectedIssueFieldIds}
