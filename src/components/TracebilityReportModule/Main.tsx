@@ -92,13 +92,10 @@ export const Main = ({
   currentPage,
   setCurrentPage,
 }: Props): JSX.Element => {
-  // const [totalNumberOfIssues, updateTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
   const [selectedLimitOptionId, setSelectedLimitOptionId] = useState(
     DEFAULT_ROWS_PER_PAGE
   );
-  // const [totalIssuesFetched, setTotalIssuesFetched] = useState(0);
-  console.log(currentPage, "currentPage from main file");
   const updateCurrentPage = (page: number): void => {
     //In the updateCurrentPage,all the arguments passing to populateIssues should not be undefined
     setCurrentPage(page);
@@ -139,7 +136,6 @@ export const Main = ({
     const newIssues = filteredIssues ?? [];
     const updatedIssues = newIssues.concat(issues);
     setFilteredIssues(updatedIssues);
-    // setTotalIssuesFetched(updatedIssues.length);
   };
   const updateIssues = (issues: IssueWithSortedLinks[]): void => {
     setFilteredIssues(issues);
@@ -150,7 +146,6 @@ export const Main = ({
     if (selectedJqlString !== null) {
       const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
       setCurrentPage(1);
-      // setTotalIssuesFetched(0);
       void tracebilityReportUtils.populateIssues(
         selectedJqlString,
         issueFields,
