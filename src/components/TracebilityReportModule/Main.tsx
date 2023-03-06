@@ -36,6 +36,8 @@ const options = [
   { id: 100, name: "100" },
 ];
 interface Props {
+  totalNumberOfIssues: number;
+  updateTotalNumberOfIssues: (totalNumberOfIssues: number) => void;
   DEFAULT_ROWS_PER_PAGE: number;
   selectedJqlString: string;
   handleNewError: (err: unknown) => void;
@@ -64,6 +66,8 @@ interface Props {
 }
 
 export const Main = ({
+  totalNumberOfIssues,
+  updateTotalNumberOfIssues,
   DEFAULT_ROWS_PER_PAGE,
   selectedJqlString,
   handleNewError,
@@ -88,18 +92,16 @@ export const Main = ({
   currentPage,
   setCurrentPage,
 }: Props): JSX.Element => {
-  const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
+  // const [totalNumberOfIssues, updateTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
   const [selectedLimitOptionId, setSelectedLimitOptionId] = useState(
     DEFAULT_ROWS_PER_PAGE
   );
-  const [totalIssuesFetched, setTotalIssuesFetched] = useState(0);
+  // const [totalIssuesFetched, setTotalIssuesFetched] = useState(0);
   console.log(currentPage, "currentPage from main file");
   const updateCurrentPage = (page: number): void => {
-    // areMoreIssuesLoading && setAreMoreIssuesLoading(true);
-
+    //In the updateCurrentPage,all the arguments passing to populateIssues should not be undefined
     setCurrentPage(page);
-    // setAreMoreIssuesLoading(false);
     const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
     const startIndex = (page - 1) * selectedLimit;
     void tracebilityReportUtils.populateIssues(
@@ -109,12 +111,13 @@ export const Main = ({
       selectedLimit,
       updateIssues,
       setAreIssuesLoading,
-      setTotalNumberOfIssues,
+      updateTotalNumberOfIssues,
       handleNewError,
       clearAllErrors
     );
   };
   const updateSelectedLimitOptionId = (limitOptionId: number): void => {
+    //In this function,all the arguments passing to populateIssues should be defined.
     setSelectedLimitOptionId(limitOptionId);
     const selectedLimit = limitOptionId;
     const startIndex = (currentPage - 1) * selectedLimit;
@@ -125,7 +128,7 @@ export const Main = ({
       limitOptionId,
       updateIssues,
       setAreIssuesLoading,
-      setTotalNumberOfIssues,
+      updateTotalNumberOfIssues,
       handleNewError,
       clearAllErrors
     );
@@ -136,32 +139,18 @@ export const Main = ({
     const newIssues = filteredIssues ?? [];
     const updatedIssues = newIssues.concat(issues);
     setFilteredIssues(updatedIssues);
-    setTotalIssuesFetched(updatedIssues.length);
+    // setTotalIssuesFetched(updatedIssues.length);
   };
   const updateIssues = (issues: IssueWithSortedLinks[]): void => {
     setFilteredIssues(issues);
   };
   const serialNo = 20 * (currentPage - 1) + 1;
   const tracebilityReportUtils = new TracebilityReportUtils(api);
-  // useEffect(() => {
-  //   if (selectedLimitOptionId) {
-  //   void tracebilityReportUtils.populateIssues(
-  //     selectedJqlString,
-  //     issueFields,
-  //     START_INDEX,
-  //     selectedLimitOptionId ,
-  //     updateIssues,
-  //     setAreIssuesLoading,
-  //     setTotalNumberOfIssues,
-  //     handleNewError,
-  //     clearAllErrors
-  //   );
-  // }}, [selectedLimitOptionId]);
   useEffect(() => {
     if (selectedJqlString !== null) {
       const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
       setCurrentPage(1);
-      setTotalIssuesFetched(0);
+      // setTotalIssuesFetched(0);
       void tracebilityReportUtils.populateIssues(
         selectedJqlString,
         issueFields,
@@ -169,23 +158,13 @@ export const Main = ({
         selectedLimit,
         updateIssues,
         setAreIssuesLoading,
-        setTotalNumberOfIssues,
+        updateTotalNumberOfIssues,
         handleNewError,
         clearAllErrors
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedJqlString]);
-  // useEffect(() => {
-  //   if (filteredIssues != null) {
-  //     const startIndex = (currentPage - 1) * DEFAULT_ROWS_PER_PAGE;
-  //     const endIndex = startIndex + DEFAULT_ROWS_PER_PAGE;
-  //     // if (filteredIssues.length < endIndex) {
-  //     //   fetchMoreIssues();
-  //     // }
-  //   }
-  // }, [currentPage, totalIssuesFetched]);
-
   useEffect(() => {
     setCurrentPage(1);
   }, [selectedViewTab, setCurrentPage]);
@@ -220,10 +199,6 @@ export const Main = ({
         </FullHeightContainer>
       );
     }
-    const currentIssues = filteredIssues.slice(
-      (currentPage - 1) * DEFAULT_ROWS_PER_PAGE,
-      currentPage * DEFAULT_ROWS_PER_PAGE
-    );
     console.log(filteredIssues, "filteredIssues");
     return (
       <Container>
