@@ -13,7 +13,7 @@ import {
 } from "../../types/api";
 import { Main } from "./Main";
 import { ErrorsList } from "../common/ErrorsList";
-import {
+import TracebilityReportUtils, {
   exportReport,
   orderSelectedIds,
 } from "../../util/tracebilityReportsUtils";
@@ -76,8 +76,11 @@ export const TracebilityReportModule = ({
   const [errors, setErrors] = useState<unknown[]>([]);
   const [isToggleOrphansLoading, setIsToggleOrphansLoading] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>(0);
+  const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
+
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
+  const tracebilityReportUtils = new TracebilityReportUtils(api);
   const [tree, setTree] = useState(treeUtils.getRootTree());
   const updateSelectedJQLString = (jqlString: string): void => {
     setSelectedJQLString(jqlString);
@@ -179,8 +182,12 @@ export const TracebilityReportModule = ({
   const selectedViewTab = viewTabs.tabs[selectedTabIndex].id;
   const isTreeReport = selectedViewTab === "tree-view";
   const allErrors = errors.concat(treeFilterContext.errors);
-  const exportAction = (clickOption) => {
-    if (clickOption === exportAllRecordsId) {
+  const updateTotalNumberOfIssues = (totalNumberOfIssues: number): void => {
+    setTotalNumberOfIssues(totalNumberOfIssues);
+  };
+  const exportAction = async (exportTypeId: string): Promise<void> => {
+    // TODO: use enum for exportTypeId
+    if (exportTypeId === exportCurrentPageId) {
       if (isTreeReport) {
         treeUtils.exportMultiTree(tree);
       } else {
@@ -191,21 +198,39 @@ export const TracebilityReportModule = ({
           isIssueTypeReport
         );
       }
-    } else if (clickOption === exportCurrentPageId) {
-      if (isTreeReport) {
-        treeUtils.exportMultiTree(tree);
-      } else {
-        const startIndex = (currentPage - 1) * DEFAULT_ROWS_PER_PAGE;
-        const endIndex = startIndex + DEFAULT_ROWS_PER_PAGE;
-        const currentPageIssues = filteredIssues.slice(startIndex, endIndex);
-        exportReport(
-          tableFields,
-          emptyEqualsAllTableIds,
-          currentPageIssues,
-          isIssueTypeReport
-        );
-      }
+    } else if (exportTypeId === exportAllRecordsId) {
+      const allFilteredIssues = await tracebilityReportUtils.getFilteredIssues(
+        selectedJQLString,
+        issueFields,
+        0,
+        totalNumberOfIssues,
+        (isLoading) => {
+          console.log("loading");
+        },
+        handleNewError
+      );
+      exportReport(
+        tableFields,
+        emptyEqualsAllTableIds,
+        allFilteredIssues,
+        isIssueTypeReport
+      );
+      console.log(allFilteredIssues, "allfilter");
     }
+    // else if (exportTypeId === exportCurrentPageId) {
+    //   if (isTreeReport) {
+    //     treeUtils.exportMultiTree(tree);
+    //   } else {
+    //     const startIndex = (currentPage - 1) * DEFAULT_ROWS_PER_PAGE;
+    //     const endIndex = startIndex + DEFAULT_ROWS_PER_PAGE;
+    //     const currentPageIssues = filteredIssues.slice(startIndex, endIndex);
+    //     exportReport(
+    //       tableFields,
+    //       emptyEqualsAllTableIds,
+    //       currentPageIssues,
+    //       isIssueTypeReport
+    //     );
+    //   }
   };
   return (
     <FullWidthContainer>
@@ -251,6 +276,8 @@ export const TracebilityReportModule = ({
       {allErrors.length > 0 && <ErrorsList errors={errors} />}
       <GrowContainer>
         <Main
+          totalNumberOfIssues={totalNumberOfIssues}
+          updateTotalNumberOfIssues={updateTotalNumberOfIssues}
           selectedJqlString={selectedJQLString}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}

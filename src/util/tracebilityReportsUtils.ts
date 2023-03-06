@@ -49,6 +49,42 @@ export default class TracebilityReportUtils {
     }
   }
 
+  async getFilteredIssues(
+    jqlString: string,
+    issueFields: IssueField[],
+    startIndex: number,
+    maxResults: number,
+    // updateIssues: (issues: any) => void,
+    setIsLoading: (loading: boolean) => void,
+    // setTotal: React.Dispatch<React.SetStateAction<number>>,
+    handleError: (err: unknown) => void,
+    clearAllErrors?: () => void
+  ): Promise<IssueWithSortedLinks[]> {
+    setIsLoading(true);
+    // updateIssues([]);
+    if (clearAllErrors !== undefined) {
+      clearAllErrors();
+    }
+    try {
+      const searchResult = await this.api.searchLinkedIssues(
+        jqlString,
+        issueFields,
+        startIndex,
+        maxResults
+      );
+      const { data, total } = searchResult;
+      // updateIssues(data);
+      setIsLoading(false);
+      return data;
+      // if (setTotal !== null) {
+      // setTotal(total);
+      // }
+    } catch (error) {
+      setIsLoading(false);
+      handleError(error);
+    }
+  }
+
   calculateCloudHeight = (errors): number => {
     const headingHeight = 40 + 8; // 8: margin top
     const toolbarHeight = 94 + 8; // 8: table top margin
