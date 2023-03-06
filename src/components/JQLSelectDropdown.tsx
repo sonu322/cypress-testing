@@ -6,13 +6,13 @@ import { useTranslation } from "react-i18next";
 
 interface Props {
   selectedFilterId: string;
-  setSelectedFilterId: React.Dispatch<React.SetStateAction<string>>;
+  updateSelectedFilterId: (filterId: string) => void;
   handleNewError: (err: unknown) => void;
 }
 
 export const JQLSelectDropdown = ({
   selectedFilterId,
-  setSelectedFilterId,
+  updateSelectedFilterId,
   handleNewError,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
@@ -43,7 +43,7 @@ export const JQLSelectDropdown = ({
       }
       options={filters}
       selectedOptionId={selectedFilterId}
-      setSelectedOptionId={setSelectedFilterId}
+      updateSelectedOptionId={updateSelectedFilterId}
     ></DropdownSingleSelect>
   );
 };

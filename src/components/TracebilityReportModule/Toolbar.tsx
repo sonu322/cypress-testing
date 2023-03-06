@@ -39,7 +39,7 @@ interface Props {
   selectedIssueFieldIds: string[];
   setSelectedIssueFieldIds: React.Dispatch<React.SetStateAction<string[]>>;
   selectedJQLString: string;
-  setSelectedJQLString: React.Dispatch<React.SetStateAction<string>>;
+  updateSelectedJQLString: (filterId: string) => void;
   selectedTableFieldIds: string[];
   updateSelectedTableFieldIds: (fieldIds: string[]) => void;
   tableFields: IssueType[] | IssueLinkType[];
@@ -63,7 +63,7 @@ export const Toolbar = ({
   selectedIssueFieldIds,
   setSelectedIssueFieldIds,
   selectedJQLString,
-  setSelectedJQLString,
+  updateSelectedJQLString,
   selectedTableFieldIds,
   updateSelectedTableFieldIds,
   tableFields,
@@ -97,13 +97,13 @@ export const Toolbar = ({
         <FlexContainer>
           <JQLSelectDropdown
             selectedFilterId={selectedJQLString}
-            setSelectedFilterId={setSelectedJQLString}
+            updateSelectedFilterId={updateSelectedJQLString}
             handleNewError={handleNewError}
           />
           <span>{t("otpl.lxp.traceability-report.toolbar.or")}</span>
           <JQLEditor
             selectedFilterId={selectedJQLString}
-            setSelectedFilterId={setSelectedJQLString}
+            updateSelectedFilterId={updateSelectedJQLString}
             showCustomJQLEditor={showCustomJQLEditor}
           />
         </FlexContainer>
