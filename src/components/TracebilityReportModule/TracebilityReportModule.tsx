@@ -217,20 +217,6 @@ export const TracebilityReportModule = ({
       );
       console.log(allFilteredIssues, "allfilter");
     }
-    // else if (exportTypeId === exportCurrentPageId) {
-    //   if (isTreeReport) {
-    //     treeUtils.exportMultiTree(tree);
-    //   } else {
-    //     const startIndex = (currentPage - 1) * DEFAULT_ROWS_PER_PAGE;
-    //     const endIndex = startIndex + DEFAULT_ROWS_PER_PAGE;
-    //     const currentPageIssues = filteredIssues.slice(startIndex, endIndex);
-    //     exportReport(
-    //       tableFields,
-    //       emptyEqualsAllTableIds,
-    //       currentPageIssues,
-    //       isIssueTypeReport
-    //     );
-    //   }
   };
   return (
     <FullWidthContainer>
