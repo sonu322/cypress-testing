@@ -1,3 +1,4 @@
+import { lastSavedReportConfigKey } from "../constants/common";
 import LXPAPI, {
   Issue,
   IssueField,
@@ -5,7 +6,14 @@ import LXPAPI, {
   IssueType,
   IssueWithSortedLinks,
 } from "../types/api";
-import { getUniqueValues, getScreenHeight } from "./common";
+import {
+  getUniqueValues,
+  getScreenHeight,
+  getItemInLocalStorage,
+  setItemInLocalStorage,
+  addIssueDetails,
+  toCSV,
+} from "./common";
 import { download, toTitleCase } from "./index";
 
 export default class TracebilityReportUtils {
@@ -54,14 +62,11 @@ export default class TracebilityReportUtils {
     issueFields: IssueField[],
     startIndex: number,
     maxResults: number,
-    // updateIssues: (issues: any) => void,
     setIsLoading: (loading: boolean) => void,
-    // setTotal: React.Dispatch<React.SetStateAction<number>>,
     handleError: (err: unknown) => void,
     clearAllErrors?: () => void
   ): Promise<IssueWithSortedLinks[]> {
     setIsLoading(true);
-    // updateIssues([]);
     if (clearAllErrors !== undefined) {
       clearAllErrors();
     }
@@ -73,12 +78,8 @@ export default class TracebilityReportUtils {
         maxResults
       );
       const { data, total } = searchResult;
-      // updateIssues(data);
       setIsLoading(false);
       return data;
-      // if (setTotal !== null) {
-      // setTotal(total);
-      // }
     } catch (error) {
       setIsLoading(false);
       handleError(error);
@@ -102,17 +103,21 @@ export default class TracebilityReportUtils {
   };
 
   calculateServerHeight = (errors): number => {
-    const headingHeight = 81 + 80 + 80 + 8; // 8: margin top
+    const headingHeight = 41 + 80 + 80 + 8; // 8: margin top
     const toolbarHeight = 94 + 8; // 8: table top margin
-    const footerHeight = 91;
     const // more button 8: margin top and bottom
       errorsHeight = errors?.length > 0 ? (52 + 8) * errors.length : 0;
+    const allBanners = document.getElementsByClassName("aui-banner");
+    const allMessages = document.getElementsByClassName("aui-message");
+    const allBannersHeight = 40 * allBanners.length;
+    const allMessagesHeight = 40 * allMessages.length;
     const finalHeight =
       getScreenHeight() -
       headingHeight -
       toolbarHeight -
-      footerHeight -
       errorsHeight -
+      allBannersHeight -
+      allMessagesHeight -
       2;
     return finalHeight;
   };
@@ -131,9 +136,10 @@ export default class TracebilityReportUtils {
   calculateTreeHeight = (errors): number => {
     let finalHeight: number;
     if (this.api.isServer) {
-      finalHeight = this.calculateServerHeight(errors) - 42;
+      finalHeight = this.calculateServerHeight(errors) - 42 - 8 - 8 - 8 - 8;
     } else {
-      finalHeight = this.calculateCloudHeight(errors) - 42;
+      finalHeight =
+        this.calculateCloudHeight(errors) + 24 - 42 - 8 - 8 - 30 - 8;
     }
     return finalHeight < 200 ? 200 : finalHeight;
   };
@@ -157,6 +163,22 @@ const processByLinkType = (
     rowItems.push(rowItemString);
   });
   return rowItems;
+};
+
+export const handleSetItemInSavedReportConfig = (
+  key: string,
+  value: any
+): void => {
+  const lastSavedReportConfig = getItemInLocalStorage(lastSavedReportConfigKey);
+  let newReportConfig: Object;
+  if (lastSavedReportConfig !== null || lastSavedReportConfig !== undefined) {
+    newReportConfig = { ...lastSavedReportConfig, [key]: value };
+  } else {
+    newReportConfig = {
+      [key]: value,
+    };
+  }
+  setItemInLocalStorage(lastSavedReportConfigKey, newReportConfig);
 };
 
 const processByIssueType = (
@@ -184,37 +206,110 @@ const processByIssueType = (
   return rowItems;
 };
 
+const getLinkedIssuesByType = (
+  issue: IssueWithSortedLinks,
+  selectedTableFieldIds: string[]
+): any => {
+  const result = {};
+  for (const linkId in issue.sortedLinks) {
+    const issues = issue.sortedLinks[linkId];
+    issues.forEach((linkedIssue) => {
+      const type = linkedIssue.type.id;
+      if (selectedTableFieldIds.includes(type)) {
+        if (result[type] === undefined) {
+          result[type] = [];
+        }
+        result[type].push({ ...linkedIssue, linkId });
+      }
+    });
+  }
+  return result;
+};
+
+const getLinkedIssuesByLink = (
+  issue: IssueWithSortedLinks,
+  selectedTableFieldIds: string[]
+): any => {
+  const result = {};
+  for (const linkId in issue.sortedLinks) {
+    if (selectedTableFieldIds.includes(linkId)) {
+      result[linkId] = issue.sortedLinks[linkId];
+    }
+  }
+  return result;
+};
+
 export const exportReport = (
-  tableFields: IssueType[] | IssueLinkType[],
   selectedTableFieldIds: string[],
+  linkTypes: IssueLinkType[],
+  issueFields: IssueField[],
+  selectedIssueFieldIds: string[],
   filteredIssues: IssueWithSortedLinks[],
   isIssueTypeReport: boolean
 ): void => {
-  let content = "";
-  const headerItems = ["Issue"];
-  tableFields.forEach((tableField) => {
-    if (selectedTableFieldIds.includes(tableField.id)) {
-      headerItems.push(`"${toTitleCase(tableField.name)}"`);
+  const linkMap = {};
+  for (const linkType of linkTypes) {
+    linkMap[linkType.id] = linkType.name;
+  }
+  const content = [];
+  let headerItems = ["Issue Key"];
+  const labels = [];
+  issueFields.forEach((issueField) => {
+    if (selectedIssueFieldIds.includes(issueField.id)) {
+      headerItems.push(issueField.name);
+      labels.push(issueField.name);
     }
   });
-  let header = headerItems.toString();
-  header = header += "\n";
-  content += header;
+  headerItems.push("Link");
+  headerItems.push("Issue Key");
+  headerItems = headerItems.concat(labels);
+  content.push(headerItems);
 
   filteredIssues.forEach((issue) => {
-    let rowItems = [];
+    let rowItems = [issue.issueKey];
+    addIssueDetails(issue, issueFields, selectedIssueFieldIds, rowItems);
+    let result = null;
     if (isIssueTypeReport) {
-      rowItems = processByIssueType(selectedTableFieldIds, issue);
+      result = getLinkedIssuesByType(issue, selectedTableFieldIds);
     } else {
-      rowItems = processByLinkType(selectedTableFieldIds, issue);
+      result = getLinkedIssuesByLink(issue, selectedTableFieldIds);
     }
-    rowItems.unshift(`"${issue.issueKey}"`);
-
-    let rowContent = rowItems.toString();
-    rowContent = rowContent += "\n";
-    content += rowContent;
+    const keys = Object.keys(result);
+    if (keys.length > 0) {
+      let i = 0;
+      for (let linkId in result) {
+        const issues = result[linkId];
+        for (const linkedIssue of issues) {
+          linkId =
+            linkedIssue.linkId !== undefined ? linkedIssue.linkId : linkId;
+          if (i > 0) {
+            for (let j = 0; j < selectedIssueFieldIds.length; j++) {
+              rowItems.push("");
+            }
+          }
+          rowItems.push(toTitleCase(linkMap[linkId]));
+          rowItems.push(linkedIssue.issueKey);
+          addIssueDetails(
+            linkedIssue,
+            issueFields,
+            selectedIssueFieldIds,
+            rowItems
+          );
+          content.push(rowItems);
+          rowItems = [""];
+          i++;
+        }
+      }
+    } else {
+      rowItems.push("");
+      rowItems.push("");
+      for (let j = 0; j < labels.length; j++) {
+        rowItems.push("");
+      }
+      content.push(rowItems);
+    }
   });
-  download("csv", content);
+  download("csv", toCSV(content, true));
 };
 
 export const orderSelectedIds = (

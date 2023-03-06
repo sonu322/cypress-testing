@@ -17,6 +17,7 @@ import {
   AtlasTree,
   AtlasTreeNode,
   ButtonTypeTreeNode,
+  LastSavedTreeConfig,
   LinkTypeTreeNode,
   TreeNodeType,
 } from "../types/app";
@@ -25,6 +26,8 @@ import {
   orphansMaxResults,
   orphansTreeBranchName,
 } from "../constants/traceabilityReport";
+import { getItemInLocalStorage, setItemInLocalStorage, addIssueDetails, toCSV } from "./common";
+import { lastSavedTreeConfigKey } from "../constants/common";
 
 // root node
 const root: AtlasTree = {
@@ -62,6 +65,30 @@ export default class TreeUtils {
       return issueId;
     } else {
       return "";
+    }
+  };
+
+  handleSetItemInSavedTreeConfig = (key: string, value: any): void => {
+    const lastSavedTreeConfig = getItemInLocalStorage(lastSavedTreeConfigKey);
+    let newReportConfig: Object;
+    if (lastSavedTreeConfig !== null || lastSavedTreeConfig !== undefined) {
+      newReportConfig = { ...lastSavedTreeConfig, [key]: value };
+    } else {
+      newReportConfig = {
+        [key]: value,
+      };
+    }
+    setItemInLocalStorage(lastSavedTreeConfigKey, newReportConfig);
+  };
+
+  handleGetItemInSavedTreeConfig = (key: string): any => {
+    const lastSavedTreeConfig: LastSavedTreeConfig = getItemInLocalStorage(
+      lastSavedTreeConfigKey
+    );
+    if (lastSavedTreeConfig !== undefined && lastSavedTreeConfig !== null) {
+      return lastSavedTreeConfig[key];
+    } else {
+      return undefined;
     }
   };
 
@@ -266,6 +293,54 @@ export default class TreeUtils {
     }
   }
 
+  addNewNodes(
+    handleError,
+    filteredIssues: IssueWithSortedLinks[],
+    prevTree: AtlasTree,
+    shouldShowOrphans: boolean
+  ): AtlasTree {
+    try {
+      let tree = this.cloneTree(prevTree);
+      const filteredIssuesWithLinks: IssueWithLinkedIssues[] =
+        filteredIssues.map((filteredIssue) => {
+          let linkedIssues = [];
+          Object.values(filteredIssue.sortedLinks).forEach((issuesOfType) => {
+            linkedIssues = linkedIssues.concat(issuesOfType);
+          });
+
+          const issueWithLinkedIssues = {
+            ...filteredIssue,
+            linkedIssues,
+          };
+          delete issueWithLinkedIssues.sortedLinks;
+          return issueWithLinkedIssues;
+        });
+
+      tree.items[this.ROOT_ID].children = [];
+      filteredIssuesWithLinks.forEach((issueWithLinks) => {
+        const node = this.createTreeNode(
+          tree,
+          "",
+          issueWithLinks,
+          null,
+          TreeNodeType.IssueNode,
+          false,
+          false
+        );
+        const nodeId = node.id;
+        tree.items[this.ROOT_ID].children.push(nodeId);
+      });
+      if (shouldShowOrphans) {
+        tree = this.addOrphansBranch(tree);
+        return tree;
+      }
+      return tree;
+    } catch (err) {
+      console.error(err);
+      handleError(err);
+    }
+  }
+
   removeOrphansBranch(tree: AtlasTree): AtlasTree {
     let newTree = this.cloneTree(tree);
     const rootNode = tree.items[this.ROOT_ID];
@@ -325,7 +400,7 @@ export default class TreeUtils {
         setTree((tree) => {
           const loadMoreButtonNode =
             tree.items[
-              `/${orphansTreeBranchName}/${loadMoreOrphansButtonName}`
+            `/${orphansTreeBranchName}/${loadMoreOrphansButtonName}`
             ];
 
           const newButtonData: ButtonTypeTreeNode = {
@@ -637,7 +712,7 @@ export default class TreeUtils {
           if (
             firstNode.nodeType !== TreeNodeType.ButtonNode &&
             (firstNode.data as IssueWithLinkedIssues).linkedIssues !==
-              undefined &&
+            undefined &&
             (firstNode.data as IssueWithLinkedIssues).linkedIssues.length > 0 &&
             firstNode.isExpanded
           ) {
@@ -999,98 +1074,50 @@ export default class TreeUtils {
     });
   }
 
-  exportTree(tree: AtlasTree) {
-    // TODO: make fields dynamic
+  exportTree(
+    tree: AtlasTree,
+    issueFields: IssueField[],
+    selectedIssueFieldIds: string[]): void {
     const root = tree.items[tree.rootId];
-    const mainNodeId = root.children[0];
-
-    const contents: any[] = [];
-
-    const process = (item: AtlasTreeNode, indent) => {
-      if (!item) return;
-      const content = {
-        indent,
-        key: "",
-        link: "",
-        summary: "",
-        type: "",
-        status: "",
-        priority: "",
-      };
-
-      if (item.data) {
-        const dataObj = item.data;
-        if (item.nodeType === TreeNodeType.LinkNode) {
-          content.link = (dataObj as LinkTypeTreeNode).title;
-        } else {
-          const data = dataObj as IssueWithLinkedIssues;
-          content.key = data.issueKey;
-          content.summary = data.summary;
-          content.type = data.type.name;
-          content.status = data.status.name;
-          content.priority = data.priority.name;
-        }
+    const headerItems = ["Indent", "Issue Key", "Link"];
+    issueFields.forEach((issueField) => {
+      if (selectedIssueFieldIds.includes(issueField.id)) {
+        headerItems.push(issueField.name);
       }
-
-      contents.push(content);
-      if (item.hasChildren) {
-        const nextIndent = indent + 1;
-        item.children.forEach((key) => {
-          process(tree.items[key], nextIndent);
-        });
-      }
-    };
-
-    process(tree.items[mainNodeId], 1);
-    download("csv", csv(contents, true));
-  }
-
-  exportMultiTree(tree: AtlasTree): void {
-    const root = tree.items[tree.rootId];
-
+    });
     const contents: any[] = [];
+    contents.push(headerItems);
 
-    const process = (item: AtlasTreeNode, indent: number): void => {
-      if (!item || item.nodeType === TreeNodeType.ButtonNode) {
+    const process = (item: AtlasTreeNode, indent: number, link: string): void => {
+      let currentNodeLink = "";
+      if (!item || !item.data || item.nodeType === TreeNodeType.ButtonNode) {
         return;
-      }
-      const content = {
-        indent,
-        key: "",
-        link: "",
-        summary: "",
-        type: "",
-        status: "",
-        priority: "",
-      };
-
-      if (item.data) {
+      } else {
         const dataObj = item.data;
         if (item.nodeType === TreeNodeType.LinkNode) {
-          content.link = (dataObj as LinkTypeTreeNode).title;
+          currentNodeLink = (dataObj as LinkTypeTreeNode).title;
         } else {
           const data = dataObj as IssueWithLinkedIssues;
-          content.key = data.issueKey;
-          content.summary = data.summary;
-          content.type = data.type.name;
-          content.status = data.status.name;
-          content.priority = data.priority.name;
+          const rowItems = [indent, data.issueKey, link];
+          addIssueDetails(data, issueFields, selectedIssueFieldIds, rowItems);
+          contents.push(rowItems);
         }
       }
-
-      contents.push(content);
       if (item.hasChildren && item.isExpanded) {
-        const nextIndent = indent + 1;
+        let nextIndent = indent;
+        if (currentNodeLink !== "") {
+          nextIndent++;
+        }
         item.children.forEach((key) => {
-          process(tree.items[key], nextIndent);
+          process(tree.items[key], nextIndent, currentNodeLink);
         });
       }
     };
 
     root.children.forEach((mainNodeId) => {
-      process(tree.items[mainNodeId], 1);
+      process(tree.items[mainNodeId], 1, "");
     });
-    download("csv", csv(contents, true));
+    download("csv", toCSV(contents, true));
   }
 
   collapseNode(
