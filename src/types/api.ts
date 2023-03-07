@@ -26,6 +26,7 @@ export interface IssueField {
 export interface CellLimit {
   id: string;
   name: string;
+  description: string;
 }
 
 export interface Issue {

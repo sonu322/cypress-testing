@@ -22,6 +22,9 @@ export const reportCellOptions = [
     name: t(
       "otpl.lxp.traceability-report.toolbar.settingsDropdown.displayAllIssueCards"
     ),
+    description: t(
+      "otpl.lxp.traceability-report.toolbar.settingsDropdown.displayAllIssueCards.Description"
+    ),
   },
   {
     id: autoHideEmptyColumnsId,

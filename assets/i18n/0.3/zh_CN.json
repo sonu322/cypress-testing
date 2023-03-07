@@ -21,6 +21,7 @@
   "otpl.lxp.traceability-report.toolbar.tableFields.name": "表字段",
   "otpl.lxp.traceability-report.toolbar.settingsDropdown.displayAllIssueCards": "显示所有事务卡",
   "otpl.lxp.traceability-report.toolbar.settingsDropdown.autoHideEmptyColumns": "自动隐藏空列",
+  "otpl.lxp.traceability-report.toolbar.settingsDropdown.displayAllIssueCards.Description": "如果啟用此選項，則將顯示所有鏈接的問題卡，否則將顯示最多 3 個鏈接的問題卡，並帶有一個選項以在表格單元格中加載更多。",
   "otpl.lxp.traceability-report.select-filter.text": "请选择筛选条件查看报告",
   "otpl.lxp.traceability-report.tree-view.name": "树视图",
   "otpl.lxp.traceability-report.tree-view.orphans-tree-branch-name": "孤儿问题",
