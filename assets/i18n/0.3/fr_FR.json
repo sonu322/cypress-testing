@@ -21,6 +21,8 @@
   "otpl.lxp.traceability-report.toolbar.settingsDropdown.autoHideEmptyColumns": "Masquer automatiquement les colonnes vides",
   "otpl.lxp.traceability-report.toolbar.settingsDropdown.displayAllIssueCards.Description": "Si cette option est activée, toutes les cartes de problèmes liés seront affichées, sinon au maximum 3 cartes de problèmes liés seront affichées avec une option pour en charger plus dans une cellule du tableau.",
   "otpl.lxp.traceability-report.toolbar.settingsDropdown.autoHideEmptyColumns.Description": "Cette option active le masquage automatique des colonnes qui ne contiennent aucune information relative aux problèmes liés. Cependant, si une colonne est désactivée manuellement via la liste déroulante 'Champs de table', elle ne sera pas affichée quelle que soit la valeur de cette option.",
+  "otpl.lxp.traceability-report.toolbar.exportDropdown.exportCurrentPage": "Exporter la page actuelle",
+  "otpl.lxp.traceability-report.toolbar.exportDropdown.exportAllRecords": "Exporter tous les enregistrements",
   "otpl.lxp.traceability-report.fetch-limit-dropdown.name": "Fetch Limit",
   "otpl.lxp.traceability-report.load-more-issues-button.name": "Charger d'autres tickets",
   "otpl.lxp.traceability-report.tree-view.name": "Vue du arbre",

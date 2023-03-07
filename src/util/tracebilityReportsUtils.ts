@@ -57,6 +57,35 @@ export default class TracebilityReportUtils {
     }
   }
 
+  async getFilteredIssues(
+    jqlString: string,
+    issueFields: IssueField[],
+    startIndex: number,
+    maxResults: number,
+    setIsLoading: (loading: boolean) => void,
+    handleError: (err: unknown) => void,
+    clearAllErrors?: () => void
+  ): Promise<IssueWithSortedLinks[]> {
+    setIsLoading(true);
+    if (clearAllErrors !== undefined) {
+      clearAllErrors();
+    }
+    try {
+      const searchResult = await this.api.searchLinkedIssues(
+        jqlString,
+        issueFields,
+        startIndex,
+        maxResults
+      );
+      const { data, total } = searchResult;
+      setIsLoading(false);
+      return data;
+    } catch (error) {
+      setIsLoading(false);
+      handleError(error);
+    }
+  }
+
   calculateCloudHeight = (errors): number => {
     const headingHeight = 40 + 8; // 8: margin top
     const toolbarHeight = 94 + 8; // 8: table top margin
@@ -177,7 +206,10 @@ const processByIssueType = (
   return rowItems;
 };
 
-const getLinkedIssuesByType = (issue: IssueWithSortedLinks, selectedTableFieldIds: string[]): any => {
+const getLinkedIssuesByType = (
+  issue: IssueWithSortedLinks,
+  selectedTableFieldIds: string[]
+): any => {
   const result = {};
   for (const linkId in issue.sortedLinks) {
     const issues = issue.sortedLinks[linkId];
@@ -194,7 +226,10 @@ const getLinkedIssuesByType = (issue: IssueWithSortedLinks, selectedTableFieldId
   return result;
 };
 
-const getLinkedIssuesByLink = (issue: IssueWithSortedLinks, selectedTableFieldIds: string[]): any => {
+const getLinkedIssuesByLink = (
+  issue: IssueWithSortedLinks,
+  selectedTableFieldIds: string[]
+): any => {
   const result = {};
   for (const linkId in issue.sortedLinks) {
     if (selectedTableFieldIds.includes(linkId)) {
@@ -245,7 +280,8 @@ export const exportReport = (
       for (let linkId in result) {
         const issues = result[linkId];
         for (const linkedIssue of issues) {
-          linkId = linkedIssue.linkId !== undefined ? linkedIssue.linkId : linkId;
+          linkId =
+            linkedIssue.linkId !== undefined ? linkedIssue.linkId : linkId;
           if (i > 0) {
             for (let j = 0; j < selectedIssueFieldIds.length; j++) {
               rowItems.push("");
@@ -253,7 +289,12 @@ export const exportReport = (
           }
           rowItems.push(toTitleCase(linkMap[linkId]));
           rowItems.push(linkedIssue.issueKey);
-          addIssueDetails(linkedIssue, issueFields, selectedIssueFieldIds, rowItems);
+          addIssueDetails(
+            linkedIssue,
+            issueFields,
+            selectedIssueFieldIds,
+            rowItems
+          );
           content.push(rowItems);
           rowItems = [""];
           i++;
@@ -273,7 +314,7 @@ export const exportReport = (
 
 export const orderSelectedIds = (
   selectedIds: string[],
-  referenceList: Array<{ id: string;[key: string]: any }>
+  referenceList: Array<{ id: string; [key: string]: any }>
 ): string[] => {
   const newSelectedIds: string[] = [];
   if (selectedIds.length > 0) {

@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { LoadingButton } from "@atlaskit/button";
+import { TablePagination } from "./TablePagination";
 import Spinner from "@atlaskit/spinner";
 import { APIContext } from "../../context/api";
 import styled from "styled-components";
@@ -27,7 +28,6 @@ const MarginAddedContainer = styled.div`
   margin-top: 8px;
   margin-bottom: 8px;
 `;
-const DEFAULT_ROWS_PER_PAGE = 20;
 const START_INDEX = 0;
 const options = [
   { id: 10, name: "10" },
@@ -36,6 +36,9 @@ const options = [
   { id: 100, name: "100" },
 ];
 interface Props {
+  totalNumberOfIssues: number;
+  updateTotalNumberOfIssues: (totalNumberOfIssues: number) => void;
+  DEFAULT_ROWS_PER_PAGE: number;
   selectedJqlString: string;
   handleNewError: (err: unknown) => void;
   clearAllErrors: () => void;
@@ -58,9 +61,14 @@ interface Props {
   setTree: React.Dispatch<React.SetStateAction<AtlasTree>>;
   isToggleOrphansLoading: boolean;
   updateIsToggleOrphansLoading: (isToggleOrphansLoading: boolean) => void;
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
 }
 
 export const Main = ({
+  totalNumberOfIssues,
+  updateTotalNumberOfIssues,
+  DEFAULT_ROWS_PER_PAGE,
   selectedJqlString,
   handleNewError,
   clearAllErrors,
@@ -81,12 +89,47 @@ export const Main = ({
   setTree,
   isToggleOrphansLoading,
   updateIsToggleOrphansLoading,
+  currentPage,
+  setCurrentPage,
 }: Props): JSX.Element => {
-  const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
   const [selectedLimitOptionId, setSelectedLimitOptionId] = useState(
     DEFAULT_ROWS_PER_PAGE
   );
+  const updateCurrentPage = (page: number): void => {
+    //In the updateCurrentPage,all the arguments passing to populateIssues should not be undefined
+    setCurrentPage(page);
+    const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
+    const startIndex = (page - 1) * selectedLimit;
+    void tracebilityReportUtils.populateIssues(
+      selectedJqlString,
+      issueFields,
+      startIndex,
+      selectedLimit,
+      updateIssues,
+      setAreIssuesLoading,
+      updateTotalNumberOfIssues,
+      handleNewError,
+      clearAllErrors
+    );
+  };
+  const updateSelectedLimitOptionId = (limitOptionId: number): void => {
+    //In this function,all the arguments passing to populateIssues should be defined.
+    setSelectedLimitOptionId(limitOptionId);
+    const selectedLimit = limitOptionId;
+    const startIndex = (currentPage - 1) * selectedLimit;
+    void tracebilityReportUtils.populateIssues(
+      selectedJqlString,
+      issueFields,
+      startIndex,
+      limitOptionId,
+      updateIssues,
+      setAreIssuesLoading,
+      updateTotalNumberOfIssues,
+      handleNewError,
+      clearAllErrors
+    );
+  };
   const { t } = useTranslation();
   const api = useContext(APIContext);
   const addMoreIssues = (issues: IssueWithSortedLinks[]): void => {
@@ -99,10 +142,12 @@ export const Main = ({
   const updateIssues = (issues: IssueWithSortedLinks[]): void => {
     setFilteredIssues(issues);
   };
+  const serialNo = 20 * (currentPage - 1) + 1;
   const tracebilityReportUtils = new TracebilityReportUtils(api);
   useEffect(() => {
     if (selectedJqlString !== undefined && selectedJqlString !== null) {
       const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
+      setCurrentPage(1);
       void tracebilityReportUtils.populateIssues(
         selectedJqlString,
         issueFields,
@@ -110,13 +155,16 @@ export const Main = ({
         selectedLimit,
         updateIssues,
         setAreIssuesLoading,
-        setTotalNumberOfIssues,
+        updateTotalNumberOfIssues,
         handleNewError,
         clearAllErrors
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedJqlString]);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedViewTab, setCurrentPage]);
 
   const fetchMoreIssues = (): void => {
     const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
@@ -170,6 +218,7 @@ export const Main = ({
             />
           ) : (
             <Report
+              serialNo={serialNo}
               filteredIssues={filteredIssues}
               issueFieldIds={selectedIssueFieldIds}
               tableFields={tableFields}
@@ -181,23 +230,26 @@ export const Main = ({
           )}
         </TableContainer>
         <MarginAddedContainer>
-          <DropdownSingleSelect
-            options={options}
-            dropdownName={
-              t("otpl.lxp.traceability-report.fetch-limit-dropdown.name") +
-              ` (${selectedLimitOptionId})`
-            }
-            selectedOptionId={selectedLimitOptionId}
-            setSelectedOptionId={setSelectedLimitOptionId}
-          />
-          &nbsp;
-          <LoadingButton
-            isLoading={areMoreIssuesLoading}
-            isDisabled={filteredIssues.length >= totalNumberOfIssues}
-            onClick={fetchMoreIssues}
-          >
-            {t("otpl.lxp.traceability-report.load-more-issues-button.name")}
-          </LoadingButton>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <DropdownSingleSelect
+              options={options}
+              dropdownName={
+                t("otpl.lxp.traceability-report.fetch-limit-dropdown.name") +
+                ` (${selectedLimitOptionId})`
+              }
+              selectedOptionId={selectedLimitOptionId}
+              updateSelectedOptionId={updateSelectedLimitOptionId}
+            />
+            <div style={{ marginLeft: "auto" }}>
+              &nbsp;
+              <TablePagination
+                currentPage={currentPage}
+                updateCurrentPage={updateCurrentPage}
+                totalNumberOfIssues={totalNumberOfIssues}
+                issuePerPage={selectedLimitOptionId}
+              ></TablePagination>
+            </div>
+          </div>
         </MarginAddedContainer>
       </Container>
     );

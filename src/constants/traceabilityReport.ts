@@ -36,6 +36,23 @@ export const reportCellOptions = [
     ),
   },
 ];
+export const exportCurrentPageId = "Export the current page";
+export const exportAllRecordsId = "Export all records";
+export const exportReportOptions = [
+  {
+    id: exportCurrentPageId,
+    name: t(
+      "otpl.lxp.traceability-report.toolbar.exportDropdown.exportCurrentPage"
+    ),
+  },
+  {
+    id: exportAllRecordsId,
+    name: t(
+      "otpl.lxp.traceability-report.toolbar.exportDropdown.exportAllRecords"
+    ),
+  },
+];
+
 export const viewTabs = {
   id: "view-tabs",
   tabs: [
