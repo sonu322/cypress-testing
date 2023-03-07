@@ -34,13 +34,6 @@ const TracebilityReport = ({ showCustomJQLEditor }: Props): JSX.Element => {
     );
   } else {
     return <LicenseContainer></LicenseContainer>;
-    // return (
-    //   <TreeFilterContextProvider>
-    //     <TracebilityReportModule
-    //       showCustomJQLEditor={showCustomJQLEditor}
-    //     ></TracebilityReportModule>
-    //   </TreeFilterContextProvider>
-    // );
   }
 };
 
