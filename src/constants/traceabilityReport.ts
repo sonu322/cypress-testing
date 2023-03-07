@@ -31,6 +31,9 @@ export const reportCellOptions = [
     name: t(
       "otpl.lxp.traceability-report.toolbar.settingsDropdown.autoHideEmptyColumns"
     ),
+    description: t(
+      "otpl.lxp.traceability-report.toolbar.settingsDropdown.autoHideEmptyColumns.Description"
+    ),
   },
 ];
 export const viewTabs = {
