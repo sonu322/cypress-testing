@@ -7,14 +7,14 @@ import DropdownMenu, {
 interface Props {
   selectedOptionId: string | number;
   dropdownName: string;
-  setSelectedOptionId: React.Dispatch<React.SetStateAction<string | number>>;
-  options: Array<{ name: string | number, id: string | number }>;
+  updateSelectedOptionId: (optionId: number | string) => void;
+  options: Array<{ name: string | number; id: string | number }>;
 }
 
 export const DropdownSingleSelect = ({
   selectedOptionId,
   dropdownName,
-  setSelectedOptionId: updateSelectedOptionId,
+  updateSelectedOptionId,
   options,
 }: Props): JSX.Element => {
   return (
@@ -29,7 +29,7 @@ export const DropdownSingleSelect = ({
           <DropdownItem
             key={option.id}
             id={option.id}
-            isSelected={selectedOptionId == option.id}
+            isSelected={selectedOptionId === option.id}
             onClick={() => updateSelectedOptionId(option.id)}
           >
             {option.name}

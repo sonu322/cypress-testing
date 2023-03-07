@@ -7,14 +7,14 @@ const _AP: any = typeof AP !== "undefined" ? AP : null;
 
 interface Props {
   selectedFilterId: string;
-  setSelectedFilterId: React.Dispatch<React.SetStateAction<string>>;
+  updateSelectedFilterId: (filterId: string) => void;
   showCustomJQLEditor?: () => void;
 }
 
 export const JQLEditor = ({
   selectedFilterId,
-  setSelectedFilterId,
-  showCustomJQLEditor
+  updateSelectedFilterId,
+  showCustomJQLEditor,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
   const options = { ...jqlDialogOptions };
@@ -22,7 +22,7 @@ export const JQLEditor = ({
     options.jql = selectedFilterId;
   }
   const callback = function ({ jql }: { jql: string }): void {
-    setSelectedFilterId(jql);
+    updateSelectedFilterId(jql);
   };
   const openJQLEditor = (): void => {
     if (showCustomJQLEditor) {
