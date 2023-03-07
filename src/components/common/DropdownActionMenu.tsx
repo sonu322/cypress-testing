@@ -11,28 +11,26 @@ export const DropdownActionMenu = ({
   actionHandler,
 }) => {
   return (
-    <>
-      <DropdownMenu
-        triggerType="button"
-        trigger={dropdownName}
-        shouldFlip={false}
-        position="bottom right"
-        isCompact={true}
-      >
-        <DropdownItemGroup>
-          {options &&
-            options.map((option) => (
-              <DropdownItem
-                key={option.id}
-                id={option.id}
-                isSelected={selectedOptionId == option.id}
-                onClick={() => actionHandler(option.id)}
-              >
-                {option.name}
-              </DropdownItem>
-            ))}
-        </DropdownItemGroup>
-      </DropdownMenu>
-    </>
+    <DropdownMenu
+      triggerType="button"
+      trigger={dropdownName}
+      shouldFlip={false}
+      position="bottom right"
+      isCompact={true}
+    >
+      <DropdownItemGroup>
+        {options &&
+          options.map((option) => (
+            <DropdownItem
+              key={option.id}
+              id={option.id}
+              isSelected={selectedOptionId == option.id}
+              onClick={() => actionHandler(option.id)}
+            >
+              {option.name}
+            </DropdownItem>
+          ))}
+      </DropdownItemGroup>
+    </DropdownMenu>
   );
 };

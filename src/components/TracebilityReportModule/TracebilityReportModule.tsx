@@ -313,9 +313,7 @@ export const TracebilityReportModule = ({
         issueFields,
         0,
         totalNumberOfIssues,
-        (isLoading) => {
-          console.log("loading");
-        },
+        (isLoading) => {},
         handleNewError
       );
       exportReport(
