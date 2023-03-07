@@ -39,7 +39,7 @@ interface Props {
   selectedIssueFieldIds: string[];
   setSelectedIssueFieldIds: React.Dispatch<React.SetStateAction<string[]>>;
   selectedJQLString: string;
-  setSelectedJQLString: React.Dispatch<React.SetStateAction<string>>;
+  updateSelectedJQLString: (filterId: string) => void;
   selectedTableFieldIds: string[];
   updateSelectedTableFieldIds: (fieldIds: string[]) => void;
   tableFields: IssueType[] | IssueLinkType[];
@@ -56,13 +56,14 @@ interface Props {
   selectedTabIndex: SelectedType;
   showCustomJQLEditor: any;
   selectedViewTab: string;
+  exportDropdownOptions: any;
 }
 
 export const Toolbar = ({
   selectedIssueFieldIds,
   setSelectedIssueFieldIds,
   selectedJQLString,
-  setSelectedJQLString,
+  updateSelectedJQLString,
   selectedTableFieldIds,
   updateSelectedTableFieldIds,
   tableFields,
@@ -77,6 +78,7 @@ export const Toolbar = ({
   selectedTabIndex,
   showCustomJQLEditor,
   selectedViewTab,
+  exportDropdownOptions,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
   const api = useContext(APIContext);
@@ -95,13 +97,13 @@ export const Toolbar = ({
         <FlexContainer>
           <JQLSelectDropdown
             selectedFilterId={selectedJQLString}
-            setSelectedFilterId={setSelectedJQLString}
+            updateSelectedFilterId={updateSelectedJQLString}
             handleNewError={handleNewError}
           />
           <span>{t("otpl.lxp.traceability-report.toolbar.or")}</span>
           <JQLEditor
             selectedFilterId={selectedJQLString}
-            setSelectedFilterId={setSelectedJQLString}
+            updateSelectedFilterId={updateSelectedJQLString}
             showCustomJQLEditor={showCustomJQLEditor}
           />
         </FlexContainer>
@@ -133,6 +135,7 @@ export const Toolbar = ({
               description={t("otpl.lxp.toolbar.export-csv.title")}
               exportContent={exportReport}
               isDisabled={isExportDisabled}
+              options={exportDropdownOptions}
             />
             <HelpLink
               description={t("otpl.lxp.common.get-help")}

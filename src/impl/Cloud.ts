@@ -645,16 +645,12 @@ export default class APIImpl implements LXPAPI {
   ): Promise<{ data: Issue[]; total: number }> {
     try {
       const fieldIds = this._getFieldIds(fields);
-      const issues: JiraIssueSearchResult = await this.api.searchIssues(
-        jql,
-        fieldIds,
-        start,
-        max
-      );
+      const issuesSearchResult: JiraIssueSearchResult =
+        await this.api.searchIssues(jql, fieldIds, start, max);
 
       const result: Issue[] = [];
-      const total = issues.total;
-      const jiraIssues = issues?.issues || [];
+      const total = issuesSearchResult.total;
+      const jiraIssues = issuesSearchResult?.issues || [];
       for (const issue of jiraIssues) {
         result.push(this._convertIssue(issue, fields));
       }

@@ -41,6 +41,7 @@ interface Props {
   issueFieldIds: string[];
   isIssueTypeReport: boolean;
   errors: any[];
+  serialNo: number;
 }
 export const Report = ({
   filteredIssues,
@@ -50,6 +51,7 @@ export const Report = ({
   issueFieldIds,
   isIssueTypeReport,
   errors,
+  serialNo,
 }: Props): JSX.Element => {
   const api = useContext(APIContext);
   const traceabilityUtils = new TracebilityReportUtils(api);
@@ -120,7 +122,7 @@ export const Report = ({
                   selectedTableFieldIds={columnsToDisplay}
                   issueFieldIds={issueFieldIds}
                   issue={issue}
-                  rowSno={index + 1}
+                  rowSno={index + serialNo}
                 />
               ) : (
                 <LinkTypeRow
@@ -128,7 +130,7 @@ export const Report = ({
                   selectedTableFieldIds={columnsToDisplay}
                   issueFieldIds={issueFieldIds}
                   issue={issue}
-                  rowSno={index + 1}
+                  rowSno={index + serialNo}
                 />
               )}
             </BorderTr>
