@@ -29,6 +29,11 @@ export interface CellLimit {
   description: string;
 }
 
+export interface ExportOptions {
+  id: string;
+  name: string;
+}
+
 export interface Issue {
   id: ID;
   priority: IssuePriority;
