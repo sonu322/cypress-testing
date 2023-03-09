@@ -96,19 +96,6 @@ export default class JiraCloudImpl implements JiraAPI {
     console.log("start", start);
     console.log("max", max);
     console.log("jql", jql);
-    // const data = {
-    //   fields,
-    //   startAt: start ?? 0,
-    //   maxResults: max ?? 100,
-    //   jql,
-    // };
-
-    // const response = await this._AP.request({
-    //   type: "POST",
-    //   contentType: "application/json",
-    //   url: "/rest/api/3/search",
-    //   data: JSON.stringify(data),
-    // });
     let allIssues: JiraIssueFull[] = [];
     const searchResult = await this.searchIssues(jql, fields, start, max);
 
