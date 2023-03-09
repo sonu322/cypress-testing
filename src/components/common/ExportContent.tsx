@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileExport } from "@fortawesome/free-solid-svg-icons";
 
 interface Props {
-  exportContent: () => void;
+  exportContent: (exportTypeId: string) => Promise<void>;
   description: string;
   isDisabled: boolean;
   options: ExportOptions[];

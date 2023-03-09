@@ -646,7 +646,7 @@ export default class APIImpl implements LXPAPI {
     try {
       const fieldIds = this._getFieldIds(fields);
       const issuesSearchResult: JiraIssueSearchResult =
-        await this.api.searchIssues(jql, fieldIds, start, max);
+        await this.api.searchAllIssues(jql, fieldIds, start, max);
 
       const result: Issue[] = [];
       const total = issuesSearchResult.total;

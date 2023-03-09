@@ -33,7 +33,14 @@ const TracebilityReport = ({ showCustomJQLEditor }: Props): JSX.Element => {
       </TreeFilterContextProvider>
     );
   } else {
-    return <LicenseContainer></LicenseContainer>;
+    // return <LicenseContainer></LicenseContainer>;
+    return (
+      <TreeFilterContextProvider localStorageKey={lastSavedReportConfigKey}>
+        <TracebilityReportModule
+          showCustomJQLEditor={showCustomJQLEditor}
+        ></TracebilityReportModule>
+      </TreeFilterContextProvider>
+    );
   }
 };
 
