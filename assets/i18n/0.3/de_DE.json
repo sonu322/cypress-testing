@@ -20,6 +20,8 @@
   "otpl.lxp.traceability-report.toolbar.tableFields.name": "Tabellenfelder",
   "otpl.lxp.traceability-report.toolbar.settingsDropdown.displayAllIssueCards": "Alle Vorgangkarten anzeigen",
   "otpl.lxp.traceability-report.toolbar.settingsDropdown.autoHideEmptyColumns": "Leere Spalten automatisch ausblenden",
+  "otpl.lxp.traceability-report.toolbar.settingsDropdown.displayAllIssueCards.Description": "Wenn diese Option aktiviert ist, werden alle verknüpften Ausgabekarten angezeigt, ansonsten werden maximal 3 verknüpfte Ausgabekarten angezeigt, mit der Option, weitere in eine Tabellenzelle zu laden.",
+  "otpl.lxp.traceability-report.toolbar.settingsDropdown.autoHideEmptyColumns.Description": "Diese Option aktiviert das automatische Ausblenden von Spalten, die keine Informationen zu den verknüpften Problemen enthalten. Wenn eine Spalte jedoch manuell über das Dropdown-Menü „Tabellenfelder“ deaktiviert wird, wird sie unabhängig vom Wert dieser Option nicht angezeigt.",
   "otpl.lxp.traceability-report.toolbar.exportDropdown.exportCurrentPage": "Aktuelle Seite exportieren",
   "otpl.lxp.traceability-report.toolbar.exportDropdown.exportAllRecords": "Alle Datensätze exportieren",
   "otpl.lxp.traceability-report.select-filter.text": "Bitte wählen Sie Filter, um den Bericht anzuzeigen",

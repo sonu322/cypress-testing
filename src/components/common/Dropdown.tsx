@@ -4,6 +4,7 @@ import DropdownMenu, {
   DropdownItemCheckbox,
 } from "@atlaskit/dropdown-menu";
 import { toTitleCase } from "../../util";
+import { TooltipContainer } from "./TooltipContainer";
 interface Props {
   selectedOptions: string[];
   dropdownName: any;
@@ -12,6 +13,7 @@ interface Props {
   options: Array<{
     id: string;
     name: string;
+    description: string;
   }>;
   useTitleCaseOptions?: boolean;
 }
@@ -47,7 +49,9 @@ export const Dropdown = ({
             isSelected={selectedOptions.includes(option.id)}
             onClick={() => handleOptionClick(option.id)}
           >
-            {useTitleCaseOptions ? toTitleCase(option.name) : option.name}
+            <TooltipContainer content={option.description}>
+              {useTitleCaseOptions ? toTitleCase(option.name) : option.name}
+            </TooltipContainer>
           </DropdownItemCheckbox>
         ))}
       </DropdownItemCheckboxGroup>
