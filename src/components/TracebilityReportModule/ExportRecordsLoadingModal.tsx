@@ -8,6 +8,7 @@ import Modal, {
 } from "@atlaskit/modal-dialog";
 import Spinner from "@atlaskit/spinner";
 import Heading from "@atlaskit/heading";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   isExportReportLoading: boolean;
@@ -35,17 +36,22 @@ const ModalBodyContainer = styled.div`
 export const ExportRecordsLoadingModal = ({
   isExportReportLoading,
 }: Props): JSX.Element => {
+  const { t } = useTranslation();
+  const exportAllRecordsTitle = t(
+    "otpl.lxp.toolbar.loading-export-all-records.title"
+  );
+  const exportAllRecordsMessage = t(
+    "otpl.lxp.toolbar.loading-export-all-records.message"
+  );
+  console.log(exportAllRecordsTitle);
   return (
     <ModalTransition>
-      {isExportReportLoading && (
+      {true && (
         <Modal width={"small"}>
           <ModalBody>
             <ModalBodyContainer>
-              <Heading level="h500">Exporting Records</Heading>
-              <Heading level="h200">
-                This operation may take some time depending upon the number of
-                records. Please wait...
-              </Heading>
+              <Heading level="h500">{exportAllRecordsTitle}</Heading>
+              <Heading level="h200">{exportAllRecordsMessage}</Heading>
               <SpinnerContainer>
                 <Spinner size={"large"} />
               </SpinnerContainer>
