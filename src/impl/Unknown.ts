@@ -75,7 +75,14 @@ export default class UnknownImpl implements LXPAPI {
   ): Promise<{ data: Issue[]; total: number }> {
     throw new Error("Method not implemented.");
   }
-
+  async searchAllIssues(
+    jql: string,
+    fields?: IssueField[],
+    start?: number,
+    max?: number
+  ): Promise<{ data: Issue[]; total: number }> {
+    throw new Error("Method not implemented.");
+  }
   async searchOrphanIssues(
     jql: string,
     fields?: IssueField[],
@@ -102,7 +109,9 @@ export default class UnknownImpl implements LXPAPI {
     throw new Error("Method not implemented.");
   }
 
-  async getAutoCompleteSuggestions(query: string): Promise<JiraAutoCompleteSuggestionsResult> {
+  async getAutoCompleteSuggestions(
+    query: string
+  ): Promise<JiraAutoCompleteSuggestionsResult> {
     throw new Error("Method not implemented.");
   }
 }

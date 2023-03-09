@@ -24,9 +24,10 @@ import {
   autoHideEmptyColumnsId,
   reportCellOptions,
   viewTabs,
-  exportReportOptions,
+  exportTabularReportOptions,
   exportAllRecordsId,
   exportCurrentPageId,
+  exportTreeReportOptions,
 } from "../../constants/traceabilityReport";
 import { TreeReportToolbar } from "./TreeReportToolbar";
 import { TreeFilterContext } from "../../context/treeFilterContext";
@@ -347,7 +348,11 @@ export const TracebilityReportModule = ({
               settingsDropdown={reportCellOptions}
               updateSelectedJQLString={updateSelectedJQLString}
               exportReport={exportAction}
-              exportDropdownOptions={exportReportOptions}
+              exportDropdownOptions={
+                isTreeReport
+                  ? exportTreeReportOptions
+                  : exportTabularReportOptions
+              }
               selectedJQLString={selectedJQLString}
               issueCardOptions={issueFields}
               selectedIssueFieldIds={selectedIssueFieldIds}

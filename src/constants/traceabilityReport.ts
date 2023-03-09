@@ -32,7 +32,7 @@ export const reportCellOptions = [
 ];
 export const exportCurrentPageId = "Export the current page";
 export const exportAllRecordsId = "Export all records";
-export const exportReportOptions = [
+export const exportTabularReportOptions = [
   {
     id: exportCurrentPageId,
     name: t(
@@ -43,6 +43,15 @@ export const exportReportOptions = [
     id: exportAllRecordsId,
     name: t(
       "otpl.lxp.traceability-report.toolbar.exportDropdown.exportAllRecords"
+    ),
+  },
+];
+
+export const exportTreeReportOptions = [
+  {
+    id: exportCurrentPageId,
+    name: t(
+      "otpl.lxp.traceability-report.toolbar.exportDropdown.exportCurrentPage"
     ),
   },
 ];
