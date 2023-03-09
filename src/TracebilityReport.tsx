@@ -24,7 +24,7 @@ const TracebilityReport = ({ showCustomJQLEditor }: Props): JSX.Element => {
       void handleLocale();
     }
   }, [api, i18n]);
-  if (true || api.hasValidLicense()) {
+  if (api.hasValidLicense()) {
     return (
       <TreeFilterContextProvider localStorageKey={lastSavedReportConfigKey}>
         <TracebilityReportModule
