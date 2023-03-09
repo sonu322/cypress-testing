@@ -5,6 +5,7 @@ import PageHeader from "@atlaskit/page-header";
 import { SelectedType } from "@atlaskit/tabs/types";
 import { Toolbar } from "./Toolbar";
 import { useTranslation } from "react-i18next";
+
 import {
   IssueField,
   IssueLinkType,
@@ -32,13 +33,7 @@ import { TreeFilterContext } from "../../context/treeFilterContext";
 import TreeUtils from "../../util/TreeUtils";
 import { lastSavedReportConfigKey } from "../../constants/common";
 import { LastSavedReportConfig } from "../../types/app";
-import Modal, {
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  ModalTitle,
-  ModalTransition,
-} from "@atlaskit/modal-dialog";
+import { ExportRecordsLoadingModal } from "./ExportRecordsLoadingModal";
 
 const FullWidthContainer = styled.div`
   width: 100%;
@@ -83,7 +78,7 @@ export const TracebilityReportModule = ({
   const [isToggleOrphansLoading, setIsToggleOrphansLoading] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>();
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
-  const [isExportLoading, setIsExportLoading] = useState(false);
+  const [isExportReportLoading, setIsExportReportLoading] = useState(false);
   useEffect(() => {
     if (selectedTabIndex !== undefined) {
       handleSetItemInSavedReportConfig("selectedTabIndex", selectedTabIndex);
@@ -299,6 +294,11 @@ export const TracebilityReportModule = ({
   const updateTotalNumberOfIssues = (totalNumberOfIssues: number): void => {
     setTotalNumberOfIssues(totalNumberOfIssues);
   };
+  const updateIsExportReportLoading = (
+    isExportReportLoading: boolean
+  ): void => {
+    setIsExportReportLoading(isExportReportLoading);
+  };
   const exportAction = async (exportTypeId: string): Promise<void> => {
     // TODO: use enum for exportTypeId
     if (exportTypeId === exportCurrentPageId) {
@@ -320,9 +320,7 @@ export const TracebilityReportModule = ({
         issueFields,
         0,
         totalNumberOfIssues,
-        (isLoading) => {
-          setIsExportLoading(isLoading);
-        },
+        updateIsExportReportLoading,
         handleNewError
       );
       exportReport(
@@ -337,33 +335,9 @@ export const TracebilityReportModule = ({
   };
   return (
     <FullWidthContainer>
-      <ModalTransition>
-        {isExportLoading && (
-          <Modal>
-            <ModalHeader>
-              <ModalTitle appearance="danger">
-                You’re about to delete this page
-              </ModalTitle>
-            </ModalHeader>
-            <ModalBody>
-              <p>
-                Before you delete it permanently, there’s some things you should
-                know:
-              </p>
-              <ul>
-                <li>4 pages have links to this page that will break</li>
-                <li>2 child pages will be left behind in the page tree</li>
-              </ul>
-            </ModalBody>
-            {/* <ModalFooter>
-              <Button appearance="subtle">Cancel</Button>
-              <Button appearance="danger" onClick={closeModal} autoFocus>
-                Delete
-              </Button>
-            </ModalFooter> */}
-          </Modal>
-        )}
-      </ModalTransition>
+      <ExportRecordsLoadingModal
+        isExportReportLoading={isExportReportLoading}
+      />
       <PageHeader
         bottomBar={
           <>
