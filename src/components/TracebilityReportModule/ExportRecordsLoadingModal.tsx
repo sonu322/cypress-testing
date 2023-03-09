@@ -37,6 +37,7 @@ export const ExportRecordsLoadingModal = ({
   isExportReportLoading,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
+
   const exportAllRecordsTitle = t(
     "otpl.lxp.toolbar.loading-export-all-records.title"
   );
