@@ -93,7 +93,9 @@ export default class JiraCloudImpl implements JiraAPI {
     start?: number,
     max?: number
   ): Promise<JiraIssueSearchResult> {
+    console.log("start", start);
     console.log("max", max);
+    console.log("jql", jql);
     // const data = {
     //   fields,
     //   startAt: start ?? 0,
@@ -111,18 +113,44 @@ export default class JiraCloudImpl implements JiraAPI {
     const searchResult = await this.searchIssues(jql, fields, start, max);
 
     const { issues, total } = searchResult;
+    console.log("total number of issues", total);
     allIssues = allIssues.concat(issues);
-    while (allIssues.length < total && allIssues.length < max) {
-      const moreLinkedIssuesData = await this.searchIssues(
-        jql,
-        fields,
-        allIssues.length,
-        total
-      );
-      allIssues = allIssues.concat(moreLinkedIssuesData.issues);
+    if (max !== undefined) {
+      while (allIssues.length < total && allIssues.length < max + start) {
+        console.log("calling next iteration");
+        console.log(allIssues.length, total);
+
+        const moreLinkedIssuesData = await this.searchIssues(
+          jql,
+          fields,
+          allIssues.length,
+          total
+        );
+        allIssues = allIssues.concat(moreLinkedIssuesData.issues);
+      }
+    } else {
+      while (allIssues.length < total) {
+        console.log("calling next iteration");
+        console.log(allIssues.length, total);
+
+        const moreLinkedIssuesData = await this.searchIssues(
+          jql,
+          fields,
+          allIssues.length,
+          total
+        );
+        allIssues = allIssues.concat(moreLinkedIssuesData.issues);
+      }
     }
 
     // return response.body && JSON.parse(response.body);
+    console.log("returning", {
+      issues: allIssues,
+      expand: searchResult.expand,
+      startAt: searchResult.total,
+      maxResults: max,
+      total: searchResult.total,
+    });
     return {
       issues: allIssues,
       expand: searchResult.expand,
