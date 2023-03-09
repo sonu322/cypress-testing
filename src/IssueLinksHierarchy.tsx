@@ -28,10 +28,7 @@ const IssueLinksHierarchy = () => {
           <IssueTreeModule />
         </TreeFilterContextProvider>
       ) : (
-        // <LicenseContainer />
-        <TreeFilterContextProvider localStorageKey={lastSavedTreeConfigKey}>
-          <IssueTreeModule />
-        </TreeFilterContextProvider>
+        <LicenseContainer />
       )}
     </Suspense>
   );
