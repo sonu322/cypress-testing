@@ -46,7 +46,7 @@ export const ExportRecordsLoadingModal = ({
   console.log(exportAllRecordsTitle);
   return (
     <ModalTransition>
-      {true && (
+      {isExportReportLoading && (
         <Modal width={"small"}>
           <ModalBody>
             <ModalBodyContainer>
