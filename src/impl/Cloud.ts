@@ -758,18 +758,7 @@ export default class APIImpl implements LXPAPI {
         0
       );
       linkedIssues = linkedIssuesResult.data;
-      const totalLinkedIssues = linkedIssuesResult.total;
-      // danger - while loop may lead to infinite looping
-      // while (linkedIssues.length < totalLinkedIssues) {
-      //   const moreLinkedIssuesData = await this.searchIssues(
-      //     linkedIssuesJQL,
-      //     fields,
-      //     linkedIssues.length,
-      //     totalLinkedIssues
-      //   );
-      //   linkedIssues = linkedIssues.concat(moreLinkedIssuesData.data);
-      // }
-      // danger end
+
     }
 
     const populatedIssues = this._populateIssueLinks(issues, linkedIssues);
