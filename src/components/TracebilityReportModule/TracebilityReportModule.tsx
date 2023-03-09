@@ -83,7 +83,7 @@ export const TracebilityReportModule = ({
   const [isToggleOrphansLoading, setIsToggleOrphansLoading] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>();
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
-
+  const [isExportLoading, setIsExportLoading] = useState(false);
   useEffect(() => {
     if (selectedTabIndex !== undefined) {
       handleSetItemInSavedReportConfig("selectedTabIndex", selectedTabIndex);
@@ -320,7 +320,9 @@ export const TracebilityReportModule = ({
         issueFields,
         0,
         totalNumberOfIssues,
-        (isLoading) => {},
+        (isLoading) => {
+          setIsExportLoading(isLoading);
+        },
         handleNewError
       );
       exportReport(
@@ -335,6 +337,33 @@ export const TracebilityReportModule = ({
   };
   return (
     <FullWidthContainer>
+      <ModalTransition>
+        {isExportLoading && (
+          <Modal>
+            <ModalHeader>
+              <ModalTitle appearance="danger">
+                You’re about to delete this page
+              </ModalTitle>
+            </ModalHeader>
+            <ModalBody>
+              <p>
+                Before you delete it permanently, there’s some things you should
+                know:
+              </p>
+              <ul>
+                <li>4 pages have links to this page that will break</li>
+                <li>2 child pages will be left behind in the page tree</li>
+              </ul>
+            </ModalBody>
+            {/* <ModalFooter>
+              <Button appearance="subtle">Cancel</Button>
+              <Button appearance="danger" onClick={closeModal} autoFocus>
+                Delete
+              </Button>
+            </ModalFooter> */}
+          </Modal>
+        )}
+      </ModalTransition>
       <PageHeader
         bottomBar={
           <>
