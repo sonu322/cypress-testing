@@ -74,7 +74,7 @@ export default class JiraCloudImpl implements JiraAPI {
     const data = {
       fields,
       startAt: start ?? 0,
-      maxResults: max ?? 500,
+      maxResults: max ?? 100,
       jql,
     };
 
@@ -112,7 +112,7 @@ export default class JiraCloudImpl implements JiraAPI {
 
     const { issues, total } = searchResult;
     allIssues = allIssues.concat(issues);
-    while (allIssues.length < total) {
+    while (allIssues.length < total && allIssues.length < max) {
       const moreLinkedIssuesData = await this.searchIssues(
         jql,
         fields,
@@ -127,7 +127,7 @@ export default class JiraCloudImpl implements JiraAPI {
       issues: allIssues,
       expand: searchResult.expand,
       startAt: searchResult.total,
-      maxResults: searchResult.maxResults,
+      maxResults: max,
       total: searchResult.total,
     };
   }
