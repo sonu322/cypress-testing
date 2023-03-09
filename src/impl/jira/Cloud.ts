@@ -116,9 +116,16 @@ export default class JiraCloudImpl implements JiraAPI {
     console.log("total number of issues", total);
     allIssues = allIssues.concat(issues);
     if (max !== undefined) {
-      while (allIssues.length < total && allIssues.length < max + start) {
+      while (
+        allIssues.length < total &&
+        allIssues.length < max &&
+        allIssues.length < total - start
+      ) {
         console.log("calling next iteration");
-        console.log(allIssues.length, total);
+        console.log("allIssues.length", allIssues.length);
+        console.log("total", total);
+        console.log("start", start);
+        console.log("max", max);
 
         const moreLinkedIssuesData = await this.searchIssues(
           jql,
