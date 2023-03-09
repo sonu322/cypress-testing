@@ -93,14 +93,10 @@ export default class JiraCloudImpl implements JiraAPI {
     start?: number,
     max?: number
   ): Promise<JiraIssueSearchResult> {
-    console.log("start", start);
-    console.log("max", max);
-    console.log("jql", jql);
     let allIssues: JiraIssueFull[] = [];
     const searchResult = await this.searchIssues(jql, fields, start, max);
 
     const { issues, total } = searchResult;
-    console.log("total number of issues", total);
     allIssues = allIssues.concat(issues);
     if (max !== undefined) {
       while (
@@ -108,12 +104,6 @@ export default class JiraCloudImpl implements JiraAPI {
         allIssues.length < max &&
         allIssues.length < total - start
       ) {
-        console.log("calling next iteration");
-        console.log("allIssues.length", allIssues.length);
-        console.log("total", total);
-        console.log("start", start);
-        console.log("max", max);
-
         const moreLinkedIssuesData = await this.searchIssues(
           jql,
           fields,
@@ -124,9 +114,6 @@ export default class JiraCloudImpl implements JiraAPI {
       }
     } else {
       while (allIssues.length < total) {
-        console.log("calling next iteration");
-        console.log(allIssues.length, total);
-
         const moreLinkedIssuesData = await this.searchIssues(
           jql,
           fields,
@@ -137,14 +124,6 @@ export default class JiraCloudImpl implements JiraAPI {
       }
     }
 
-    // return response.body && JSON.parse(response.body);
-    console.log("returning", {
-      issues: allIssues,
-      expand: searchResult.expand,
-      startAt: searchResult.total,
-      maxResults: max,
-      total: searchResult.total,
-    });
     return {
       issues: allIssues,
       expand: searchResult.expand,
