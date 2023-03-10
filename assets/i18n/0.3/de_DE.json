@@ -53,8 +53,6 @@
   "otpl.lxp.toolbar.expand-all.title": "Klicken Sie hier, um alle Baumknoten bis zu einer maximalen Tiefe von 3 zu erweitern",
   "otpl.lxp.toolbar.collapse-all.title": "Bitte hier klicken um gesamten Baum einzuklappen",
   "otpl.lxp.toolbar.export-csv.title": "Klicken Sie hier, um die CSV-Datei zu exportieren",
-  "otpl.lxp.toolbar.loading-export-all-records.title": "Datensätze exportieren",
-  "otpl.lxp.toolbar.loading-export-all-records.message": "Dieser Vorgang kann je nach Anzahl der Datensätze einige Zeit in Anspruch nehmen. Warten Sie mal...",
   "otpl.lxp.license.do-not-have": "Keine Lizenz vorhanden",
   "otpl.lxp.traceability-report.name": "Links Explorer - Rückverfolgbarkeitsberichte",
   "otpl.lxp.traceability-report.label": "Links Explorer - Rückverfolgbarkeitsberichte",

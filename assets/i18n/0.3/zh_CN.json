@@ -52,8 +52,6 @@
   "otpl.lxp.toolbar.expand-all.title": "单击此处展开所有树节点，最大深度为 3",
   "otpl.lxp.toolbar.collapse-all.title": "点击这里折叠所有树节点",
   "otpl.lxp.toolbar.export-csv.title": "点击这里导出CSV文件",
-  "otpl.lxp.toolbar.loading-export-all-records.title": "导出记录",
-  "otpl.lxp.toolbar.loading-export-all-records.message": "此操作可能需要一些时间，具体取决于记录的数量。 请稍等...",
   "otpl.lxp.license.do-not-have": "找不到许可证",
   "otpl.lxp.traceability-report.name": "链接浏览器 - 可追溯性报告",
   "otpl.lxp.traceability-report.label": "链接浏览器 - 可追溯性报告",

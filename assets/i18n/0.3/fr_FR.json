@@ -52,8 +52,6 @@
   "otpl.lxp.toolbar.expand-all.title": "Cliquez ici pour étendre tous les nœuds de l'arbre jusqu'à une profondeur maximale de 3",
   "otpl.lxp.toolbar.collapse-all.title": "Cliquez ici pour replier tous les nœuds d'arbre",
   "otpl.lxp.toolbar.export-csv.title": "Cliquez ici pour exporter un fichier CSV",
-  "otpl.lxp.toolbar.loading-export-all-records.title": "Exportation d'enregistrements",
-  "otpl.lxp.toolbar.loading-export-all-records.message": "Cette opération peut prendre un certain temps en fonction du nombre d'enregistrements. S'il vous plaît, attendez...",
   "otpl.lxp.license.do-not-have": "Aucune licence trouvé",
   "otpl.lxp.traceability-report.name": "Liens Explorer - Rapport de traçabilité",
   "otpl.lxp.traceability-report.label": "Liens Explorer - Rapport de traçabilité",
