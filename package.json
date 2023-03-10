@@ -13,7 +13,7 @@
     "@atlaskit/icon": "^21.11.2",
     "@atlaskit/inline-dialog": "^11.0.1",
     "@atlaskit/lozenge": "^11.3.0",
-    "@atlaskit/modal-dialog": "^12.4.4",
+    "@atlaskit/modal-dialog": "^12.4.11",
     "@atlaskit/navigation-next": "^6.0.1",
     "@atlaskit/page": "^10.0.2",
     "@atlaskit/page-header": "^9.0.20",

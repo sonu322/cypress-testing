@@ -18,7 +18,7 @@ import { getQueryParam } from "../../util/index";
 
 export default class JiraCloudImpl implements JiraAPI {
   // @ts-expect-error
-  readonly private _AP: any = AP;
+  private readonly _AP: any = AP;
 
   isJiraCloud(): boolean {
     return true;
@@ -74,7 +74,7 @@ export default class JiraCloudImpl implements JiraAPI {
     const data = {
       fields,
       startAt: start ?? 0,
-      maxResults: max ?? 500,
+      maxResults: max ?? 100,
       jql,
     };
 
@@ -85,6 +85,48 @@ export default class JiraCloudImpl implements JiraAPI {
       data: JSON.stringify(data),
     });
     return response.body && JSON.parse(response.body);
+  }
+
+  async searchAllIssues(
+    jql: string,
+    fields: string[],
+    start?: number,
+    max?: number
+  ): Promise<JiraIssueSearchResult> {
+    let allIssues: JiraIssueFull[] = [];
+    const searchResult = await this.searchIssues(jql, fields, start, max);
+
+    const { issues, total } = searchResult;
+    allIssues = allIssues.concat(issues);
+    if (max !== undefined) {
+      while (allIssues.length < max && allIssues.length < total - start) {
+        const moreLinkedIssuesData = await this.searchIssues(
+          jql,
+          fields,
+          allIssues.length,
+          total
+        );
+        allIssues = allIssues.concat(moreLinkedIssuesData.issues);
+      }
+    } else {
+      while (allIssues.length < total) {
+        const moreLinkedIssuesData = await this.searchIssues(
+          jql,
+          fields,
+          allIssues.length,
+          total
+        );
+        allIssues = allIssues.concat(moreLinkedIssuesData.issues);
+      }
+    }
+
+    return {
+      issues: allIssues,
+      expand: searchResult.expand,
+      startAt: searchResult.total,
+      maxResults: max,
+      total: searchResult.total,
+    };
   }
 
   getCurrentIssueId(): Promise<string> {
@@ -126,7 +168,7 @@ export default class JiraCloudImpl implements JiraAPI {
   getHelpLinks(): HelpLinks {
     return {
       issueTree: "https://optimizory.atlassian.net/l/cp/xj7rXies",
-      traceability: "https://optimizory.atlassian.net/l/cp/77caidqE"
+      traceability: "https://optimizory.atlassian.net/l/cp/77caidqE",
     };
   }
 
@@ -135,8 +177,12 @@ export default class JiraCloudImpl implements JiraAPI {
     return response.body && JSON.parse(response.body);
   }
 
-  async getAutoCompleteSuggestions(query: string): Promise<JiraAutoCompleteSuggestionsResult> {
-    const response = await this._AP.request("/rest/api/3/jql/autocompletedata/suggestions?" + query);
+  async getAutoCompleteSuggestions(
+    query: string
+  ): Promise<JiraAutoCompleteSuggestionsResult> {
+    const response = await this._AP.request(
+      "/rest/api/3/jql/autocompletedata/suggestions?" + query
+    );
     return response.body && JSON.parse(response.body);
   }
 }

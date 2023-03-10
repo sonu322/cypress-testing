@@ -88,6 +88,47 @@ export default class JiraServerImpl implements JiraAPI {
     });
   }
 
+  async searchAllIssues(
+    jql: string,
+    fields: string[],
+    start?: number,
+    max?: number
+  ): Promise<JiraIssueSearchResult> {
+    let allIssues: JiraIssueFull[] = [];
+    const searchResult = await this.searchIssues(jql, fields, start, max);
+
+    const { issues, total } = searchResult;
+    allIssues = allIssues.concat(issues);
+    if (max !== undefined) {
+      while (allIssues.length < max && allIssues.length < total - start) {
+        const moreLinkedIssuesData = await this.searchIssues(
+          jql,
+          fields,
+          allIssues.length,
+          total
+        );
+        allIssues = allIssues.concat(moreLinkedIssuesData.issues);
+      }
+    } else {
+      while (allIssues.length < total) {
+        const moreLinkedIssuesData = await this.searchIssues(
+          jql,
+          fields,
+          allIssues.length,
+          total
+        );
+        allIssues = allIssues.concat(moreLinkedIssuesData.issues);
+      }
+    }
+    return {
+      issues: allIssues,
+      expand: searchResult.expand,
+      startAt: searchResult.total,
+      maxResults: max,
+      total: searchResult.total,
+    };
+  }
+
   getCurrentIssueId(): Promise<string> {
     let issueID = this._JIRA.Issue.getIssueId();
     if (!issueID) {
@@ -105,7 +146,7 @@ export default class JiraServerImpl implements JiraAPI {
       startAt: 0,
       total: res.length,
       isLast: true,
-      values: res
+      values: res,
     };
   }
 
@@ -128,7 +169,7 @@ export default class JiraServerImpl implements JiraAPI {
   getHelpLinks(): HelpLinks {
     return {
       issueTree: "https://optimizory.atlassian.net/l/cp/gdv35UvD",
-      traceability: "https://optimizory.atlassian.net/l/cp/1KpzZ3z4"
+      traceability: "https://optimizory.atlassian.net/l/cp/1KpzZ3z4",
     };
   }
 
@@ -137,10 +178,16 @@ export default class JiraServerImpl implements JiraAPI {
   }
 
   async getAutoCompleteData(): Promise<JiraAutoCompleteResult> {
-    return await this._AJS.$.getJSON(this.contextPath + "/rest/api/2/jql/autocompletedata");
+    return await this._AJS.$.getJSON(
+      this.contextPath + "/rest/api/2/jql/autocompletedata"
+    );
   }
 
-  async getAutoCompleteSuggestions(query: string): Promise<JiraAutoCompleteSuggestionsResult> {
-    return await this._AJS.$.getJSON("/rest/api/2/jql/autocompletedata/suggestions?" + query);
+  async getAutoCompleteSuggestions(
+    query: string
+  ): Promise<JiraAutoCompleteSuggestionsResult> {
+    return await this._AJS.$.getJSON(
+      "/rest/api/2/jql/autocompletedata/suggestions?" + query
+    );
   }
 }

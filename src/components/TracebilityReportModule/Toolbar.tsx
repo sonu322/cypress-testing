@@ -48,7 +48,7 @@ interface Props {
   setSelectedSettingsDropdownIds: React.Dispatch<
     React.SetStateAction<string[]>
   >;
-  exportReport: () => void;
+  exportReport: (exportTypeId: string) => Promise<void>;
   handleNewError: (err: unknown) => void;
   isExportDisabled: boolean;
   issueCardOptions: IssueField[];

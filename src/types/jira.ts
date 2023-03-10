@@ -271,7 +271,6 @@ interface SuggestionResult {
 }
 
 export interface JiraAPI {
-
   isJiraCloud(): boolean;
 
   hasValidLicense(): boolean;
@@ -297,6 +296,13 @@ export interface JiraAPI {
     max?: number
   ): Promise<JiraIssueSearchResult>;
 
+  searchAllIssues(
+    jql: string,
+    fields: string[],
+    start?: number,
+    max?: number
+  ): Promise<JiraIssueSearchResult>;
+
   getCurrentIssueId(): Promise<string>;
 
   getFilters(): Promise<JiraFiltersResponse>;
@@ -309,5 +315,7 @@ export interface JiraAPI {
 
   getAutoCompleteData(): Promise<JiraAutoCompleteResult>;
 
-  getAutoCompleteSuggestions(query: string): Promise<JiraAutoCompleteSuggestionsResult>;
+  getAutoCompleteSuggestions(
+    query: string
+  ): Promise<JiraAutoCompleteSuggestionsResult>;
 }
