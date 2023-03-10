@@ -142,7 +142,7 @@ export const Main = ({
   const updateIssues = (issues: IssueWithSortedLinks[]): void => {
     setFilteredIssues(issues);
   };
-  const serialNo = 20 * (currentPage - 1) + 1;
+  const serialNo = (currentPage - 1) * selectedLimitOptionId + 1;
   const tracebilityReportUtils = new TracebilityReportUtils(api);
   useEffect(() => {
     if (selectedJqlString !== undefined && selectedJqlString !== null) {
