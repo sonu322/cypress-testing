@@ -162,9 +162,6 @@ export const Main = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedJqlString]);
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedViewTab, setCurrentPage]);
 
   const fetchMoreIssues = (): void => {
     const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
