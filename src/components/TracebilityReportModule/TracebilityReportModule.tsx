@@ -5,6 +5,7 @@ import PageHeader from "@atlaskit/page-header";
 import { SelectedType } from "@atlaskit/tabs/types";
 import { Toolbar } from "./Toolbar";
 import { useTranslation } from "react-i18next";
+
 import {
   IssueField,
   IssueLinkType,
@@ -23,15 +24,17 @@ import {
   autoHideEmptyColumnsId,
   reportCellOptions,
   viewTabs,
-  exportReportOptions,
+  exportTabularReportOptions,
   exportAllRecordsId,
   exportCurrentPageId,
+  exportTreeReportOptions,
 } from "../../constants/traceabilityReport";
 import { TreeReportToolbar } from "./TreeReportToolbar";
 import { TreeFilterContext } from "../../context/treeFilterContext";
 import TreeUtils from "../../util/TreeUtils";
 import { lastSavedReportConfigKey } from "../../constants/common";
 import { LastSavedReportConfig } from "../../types/app";
+import { ExportRecordsLoadingModal } from "./ExportRecordsLoadingModal";
 
 const FullWidthContainer = styled.div`
   width: 100%;
@@ -76,7 +79,7 @@ export const TracebilityReportModule = ({
   const [isToggleOrphansLoading, setIsToggleOrphansLoading] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>();
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
-
+  const [isExportReportLoading, setIsExportReportLoading] = useState(false);
   useEffect(() => {
     if (selectedTabIndex !== undefined) {
       handleSetItemInSavedReportConfig("selectedTabIndex", selectedTabIndex);
@@ -292,6 +295,11 @@ export const TracebilityReportModule = ({
   const updateTotalNumberOfIssues = (totalNumberOfIssues: number): void => {
     setTotalNumberOfIssues(totalNumberOfIssues);
   };
+  const updateIsExportReportLoading = (
+    isExportReportLoading: boolean
+  ): void => {
+    setIsExportReportLoading(isExportReportLoading);
+  };
   const exportAction = async (exportTypeId: string): Promise<void> => {
     // TODO: use enum for exportTypeId
     if (exportTypeId === exportCurrentPageId) {
@@ -313,7 +321,7 @@ export const TracebilityReportModule = ({
         issueFields,
         0,
         totalNumberOfIssues,
-        (isLoading) => {},
+        updateIsExportReportLoading,
         handleNewError
       );
       exportReport(
@@ -328,6 +336,9 @@ export const TracebilityReportModule = ({
   };
   return (
     <FullWidthContainer>
+      <ExportRecordsLoadingModal
+        isExportReportLoading={isExportReportLoading}
+      />
       <PageHeader
         bottomBar={
           <>
@@ -337,7 +348,11 @@ export const TracebilityReportModule = ({
               settingsDropdown={reportCellOptions}
               updateSelectedJQLString={updateSelectedJQLString}
               exportReport={exportAction}
-              exportDropdownOptions={exportReportOptions}
+              exportDropdownOptions={
+                isTreeReport
+                  ? exportTreeReportOptions
+                  : exportTabularReportOptions
+              }
               selectedJQLString={selectedJQLString}
               issueCardOptions={issueFields}
               selectedIssueFieldIds={selectedIssueFieldIds}
