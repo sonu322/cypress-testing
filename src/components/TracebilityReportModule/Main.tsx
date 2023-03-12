@@ -117,7 +117,12 @@ export const Main = ({
     //In this function,all the arguments passing to populateIssues should be defined.
     setSelectedLimitOptionId(limitOptionId);
     const selectedLimit = limitOptionId;
-    const startIndex = (currentPage - 1) * selectedLimit;
+    const newTotalNumberOfIssues = Math.ceil(
+      filteredIssues.length / selectedLimit
+    );
+    const newCurrentPage = Math.min(currentPage, newTotalNumberOfIssues);
+    setCurrentPage(newCurrentPage);
+    const startIndex = (newCurrentPage - 1) * selectedLimit;
     void tracebilityReportUtils.populateIssues(
       selectedJqlString,
       issueFields,
