@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Dropdown } from "../common/Dropdown";
 import { ButtonGroup } from "@atlaskit/button";
 import styled from "styled-components";
-import { ExportContent } from "../common/ExportContent";
+import { ExportButton } from "../common/ExportButton";
 import { HelpLink } from "../common/HelpLink";
 import { useTranslation } from "react-i18next";
 import { APIContext } from "../../context/api";
@@ -30,7 +30,7 @@ export const Toolbar = ({
   collapseAll,
   expandAll,
   isExportDisabled,
-  isExpandAllLoading
+  isExpandAllLoading,
 }): JSX.Element => {
   const { t } = useTranslation();
   const api = useContext(APIContext);
@@ -70,7 +70,7 @@ export const Toolbar = ({
           selectedOptions={selectedIssueFieldIds}
           updateSelectedOptions={setSelectedIssueFieldIds}
         />
-        <ExportContent
+        <ExportButton
           isDisabled={isExportDisabled}
           description={t("otpl.lxp.toolbar.export-csv.title")}
           exportContent={exportTree}
