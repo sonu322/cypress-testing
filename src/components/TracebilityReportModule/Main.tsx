@@ -114,15 +114,16 @@ export const Main = ({
     );
   };
   const updateSelectedLimitOptionId = (limitOptionId: number): void => {
-    //In this function,all the arguments passing to populateIssues should be defined.
+    //In the updateSelectedLimitOptionId, all the arguments passing to populateIssues should not be undefined
     setSelectedLimitOptionId(limitOptionId);
+    setCurrentPage(1);
     const selectedLimit = limitOptionId;
-    const startIndex = (currentPage - 1) * selectedLimit;
+    const startIndex = 0;
     void tracebilityReportUtils.populateIssues(
       selectedJqlString,
       issueFields,
       startIndex,
-      limitOptionId,
+      selectedLimit,
       updateIssues,
       setAreIssuesLoading,
       updateTotalNumberOfIssues,
@@ -162,9 +163,6 @@ export const Main = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedJqlString]);
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedViewTab, setCurrentPage]);
 
   const fetchMoreIssues = (): void => {
     const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
