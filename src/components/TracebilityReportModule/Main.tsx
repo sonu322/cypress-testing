@@ -114,20 +114,16 @@ export const Main = ({
     );
   };
   const updateSelectedLimitOptionId = (limitOptionId: number): void => {
-    //In this function,all the arguments passing to populateIssues should be defined.
+    //In the updateSelectedLimitOptionId, all the arguments passing to populateIssues should not be undefined
     setSelectedLimitOptionId(limitOptionId);
+    setCurrentPage(1);
     const selectedLimit = limitOptionId;
-    const newTotalNumberOfIssues = Math.ceil(
-      filteredIssues.length / selectedLimit
-    );
-    const newCurrentPage = Math.min(currentPage, newTotalNumberOfIssues);
-    setCurrentPage(newCurrentPage);
-    const startIndex = (newCurrentPage - 1) * selectedLimit;
+    const startIndex = 0;
     void tracebilityReportUtils.populateIssues(
       selectedJqlString,
       issueFields,
       startIndex,
-      limitOptionId,
+      selectedLimit,
       updateIssues,
       setAreIssuesLoading,
       updateTotalNumberOfIssues,
