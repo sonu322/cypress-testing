@@ -65,7 +65,6 @@ export const Report = ({
     filteredIssues.forEach((issue) => {
       Object.keys(issue.sortedLinks).forEach((key) => {
         const linkArray = issue.sortedLinks[key];
-        console.log(linkArray, "linkArray");
         if (linkArray !== undefined && linkArray.length > 0) {
           if (isIssueTypeReport) {
             linkArray.forEach((link) => {
