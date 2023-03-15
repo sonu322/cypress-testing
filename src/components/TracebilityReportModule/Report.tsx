@@ -69,13 +69,15 @@ export const Report = ({
           issue.sortedLinks[key].length > 0
         ) {
           if (isIssueTypeReport) {
-            if (!columnsToDisplay.includes(issue.sortedLinks[key][0].type.id)) {
+            if (
+              !columnsToDisplay.includes(issue.sortedLinks[key][length].type.id)
+            ) {
               if (
                 selectedTableFieldIds.includes(
-                  issue.sortedLinks[key][0].type.id
+                  issue.sortedLinks[key][length].type.id
                 )
               ) {
-                columnsToDisplay.push(issue.sortedLinks[key][0].type.id);
+                columnsToDisplay.push(issue.sortedLinks[key][length].type.id);
               }
             }
           } else {
