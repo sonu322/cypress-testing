@@ -44,7 +44,6 @@ export const ExportRecordsLoadingModal = ({
   const exportAllRecordsMessage = t(
     "otpl.lxp.toolbar.loading-export-all-records.message"
   );
-  console.log(exportAllRecordsTitle);
   return (
     <ModalTransition>
       {isExportReportLoading && (

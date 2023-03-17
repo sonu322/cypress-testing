@@ -167,8 +167,8 @@ export default class JiraCloudImpl implements JiraAPI {
 
   getHelpLinks(): HelpLinks {
     return {
-      issueTree: "https://optimizory.atlassian.net/l/cp/xj7rXies",
-      traceability: "https://optimizory.atlassian.net/l/cp/77caidqE",
+      issueTree: "https://optimizory.atlassian.net/l/cp/1R9sKugt",
+      traceability: "https://optimizory.atlassian.net/l/cp/bweX21AS",
     };
   }
 
