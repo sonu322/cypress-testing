@@ -5,7 +5,7 @@ import { APIContext } from "./context/api";
 import { useTranslation } from "react-i18next";
 import "../i18n";
 import { TreeFilterContextProvider } from "./components/common/TreeFilterContextProvider";
-import { lastSavedTreeConfigKey } from "./constants/common";
+
 
 const IssueLinksHierarchy = () => {
   const api = useContext(APIContext);
@@ -24,7 +24,7 @@ const IssueLinksHierarchy = () => {
   return (
     <Suspense fallback={t("otpl.lxp.common.loading")}>
       {api.hasValidLicense() ? (
-        <TreeFilterContextProvider localStorageKey={lastSavedTreeConfigKey}>
+        <TreeFilterContextProvider>
           <IssueTreeModule />
         </TreeFilterContextProvider>
       ) : (
