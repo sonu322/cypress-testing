@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import LicenseContainer from "./components/common/LicenseContainer";
 import { TreeFilterContextProvider } from "./components/common/TreeFilterContextProvider";
 import { TracebilityReportModule } from "./components/TracebilityReportModule/TracebilityReportModule";
-import { lastSavedReportConfigKey } from "./constants/common";
+// import { lastSavedReportConfigKey } from "./constants/common";
 import { APIContext } from "./context/api";
 
 interface Props {
