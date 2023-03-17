@@ -168,8 +168,8 @@ export default class JiraServerImpl implements JiraAPI {
 
   getHelpLinks(): HelpLinks {
     return {
-      issueTree: "https://optimizory.atlassian.net/l/cp/gdv35UvD",
-      traceability: "https://optimizory.atlassian.net/l/cp/1KpzZ3z4",
+      issueTree: "https://optimizory.atlassian.net/l/cp/SpHT1C13",
+      traceability: "https://optimizory.atlassian.net/l/cp/ro6jscHZ",
     };
   }
 
