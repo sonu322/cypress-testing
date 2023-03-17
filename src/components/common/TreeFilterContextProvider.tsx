@@ -17,10 +17,14 @@ import {
 } from "../../util/common";
 import TreeUtils from "../../util/TreeUtils";
 
+interface Props {
+  children: any;
+  localStorageKey?: string;
+}
 export const TreeFilterContextProvider = ({
   children,
   localStorageKey,
-}): JSX.Element => {
+}: Props): JSX.Element => {
   const api = useContext(APIContext);
   // TODO: fix type
   const treeUtils = new TreeUtils(api);
@@ -46,7 +50,7 @@ export const TreeFilterContextProvider = ({
   };
 
   const updateLastSavedInLocalStorage = (newFilter: IssueTreeFilter): void => {
-    if (newFilter !== undefined) {
+    if (newFilter !== undefined && localStorageKey !== undefined) {
       const lastSavedConfig = getItemInLocalStorage(localStorageKey);
       const newSavedConfig = { ...lastSavedConfig, treeFilter: newFilter };
       setItemInLocalStorage(localStorageKey, newSavedConfig);

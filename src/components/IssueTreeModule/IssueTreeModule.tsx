@@ -18,8 +18,9 @@ export const IssueTreeModule = () => {
   const [errors, setErrors] = useState([]);
   const [tree, setTree] = useState(treeUtils.getRootTree());
   const [issueFields, setIssueFields] = useState<IssueField[]>([]);
-  const [selectedIssueFieldIds, setSelectedIssueFieldIds] =
-    useState<string[]>();
+  const [selectedIssueFieldIds, setSelectedIssueFieldIds] = useState<string[]>(
+    []
+  );
   const updateSelectedIssueFieldIds = (
     selectedIssueFieldIds: string[]
   ): void => {
@@ -50,22 +51,8 @@ export const IssueTreeModule = () => {
   }, [selectedIssueFieldIds]);
 
   useEffect(() => {
-    const updateInitialSelectedIssueFields = (
-      newSelectedIssueFieldIds: string[]
-    ): void => {
-      const savedSelectedIssueFieldIds: string[] =
-        treeUtils.handleGetItemInSavedTreeConfig("selectedIssueFieldIds");
-      if (
-        savedSelectedIssueFieldIds !== undefined &&
-        savedSelectedIssueFieldIds !== null
-      ) {
-        updateSelectedIssueFieldIds(savedSelectedIssueFieldIds);
-      } else {
-        updateSelectedIssueFieldIds(newSelectedIssueFieldIds);
-      }
-    };
     void treeUtils.loadToolbarData(
-      updateInitialSelectedIssueFields,
+      updateSelectedIssueFieldIds,
       updateIssueFields,
       updateIsLoading,
       handleNewError
