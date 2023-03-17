@@ -51,20 +51,6 @@ export const IssueTreeModule = () => {
   }, [selectedIssueFieldIds]);
 
   useEffect(() => {
-    // const updateInitialSelectedIssueFields = (
-    //   newSelectedIssueFieldIds: string[]
-    // ): void => {
-    //   const savedSelectedIssueFieldIds: string[] =
-    //     treeUtils.handleGetItemInSavedTreeConfig("selectedIssueFieldIds");
-    //   if (
-    //     savedSelectedIssueFieldIds !== undefined &&
-    //     savedSelectedIssueFieldIds !== null
-    //   ) {
-    //     updateSelectedIssueFieldIds(savedSelectedIssueFieldIds);
-    //   } else {
-    //     updateSelectedIssueFieldIds(newSelectedIssueFieldIds);
-    //   }
-    // };
     void treeUtils.loadToolbarData(
       updateSelectedIssueFieldIds,
       updateIssueFields,
