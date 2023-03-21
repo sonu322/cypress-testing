@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import "../i18n";
 import { TreeFilterContextProvider } from "./components/common/TreeFilterContextProvider";
 
-
 const IssueLinksHierarchy = () => {
   const api = useContext(APIContext);
   const { i18n, t } = useTranslation();
