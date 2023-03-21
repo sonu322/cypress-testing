@@ -52,6 +52,22 @@
         ],
         "key": "lxp-home-page"
       }
-    ]
+    ],
+      "jiraReports": [
+      {
+        "url": "/tracebilityReportModuleEntry.html",
+        "description": {
+          "value": "This is a traceability report",
+          "i18n": "otpl.lxp.traceability-report.description"
+        },
+        "reportCategory": "agile",
+        "thumbnailUrl": "http://example.com/images/report-example-thumbnail.png",
+        "name": {
+          "value": "Links Explorer Report",
+          "i18n": "otpl.lxp.report.name"
+        },
+        "key": "lxp-report-report"
+      }
+    ]  
   }
 }
