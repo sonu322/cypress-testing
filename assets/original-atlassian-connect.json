@@ -64,9 +64,9 @@
         "thumbnailUrl": "http://example.com/images/report-example-thumbnail.png",
         "name": {
           "value": "Links Explorer Report",
-          "i18n": "otpl.lxp.report.name"
+          "i18n": "otpl.lxp.traceability-report.name"
         },
-        "key": "lxp-report-report"
+        "key": "lxp-traceability-reports"
       }
     ]  
   }
