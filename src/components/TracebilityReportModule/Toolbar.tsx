@@ -1,8 +1,9 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import { JQLSelectDropdown } from "../JQLSelectDropdown";
 import { ButtonGroup } from "@atlaskit/button";
+import { RefreshButton } from "../common/RefreshButton";
 import { Dropdown } from "../common/Dropdown";
 import { HelpLink } from "../common/HelpLink";
 import { ExportContent } from "../common/ExportContent";
@@ -57,6 +58,7 @@ interface Props {
   showCustomJQLEditor: any;
   selectedViewTab: string;
   exportDropdownOptions: any;
+  handleRefresh: (refreshTypeId: string) => void;
 }
 
 export const Toolbar = ({
@@ -79,6 +81,7 @@ export const Toolbar = ({
   showCustomJQLEditor,
   selectedViewTab,
   exportDropdownOptions,
+  handleRefresh,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
   const api = useContext(APIContext);
@@ -106,6 +109,7 @@ export const Toolbar = ({
             updateSelectedFilterId={updateSelectedJQLString}
             showCustomJQLEditor={showCustomJQLEditor}
           />
+          <RefreshButton refresh={handleRefresh} />
         </FlexContainer>
 
         <div>
