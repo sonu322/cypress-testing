@@ -25,17 +25,9 @@ interface Props {
     label: string;
   }>;
   updateFilteredKeyOptions: (key: string, keyOptions: string[]) => void;
-  expandAll?: (
-    filter: IssueTreeFilter,
-    fields: IssueField[],
-    setTree,
-    handleError,
-    clearAllErrors,
-    setIsExpandAllLoading
-  ) => Promise<void>;
-  isExpandAllLoading?: boolean;
-  collapseAll?: (setTree) => void;
-  isMultiNodeTree?: boolean;
+  expandAll: () => Promise<void>;
+  isExpandAllLoading: boolean;
+  collapseAll: () => void;
 }
 export const TreeFilterDropdowns = ({
   options,
@@ -45,7 +37,6 @@ export const TreeFilterDropdowns = ({
   expandAll,
   isExpandAllLoading,
   collapseAll,
-  isMultiNodeTree,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
   return (
@@ -60,26 +51,23 @@ export const TreeFilterDropdowns = ({
           updateSelectedOptions={updateFilteredKeyOptions}
         />
       ))}
-      {!isMultiNodeTree && (
-        <>
-          <TooltipContainer content={t("otpl.lxp.toolbar.expand-all.title")}>
-            <LoadingButton
-              appearance="default"
-              iconBefore={<ExpandIcon label={""} />}
-              onClick={expandAll}
-              isLoading={isExpandAllLoading}
-              isDisabled={isExpandAllLoading}
-            />
-          </TooltipContainer>
-          <TooltipContainer content={t("otpl.lxp.toolbar.collapse-all.title")}>
-            <Button
-              appearance="default"
-              iconBefore={<CollapseIcon label={""} />}
-              onClick={collapseAll}
-            />
-          </TooltipContainer>
-        </>
-      )}
+
+      <TooltipContainer content={t("otpl.lxp.toolbar.expand-all.title")}>
+        <LoadingButton
+          appearance="default"
+          iconBefore={<ExpandIcon label={""} />}
+          onClick={expandAll}
+          isLoading={isExpandAllLoading}
+          isDisabled={isExpandAllLoading}
+        />
+      </TooltipContainer>
+      <TooltipContainer content={t("otpl.lxp.toolbar.collapse-all.title")}>
+        <Button
+          appearance="default"
+          iconBefore={<CollapseIcon label={""} />}
+          onClick={collapseAll}
+        />
+      </TooltipContainer>
     </ButtonGroup>
   );
 };

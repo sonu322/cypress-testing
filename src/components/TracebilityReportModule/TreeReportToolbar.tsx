@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import { treeFilterDropdowns } from "../../constants/common";
 import { TreeFilterDropdowns } from "../IssueTreeModule/TreeFilterDropdowns";
@@ -13,6 +13,7 @@ import {
 import { useTranslation } from "react-i18next";
 import TreeUtils from "../../util/TreeUtils";
 import { APIContext } from "../../context/api";
+import { TreeFilterContext } from "../../context/treeFilterContext";
 const FlexContainer = styled.div`
   display: flex;
   gap: 4px;
@@ -57,6 +58,9 @@ export const TreeReportToolbar = ({
   const toggleOrphans = (): void => {
     updateIsOrphansBranchPresent(!isOrphansBranchPresent);
   };
+  const api = useContext(APIContext);
+  const treeUtils = new TreeUtils(api);
+  const treeFilterContext = useContext(TreeFilterContext);
 
   return (
     <ToolbarContainer>
@@ -67,7 +71,22 @@ export const TreeReportToolbar = ({
           filter={filter}
           filterDropdowns={treeFilterDropdowns}
           updateFilteredKeyOptions={updateFilteredKeyOptions}
-          isMultiNodeTree={true}
+          expandAll={async () =>
+            // await treeUtils.handleExpandAllNodes(
+            //   treeFilterContext.filter,
+            //   issueFields,
+            //   tree,
+            //   setTree,
+            //   handleNewError,
+            //   clearAllErrors,
+            //   setIsExpandAllLoading
+            // )
+            console.log("expand clicked")
+          }
+          isExpandAllLoading={false}
+          collapseAll={() => {
+            console.log("collapse all clicked");
+          }}
         />
         <LoadingButton
           onClick={toggleOrphans}
