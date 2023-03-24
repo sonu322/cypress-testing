@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { treeFilterDropdowns } from "../../constants/common";
 import { TreeFilterDropdowns } from "../IssueTreeModule/TreeFilterDropdowns";
@@ -36,6 +36,11 @@ interface Props {
   isOrphansBranchPresent: boolean;
   updateIsOrphansBranchPresent: (treeHasOnlyOptions: boolean) => void;
   isToggleOrphansLoading: boolean;
+  issueFields;
+  tree;
+  setTree;
+  handleNewError;
+  clearAllErrors;
 }
 export const TreeReportToolbar = ({
   options,
@@ -44,7 +49,13 @@ export const TreeReportToolbar = ({
   isOrphansBranchPresent,
   updateIsOrphansBranchPresent,
   isToggleOrphansLoading,
+  issueFields,
+  tree,
+  setTree,
+  handleNewError,
+  clearAllErrors,
 }: Props): JSX.Element => {
+  const [isExpandAllLoading, setIsExpandAllLoading] = useState(false);
   const { t } = useTranslation();
   const hideOrphanText = t(
     "otpl.lxp.traceability-report.tree-view.hide-orphan-issues"
@@ -72,18 +83,17 @@ export const TreeReportToolbar = ({
           filterDropdowns={treeFilterDropdowns}
           updateFilteredKeyOptions={updateFilteredKeyOptions}
           expandAll={async () =>
-            // await treeUtils.handleExpandAllNodes(
-            //   treeFilterContext.filter,
-            //   issueFields,
-            //   tree,
-            //   setTree,
-            //   handleNewError,
-            //   clearAllErrors,
-            //   setIsExpandAllLoading
-            // )
-            console.log("expand clicked")
+            await treeUtils.handleMultipleExpandAllNodes(
+              treeFilterContext.filter,
+              issueFields,
+              tree,
+              setTree,
+              handleNewError,
+              clearAllErrors,
+              setIsExpandAllLoading
+            )
           }
-          isExpandAllLoading={false}
+          isExpandAllLoading={isExpandAllLoading}
           collapseAll={() => {
             console.log("collapse all clicked");
           }}

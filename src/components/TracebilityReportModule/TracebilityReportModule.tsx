@@ -58,7 +58,7 @@ export const TracebilityReportModule = ({
   const { t } = useTranslation();
   const treeFilterContext = useContext(TreeFilterContext);
   const [isOrphansBranchPresent, setIsOrphansBranchPresent] =
-    useState<Boolean>();
+    useState<boolean>();
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
   const [selectedSettingsDropdownIds, setSelectedSettingsDropdownIds] =
     useState<string[]>([autoHideEmptyColumnsId]);
@@ -375,6 +375,11 @@ export const TracebilityReportModule = ({
                 isOrphansBranchPresent={isOrphansBranchPresent}
                 updateIsOrphansBranchPresent={updateIsOrphansBranchPresent}
                 isToggleOrphansLoading={isToggleOrphansLoading}
+                issueFields={issueFields}
+                tree={tree}
+                setTree={setTree}
+                handleNewError={handleNewError}
+                clearAllErrors={clearAllErrors}
               />
             )}
           </>
