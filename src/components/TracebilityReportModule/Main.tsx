@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import { LoadingButton } from "@atlaskit/button";
+import React, { useContext, useEffect, useState } from "react";
 import { TablePagination } from "./TablePagination";
 import Spinner from "@atlaskit/spinner";
 import { APIContext } from "../../context/api";
@@ -63,6 +62,8 @@ interface Props {
   updateIsToggleOrphansLoading: (isToggleOrphansLoading: boolean) => void;
   currentPage: number;
   setCurrentPage: (page: number) => void;
+  selectedLimitOptionId: number;
+  setSelectedLimitOptionId: (limit: number) => void;
 }
 
 export const Main = ({
@@ -91,11 +92,10 @@ export const Main = ({
   updateIsToggleOrphansLoading,
   currentPage,
   setCurrentPage,
+  selectedLimitOptionId,
+  setSelectedLimitOptionId,
 }: Props): JSX.Element => {
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
-  const [selectedLimitOptionId, setSelectedLimitOptionId] = useState(
-    DEFAULT_ROWS_PER_PAGE
-  );
   const updateCurrentPage = (page: number): void => {
     //In the updateCurrentPage,all the arguments passing to populateIssues should not be undefined
     setCurrentPage(page);
