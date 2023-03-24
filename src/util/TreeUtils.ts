@@ -936,7 +936,7 @@ export default class TreeUtils {
     }
   }
 
-  async handleExpandAllNodes(
+  async handleSingleExpandAllNodes(
     filter: IssueTreeFilter,
     fields: IssueField[],
     prevTree: AtlasTree,
@@ -954,7 +954,7 @@ export default class TreeUtils {
         prevTree.items[this.ROOT_ID].children,
         0,
         fields,
-        setTree
+        4
       );
       if (newTree?.items !== undefined) {
         setTree(() => {
@@ -997,17 +997,14 @@ export default class TreeUtils {
         prevTree.items[this.ROOT_ID].children,
         0,
         fields,
-        setTree
+        4
       );
       if (newTree?.items !== undefined) {
         setTree(() => {
-          const rootNode = newTree.items[this.ROOT_ID];
-          const rootIssueNodeId = rootNode.children[0];
-          newTree = this.applySingleNodeTreeFilter(
+          newTree = this.applyMultiNodeTreeFilter(
             newTree,
             filter,
             fields,
-            rootIssueNodeId,
             handleError
           );
           return newTree;
@@ -1025,9 +1022,13 @@ export default class TreeUtils {
     nodeIds: string[],
     level: number,
     issueFields: IssueField[],
-    setTree
+    maxLevels: number
   ): Promise<AtlasTree> {
-    if (level >= 3 || nodeIds?.length === 0) {
+    console.log("expand all called 1st line");
+    console.log("all params", prevTree, nodeIds, level);
+    if (level >= maxLevels) {
+      console.log("returning tree", level, maxLevels);
+      console.log(prevTree);
       return prevTree;
     }
     console.log("expand all called");
@@ -1040,12 +1041,12 @@ export default class TreeUtils {
       const node = prevTree.items[nodeId];
       if (node?.nodeType !== TreeNodeType.ButtonNode) {
         if (!node.isExpanded) {
+          console.log("node expanded", nodeId);
           newTree = mutateTree(newTree, nodeId, { isExpanded: true });
         }
-        console.log("node", node, node?.nodeType, TreeNodeType.ButtonNode);
-        // if (node?.nodeType !== TreeNodeType.ButtonNode) {
-        if (!node.hasChildrenLoaded) {
+        if (!node.hasChildrenLoaded && node.hasChildren) {
           const issueId = this.getIssueIdFromNodeId(nodeId);
+          console.log("issue id", issueId);
           issuesToFetch.push(issueId);
           if (issueNodeIdMap[issueId] === undefined) {
             issueNodeIdMap[issueId] = [nodeId];
@@ -1054,26 +1055,31 @@ export default class TreeUtils {
           }
         }
 
-        if (node.children.length > 0) {
+        if (node?.children.length > 0) {
           node.children.forEach((typeNodeId) => {
+            console.log(typeNodeId);
             const typeNode = newTree.items[typeNodeId];
-            if (!typeNode.isExpanded) {
+            console.log(typeNode);
+            if (
+              typeNode !== undefined &&
+              !typeNode.isExpanded &&
+              typeNode.nodeType === TreeNodeType.LinkNode
+            ) {
               newTree = mutateTree(newTree, typeNodeId, { isExpanded: true });
+              nextNodeIds = nextNodeIds.concat(typeNode.children);
             }
-            nextNodeIds = nextNodeIds.concat(typeNode.children);
           });
         }
-        // }
-      } else {
-        return newTree;
       }
     });
 
     if (issuesToFetch?.length > 0) {
+      console.log("issuesToFetch", issuesToFetch);
       const issues = await this.api.getIssuesWithLinks(
         issueFields,
         issuesToFetch
       );
+      console.log("issues", issues);
       for (const issue of issues) {
         const issueNodeIds = issueNodeIdMap[issue.id];
         issueNodeIds.forEach((nodeId) => {
@@ -1081,26 +1087,26 @@ export default class TreeUtils {
           newTree = this.addChildren(nodeId, newTree);
         });
       }
+      console.log("new tree", newTree);
 
       // return newTree;
+      console.log("expand all called again");
       newTree = await this.expandAllNodes(
         newTree,
         nextNodeIds,
         level + 1,
         issueFields,
-        setTree
+        maxLevels
       );
       return newTree;
     } else {
-      // return newTree;
       newTree = await this.expandAllNodes(
         newTree,
         nextNodeIds,
         level + 1,
         issueFields,
-        setTree
+        maxLevels
       );
-      return newTree;
     }
   }
 
