@@ -80,6 +80,12 @@ export const TracebilityReportModule = ({
   const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>();
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [isExportReportLoading, setIsExportReportLoading] = useState(false);
+  const [selectedLimitOptionId, setSelectedLimitOptionId] = useState(
+    DEFAULT_ROWS_PER_PAGE
+  );
+  const updatedIssues = (issues: IssueWithSortedLinks[]): void => {
+    setFilteredIssues(issues);
+  };
   useEffect(() => {
     if (selectedTabIndex !== undefined) {
       handleSetItemInSavedReportConfig("selectedTabIndex", selectedTabIndex);
@@ -295,6 +301,20 @@ export const TracebilityReportModule = ({
   const updateTotalNumberOfIssues = (totalNumberOfIssues: number): void => {
     setTotalNumberOfIssues(totalNumberOfIssues);
   };
+  const handleRefresh = (): void => {
+    const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
+    void tracebilityReportUtils.populateIssues(
+      selectedJQLString,
+      issueFields,
+      0,
+      selectedLimit,
+      updatedIssues,
+      setAreIssuesLoading,
+      updateTotalNumberOfIssues,
+      handleNewError,
+      clearAllErrors
+    );
+  };
   const updateIsExportReportLoading = (
     isExportReportLoading: boolean
   ): void => {
@@ -353,6 +373,7 @@ export const TracebilityReportModule = ({
                   ? exportTreeReportOptions
                   : exportTabularReportOptions
               }
+              handleRefresh={handleRefresh}
               selectedJQLString={selectedJQLString}
               issueCardOptions={issueFields}
               selectedIssueFieldIds={selectedIssueFieldIds}
@@ -385,6 +406,8 @@ export const TracebilityReportModule = ({
       {allErrors.length > 0 && <ErrorsList errors={errors} />}
       <GrowContainer>
         <Main
+          selectedLimitOptionId={selectedLimitOptionId}
+          setSelectedLimitOptionId={setSelectedLimitOptionId}
           totalNumberOfIssues={totalNumberOfIssues}
           updateTotalNumberOfIssues={updateTotalNumberOfIssues}
           selectedJqlString={selectedJQLString}
