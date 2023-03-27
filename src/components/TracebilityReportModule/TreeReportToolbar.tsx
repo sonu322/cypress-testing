@@ -95,7 +95,7 @@ export const TreeReportToolbar = ({
           }
           isExpandAllLoading={isExpandAllLoading}
           collapseAll={() => {
-            console.log("collapse all clicked");
+            treeUtils.collapseAll(setTree);
           }}
         />
         <LoadingButton

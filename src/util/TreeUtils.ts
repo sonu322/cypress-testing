@@ -1124,8 +1124,14 @@ export default class TreeUtils {
   }
 
   collapseAll(setTree): void {
-    const collapseNode = (tree: AtlasTree, nodeId): void => {
-      const node = tree?.items[nodeId];
+    const collapseNode = (tree: AtlasTree, nodeId?: string): void => {
+      let node: AtlasTreeNode;
+      if (nodeId !== undefined) {
+        node = tree?.items[nodeId];
+      } else {
+        node = tree?.items[this.ROOT_ID];
+      }
+
       if (node !== undefined) {
         node.isExpanded = false;
         const children = node.children;
