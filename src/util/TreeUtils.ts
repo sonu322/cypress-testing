@@ -990,8 +990,6 @@ export default class TreeUtils {
     // NOTE: using setTree without function is ok because, the node ids to be expanded are not being changed from prev tree to now. we just need the node ids. we dont need the most recent value. its ok if batched.
     try {
       clearAllErrors();
-      console.log("node ids");
-      console.log(prevTree.items[this.ROOT_ID].children);
       let newTree = await this.expandAllNodes(
         prevTree,
         prevTree.items[this.ROOT_ID].children,
@@ -1017,98 +1015,25 @@ export default class TreeUtils {
     }
   }
 
-  // async expandAllNodes(
-  //   prevTree: AtlasTree,
-  //   nodeIds: string[],
-  //   level: number,
-  //   issueFields: IssueField[],
-  //   maxLevels: number
-  // ): Promise<AtlasTree> {
-  //   console.log("expand all called 1st line");
-  //   console.log("all params", prevTree, nodeIds, level);
-  //   if (level >= maxLevels) {
-  //     console.log("returning tree", level, maxLevels);
-  //     console.log(prevTree);
-  //     return prevTree;
-  //   }
-  //   console.log("expand all called");
-  //   console.log(level, nodeIds);
-  //   let newTree = this.cloneTree(prevTree);
-  //   let nextNodeIds: string[] = [];
-  //   const issueNodeIdMap = new Map<string, string[]>();
-  //   const issuesToFetch: string[] = [];
-  //   nodeIds.forEach((nodeId) => {
-  //     const node = prevTree.items[nodeId];
-  //     if (node?.nodeType !== TreeNodeType.ButtonNode) {
-  //       if (!node.isExpanded) {
-  //         console.log("node expanded", nodeId);
-  //         newTree = mutateTree(newTree, nodeId, { isExpanded: true });
-  //       }
-  //       if (!node.hasChildrenLoaded && node.hasChildren) {
-  //         const issueId = this.getIssueIdFromNodeId(nodeId);
-  //         console.log("issue id", issueId);
-  //         issuesToFetch.push(issueId);
-  //         if (issueNodeIdMap[issueId] === undefined) {
-  //           issueNodeIdMap[issueId] = [nodeId];
-  //         } else {
-  //           issueNodeIdMap[issueId] = issueNodeIdMap[issueId].concat([nodeId]);
-  //         }
-  //       }
-
-  //       if (node?.children.length > 0) {
-  //         node.children.forEach((typeNodeId) => {
-  //           console.log(typeNodeId);
-  //           const typeNode = newTree.items[typeNodeId];
-  //           console.log(typeNode);
-  //           if (
-  //             typeNode !== undefined &&
-  //             !typeNode.isExpanded &&
-  //             typeNode.nodeType === TreeNodeType.LinkNode
-  //           ) {
-  //             newTree = mutateTree(newTree, typeNodeId, { isExpanded: true });
-  //             nextNodeIds = nextNodeIds.concat(typeNode.children);
-  //           }
-  //         });
-  //       }
-  //     }
-  //   });
-
-  //   if (issuesToFetch?.length > 0) {
-  //     console.log("issuesToFetch", issuesToFetch);
-  //     const issues = await this.api.getIssuesWithLinks(
-  //       issueFields,
-  //       issuesToFetch
-  //     );
-  //     console.log("issues", issues);
-  //     for (const issue of issues) {
-  //       const issueNodeIds = issueNodeIdMap[issue.id];
-  //       issueNodeIds.forEach((nodeId) => {
-  //         newTree = mutateTree(newTree, nodeId, { data: issue });
-  //         newTree = this.addChildren(nodeId, newTree);
-  //       });
-  //     }
-  //     console.log("new tree", newTree);
-
-  //     // return newTree;
-  //     console.log("expand all called again");
-  //     newTree = await this.expandAllNodes(
-  //       newTree,
-  //       nextNodeIds,
-  //       level + 1,
-  //       issueFields,
-  //       maxLevels
-  //     );
-  //     return newTree;
-  //   } else {
-  //     newTree = await this.expandAllNodes(
-  //       newTree,
-  //       nextNodeIds,
-  //       level + 1,
-  //       issueFields,
-  //       maxLevels
-  //     );
-  //   }
-  // }
+  getChildItemNodeIds = (
+    prevTree: AtlasTree,
+    nodeChildren: string[]
+  ): { newTree: AtlasTree; nextNodeIds: string[] } => {
+    if (nodeChildren.length > 0) {
+      nodeChildren.forEach((typeNodeId) => {
+        const typeNode = tree.items[typeNodeId];
+        if (!typeNode.isExpanded) {
+          console.log("expanding", typeNodeId);
+          newTree = mutateTree(newTree, typeNodeId, { isExpanded: true });
+        }
+        console.log("typenode", typeNodeId, "has children");
+        console.log(typeNode.children);
+        nextNodeIds = nextNodeIds.concat(typeNode.children);
+        console.log("next node ids till now");
+        console.log(nextNodeIds);
+      });
+    }
+  };
 
   async expandAllNodes(
     prevTree: AtlasTree,
@@ -1147,8 +1072,6 @@ export default class TreeUtils {
       }
 
       if (node.children.length > 0) {
-        console.log(node.id, "has children loaded");
-        console.log(node.children);
         node.children.forEach((typeNodeId) => {
           const typeNode = newTree.items[typeNodeId];
           if (!typeNode.isExpanded) {
