@@ -1015,25 +1015,25 @@ export default class TreeUtils {
     }
   }
 
-  getChildItemNodeIds = (
-    prevTree: AtlasTree,
-    nodeChildren: string[]
-  ): { newTree: AtlasTree; nextNodeIds: string[] } => {
-    if (nodeChildren.length > 0) {
-      nodeChildren.forEach((typeNodeId) => {
-        const typeNode = tree.items[typeNodeId];
-        if (!typeNode.isExpanded) {
-          console.log("expanding", typeNodeId);
-          newTree = mutateTree(newTree, typeNodeId, { isExpanded: true });
-        }
-        console.log("typenode", typeNodeId, "has children");
-        console.log(typeNode.children);
-        nextNodeIds = nextNodeIds.concat(typeNode.children);
-        console.log("next node ids till now");
-        console.log(nextNodeIds);
-      });
-    }
-  };
+  // getChildItemNodeIds = (
+  //   prevTree: AtlasTree,
+  //   nodeChildren: string[]
+  // ): { newTree: AtlasTree; nextNodeIds: string[] } => {
+  //   if (nodeChildren.length > 0) {
+  //     nodeChildren.forEach((typeNodeId) => {
+  //       const typeNode = tree.items[typeNodeId];
+  //       if (!typeNode.isExpanded) {
+  //         console.log("expanding", typeNodeId);
+  //         newTree = mutateTree(newTree, typeNodeId, { isExpanded: true });
+  //       }
+  //       console.log("typenode", typeNodeId, "has children");
+  //       console.log(typeNode.children);
+  //       nextNodeIds = nextNodeIds.concat(typeNode.children);
+  //       console.log("next node ids till now");
+  //       console.log(nextNodeIds);
+  //     });
+  //   }
+  // };
 
   async expandAllNodes(
     prevTree: AtlasTree,
