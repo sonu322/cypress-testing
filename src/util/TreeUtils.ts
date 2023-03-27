@@ -1015,25 +1015,28 @@ export default class TreeUtils {
     }
   }
 
-  // getChildItemNodeIds = (
-  //   prevTree: AtlasTree,
-  //   nodeChildren: string[]
-  // ): { newTree: AtlasTree; nextNodeIds: string[] } => {
-  //   if (nodeChildren.length > 0) {
-  //     nodeChildren.forEach((typeNodeId) => {
-  //       const typeNode = tree.items[typeNodeId];
-  //       if (!typeNode.isExpanded) {
-  //         console.log("expanding", typeNodeId);
-  //         newTree = mutateTree(newTree, typeNodeId, { isExpanded: true });
-  //       }
-  //       console.log("typenode", typeNodeId, "has children");
-  //       console.log(typeNode.children);
-  //       nextNodeIds = nextNodeIds.concat(typeNode.children);
-  //       console.log("next node ids till now");
-  //       console.log(nextNodeIds);
-  //     });
-  //   }
-  // };
+  getChildIssueNodeIds = (
+    prevTree: AtlasTree,
+    typeNodeIds: string[]
+  ): { newTree?: AtlasTree; childIssueNodeIds: string[] } => {
+    // takes typeNodeIds of an issue node and returns all their child node ids - these will be issues
+    // takes prevTree and expands any collapsed type nodes
+    let newTree: AtlasTree;
+    let childIssueNodeIds: string[] = [];
+    typeNodeIds.forEach((typeNodeId) => {
+      const typeNode = prevTree.items[typeNodeId];
+      if (!typeNode.isExpanded) {
+        console.log("expanding", typeNodeId);
+        newTree = mutateTree(prevTree, typeNodeId, { isExpanded: true });
+      }
+      console.log("typenode", typeNodeId, "has children");
+      console.log(typeNode.children);
+      childIssueNodeIds = childIssueNodeIds.concat(typeNode.children);
+      console.log("next node ids till now");
+      console.log(childIssueNodeIds);
+    });
+    return { newTree, childIssueNodeIds };
+  };
 
   async expandAllNodes(
     prevTree: AtlasTree,
@@ -1072,18 +1075,27 @@ export default class TreeUtils {
       }
 
       if (node.children.length > 0) {
-        node.children.forEach((typeNodeId) => {
-          const typeNode = newTree.items[typeNodeId];
-          if (!typeNode.isExpanded) {
-            console.log("expanding", typeNodeId);
-            newTree = mutateTree(newTree, typeNodeId, { isExpanded: true });
-          }
-          console.log("typenode", typeNodeId, "has children");
-          console.log(typeNode.children);
-          nextNodeIds = nextNodeIds.concat(typeNode.children);
-          console.log("next node ids till now");
-          console.log(nextNodeIds);
-        });
+        // node.children.forEach((typeNodeId) => {
+        //   const typeNode = newTree.items[typeNodeId];
+        //   if (!typeNode.isExpanded) {
+        //     console.log("expanding", typeNodeId);
+        //     newTree = mutateTree(newTree, typeNodeId, { isExpanded: true });
+        //   }
+        //   console.log("typenode", typeNodeId, "has children");
+        //   console.log(typeNode.children);
+        //   nextNodeIds = nextNodeIds.concat(typeNode.children);
+        //   console.log("next node ids till now");
+        //   console.log(nextNodeIds);
+        // });
+        const childIssueNodesInfo = this.getChildIssueNodeIds(
+          newTree,
+          node.children
+        );
+        if (childIssueNodesInfo.newTree !== undefined) {
+          console.log("new tree not undefined");
+          newTree = childIssueNodesInfo.newTree;
+        }
+        nextNodeIds = nextNodeIds.concat(childIssueNodesInfo.childIssueNodeIds);
       }
     });
 
@@ -1099,21 +1111,31 @@ export default class TreeUtils {
           newTree = this.addChildren(nodeId, newTree);
           const node = newTree.items[nodeId];
           if (node.children.length > 0) {
-            console.log("AFTER LOADING ISSUES!!!!!!!!!");
-            console.log(node.id, "has children loaded");
-            console.log(node.children);
-            node.children.forEach((typeNodeId) => {
-              const typeNode = newTree.items[typeNodeId];
-              if (!typeNode.isExpanded) {
-                console.log("expanding", typeNodeId);
-                newTree = mutateTree(newTree, typeNodeId, { isExpanded: true });
-              }
-              console.log("typenode", typeNodeId, "has children");
-              console.log(typeNode.children);
-              nextNodeIds = nextNodeIds.concat(typeNode.children);
-              console.log("next node ids till now");
-              console.log(nextNodeIds);
-            });
+            // console.log("AFTER LOADING ISSUES!!!!!!!!!");
+            // console.log(node.id, "has children loaded");
+            // console.log(node.children);
+            // node.children.forEach((typeNodeId) => {
+            //   const typeNode = newTree.items[typeNodeId];
+            //   if (!typeNode.isExpanded) {
+            //     console.log("expanding", typeNodeId);
+            //     newTree = mutateTree(newTree, typeNodeId, { isExpanded: true });
+            //   }
+            //   console.log("typenode", typeNodeId, "has children");
+            //   console.log(typeNode.children);
+            //   nextNodeIds = nextNodeIds.concat(typeNode.children);
+            //   console.log("next node ids till now");
+            //   console.log(nextNodeIds);
+            // });
+            const childIssueNodesInfo = this.getChildIssueNodeIds(
+              newTree,
+              node.children
+            );
+            if (childIssueNodesInfo.newTree !== undefined) {
+              newTree = childIssueNodesInfo.newTree;
+            }
+            nextNodeIds = nextNodeIds.concat(
+              childIssueNodesInfo.childIssueNodeIds
+            );
           }
         });
       }
