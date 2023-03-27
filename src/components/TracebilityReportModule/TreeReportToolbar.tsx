@@ -5,6 +5,7 @@ import { TreeFilterDropdowns } from "../IssueTreeModule/TreeFilterDropdowns";
 import { LoadingButton } from "@atlaskit/button";
 import Heading from "@atlaskit/heading";
 import {
+  IssueField,
   IssueLinkType,
   IssuePriority,
   IssueTreeFilter,
@@ -14,6 +15,7 @@ import { useTranslation } from "react-i18next";
 import TreeUtils from "../../util/TreeUtils";
 import { APIContext } from "../../context/api";
 import { TreeFilterContext } from "../../context/treeFilterContext";
+import { AtlasTree } from "../../types/app";
 const FlexContainer = styled.div`
   display: flex;
   gap: 4px;
@@ -36,11 +38,11 @@ interface Props {
   isOrphansBranchPresent: boolean;
   updateIsOrphansBranchPresent: (treeHasOnlyOptions: boolean) => void;
   isToggleOrphansLoading: boolean;
-  issueFields;
-  tree;
-  setTree;
-  handleNewError;
-  clearAllErrors;
+  issueFields: IssueField[];
+  tree: AtlasTree;
+  setTree: React.Dispatch<React.SetStateAction<AtlasTree>>;
+  handleNewError: (err: unknown) => void;
+  clearAllErrors: () => void;
 }
 export const TreeReportToolbar = ({
   options,

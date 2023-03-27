@@ -1021,15 +1021,19 @@ export default class TreeUtils {
   ): { newTree?: AtlasTree; childIssueNodeIds: string[] } => {
     // takes typeNodeIds of an issue node and returns all their child node ids - these will be issues
     // takes prevTree and expands any collapsed type nodes
-    let newTree: AtlasTree;
+    let newTree = prevTree;
     let childIssueNodeIds: string[] = [];
     typeNodeIds.forEach((typeNodeId) => {
-      const typeNode = prevTree.items[typeNodeId];
+      console.log(typeNodeId);
+      const typeNode = newTree.items[typeNodeId];
       if (!typeNode.isExpanded) {
-        newTree = mutateTree(prevTree, typeNodeId, { isExpanded: true });
+        console.log("expanding type node", typeNodeId);
+        newTree = mutateTree(newTree, typeNodeId, { isExpanded: true });
       }
       childIssueNodeIds = childIssueNodeIds.concat(typeNode.children);
+      console.log("child issue node ids till now", childIssueNodeIds);
     });
+    console.log("newTree to be returned", newTree);
     return { newTree, childIssueNodeIds };
   };
 
@@ -1068,10 +1072,12 @@ export default class TreeUtils {
           newTree,
           node.children
         );
+        console.log("CHILD NODES INFO", childIssueNodesInfo.newTree);
         if (childIssueNodesInfo.newTree !== undefined) {
           newTree = childIssueNodesInfo.newTree;
         }
         nextNodeIds = nextNodeIds.concat(childIssueNodesInfo.childIssueNodeIds);
+        console.log("next node ids till now", nextNodeIds);
       }
     });
 
@@ -1125,13 +1131,7 @@ export default class TreeUtils {
 
   collapseAll(setTree): void {
     const collapseNode = (tree: AtlasTree, nodeId?: string): void => {
-      let node: AtlasTreeNode;
-      if (nodeId !== undefined) {
-        node = tree?.items[nodeId];
-      } else {
-        node = tree?.items[this.ROOT_ID];
-      }
-
+      const node = tree?.items[nodeId];
       if (node !== undefined) {
         node.isExpanded = false;
         const children = node.children;
