@@ -27,7 +27,7 @@ import {
   orphansTreeBranchName,
 } from "../constants/traceabilityReport";
 import { getItemInLocalStorage, setItemInLocalStorage, addIssueDetails, toCSV } from "./common";
-import { lastSavedTreeConfigKey } from "../constants/common";
+import { EXPAND_ALL_LEVEL, lastSavedTreeConfigKey } from "../constants/common";
 
 // root node
 const root: AtlasTree = {
@@ -954,7 +954,7 @@ export default class TreeUtils {
         prevTree.items[this.ROOT_ID].children,
         0,
         fields,
-        3
+        EXPAND_ALL_LEVEL
       );
       if (newTree?.items !== undefined) {
         setTree(() => {
@@ -995,7 +995,7 @@ export default class TreeUtils {
         prevTree.items[this.ROOT_ID].children,
         0,
         fields,
-        3
+        EXPAND_ALL_LEVEL
       );
       if (newTree?.items !== undefined) {
         setTree(() => {
@@ -1124,7 +1124,7 @@ export default class TreeUtils {
   }
 
   collapseAll(setTree): void {
-    const collapseNode = (tree: AtlasTree, nodeId?: string): void => {
+    const collapseNode = (tree: AtlasTree, nodeId: string): void => {
       const node = tree?.items[nodeId];
       if (node !== undefined) {
         node.isExpanded = false;

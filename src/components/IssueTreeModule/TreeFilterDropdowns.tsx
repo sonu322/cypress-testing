@@ -6,7 +6,6 @@ import CollapseIcon from "@atlaskit/icon/glyph/hipchat/chevron-double-up";
 import { TooltipContainer } from "../common/TooltipContainer";
 import { useTranslation } from "react-i18next";
 import {
-  IssueField,
   IssueLinkType,
   IssuePriority,
   IssueTreeFilter,
