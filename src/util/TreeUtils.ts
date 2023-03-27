@@ -1024,16 +1024,12 @@ export default class TreeUtils {
     let newTree = prevTree;
     let childIssueNodeIds: string[] = [];
     typeNodeIds.forEach((typeNodeId) => {
-      console.log(typeNodeId);
       const typeNode = newTree.items[typeNodeId];
       if (!typeNode.isExpanded) {
-        console.log("expanding type node", typeNodeId);
         newTree = mutateTree(newTree, typeNodeId, { isExpanded: true });
       }
       childIssueNodeIds = childIssueNodeIds.concat(typeNode.children);
-      console.log("child issue node ids till now", childIssueNodeIds);
     });
-    console.log("newTree to be returned", newTree);
     return { newTree, childIssueNodeIds };
   };
 
@@ -1072,12 +1068,10 @@ export default class TreeUtils {
           newTree,
           node.children
         );
-        console.log("CHILD NODES INFO", childIssueNodesInfo.newTree);
         if (childIssueNodesInfo.newTree !== undefined) {
           newTree = childIssueNodesInfo.newTree;
         }
         nextNodeIds = nextNodeIds.concat(childIssueNodesInfo.childIssueNodeIds);
-        console.log("next node ids till now", nextNodeIds);
       }
     });
 
