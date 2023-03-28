@@ -53,7 +53,7 @@
         "key": "lxp-home-page"
       }
     ],
-      "jiraReports": [
+    "jiraReports": [
       {
         "url": "/tracebilityReportModuleEntry.html",
         "description": {
@@ -68,6 +68,21 @@
         },
         "key": "lxp-traceability-reports"
       }
-    ]  
+    ],
+    "jiraDashboardItems": [
+      {
+        "description": {
+          "value": "Dashboard item description"
+        },
+        "url": "/lxpViewGadget.html",
+        "configurable": false,
+        "thumbnailUrl": "http://example.com/images/report-example-thumbnail.png",
+        "refreshable": false,
+        "name": {
+          "value": "Dashboard item title"
+        },
+        "key": "dashboard-item-key"
+      }
+    ]
   }
 }
