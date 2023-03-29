@@ -1,5 +1,5 @@
 import React from "react";
-import { Dropdown } from "../common/Dropdown";
+import { DropdownFields } from "../common/DropdownFields";
 export const IssueOptionsDropdown = ({
   keyName,
   dropdownName,
@@ -11,7 +11,7 @@ export const IssueOptionsDropdown = ({
     updateSelectedOptions(keyName, updatedList);
   };
   return (
-    <Dropdown
+    <DropdownFields
       useTitleCaseOptions
       key={keyName}
       dropdownName={dropdownName}
