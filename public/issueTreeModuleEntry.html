@@ -65,6 +65,21 @@
         </div>
       </div>
     </section>
+    <script>
+      console.log("other script called")
+      const configuredCallback = function(config) {
+                console.log("config", config)
+            }
+      // AP.require(['request'], function(request) {
+      //               request({
+      //                   url: '/rest/api/2/dashboard/{{{dashboard}}}/items/{{{dashboardItem}}}/properties/itemkey',
+      //                   success: function(response) {
+      //                       configuredCallback(JSON.parse(response).value);
+      //                   }
+      //               });
+      //           });
+    </script>
+
     <script src="../src/IssueLinksHierarchyCloud.tsx"></script>
   </body>
 </html>
