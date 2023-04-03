@@ -1,7 +1,7 @@
 import React from "react";
 import { Config, getConfig } from "@atlaskit/util-service-support";
 import ReactDOM from "react-dom";
-import { GadgetConfigurationForm } from "../common/GadgetConfigForm";
+import { GadgetConfigurationForm } from "./GadgetConfigForm";
 const Configure = () => {
   const config = getConfig();
   console.log("config", config); // TODO: this does not work
