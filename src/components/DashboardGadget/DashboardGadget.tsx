@@ -16,13 +16,13 @@ const DashboardGadget: React.FC = () => {
 
   return (
     <div>
-      <h1>{"extension.title"}</h1>
+      <h1>LXP</h1>
       {isConfiguring ? (
         <GadgetConfigurationForm onSave={handleSaveConfig} />
       ) : (
         <>
           <button onClick={handleConfigure}>Configure</button>
-          <Gadget title={"extension.title"} url={""} />
+          <Gadget title={"LXP"} url={""} />
         </>
       )}
     </div>

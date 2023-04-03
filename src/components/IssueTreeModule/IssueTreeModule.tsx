@@ -7,7 +7,10 @@ import { APIContext } from "../../context/api";
 import { IssueField } from "../../types/api";
 import { useTranslation } from "react-i18next";
 import { TreeFilterContext } from "../../context/treeFilterContext";
-export const IssueTreeModule = () => {
+interface Props {
+  rootIssueId?: string;
+}
+export const IssueTreeModule = ({ rootIssueId }: Props): JSX.Element => {
   const treeFilterContext = useContext(TreeFilterContext);
   const { t } = useTranslation();
   const api = useContext(APIContext);
@@ -82,7 +85,9 @@ export const IssueTreeModule = () => {
       {treeFilterContext.filter !== undefined && (
         <>
           <Toolbar
-            exportTree={() => treeUtils.exportTree(tree, issueFields, selectedIssueFieldIds)}
+            exportTree={() =>
+              treeUtils.exportTree(tree, issueFields, selectedIssueFieldIds)
+            }
             isExportDisabled={
               tree?.items !== undefined && Object.keys(tree.items).length <= 1
             }
@@ -116,6 +121,7 @@ export const IssueTreeModule = () => {
             selectedIssueFieldIds={selectedIssueFieldIds}
             handleError={handleNewError}
             clearAllErrors={clearAllErrors}
+            rootIssueId={rootIssueId}
           />
         </>
       )}

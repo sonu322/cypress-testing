@@ -6,7 +6,10 @@ import { useTranslation } from "react-i18next";
 import "../i18n";
 import { TreeFilterContextProvider } from "./components/common/TreeFilterContextProvider";
 
-const IssueLinksHierarchy = () => {
+interface Props {
+  rootIssueId?: string;
+}
+const IssueLinksHierarchy = ({ rootIssueId }: Props): JSX.Element => {
   const api = useContext(APIContext);
   const { i18n, t } = useTranslation();
   useEffect(() => {
@@ -24,7 +27,7 @@ const IssueLinksHierarchy = () => {
     <Suspense fallback={t("otpl.lxp.common.loading")}>
       {api.hasValidLicense() ? (
         <TreeFilterContextProvider>
-          <IssueTreeModule />
+          <IssueTreeModule rootIssueId={rootIssueId} />
         </TreeFilterContextProvider>
       ) : (
         <LicenseContainer />
