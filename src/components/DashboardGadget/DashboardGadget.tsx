@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { Gadget } from "./Gadget";
-import { GadgetConfigurationForm } from "../common/GadgetConfigForm";
+import { GadgetConfigurationForm } from "./GadgetConfigForm";
 
 interface GadgetConfig {
   title: string;
