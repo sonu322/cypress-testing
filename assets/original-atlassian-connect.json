@@ -91,9 +91,8 @@
 
         "url": "/lxpViewGadget.html",
         "configurable": true,
-        "configure": {
-          "url": "/configureGadget.html",
-          "height": 500
+        "configurePage": {
+          "url": "/configureGadget.html"
         },
         "thumbnailUrl": "http://example.com/images/report-example-thumbnail.png",
         "refreshable": false,

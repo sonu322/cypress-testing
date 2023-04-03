@@ -193,15 +193,23 @@ export default class TreeUtils {
     return node;
   }
 
-  async initTreeHook(
+  async handleInitTree(
     filter: IssueTreeFilter,
     fields: IssueField[],
     setTree,
-    handleError
+    handleError,
+    rootIssueId?: string
   ): Promise<void> {
     try {
       const tree = this.getRootTree();
-      await this.initTree(tree, filter, fields, setTree, handleError);
+      await this.initTree(
+        tree,
+        filter,
+        fields,
+        setTree,
+        handleError,
+        rootIssueId
+      );
     } catch (error) {
       console.log(error);
       handleError(error);
@@ -217,11 +225,12 @@ export default class TreeUtils {
     filter: IssueTreeFilter,
     fields: IssueField[],
     setTree,
-    handleError
+    handleError,
+    rootIssueId?: string
   ): Promise<void> {
     try {
       const tree = this.cloneTree(prevTree);
-      const issue = await this.api.getIssueWithLinks(fields);
+      const issue = await this.api.getIssueWithLinks(fields, rootIssueId);
       const mainNode = this.createTreeNode(
         tree,
         "",
@@ -400,7 +409,7 @@ export default class TreeUtils {
         setTree((tree) => {
           const loadMoreButtonNode =
             tree.items[
-            `/${orphansTreeBranchName}/${loadMoreOrphansButtonName}`
+              `/${orphansTreeBranchName}/${loadMoreOrphansButtonName}`
             ];
 
           const newButtonData: ButtonTypeTreeNode = {
@@ -712,7 +721,7 @@ export default class TreeUtils {
           if (
             firstNode.nodeType !== TreeNodeType.ButtonNode &&
             (firstNode.data as IssueWithLinkedIssues).linkedIssues !==
-            undefined &&
+              undefined &&
             (firstNode.data as IssueWithLinkedIssues).linkedIssues.length > 0 &&
             firstNode.isExpanded
           ) {
@@ -1077,7 +1086,8 @@ export default class TreeUtils {
   exportTree(
     tree: AtlasTree,
     issueFields: IssueField[],
-    selectedIssueFieldIds: string[]): void {
+    selectedIssueFieldIds: string[]
+  ): void {
     const root = tree.items[tree.rootId];
     const headerItems = ["Indent", "Issue Key", "Link"];
     issueFields.forEach((issueField) => {
@@ -1088,7 +1098,11 @@ export default class TreeUtils {
     const contents: any[] = [];
     contents.push(headerItems);
 
-    const process = (item: AtlasTreeNode, indent: number, link: string): void => {
+    const process = (
+      item: AtlasTreeNode,
+      indent: number,
+      link: string
+    ): void => {
       let currentNodeLink = "";
       if (!item || !item.data || item.nodeType === TreeNodeType.ButtonNode) {
         return;
