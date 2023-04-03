@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from "react";
 
+
 interface GadgetConfig {
   title: string;
-  url: string;
+  issueId: string;
 }
 
 interface GadgetConfigurationFormProps {
-  onSave: (GadgetConfig) => void;
+  onSave: (GadgetConfig: GadgetConfig) => void;
 }
 
 export const GadgetConfigurationForm: React.FC<
   GadgetConfigurationFormProps
 > = ({ onSave }) => {
-  const [config, setConfig] = useState<GadgetConfig>({ title: "", url: "" });
-
+  const [inputConfig, setInputConfig] = useState<GadgetConfig>({
+    title: "",
+    issueId: "",
+  });
   useEffect(() => {
     AP.context.getToken(function (token) {
       console.log("Access token:", token);
@@ -22,7 +25,7 @@ export const GadgetConfigurationForm: React.FC<
     AP.request({
       url: "/config",
       success: (response) => {
-        setConfig(response.config);
+        setInputConfig(response.config); // last saved value
       },
     });
   }, []);
@@ -32,10 +35,9 @@ export const GadgetConfigurationForm: React.FC<
     AP.request({
       url: "/config",
       type: "POST",
-      data: JSON.stringify({ config }),
+      data: JSON.stringify({ config: inputConfig }),
       success: () => {
-        console.log("saved");
-        onSave(config);
+        onSave(inputConfig);
       },
     });
   };
@@ -44,7 +46,7 @@ export const GadgetConfigurationForm: React.FC<
     event: React.ChangeEvent<HTMLInputElement>
   ): void => {
     const { name, value } = event.target;
-    setConfig((prevConfig) => ({
+    setInputConfig((prevConfig) => ({
       ...prevConfig,
       [name]: value,
     }));
@@ -57,16 +59,16 @@ export const GadgetConfigurationForm: React.FC<
         type="text"
         name="title"
         id="title"
-        value={config.title}
+        value={inputConfig.title}
         onChange={handleInputChange}
       />
       <br />
-      <label htmlFor="url">URL:</label>
+      <label htmlFor="issueId">Issue Id:</label>
       <input
         type="text"
-        name="url"
-        id="url"
-        value={config.url}
+        name="issueId"
+        id="issueId"
+        value={inputConfig.issueId}
         onChange={handleInputChange}
       />
       <br />
