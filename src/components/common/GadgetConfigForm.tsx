@@ -6,7 +6,7 @@ interface GadgetConfig {
 }
 
 interface GadgetConfigurationFormProps {
-  onSave: () => void;
+  onSave: (GadgetConfig) => void;
 }
 
 export const GadgetConfigurationForm: React.FC<
@@ -15,7 +15,11 @@ export const GadgetConfigurationForm: React.FC<
   const [config, setConfig] = useState<GadgetConfig>({ title: "", url: "" });
 
   useEffect(() => {
-    AP.request<GadgetConfig>({
+    AP.context.getToken(function (token) {
+      console.log("Access token:", token);
+    }); // TODO: check why token is undefined
+
+    AP.request({
       url: "/config",
       success: (response) => {
         setConfig(response.config);
@@ -28,9 +32,10 @@ export const GadgetConfigurationForm: React.FC<
     AP.request({
       url: "/config",
       type: "POST",
-      data: { config },
+      data: JSON.stringify({ config }),
       success: () => {
-        onSave();
+        console.log("saved");
+        onSave(config);
       },
     });
   };

@@ -10,7 +10,9 @@ const DashboardGadget: React.FC = () => {
     setIsConfiguring(true);
   };
 
-  const handleSaveConfig = () => {
+  const handleSaveConfig = (newConfig) => {
+    console.log("new config is");
+    console.log(newConfig);
     setIsConfiguring(false);
   };
 

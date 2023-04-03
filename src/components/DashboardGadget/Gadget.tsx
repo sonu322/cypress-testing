@@ -30,6 +30,7 @@ export const Gadget: React.FC<GadgetProps> = ({ title, url }) => {
   //     .then((data) => setData(data))
   //     .catch((error) => console.error(error));
   // }, [url]);
+
   const jiraCloud = new JiraCloudImpl();
   const api = new APIImpl(jiraCloud);
   return (
