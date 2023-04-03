@@ -4,7 +4,6 @@ import IssueLinksHierarchy from "./IssueLinksHierarchy";
 import APIImpl from "./impl/Cloud";
 import JiraCloudImpl from "./impl/jira/Cloud";
 import { APIContext } from "./context/api";
-window.React = React;
 const jiraCloud = new JiraCloudImpl();
 const api = new APIImpl(jiraCloud);
 
