@@ -5,16 +5,16 @@ import JiraCloudImpl from "../../impl/jira/Cloud";
 import IssueLinksHierarchy from "../../IssueLinksHierarchy";
 
 interface GadgetProps {
-  issueId: string;
+  issueKey: string;
 }
 
-export const Gadget: React.FC<GadgetProps> = ({ issueId }) => {
-  console.log("issue id", issueId);
+export const Gadget: React.FC<GadgetProps> = ({ issueKey }) => {
+  console.log("issue id", issueKey);
   const jiraCloud = new JiraCloudImpl();
   const api = new APIImpl(jiraCloud);
   return (
     <APIContext.Provider value={api}>
-      <IssueLinksHierarchy rootIssueId={issueId} />
+      <IssueLinksHierarchy rootIssueKey={issueKey} />
     </APIContext.Provider>
   );
 };

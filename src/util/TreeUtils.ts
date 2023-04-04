@@ -198,7 +198,7 @@ export default class TreeUtils {
     fields: IssueField[],
     setTree,
     handleError,
-    rootIssueId?: string
+    rootIssueKey?: string
   ): Promise<void> {
     try {
       const tree = this.getRootTree();
@@ -208,7 +208,7 @@ export default class TreeUtils {
         fields,
         setTree,
         handleError,
-        rootIssueId
+        rootIssueKey
       );
     } catch (error) {
       console.log(error);
@@ -226,11 +226,11 @@ export default class TreeUtils {
     fields: IssueField[],
     setTree,
     handleError,
-    rootIssueId?: string
+    rootIssueKey?: string
   ): Promise<void> {
     try {
       const tree = this.cloneTree(prevTree);
-      const issue = await this.api.getIssueWithLinks(fields, rootIssueId);
+      const issue = await this.api.getIssueWithLinks(fields, rootIssueKey);
       const mainNode = this.createTreeNode(
         tree,
         "",

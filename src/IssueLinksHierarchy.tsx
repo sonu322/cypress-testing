@@ -7,9 +7,9 @@ import "../i18n";
 import { TreeFilterContextProvider } from "./components/common/TreeFilterContextProvider";
 
 interface Props {
-  rootIssueId?: string;
+  rootIssueKey?: string;
 }
-const IssueLinksHierarchy = ({ rootIssueId }: Props): JSX.Element => {
+const IssueLinksHierarchy = ({ rootIssueKey }: Props): JSX.Element => {
   const api = useContext(APIContext);
   const { i18n, t } = useTranslation();
   useEffect(() => {
@@ -27,7 +27,7 @@ const IssueLinksHierarchy = ({ rootIssueId }: Props): JSX.Element => {
     <Suspense fallback={t("otpl.lxp.common.loading")}>
       {api.hasValidLicense() ? (
         <TreeFilterContextProvider>
-          <IssueTreeModule rootIssueId={rootIssueId} />
+          <IssueTreeModule rootIssueKey={rootIssueKey} />
         </TreeFilterContextProvider>
       ) : (
         <LicenseContainer />
