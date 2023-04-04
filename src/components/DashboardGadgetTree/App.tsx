@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import styled, { css } from "styled-components";
 import { DEFAULT_GADGET_HEIGHT } from "../../constants/tree";
@@ -12,6 +12,7 @@ interface ContainerProps {
 const Container = styled.div<ContainerProps>`
   height: ${({ height }) => height}px;
 `;
+
 const DashboardGadget: React.FC = () => {
   const [isConfiguring, setIsConfiguring] = useState(false);
   const [config, setConfig] = useState<TreeGadgetConfig>({
@@ -28,6 +29,10 @@ const DashboardGadget: React.FC = () => {
     setConfig(newConfig);
   };
 
+  useEffect(() => {
+    // Set the height of your gadget using AP.resize
+    AP.resize("100%", config.height);
+  }, [config]);
   return (
     <Container height={config.height}>
       <h1>{config.title?.length > 0 ? config.title : "LXP"}</h1>
