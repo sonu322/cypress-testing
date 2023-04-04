@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { DEFAULT_GADGET_HEIGHT } from "../../constants/tree";
 import { TreeGadgetConfig } from "../../types/app";
 
 interface GadgetConfigurationFormProps {
@@ -11,6 +12,7 @@ export const GadgetConfigurationForm: React.FC<
   const [inputConfig, setInputConfig] = useState<TreeGadgetConfig>({
     title: "",
     issueKey: "",
+    height: DEFAULT_GADGET_HEIGHT,
   });
   useEffect(() => {
     AP.context.getToken(function (token) {
@@ -42,6 +44,7 @@ export const GadgetConfigurationForm: React.FC<
     event: React.ChangeEvent<HTMLInputElement>
   ): void => {
     const { name, value } = event.target;
+    console.log(name, value);
     setInputConfig((prevConfig) => ({
       ...prevConfig,
       [name]: value,
@@ -50,7 +53,7 @@ export const GadgetConfigurationForm: React.FC<
 
   return (
     <form onSubmit={handleSave}>
-      <label htmlFor="title">Title:</label>
+      <label htmlFor="title">Title</label>
       <input
         type="text"
         name="title"
@@ -59,12 +62,21 @@ export const GadgetConfigurationForm: React.FC<
         onChange={handleInputChange}
       />
       <br />
-      <label htmlFor="issueKey">Issue Id:</label>
+      <label htmlFor="issueKey">Issue Key</label>
       <input
         type="text"
         name="issueKey"
         id="issueKey"
         value={inputConfig.issueKey}
+        onChange={handleInputChange}
+      />
+      <br />
+      <label htmlFor="height">Tree Height</label>
+      <input
+        type="number"
+        name="height"
+        id="height"
+        value={inputConfig.height}
         onChange={handleInputChange}
       />
       <br />
