@@ -13,7 +13,7 @@ export interface Props {
   selectedIssueFieldIds: ID[];
   handleError: any;
   clearAllErrors: () => void;
-  rootIssueId?: string;
+  rootIssueKey?: string;
 }
 
 export const IssueTreeSingleNode = ({
@@ -25,7 +25,7 @@ export const IssueTreeSingleNode = ({
   selectedIssueFieldIds,
   handleError,
   clearAllErrors,
-  rootIssueId,
+  rootIssueKey,
 }: Props): JSX.Element => {
   const fieldMap = {};
   issueFields.forEach((field) => {
@@ -39,7 +39,7 @@ export const IssueTreeSingleNode = ({
         treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds),
         setTree,
         handleError,
-        rootIssueId
+        rootIssueKey
       );
     };
     void initTree();

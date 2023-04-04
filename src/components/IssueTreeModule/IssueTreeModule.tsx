@@ -8,9 +8,9 @@ import { IssueField } from "../../types/api";
 import { useTranslation } from "react-i18next";
 import { TreeFilterContext } from "../../context/treeFilterContext";
 interface Props {
-  rootIssueId?: string;
+  rootIssueKey?: string;
 }
-export const IssueTreeModule = ({ rootIssueId }: Props): JSX.Element => {
+export const IssueTreeModule = ({ rootIssueKey }: Props): JSX.Element => {
   const treeFilterContext = useContext(TreeFilterContext);
   const { t } = useTranslation();
   const api = useContext(APIContext);
@@ -121,7 +121,7 @@ export const IssueTreeModule = ({ rootIssueId }: Props): JSX.Element => {
             selectedIssueFieldIds={selectedIssueFieldIds}
             handleError={handleNewError}
             clearAllErrors={clearAllErrors}
-            rootIssueId={rootIssueId}
+            rootIssueKey={rootIssueKey}
           />
         </>
       )}

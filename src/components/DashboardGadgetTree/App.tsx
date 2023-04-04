@@ -1,24 +1,20 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
+import { TreeGadgetConfig } from "../../types/app";
 import { Gadget } from "./Gadget";
 import { GadgetConfigurationForm } from "./GadgetConfigForm";
 
-interface GadgetConfig {
-  title: string;
-  issueId: string;
-}
-
 const DashboardGadget: React.FC = () => {
   const [isConfiguring, setIsConfiguring] = useState(false);
-  const [config, setConfig] = useState<GadgetConfig>({
+  const [config, setConfig] = useState<TreeGadgetConfig>({
     title: "",
-    issueId: "",
+    issueKey: "",
   });
   const openConfigureScreen = (): void => {
     setIsConfiguring(true);
   };
 
-  const handleSaveConfig = (newConfig: GadgetConfig): void => {
+  const handleSaveConfig = (newConfig: TreeGadgetConfig): void => {
     setIsConfiguring(false);
     setConfig(newConfig);
   };
@@ -32,7 +28,9 @@ const DashboardGadget: React.FC = () => {
         <>
           <button onClick={openConfigureScreen}>Configure</button>
           <Gadget
-            issueId={config.issueId?.length > 0 ? config.issueId : "13153"}
+            issueKey={
+              config.issueKey?.length > 0 ? config.issueKey : "TNG31-12"
+            }
           />
         </>
       )}

@@ -54,3 +54,8 @@ export interface LastSavedTreeConfig {
   selectedIssueFieldIds?: string[];
   treeFilter?: IssueTreeFilter;
 }
+
+export interface TreeGadgetConfig {
+  title: string;
+  issueKey: string;
+}

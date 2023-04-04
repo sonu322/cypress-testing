@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from "react";
-
-interface GadgetConfig {
-  title: string;
-  issueId: string;
-}
+import { TreeGadgetConfig } from "../../types/app";
 
 interface GadgetConfigurationFormProps {
-  onSave: (GadgetConfig: GadgetConfig) => void;
+  onSave: (GadgetConfig: TreeGadgetConfig) => void;
 }
 
 export const GadgetConfigurationForm: React.FC<
   GadgetConfigurationFormProps
 > = ({ onSave }) => {
-  const [inputConfig, setInputConfig] = useState<GadgetConfig>({
+  const [inputConfig, setInputConfig] = useState<TreeGadgetConfig>({
     title: "",
-    issueId: "",
+    issueKey: "",
   });
   useEffect(() => {
     AP.context.getToken(function (token) {
@@ -31,14 +27,15 @@ export const GadgetConfigurationForm: React.FC<
 
   const handleSave = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
-    AP.request({
-      url: "/config",
-      type: "POST",
-      data: JSON.stringify({ config: inputConfig }),
-      success: () => {
-        onSave(inputConfig);
-      },
-    });
+    // AP.request({
+    //   url: "/config",
+    //   type: "POST",
+    //   data: JSON.stringify({ config: inputConfig }),
+    //   success: () => {
+    //     onSave(inputConfig);
+    //   },
+    // });
+    onSave(inputConfig);
   };
 
   const handleInputChange = (
@@ -62,12 +59,12 @@ export const GadgetConfigurationForm: React.FC<
         onChange={handleInputChange}
       />
       <br />
-      <label htmlFor="issueId">Issue Id:</label>
+      <label htmlFor="issueKey">Issue Id:</label>
       <input
         type="text"
-        name="issueId"
-        id="issueId"
-        value={inputConfig.issueId}
+        name="issueKey"
+        id="issueKey"
+        value={inputConfig.issueKey}
         onChange={handleInputChange}
       />
       <br />
