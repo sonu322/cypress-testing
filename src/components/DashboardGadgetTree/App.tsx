@@ -1,10 +1,17 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
+import styled, { css } from "styled-components";
 import { DEFAULT_GADGET_HEIGHT } from "../../constants/tree";
 import { TreeGadgetConfig } from "../../types/app";
 import { Gadget } from "./Gadget";
 import { GadgetConfigurationForm } from "./GadgetConfigForm";
 
+interface ContainerProps {
+  height: number;
+}
+const Container = styled.div<ContainerProps>`
+  height: ${({ height }) => height}px;
+`;
 const DashboardGadget: React.FC = () => {
   const [isConfiguring, setIsConfiguring] = useState(false);
   const [config, setConfig] = useState<TreeGadgetConfig>({
@@ -22,7 +29,7 @@ const DashboardGadget: React.FC = () => {
   };
 
   return (
-    <div>
+    <Container height={config.height}>
       <h1>{config.title?.length > 0 ? config.title : "LXP"}</h1>
       {isConfiguring ? (
         <GadgetConfigurationForm onSave={handleSaveConfig} />
@@ -36,7 +43,7 @@ const DashboardGadget: React.FC = () => {
           />
         </>
       )}
-    </div>
+    </Container>
   );
 };
 
