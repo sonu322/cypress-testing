@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
+import { DEFAULT_GADGET_HEIGHT } from "../../constants/tree";
 import { TreeGadgetConfig } from "../../types/app";
 import { Gadget } from "./Gadget";
 import { GadgetConfigurationForm } from "./GadgetConfigForm";
@@ -9,6 +10,7 @@ const DashboardGadget: React.FC = () => {
   const [config, setConfig] = useState<TreeGadgetConfig>({
     title: "",
     issueKey: "",
+    height: DEFAULT_GADGET_HEIGHT,
   });
   const openConfigureScreen = (): void => {
     setIsConfiguring(true);
