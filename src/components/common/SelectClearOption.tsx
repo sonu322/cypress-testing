@@ -11,9 +11,20 @@ export const SelectClearOption = ({
   onClearAll,
 }: Props): JSX.Element => {
   return (
-    <div style={{ display: "flex", justifyContent: "space-between" }}>
-      <Button onClick={onSelectAll}>Select All</Button>
-      <Button onClick={onClearAll}>Clear All</Button>
+    <div
+      style={{
+        borderTop: "1px solid #eee",
+        display: "flex",
+        justifyContent: "space-between",
+        backgroundColor: "#f9f9f9",
+      }}
+    >
+      <Button appearance="subtle-link" onClick={onSelectAll}>
+        Select All
+      </Button>
+      <Button appearance="subtle-link" onClick={onClearAll}>
+        Clear All
+      </Button>
     </div>
   );
 };

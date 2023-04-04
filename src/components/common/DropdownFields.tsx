@@ -58,29 +58,35 @@ export const DropdownFields = ({
   );
 
   return (
-    <DropdownMenu
-      trigger={dropdownName}
-      placement={dropdownNamePlacement ?? "bottom-start"}
-    >
-      <SearchOption placeholder="Search" onSearch={handleSearch} />
-      <DropdownItemCheckboxGroup id={dropdownName + "-options"}>
-        {filteredOptions?.map((option) => (
-          <DropdownItemCheckbox
-            key={option.id}
-            id={option.id}
-            isSelected={selectedOptions.includes(option.id)}
-            onClick={() => handleOptionClick(option.id)}
-          >
-            <TooltipContainer content={option.description}>
-              {useTitleCaseOptions ? toTitleCase(option.name) : option.name}
-            </TooltipContainer>
-          </DropdownItemCheckbox>
-        ))}
-      </DropdownItemCheckboxGroup>
-      <SelectClearOption
-        onSelectAll={handleSelectAll}
-        onClearAll={handleClearAll}
-      />
-    </DropdownMenu>
+    <div style={{ position: "relative" }}>
+      <DropdownMenu
+        trigger={dropdownName}
+        placement={dropdownNamePlacement ?? "bottom-start"}
+      >
+        <div style={{ position: "sticky", top: 0, zIndex: 1 }}>
+          <SearchOption placeholder="Search" onSearch={handleSearch} />
+        </div>
+        <DropdownItemCheckboxGroup id={dropdownName + "-options"}>
+          {filteredOptions?.map((option) => (
+            <DropdownItemCheckbox
+              key={option.id}
+              id={option.id}
+              isSelected={selectedOptions.includes(option.id)}
+              onClick={() => handleOptionClick(option.id)}
+            >
+              <TooltipContainer content={option.description}>
+                {useTitleCaseOptions ? toTitleCase(option.name) : option.name}
+              </TooltipContainer>
+            </DropdownItemCheckbox>
+          ))}
+        </DropdownItemCheckboxGroup>
+        <div style={{ position: "sticky", bottom: 0, zIndex: 1 }}>
+          <SelectClearOption
+            onSelectAll={handleSelectAll}
+            onClearAll={handleClearAll}
+          />
+        </div>
+      </DropdownMenu>
+    </div>
   );
 };
