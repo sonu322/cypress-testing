@@ -5,8 +5,9 @@ import {
   MIN_GADGET_HEIGHT,
 } from "../../constants/tree";
 import { TreeGadgetConfig } from "../../types/app";
-import Form, { Field, ErrorMessage } from "@atlaskit/form";
+import Form, { Field, ErrorMessage, FormFooter } from "@atlaskit/form";
 import TextField from "@atlaskit/textfield";
+import Button from "@atlaskit/button";
 interface GadgetConfigurationFormProps {
   onSave: (GadgetConfig: TreeGadgetConfig) => void;
 }
@@ -152,7 +153,11 @@ export const GadgetConfigurationForm: React.FC<
                 </>
               )}
             </Field>
-            <button type="submit">Submit</button>
+            <FormFooter>
+              <Button appearance="primary" type="submit">
+                Submit
+              </Button>
+            </FormFooter>
           </form>
         );
       }}

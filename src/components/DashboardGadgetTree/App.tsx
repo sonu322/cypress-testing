@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { DEFAULT_GADGET_HEIGHT } from "../../constants/tree";
 import { TreeGadgetConfig } from "../../types/app";
 import { Gadget } from "./Gadget";
