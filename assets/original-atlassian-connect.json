@@ -58,12 +58,8 @@
       "name": {
         "value": "My Gadget Configuration"
       },
-      "url": "/ConfigureGadget.html",
-      "conditions": [
-        {
-          "condition": "user_is_logged_in"
-        }
-      ]
+      "url": "/configureGadget.html",
+      "conditions": []
     },
     "jiraReports": [
       {
