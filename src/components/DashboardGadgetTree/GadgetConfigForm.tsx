@@ -5,7 +5,13 @@ import {
   MIN_GADGET_HEIGHT,
 } from "../../constants/tree";
 import { TreeGadgetConfig } from "../../types/app";
-import Form, { Field, ErrorMessage, FormFooter } from "@atlaskit/form";
+import Form, {
+  Field,
+  ErrorMessage,
+  FormHeader,
+  FormSection,
+  FormFooter,
+} from "@atlaskit/form";
 import TextField from "@atlaskit/textfield";
 import Button from "@atlaskit/button";
 interface GadgetConfigurationFormProps {
@@ -97,62 +103,69 @@ export const GadgetConfigurationForm: React.FC<
         console.log(formProps, submitting);
         return (
           <form {...formProps}>
-            <Field name="title" label="Title" isRequired>
-              {({ fieldProps, error }) => (
-                <>
-                  <TextField
-                    {...fieldProps}
-                    value={inputConfig.title}
-                    onChange={handleInputChange}
-                  />
-                  {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
-                </>
-              )}
-            </Field>
-            {/* <TextField
+            <FormHeader
+              title="Configure"
+              description="* indicates a required field"
+            />
+
+            <FormSection>
+              <Field name="title" label="Title" isRequired>
+                {({ fieldProps, error }) => (
+                  <>
+                    <TextField
+                      {...fieldProps}
+                      value={inputConfig.title}
+                      onChange={handleInputChange}
+                    />
+                    {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
+                  </>
+                )}
+              </Field>
+              {/* <TextField
               label="Title"
               name="title"
               onChange={handleInputChange}
             /> */}
-            <Field name="issueKey" label="Issue Key" isRequired>
-              {({ fieldProps, error }) => (
-                <>
-                  <TextField
-                    {...fieldProps}
-                    value={inputConfig.issueKey}
-                    onChange={handleInputChange}
-                  />
-                  {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
-                </>
-              )}
-            </Field>
-            {/* <FieldNumber
+              <Field name="issueKey" label="Issue Key" isRequired>
+                {({ fieldProps, error }) => (
+                  <>
+                    <TextField
+                      {...fieldProps}
+                      value={inputConfig.issueKey}
+                      onChange={handleInputChange}
+                    />
+                    {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
+                  </>
+                )}
+              </Field>
+              {/* <FieldNumber
               label="Tree Height (in px)"
               name="height"
               min={MIN_GADGET_HEIGHT}
               defaultValue={DEFAULT_GADGET_HEIGHT}
               onChange={handleInputChange}
             /> */}
-            <Field
-              name="height"
-              label="Height"
-              defaultValue={MIN_GADGET_HEIGHT}
-              // validate={validateHeight}
-            >
-              {({ fieldProps, error }) => (
-                <>
-                  <TextField
-                    {...fieldProps}
-                    value={inputConfig.height}
-                    type="number"
-                    min={MIN_GADGET_HEIGHT}
-                    step="1"
-                    onChange={handleInputChange}
-                  />
-                  {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
-                </>
-              )}
-            </Field>
+              <Field
+                name="height"
+                label="Height"
+                defaultValue={MIN_GADGET_HEIGHT}
+                // validate={validateHeight}
+              >
+                {({ fieldProps, error }) => (
+                  <>
+                    <TextField
+                      {...fieldProps}
+                      value={inputConfig.height}
+                      type="number"
+                      min={MIN_GADGET_HEIGHT}
+                      step="1"
+                      onChange={handleInputChange}
+                    />
+                    {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
+                  </>
+                )}
+              </Field>
+            </FormSection>
             <FormFooter>
               <Button appearance="primary" type="submit">
                 Submit
