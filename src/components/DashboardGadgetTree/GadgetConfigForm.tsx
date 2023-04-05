@@ -5,15 +5,15 @@ import {
   MIN_GADGET_HEIGHT,
 } from "../../constants/tree";
 import { TreeGadgetConfig } from "../../types/app";
-import Form, { Field } from "@atlaskit/form";
+import Form, { Field, ErrorMessage } from "@atlaskit/form";
 import TextField from "@atlaskit/textfield";
 interface GadgetConfigurationFormProps {
   onSave: (GadgetConfig: TreeGadgetConfig) => void;
 }
 type ValidationError = Record<string, string>;
-export const GadgetConfigurationForm: React.FC<GadgetConfigurationFormProps> = ({
-  onSave,
-}) => {
+export const GadgetConfigurationForm: React.FC<
+  GadgetConfigurationFormProps
+> = ({ onSave }) => {
   const [inputConfig, setInputConfig] = useState<TreeGadgetConfig>({
     title: DEFAULT_GADGET_TITLE,
     issueKey: "",
@@ -32,7 +32,7 @@ export const GadgetConfigurationForm: React.FC<GadgetConfigurationFormProps> = (
     });
   }, []);
 
-  const handleSave = (event: React.FormEvent<HTMLFormElement>): void => {
+  const handleSave = (): ValidationError => {
     // if (event !== undefined) {
     //   event.preventDefault();
     // }
@@ -44,6 +44,10 @@ export const GadgetConfigurationForm: React.FC<GadgetConfigurationFormProps> = (
     //     onSave(inputConfig);
     //   },
     // });
+    const errors = validate(inputConfig);
+    if (Object.keys(errors).length > 0) {
+      return errors;
+    }
     onSave(inputConfig);
   };
 
@@ -64,8 +68,16 @@ export const GadgetConfigurationForm: React.FC<GadgetConfigurationFormProps> = (
 
   const validate = (values: TreeGadgetConfig): ValidationError => {
     const errors: ValidationError = {};
+    const titleRegex =
+      /^[a-zA-Z][a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{0,49}$/;
+    if (values.title === undefined || values.title === "") {
+      errors.issueKey = "Please enter a Title";
+    } else if (!titleRegex.test(values.title)) {
+      errors.title =
+        "Title must start with a letter and can have a maximum of 50 characters";
+    }
     const issueKeyRegex = /^[A-Z][A-Z0-9]{0,9}-\d+$/; // Regex for issue key pattern
-    if (values.issueKey !== undefined && values.issueKey !== "") {
+    if (values.issueKey === undefined || values.issueKey === "") {
       errors.issueKey = "Please enter an issue key";
     } else if (!issueKeyRegex.test(values.issueKey)) {
       errors.issueKey = "Please enter a valid issue key";
@@ -74,50 +86,17 @@ export const GadgetConfigurationForm: React.FC<GadgetConfigurationFormProps> = (
     if (values.height < MIN_GADGET_HEIGHT) {
       errors.height = `Minimum height: ${MIN_GADGET_HEIGHT} `;
     }
-
+    console.log("errors from validate", errors);
     return errors;
   };
 
-  // return (
-  //   <form onSubmit={handleSave}>
-  //     <label htmlFor="title">Title</label>
-  //     <input
-  //       type="text"
-  //       name="title"
-  //       id="title"
-  //       value={inputConfig.title}
-  //       onChange={handleInputChange}
-  //     />
-  //     <br />
-  //     <label htmlFor="issueKey">Issue Key</label>
-  //     <input
-  //       type="text"
-  //       name="issueKey"
-  //       id="issueKey"
-  //       value={inputConfig.issueKey}
-  //       onChange={handleInputChange}
-  //     />
-  //     <br />
-  //     <label htmlFor="height">Tree Height</label>
-  //     <input
-  //       type="number"
-  //       name="height"
-  //       id="height"
-  //       value={inputConfig.height}
-  //       onChange={handleInputChange}
-  //     />
-  //     <br />
-  //     <button type="submit">Save</button>
-  //   </form>
-  // );
-
   return (
-    <Form onSubmit={handleSave} validate={validate}>
+    <Form onSubmit={handleSave}>
       {({ formProps, submitting }) => {
         console.log(formProps, submitting);
         return (
           <form {...formProps}>
-            <Field name="title" label="Title">
+            <Field name="title" label="Title" isRequired>
               {({ fieldProps, error }) => (
                 <>
                   <TextField
@@ -125,6 +104,7 @@ export const GadgetConfigurationForm: React.FC<GadgetConfigurationFormProps> = (
                     value={inputConfig.title}
                     onChange={handleInputChange}
                   />
+                  {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
                 </>
               )}
             </Field>
@@ -133,7 +113,7 @@ export const GadgetConfigurationForm: React.FC<GadgetConfigurationFormProps> = (
               name="title"
               onChange={handleInputChange}
             /> */}
-            <Field name="issueKey" label="Issue Key">
+            <Field name="issueKey" label="Issue Key" isRequired>
               {({ fieldProps, error }) => (
                 <>
                   <TextField
@@ -141,6 +121,7 @@ export const GadgetConfigurationForm: React.FC<GadgetConfigurationFormProps> = (
                     value={inputConfig.issueKey}
                     onChange={handleInputChange}
                   />
+                  {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
                 </>
               )}
             </Field>
@@ -167,6 +148,7 @@ export const GadgetConfigurationForm: React.FC<GadgetConfigurationFormProps> = (
                     step="1"
                     onChange={handleInputChange}
                   />
+                  {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
                 </>
               )}
             </Field>
@@ -176,4 +158,4 @@ export const GadgetConfigurationForm: React.FC<GadgetConfigurationFormProps> = (
       }}
     </Form>
   );
-};;;;;;;;;;;
+};
