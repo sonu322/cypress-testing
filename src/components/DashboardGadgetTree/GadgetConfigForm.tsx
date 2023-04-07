@@ -39,9 +39,17 @@ export const GadgetConfigurationForm: React.FC<
     // });
     // TODO: check why token is undefined
     AP.request({
-      url: `/rest/api/3/dashboard/${dashboardId}/items/${dashboardItemId}/properties/config`,
+      url: `/rest/api/3/dashboard/${dashboardId}/items/${dashboardItemId}/properties/`,
       success: (response) => {
-        console.log("response config", response);
+        console.log("response keys", response);
+        const keys = response;
+        // if(keys?.length === 0) {
+        //   AP.request({
+        //     url: `/rest/api/3/dashboard/${dashboardId}/items/${dashboardItemId}/properties/`,
+        //     type: "POST",
+
+        //   })
+        // }
         //setInputConfig(response.config); // last saved value
       },
       failure: () => {
@@ -74,9 +82,7 @@ export const GadgetConfigurationForm: React.FC<
       await AP.request({
         url: `/rest/api/3/dashboard/${dashboardId}/items/${dashboardItemId}/properties/config`,
         type: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        contentType: "application/json",
         data: JSON.stringify(inputConfig),
       });
       onSave(inputConfig);
