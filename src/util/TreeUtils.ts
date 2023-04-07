@@ -68,6 +68,11 @@ export default class TreeUtils {
     }
   };
 
+  getToken = async (): Promise<string> => {
+    const token = await this.api.getToken();
+    return token;
+  };
+
   handleSetItemInSavedTreeConfig = (key: string, value: any): void => {
     const lastSavedTreeConfig = getItemInLocalStorage(lastSavedTreeConfigKey);
     let newReportConfig: Object;

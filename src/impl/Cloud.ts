@@ -77,6 +77,12 @@ export default class APIImpl implements LXPAPI {
     this.isServer = isServer;
   }
 
+  async getToken(): Promise<string> {
+    const token = await this.api.getToken();
+    console.log("token", token);
+    return token;
+  }
+
   hasValidLicense(): boolean {
     return this.api.hasValidLicense();
   }
@@ -758,7 +764,6 @@ export default class APIImpl implements LXPAPI {
         0
       );
       linkedIssues = linkedIssuesResult.data;
-
     }
 
     const populatedIssues = this._populateIssueLinks(issues, linkedIssues);

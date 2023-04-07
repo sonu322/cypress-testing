@@ -279,6 +279,8 @@ export interface JiraAPI {
 
   getPriorities(): Promise<JiraIssuePriorityFull[]>;
 
+  getToken(): Promise<string>;
+
   getMyself(): Promise<JiraMyself>;
 
   getIssueTypes(): Promise<JiraIssueType[]>;

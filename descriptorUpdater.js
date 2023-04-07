@@ -1,8 +1,8 @@
 const fs = require("fs");
-const updater = function(baseURL) {
+const updater = async function (baseURL) {
   try {
     let jsonData, jsonString;
-    
+
     console.log("App Descriptor URL: ");
     console.info(`${baseURL}/atlassian-connect.json`);
 
