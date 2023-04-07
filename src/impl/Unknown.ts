@@ -28,6 +28,10 @@ export default class UnknownImpl implements LXPAPI {
     throw new Error("Method not implemented.");
   }
 
+  async getToken(): Promise<string> {
+    throw new Error("Method not implemented.");
+  }
+
   async getLocale(): Promise<string> {
     throw new Error("Method not implemented");
   }

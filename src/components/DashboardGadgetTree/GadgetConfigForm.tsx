@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   DEFAULT_GADGET_HEIGHT,
   DEFAULT_GADGET_TITLE,
@@ -14,32 +14,77 @@ import Form, {
 } from "@atlaskit/form";
 import TextField from "@atlaskit/textfield";
 import Button from "@atlaskit/button";
+
+import TreeUtils from "../../util/TreeUtils";
+import { APIContext } from "../../context/api";
 interface GadgetConfigurationFormProps {
   onSave: (GadgetConfig: TreeGadgetConfig) => void;
+  dashboardId: string;
+  dashboardItemId: string;
 }
 type ValidationError = Record<string, string>;
 export const GadgetConfigurationForm: React.FC<
   GadgetConfigurationFormProps
-> = ({ onSave }) => {
+> = ({ onSave, dashboardId, dashboardItemId }) => {
   const [inputConfig, setInputConfig] = useState<TreeGadgetConfig>({
     title: DEFAULT_GADGET_TITLE,
     issueKey: "",
     height: DEFAULT_GADGET_HEIGHT,
   });
+  const api = useContext(APIContext);
+  const treeUtils = new TreeUtils(api);
   useEffect(() => {
-    AP.context.getToken(function (token) {
-      console.log("Access token:", token);
-    }); // TODO: check why token is undefined
-
+    // AP.context.getToken(function (token) {
+    //   console.log("Access token:", token);
+    // });
+    // TODO: check why token is undefined
     AP.request({
-      url: "/config",
+      url: `/rest/api/3/dashboard/${dashboardId}/items/${dashboardItemId}/properties/config`,
       success: (response) => {
-        setInputConfig(response.config); // last saved value
+        console.log("response config", response);
+        //setInputConfig(response.config); // last saved value
+      },
+      failure: () => {
+        console.log("failed to get config");
       },
     });
-  }, []);
+    // const previousConfig = AP.context.getContext().config;
+    // console.log("previousConfig", previousConfig);
+    // AP.define("lxp-tree-gadget", function () {
+    //   return {
+    //     // This function is called when the gadget is loaded
+    //     onLoad: function () {
+    //       // Get the current Jira context
+    //       var context = JIRA.getContext();
+    //       console.log("context", context);
+    //     },
+    //   };
+    // });
+  };, []);
 
-  const handleSave = (): ValidationError => {
+  const handleSave = async (): ValidationError => {
+    const errors = validate(inputConfig);
+    if (Object.keys(errors).length > 0) {
+      return errors;
+    }
+    try {
+      // const token = await treeUtils.getToken();
+      // console.log("TOKEN!!!!!!!", token);
+      console.log("INPUT CONFIG", inputConfig);
+      await AP.request({
+        url: `/rest/api/3/dashboard/${dashboardId}/items/${dashboardItemId}/properties/config`,
+        type: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: JSON.stringify(inputConfig),
+      });
+      onSave(inputConfig);
+    } catch (error) {
+      console.log("error not having ap");
+      console.error(error);
+    }
+
     // if (event !== undefined) {
     //   event.preventDefault();
     // }
@@ -51,11 +96,6 @@ export const GadgetConfigurationForm: React.FC<
     //     onSave(inputConfig);
     //   },
     // });
-    const errors = validate(inputConfig);
-    if (Object.keys(errors).length > 0) {
-      return errors;
-    }
-    onSave(inputConfig);
   };
 
   const handleInputChange = (

@@ -23,7 +23,7 @@
   "authentication": {
     "type": "none"
   },
-  "scopes": ["read", "write"],
+  "scopes": ["read", "write", "ACT_AS_USER"],
   "apiVersion": 1,
   "modules": {
     "jiraIssueTabPanels": [
@@ -85,18 +85,32 @@
           "authentication": "none"
         },
 
-        "url": "/lxpViewGadget.html",
+        "url": "/lxpViewGadget.html?dashboardItemId={dashboardItem.id}&dashboardId={dashboard.id}&view={dashboardItem.viewType}",
         "configurable": true,
         "configurePage": {
           "url": "/configureGadget.html"
         },
+        "context": ["dashboard"],
+        "dependencies": ["jquery"],
         "thumbnailUrl": "http://example.com/images/report-example-thumbnail.png",
         "refreshable": false,
         "name": {
-          "value": "Dashboard item title"
+          "value": "LXP Tree Gadgt"
         },
-        "key": "dashboard-item-key"
+        "key": "lxp-tree-gadget"
       }
     ]
+  },
+  "context": {
+    "modules": {
+      "read": {
+        "url": "/context",
+        "key": "context",
+        "name": {
+          "value": "Context Read"
+        },
+        "scopes": ["read:jira-user", "read:jira-work"]
+      }
+    }
   }
 }
