@@ -82,7 +82,9 @@ export const IssueTreeModule = () => {
       {treeFilterContext.filter !== undefined && (
         <>
           <Toolbar
-            exportTree={() => treeUtils.exportTree(tree, issueFields, selectedIssueFieldIds)}
+            exportTree={() =>
+              treeUtils.exportTree(tree, issueFields, selectedIssueFieldIds)
+            }
             isExportDisabled={
               tree?.items !== undefined && Object.keys(tree.items).length <= 1
             }
@@ -96,7 +98,7 @@ export const IssueTreeModule = () => {
             collapseAll={() => treeUtils.collapseAll(setTree)}
             isExpandAllLoading={isExpandAllLoading}
             expandAll={async () =>
-              await treeUtils.handleExpandAllNodes(
+              await treeUtils.handleSingleExpandAllNodes(
                 treeFilterContext.filter,
                 issueFields,
                 tree,
