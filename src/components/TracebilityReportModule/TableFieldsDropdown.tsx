@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { IssueLinkType, IssueType } from "../../types/api";
-import { Dropdown } from "../common/Dropdown";
+import { DropdownFields } from "../common/DropdownFields";
 
 interface Props {
   options: IssueType[] | IssueLinkType[];
@@ -15,7 +15,7 @@ export const TableFieldsDropdown = ({
 }: Props): JSX.Element => {
   const { t } = useTranslation();
   return (
-    <Dropdown
+    <DropdownFields
       useTitleCaseOptions
       dropdownName={t("otpl.lxp.traceability-report.toolbar.tableFields.name")}
       options={options}

@@ -1,10 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import { JQLSelectDropdown } from "../JQLSelectDropdown";
 import { ButtonGroup } from "@atlaskit/button";
 import { RefreshButton } from "../common/RefreshButton";
 import { Dropdown } from "../common/Dropdown";
+import { DropdownFields } from "../common/DropdownFields";
 import { HelpLink } from "../common/HelpLink";
 import { ExportContent } from "../common/ExportContent";
 import { JQLEditor } from "../JQLEditor";
@@ -121,7 +122,7 @@ export const Toolbar = ({
                 options={tableFields}
               />
             )}
-            <Dropdown
+            <DropdownFields
               dropdownName={t("otpl.lxp.toolbar.issue-card-fields")}
               options={issueCardOptions}
               selectedOptions={selectedIssueFieldIds}
