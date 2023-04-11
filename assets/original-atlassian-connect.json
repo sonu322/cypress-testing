@@ -23,7 +23,7 @@
   "authentication": {
     "type": "none"
   },
-  "scopes": ["read", "write"],
+  "scopes": ["read", "write", "READ", "WRITE"],
   "apiVersion": 1,
   "modules": {
     "jiraIssueTabPanels": [
@@ -82,7 +82,7 @@
         "context": ["dashboard"],
         "dependencies": ["jquery"],
         "thumbnailUrl": "http://example.com/images/report-example-thumbnail.png",
-        "refreshable": false,
+        "refreshable": true,
         "name": {
           "value": "LXP Tree Gadgt"
         },
