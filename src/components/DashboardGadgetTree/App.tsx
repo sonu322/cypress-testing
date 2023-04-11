@@ -5,6 +5,7 @@ import {
   DEFAULT_GADGET_HEIGHT,
   DEFAULT_GADGET_TITLE,
 } from "../../constants/tree";
+import Spinner from "@atlaskit/spinner";
 import { APIContext } from "../../context/api";
 import { TreeGadgetConfig } from "../../types/app";
 import { Gadget } from "./Gadget";
@@ -21,6 +22,17 @@ const Container = styled.div<ContainerProps>`
   height: ${({ height }) => height}px;
   overflow: auto;
 `;
+const SpinnerContainer = styled.span`
+  display: flex;
+  min-width: 24px;
+  width: 24px;
+  height: 64px;
+  justify-content: center;
+  font-size: 12px;
+  line-height: 32px;
+  padding-top: 8px;
+`;
+
 
 const DashboardGadget: React.FC = () => {
   const [isConfiguring, setIsConfiguring] = useState(true);
@@ -112,7 +124,11 @@ const DashboardGadget: React.FC = () => {
       </APIContext.Provider>
     );
   } else {
-    return <em>Loading</em>;
+    return (
+      <SpinnerContainer>
+        <Spinner size={"large"} />
+      </SpinnerContainer>
+    );
   }
 };
 const App = document.getElementById("app");
