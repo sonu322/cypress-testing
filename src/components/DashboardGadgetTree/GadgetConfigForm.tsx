@@ -54,6 +54,21 @@ export const GadgetConfigurationForm: React.FC<GadgetConfigurationFormProps> = (
         contentType: "application/json",
         data: JSON.stringify(inputConfig),
       });
+      // await AP.request({
+      //   url: `/rest/api/3/dashboard/${dashboardId}/gadget/${dashboardItemId}`,
+      //   type: "PUT",
+      //   headers: {
+      //     Accept: "application/json",
+      //     "Content-Type": "application/json",
+      //   },
+      //   data: JSON.stringify({ title: inputConfig.title }),
+      // });
+      await AP.request({
+        url: `/rest/api/3/dashboard/${dashboardId}/gadget/${dashboardItemId}`,
+        type: "PUT",
+        contentType: "application/json",
+        data: JSON.stringify({ title: inputConfig.title }),
+      });
       onSave(inputConfig);
     } catch (error) {
       console.log("error not having ap");
