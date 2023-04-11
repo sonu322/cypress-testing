@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import { LoadingButton } from "@atlaskit/button";
+import React, { useContext, useEffect, useState } from "react";
 import { TablePagination } from "./TablePagination";
 import Spinner from "@atlaskit/spinner";
 import { APIContext } from "../../context/api";
