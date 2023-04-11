@@ -7,7 +7,24 @@ import { HelpLink } from "../common/HelpLink";
 import { useTranslation } from "react-i18next";
 import { APIContext } from "../../context/api";
 import { TreeFilterDropdowns } from "./TreeFilterDropdowns";
+import { DashboardContext } from "../DashboardGadgetTree/DashboardContext";
+import { ConfigureGadgetButton } from "../common/Dashboard/CofigureGadgetButton";
 
+interface Props {
+  options;
+  filter;
+  updateFilteredKeyOptions;
+  filterDropdowns;
+  selectedIssueFieldIds;
+  setSelectedIssueFieldIds;
+  issueCardOptions;
+  exportTree;
+  collapseAll;
+  expandAll;
+  isExportDisabled: boolean;
+  isExpandAllLoading: boolean;
+  isFromDashboardGadget: boolean;
+}
 export const Container = styled.div`
   display: flex;
   justify-content: space-between;
@@ -18,7 +35,7 @@ export const LeftContainer = styled.div`
   min-width: 450px;
 `;
 
-export const Toolbar = ({
+export const Toolbar: React.FC<Props> = ({
   options,
   filter,
   updateFilteredKeyOptions,
@@ -31,8 +48,10 @@ export const Toolbar = ({
   expandAll,
   isExportDisabled,
   isExpandAllLoading,
-}): JSX.Element => {
+  isFromDashboardGadget,
+}) => {
   const { t } = useTranslation();
+  const dashboardContext = useContext(DashboardContext);
   const api = useContext(APIContext);
   const helpLinkUrl = api.getHelpLinks().issueTree;
   let areTreeNecessitiesPresent = false;
@@ -79,6 +98,13 @@ export const Toolbar = ({
           description={t("otpl.lxp.common.get-help")}
           href={helpLinkUrl}
         />
+        {isFromDashboardGadget && (
+          <ConfigureGadgetButton
+            handleClick={() => {
+              dashboardContext.updateIsConfiguring(true);
+            }}
+          />
+        )}
       </ButtonGroup>
     </Container>
   );

@@ -11,8 +11,6 @@ export const Gadget: React.FC<GadgetProps> = ({ issueKey }) => {
   const jiraCloud = new JiraCloudImpl();
   const api = new APIImpl(jiraCloud);
   return (
-    <APIContext.Provider value={api}>
-      <IssueLinksHierarchy rootIssueKey={issueKey} />
-    </APIContext.Provider>
+    <IssueLinksHierarchy rootIssueKey={issueKey} isFromDashboardGadget={true} />
   );
 };
