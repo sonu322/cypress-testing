@@ -13,41 +13,38 @@ import Form, {
   FormFooter,
 } from "@atlaskit/form";
 import TextField from "@atlaskit/textfield";
-import Button from "@atlaskit/button";
+import Button, { ButtonGroup } from "@atlaskit/button";
+import { DashboardContext } from "./DashboardContext";
 
-// import TreeUtils from "../../util/TreeUtils";
-// import { APIContext } from "../../context/api";
-interface GadgetConfigurationFormProps {
-  onSave: (GadgetConfig: TreeGadgetConfig) => void;
-  dashboardId: string;
-  dashboardItemId: string;
-  savedConfig: TreeGadgetConfig;
-}
 type ValidationError = Record<string, string>;
-export const GadgetConfigurationForm: React.FC<GadgetConfigurationFormProps> = ({
-  onSave,
-  dashboardId,
-  dashboardItemId,
-  savedConfig,
-}) => {
+export const GadgetConfigurationForm: React.FC = () => {
   const [inputConfig, setInputConfig] = useState<TreeGadgetConfig>({
     title: DEFAULT_GADGET_TITLE,
     issueKey: "",
     height: DEFAULT_GADGET_HEIGHT,
   });
+  const dashboardContext = useContext(DashboardContext);
+  const {
+    dashboardId,
+    dashboardItemId,
+    config: savedConfig,
+    updateConfig: updateSavedConfig,
+    updateIsConfiguring,
+  } = dashboardContext;
   useEffect(() => {
     if (savedConfig !== undefined) {
       setInputConfig(savedConfig);
     }
   }, [savedConfig, setInputConfig]);
-
+  const handleCancelFormSubmission = (): void => {
+    updateIsConfiguring(false);
+  };
   const handleSave = async (): ValidationError => {
     const errors = validate(inputConfig);
     if (Object.keys(errors).length > 0) {
       return errors;
     }
     try {
-      console.log("INPUT CONFIG", inputConfig);
       await Promise.all([
         AP.request({
           url: `/rest/api/3/dashboard/${dashboardId}/items/${dashboardItemId}/properties/config`,
@@ -61,13 +58,11 @@ export const GadgetConfigurationForm: React.FC<GadgetConfigurationFormProps> = (
           contentType: "application/json",
           data: JSON.stringify({ title: inputConfig.title }),
         }),
-      ]).then((responses) => {
-        onSave(inputConfig);
+      ]).then(() => {
+        updateIsConfiguring(false);
+        updateSavedConfig(inputConfig);
       });
-
-
     } catch (error) {
-      console.log("error not having ap");
       console.error(error);
     }
   };
@@ -77,7 +72,6 @@ export const GadgetConfigurationForm: React.FC<GadgetConfigurationFormProps> = (
   ): void => {
     const { name, value, type } = event.target;
     let parsedValue: unknown = value;
-    console.log(name, value, type);
     if (type === "number") {
       parsedValue = parseFloat(value);
     }
@@ -107,14 +101,12 @@ export const GadgetConfigurationForm: React.FC<GadgetConfigurationFormProps> = (
     if (values.height < MIN_GADGET_HEIGHT) {
       errors.height = `Minimum height: ${MIN_GADGET_HEIGHT} `;
     }
-    console.log("errors from validate", errors);
     return errors;
   };
 
   return (
     <Form onSubmit={handleSave}>
-      {({ formProps, submitting }) => {
-        console.log(formProps, submitting);
+      {({ formProps }) => {
         return (
           <form {...formProps}>
             <FormHeader
@@ -168,9 +160,17 @@ export const GadgetConfigurationForm: React.FC<GadgetConfigurationFormProps> = (
               </Field>
             </FormSection>
             <FormFooter>
-              <Button appearance="primary" type="submit">
-                Submit
-              </Button>
+              <ButtonGroup>
+                <Button
+                  appearance="subtle"
+                  onClick={handleCancelFormSubmission}
+                >
+                  Cancel
+                </Button>
+                <Button appearance="primary" type="submit">
+                  Submit
+                </Button>
+              </ButtonGroup>
             </FormFooter>
           </form>
         );

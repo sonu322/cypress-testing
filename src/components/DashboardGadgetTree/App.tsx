@@ -12,6 +12,8 @@ import { GadgetConfigurationForm } from "./GadgetConfigForm";
 import APIImpl from "../../impl/Cloud";
 import JiraCloudImpl from "../../impl/jira/Cloud";
 import { getQueryParam } from "../../util/index";
+import { DashboardContext } from "./DashboardContext";
+
 interface ContainerProps {
   height: number;
 }
@@ -23,13 +25,16 @@ const Container = styled.div<ContainerProps>`
 const DashboardGadget: React.FC = () => {
   const [isConfiguring, setIsConfiguring] = useState(true);
   const [config, setConfig] = useState<TreeGadgetConfig>();
-
   const [dashboardId, setDashboardId] = useState();
   const [dashboardItemId, setDashboardItemId] = useState();
-  const handleSaveConfig = (newConfig: TreeGadgetConfig): void => {
-    setIsConfiguring(false);
-    setConfig(newConfig);
+
+  const updateConfig = (config: TreeGadgetConfig): void => {
+    setConfig(config);
   };
+  const updateIsConfiguring = (isConfiguring: boolean): void => {
+    setIsConfiguring(isConfiguring);
+  };
+
   const jiraCloud = new JiraCloudImpl();
   const api = new APIImpl(jiraCloud);
   useEffect(() => {
@@ -42,8 +47,6 @@ const DashboardGadget: React.FC = () => {
   useEffect(() => {
     const dashboardId = getQueryParam("dashboardId");
     const dashboardItemId = getQueryParam("dashboardItemId");
-    console.log("DAshboadId", dashboardId);
-    console.log("dashboarditemdi", dashboardItemId);
     if (dashboardId !== undefined) {
       setDashboardId(dashboardId);
     }
@@ -55,16 +58,11 @@ const DashboardGadget: React.FC = () => {
         url: `/rest/api/3/dashboard/${dashboardId}/items/${dashboardItemId}/properties/config`,
       })
         .then((response) => {
-          console.log("response", response);
           const data = JSON.parse(response.body);
-
-          console.log("parsed response", data.value);
           setConfig(data.value); // last saved value
           setIsConfiguring(false);
         })
         .catch((e) => {
-          console.log("FROM CATCH!!!!!!!!");
-          console.log(e);
           setConfig({
             title: DEFAULT_GADGET_TITLE,
             issueKey: "",
@@ -77,7 +75,6 @@ const DashboardGadget: React.FC = () => {
 
   AP.require(["jira"], function (jira) {
     jira.DashboardItem.onDashboardItemEdit(function () {
-      console.log("edit called");
       // render dashboard item configuration now
       setIsConfiguring(true);
     });
@@ -90,29 +87,33 @@ const DashboardGadget: React.FC = () => {
   ) {
     return (
       <APIContext.Provider value={api}>
-        <Container height={config?.height ?? DEFAULT_GADGET_HEIGHT}>
-          {isConfiguring ? (
-            <GadgetConfigurationForm
-              savedConfig={config}
-              dashboardId={dashboardId}
-              dashboardItemId={dashboardItemId}
-              onSave={handleSaveConfig}
-            />
-          ) : (
-            <Gadget
-              issueKey={
-                config.issueKey?.length > 0 ? config.issueKey : "TNG31-12"
-              }
-            />
-          )}
-        </Container>
+        <DashboardContext.Provider
+          value={{
+            dashboardId,
+            dashboardItemId,
+            config,
+            updateConfig,
+            isConfiguring,
+            updateIsConfiguring,
+          }}
+        >
+          <Container height={config?.height ?? DEFAULT_GADGET_HEIGHT}>
+            {isConfiguring ? (
+              <GadgetConfigurationForm />
+            ) : (
+              <Gadget
+                issueKey={
+                  config.issueKey?.length > 0 ? config.issueKey : "TNG31-12"
+                }
+              />
+            )}
+          </Container>
+        </DashboardContext.Provider>
       </APIContext.Provider>
     );
   } else {
     return <em>Loading</em>;
   }
 };
-
-console.log("dashboard gadget script called");
 const App = document.getElementById("app");
 ReactDOM.render(<DashboardGadget />, App);
