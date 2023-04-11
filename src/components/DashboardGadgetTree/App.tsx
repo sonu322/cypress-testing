@@ -32,6 +32,14 @@ const DashboardGadget: React.FC = () => {
   const handleSaveConfig = (newConfig: TreeGadgetConfig): void => {
     setIsConfiguring(false);
     setConfig(newConfig);
+    AP.require(["gadget"], function (gadget) {
+      console.log("GADGET", gadget);
+      const gadgetObj = gadget.get(dashboardItemId);
+      console.log("GADGET OBJ", gadgetObj);
+      if (gadgetObj) {
+        gadgetObj.refresh();
+      }
+    });
   };
   const jiraCloud = new JiraCloudImpl();
   const api = new APIImpl(jiraCloud);
@@ -58,8 +66,10 @@ const DashboardGadget: React.FC = () => {
         url: `/rest/api/3/dashboard/${dashboardId}/items/${dashboardItemId}/properties/config`,
       })
         .then((response) => {
-          const data = JSON.parse(response);
-          console.log("response", data.value);
+          console.log("response", response);
+          const data = JSON.parse(response.body);
+
+          console.log("parsed response", data.value);
           setConfig(data.value); // last saved value
           setIsConfiguring(false);
         })
@@ -92,9 +102,6 @@ const DashboardGadget: React.FC = () => {
     return (
       <APIContext.Provider value={api}>
         <Container height={config?.height ?? DEFAULT_GADGET_HEIGHT}>
-          <h1>
-            {config?.title?.length > 0 ? config.title : DEFAULT_GADGET_TITLE}
-          </h1>
           {isConfiguring ? (
             <GadgetConfigurationForm
               savedConfig={config}
@@ -103,14 +110,11 @@ const DashboardGadget: React.FC = () => {
               onSave={handleSaveConfig}
             />
           ) : (
-            <>
-              <button onClick={openConfigureScreen}>Configure</button>
-              <Gadget
-                issueKey={
-                  config.issueKey?.length > 0 ? config.issueKey : "TNG31-12"
-                }
-              />
-            </>
+            <Gadget
+              issueKey={
+                config.issueKey?.length > 0 ? config.issueKey : "TNG31-12"
+              }
+            />
           )}
         </Container>
       </APIContext.Provider>
