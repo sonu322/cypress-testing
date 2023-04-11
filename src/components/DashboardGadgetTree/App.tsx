@@ -17,6 +17,7 @@ interface ContainerProps {
 }
 const Container = styled.div<ContainerProps>`
   height: ${({ height }) => height}px;
+  overflow: auto;
 `;
 
 const DashboardGadget: React.FC = () => {
@@ -25,21 +26,9 @@ const DashboardGadget: React.FC = () => {
 
   const [dashboardId, setDashboardId] = useState();
   const [dashboardItemId, setDashboardItemId] = useState();
-  const openConfigureScreen = (): void => {
-    setIsConfiguring(true);
-  };
-
   const handleSaveConfig = (newConfig: TreeGadgetConfig): void => {
     setIsConfiguring(false);
     setConfig(newConfig);
-    AP.require(["gadget"], function (gadget) {
-      console.log("GADGET", gadget);
-      const gadgetObj = gadget.get(dashboardItemId);
-      console.log("GADGET OBJ", gadgetObj);
-      if (gadgetObj) {
-        gadgetObj.refresh();
-      }
-    });
   };
   const jiraCloud = new JiraCloudImpl();
   const api = new APIImpl(jiraCloud);
