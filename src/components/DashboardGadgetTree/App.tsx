@@ -54,26 +54,6 @@ const DashboardGadget: React.FC = () => {
       setDashboardItemId(dashboardItemId);
     }
     if (dashboardId !== undefined && dashboardItemId !== undefined) {
-      // AP.request({
-      //   url: `/rest/api/3/dashboard/${dashboardId}/items/${dashboardItemId}/properties/config`,
-      //   success: (response) => {
-      // const data = JSON.parse(response);
-      // console.log("response", data.value);
-      // setConfig(data.value); // last saved value
-      // setIsConfiguring(false);
-      //   },
-      //   failure: () => {
-      //     console.log(
-      //       "failed to get config !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-      //     );
-      // setConfig({
-      //   title: "",
-      //   issueKey: "",
-      //   height: DEFAULT_GADGET_HEIGHT,
-      // });
-      // setIsConfiguring(true);
-      //   },
-      // });
       AP.request({
         url: `/rest/api/3/dashboard/${dashboardId}/items/${dashboardItemId}/properties/config`,
       })
