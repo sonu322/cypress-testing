@@ -35,36 +35,7 @@ export const GadgetConfigurationForm: React.FC<GadgetConfigurationFormProps> = (
     issueKey: "",
     height: DEFAULT_GADGET_HEIGHT,
   });
-  // const api = useContext(APIContext);
-  // const treeUtils = new TreeUtils(api);
   useEffect(() => {
-    // AP.context.getToken(function (token) {
-    //   console.log("Access token:", token);
-    // });
-    // TODO: check why token is undefined
-    // AP.request({
-    //   url: `/rest/api/3/dashboard/${dashboardId}/items/${dashboardItemId}/properties/config`,
-    //   success: (response) => {
-    //     const data = JSON.parse(response)
-    //     console.log("response", data.value);
-    //     setInputConfig(data.value); // last saved value
-    //   };,
-    //   failure: () => {
-    //     console.log("failed to get config");
-    //   },
-    // });
-    // const previousConfig = AP.context.getContext().config;
-    // console.log("previousConfig", previousConfig);
-    // AP.define("lxp-tree-gadget", function () {
-    //   return {
-    //     // This function is called when the gadget is loaded
-    //     onLoad: function () {
-    //       // Get the current Jira context
-    //       var context = JIRA.getContext();
-    //       console.log("context", context);
-    //     },
-    //   };
-    // });
     if (savedConfig !== undefined) {
       setInputConfig(savedConfig);
     }
@@ -76,8 +47,6 @@ export const GadgetConfigurationForm: React.FC<GadgetConfigurationFormProps> = (
       return errors;
     }
     try {
-      // const token = await treeUtils.getToken();
-      // console.log("TOKEN!!!!!!!", token);
       console.log("INPUT CONFIG", inputConfig);
       await AP.request({
         url: `/rest/api/3/dashboard/${dashboardId}/items/${dashboardItemId}/properties/config`,
@@ -90,18 +59,6 @@ export const GadgetConfigurationForm: React.FC<GadgetConfigurationFormProps> = (
       console.log("error not having ap");
       console.error(error);
     }
-
-    // if (event !== undefined) {
-    //   event.preventDefault();
-    // }
-    // AP.request({
-    //   url: "/config",
-    //   type: "POST",
-    //   data: JSON.stringify({ config: inputConfig }),
-    //   success: () => {
-    //     onSave(inputConfig);
-    //   },
-    // });
   };
 
   const handleInputChange = (
@@ -167,11 +124,6 @@ export const GadgetConfigurationForm: React.FC<GadgetConfigurationFormProps> = (
                   </>
                 )}
               </Field>
-              {/* <TextField
-              label="Title"
-              name="title"
-              onChange={handleInputChange}
-            /> */}
               <Field name="issueKey" label="Issue Key" isRequired>
                 {({ fieldProps, error }) => (
                   <>
@@ -184,18 +136,10 @@ export const GadgetConfigurationForm: React.FC<GadgetConfigurationFormProps> = (
                   </>
                 )}
               </Field>
-              {/* <FieldNumber
-              label="Tree Height (in px)"
-              name="height"
-              min={MIN_GADGET_HEIGHT}
-              defaultValue={DEFAULT_GADGET_HEIGHT}
-              onChange={handleInputChange}
-            /> */}
               <Field
                 name="height"
                 label="Height"
                 defaultValue={MIN_GADGET_HEIGHT}
-                // validate={validateHeight}
               >
                 {({ fieldProps, error }) => (
                   <>
