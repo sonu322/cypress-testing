@@ -23,7 +23,7 @@
   "authentication": {
     "type": "none"
   },
-  "scopes": ["read", "write", "ACT_AS_USER"],
+  "scopes": ["read", "write"],
   "apiVersion": 1,
   "modules": {
     "jiraIssueTabPanels": [
@@ -53,14 +53,6 @@
         "key": "lxp-home-page"
       }
     ],
-    "configurePage": {
-      "key": "my-gadget-configuration",
-      "name": {
-        "value": "My Gadget Configuration"
-      },
-      "url": "/configureGadget.html",
-      "conditions": []
-    },
     "jiraReports": [
       {
         "url": "/tracebilityReportModuleEntry.html",
@@ -87,9 +79,6 @@
 
         "url": "/lxpViewGadget.html?dashboardItemId={dashboardItem.id}&dashboardId={dashboard.id}&view={dashboardItem.viewType}",
         "configurable": true,
-        "configurePage": {
-          "url": "/configureGadget.html"
-        },
         "context": ["dashboard"],
         "dependencies": ["jquery"],
         "thumbnailUrl": "http://example.com/images/report-example-thumbnail.png",

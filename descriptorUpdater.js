@@ -1,5 +1,5 @@
 const fs = require("fs");
-const updater = async function (baseURL) {
+const updater = function (baseURL) {
   try {
     let jsonData, jsonString;
 
