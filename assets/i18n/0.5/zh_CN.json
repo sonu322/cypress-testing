@@ -72,6 +72,6 @@
   "otpl.lxp.gh-link-issue-tab": "相互关联的问题",
   "otpl.lxp.gh-link-issue-tab.label": "链接浏览器",
   "otpl.lxp.gh-link-issue-tab.tooltip": "链接浏览器",
-  "otpl.lxp.gadget.configure-button.label": "Configure",
-  "otpl.lxp.gadget.configure-button.description": "Configure Gadget"
+  "otpl.lxp.gadget.configure-button.label": "配置",
+  "otpl.lxp.gadget.configure-button.description": "配置小工具"
 }

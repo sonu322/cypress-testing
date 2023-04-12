@@ -9,15 +9,16 @@ interface Props {
 
 export const ConfigureGadgetButton: React.FC<Props> = ({ handleClick }) => {
   const { t } = useTranslation();
-  const configureGadgetLabel = t(
+  const configureGadgetLabel = t("otpl.lxp.gadget.configure-button.label");
+  const configureGadgetDescription = t(
     "otpl.lxp.gadget.configure-button.description"
   );
   return (
-    <TooltipContainer content={"Configure Gadget"}>
+    <TooltipContainer content={configureGadgetDescription}>
       <Button
         appearance="default"
         onClick={handleClick}
-        iconBefore={<SettingsIcon label="Configure Gadget" />}
+        iconBefore={<SettingsIcon label={configureGadgetDescription} />}
       >
         {configureGadgetLabel}
       </Button>
