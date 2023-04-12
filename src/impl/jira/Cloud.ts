@@ -1,4 +1,5 @@
 import i18n from "../../../i18n";
+import { TreeGadgetConfig } from "../../types/app";
 import {
   JiraAPI,
   JiraFiltersResponse,
@@ -192,4 +193,19 @@ export default class JiraCloudImpl implements JiraAPI {
     );
     return response.body && JSON.parse(response.body);
   }
+
+  getDashboardGadgetConfig = (
+    dashboardId: string,
+    dashboardItemId: string
+  ): Object => {
+    const config = this._AP
+      .request({
+        url: `/rest/api/3/dashboard/${dashboardId}/items/${dashboardItemId}/properties/config`,
+      })
+      .then((response) => {
+        const data = JSON.parse(response.body);
+        return data;
+      });
+    return config;
+  };
 }

@@ -57,6 +57,24 @@ const DashboardGadget: React.FC = () => {
   }, [config]);
 
   useEffect(() => {
+    const getConfig = async (): Promise<void> => {
+      try {
+        const config = await api.getDashboardGadgetConfig(
+          dashboardId,
+          dashboardItemId
+        );
+        console.log(config);
+        setConfig(config.value);
+        setIsConfiguring(false);
+      } catch (error: unknown) {
+        setConfig({
+          title: DEFAULT_GADGET_TITLE,
+          issueKey: "",
+          height: DEFAULT_GADGET_HEIGHT,
+        });
+        setIsConfiguring(true);
+      }
+    };
     const dashboardId = getQueryParam("dashboardId");
     const dashboardItemId = getQueryParam("dashboardItemId");
     if (dashboardId !== undefined) {
@@ -66,22 +84,7 @@ const DashboardGadget: React.FC = () => {
       setDashboardItemId(dashboardItemId);
     }
     if (dashboardId !== undefined && dashboardItemId !== undefined) {
-      AP.request({
-        url: `/rest/api/3/dashboard/${dashboardId}/items/${dashboardItemId}/properties/config`,
-      })
-        .then((response) => {
-          const data = JSON.parse(response.body);
-          setConfig(data.value); // last saved value
-          setIsConfiguring(false);
-        })
-        .catch((e) => {
-          setConfig({
-            title: DEFAULT_GADGET_TITLE,
-            issueKey: "",
-            height: DEFAULT_GADGET_HEIGHT,
-          });
-          setIsConfiguring(true);
-        });
+      void getConfig();
     }
   }, []);
 
