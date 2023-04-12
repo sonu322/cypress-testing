@@ -201,4 +201,4 @@ export default interface LXPAPI {
     dashboardId: string,
     dashboardItemId: string
   ) => Promise<any>;
-};
+}
