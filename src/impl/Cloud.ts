@@ -902,4 +902,23 @@ export default class APIImpl implements LXPAPI {
   ): Promise<JiraAutoCompleteSuggestionsResult> {
     return await this.api.getAutoCompleteSuggestions(query);
   }
+
+  async getDashboardGadgetConfig(
+    dashboardId: string,
+    dashboardItemId: string
+  ): Promise<any> {
+    try {
+      const config = await this.api.getDashboardGadgetConfig(
+        dashboardId,
+        dashboardItemId
+      );
+      if (config.value === undefined) {
+        throwError("otpl.lxp.api.dashboard-gadget-get-config-error");
+      }
+      return config;
+    } catch (error) {
+      console.log("ERROR FETCHING GADGET CONFIG", error);
+      throwError("otpl.lxp.api.dashboard-gadget-get-config-error");
+    }
+  }
 }
