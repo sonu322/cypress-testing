@@ -72,6 +72,6 @@
   "otpl.lxp.gh-link-issue-tab": "questions liées",
   "otpl.lxp.gh-link-issue-tab.label": "liens Explorateur",
   "otpl.lxp.gh-link-issue-tab.tooltip": "liens Explorateur",
-  "otpl.lxp.gadget.configure-button.label": "Configure",
-  "otpl.lxp.gadget.configure-button.description": "Configure Gadget"
+  "otpl.lxp.gadget.configure-button.label": "Configurer",
+  "otpl.lxp.gadget.configure-button.description": "Configurer le gadget"
 }

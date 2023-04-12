@@ -72,6 +72,6 @@
   "otpl.lxp.gh-link-issue-tab": "Verknüpfte Vorgänge",
   "otpl.lxp.gh-link-issue-tab.label": "Verknüpfungs-Explorer",
   "otpl.lxp.gh-link-issue-tab.tooltip": "Verknüpfungs-Explorer",
-  "otpl.lxp.gadget.configure-button.label": "Configure",
-  "otpl.lxp.gadget.configure-button.description": "Configure Gadget"
+  "otpl.lxp.gadget.configure-button.label": "Konfigurieren",
+  "otpl.lxp.gadget.configure-button.description": "Gadget konfigurieren"
 }
