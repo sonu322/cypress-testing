@@ -118,4 +118,11 @@ export default class UnknownImpl implements LXPAPI {
   ): Promise<JiraAutoCompleteSuggestionsResult> {
     throw new Error("Method not implemented.");
   }
+
+  async getDashboardGadgetConfig(
+    dashboardId: string,
+    dashboardItemId: string
+  ): Promise<any> {
+    throw new Error("Method not implemented");
+  }
 }

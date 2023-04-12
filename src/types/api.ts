@@ -196,4 +196,9 @@ export default interface LXPAPI {
   getAutoCompleteSuggestions: (
     query: string
   ) => Promise<JiraAutoCompleteSuggestionsResult>;
-}
+
+  getDashboardGadgetConfig: (
+    dashboardId: string,
+    dashboardItemId: string
+  ) => Promise<any>;
+};

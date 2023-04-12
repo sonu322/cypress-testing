@@ -903,6 +903,7 @@ export default class APIImpl implements LXPAPI {
     return await this.api.getAutoCompleteSuggestions(query);
   }
 
+
   async getDashboardGadgetConfig(
     dashboardId: string,
     dashboardItemId: string
