@@ -204,4 +204,8 @@ export default class JiraCloudImpl implements JiraAPI {
     const data = JSON.parse(response.body);
     return data;
   };
+
+  resizeWindow(width: string | number, height: string | number): void {
+    this._AP.resize(width, height);
+  }
 }
