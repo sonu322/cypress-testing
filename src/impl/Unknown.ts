@@ -125,4 +125,8 @@ export default class UnknownImpl implements LXPAPI {
   ): Promise<any> {
     throw new Error("Method not implemented");
   }
+
+  resizeWindow(width: string | number, height: string | number): void {
+    throw new Error("Method not implemented");
+  }
 }

@@ -325,4 +325,6 @@ export interface JiraAPI {
     dashboardId: string,
     dashboardItemId: string
   ) => Promise<any>;
+
+  resizeWindow: (width: string | number, height: string | number) => void;
 }

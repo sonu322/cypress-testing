@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
 import {
@@ -33,6 +33,12 @@ const SpinnerContainer = styled.span`
   padding-top: 8px;
 `;
 
+const createAPI = () => {
+  const jiraCloud = new JiraCloudImpl();
+  const api = new APIImpl(jiraCloud);
+
+  return api;
+};
 
 const DashboardGadget: React.FC = () => {
   const [isConfiguring, setIsConfiguring] = useState(true);
@@ -47,16 +53,19 @@ const DashboardGadget: React.FC = () => {
     setIsConfiguring(isConfiguring);
   };
 
-  const jiraCloud = new JiraCloudImpl();
-  const api = new APIImpl(jiraCloud);
+  const api = useMemo(() => createAPI(), []);
+
+  // const api = new APIImpl(jiraCloud);
   useEffect(() => {
+    console.log("resize window called");
     // Set the height of your gadget using AP.resize
     if (config?.height !== undefined) {
-      AP.resize("100%", config.height);
+      api.resizeWindow("100%", config.height);
     }
-  }, [config]);
+  }, [config, api]);
 
   useEffect(() => {
+    console.log("get config called");
     const getConfig = async (): Promise<void> => {
       try {
         const config = await api.getDashboardGadgetConfig(
@@ -86,8 +95,9 @@ const DashboardGadget: React.FC = () => {
     if (dashboardId !== undefined && dashboardItemId !== undefined) {
       void getConfig();
     }
-  }, []);
+  }, [api]);
 
+  // event handler
   AP.require(["jira"], function (jira) {
     jira.DashboardItem.onDashboardItemEdit(function () {
       // render dashboard item configuration now
@@ -133,6 +143,6 @@ const DashboardGadget: React.FC = () => {
       </SpinnerContainer>
     );
   }
-};
+};;
 const App = document.getElementById("app");
 ReactDOM.render(<DashboardGadget />, App);

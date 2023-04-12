@@ -903,7 +903,6 @@ export default class APIImpl implements LXPAPI {
     return await this.api.getAutoCompleteSuggestions(query);
   }
 
-
   async getDashboardGadgetConfig(
     dashboardId: string,
     dashboardItemId: string
@@ -921,5 +920,9 @@ export default class APIImpl implements LXPAPI {
       console.log("ERROR FETCHING GADGET CONFIG", error);
       throwError("otpl.lxp.api.dashboard-gadget-get-config-error");
     }
+  }
+
+  resizeWindow(width: string | number, height: string | number): void {
+    this.api.resizeWindow(width, height);
   }
 }
