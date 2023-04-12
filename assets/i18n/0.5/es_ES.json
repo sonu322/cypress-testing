@@ -72,6 +72,19 @@
   "otpl.lxp.gh-link-issue-tab": "cuestiones vinculadas",
   "otpl.lxp.gh-link-issue-tab.label": "enlaces Explorador",
   "otpl.lxp.gh-link-issue-tab.tooltip": "enlaces Explorador",
-  "otpl.lxp.gadget.configure-button.label": "Configurar",
-  "otpl.lxp.gadget.configure-button.description": "Configurar gadget"
+  "otpl.lxp.gadget.configure-label": "Configurar",
+  "otpl.lxp.gadget.configure-button.description": "Configurar gadget",
+  "otpl.lxp.gadget.configure-form.description": "* indica un campo obligatorio",
+  "otpl.lxp.gadget.configure-form.fields.title": "Título",
+  "otpl.lxp.gadget.configure-form.fields.issue-key": "Clave de incidencia",
+  "otpl.lxp.gadget.configure-form.fields.height": "Altura",
+  "otpl.lxp.gadget.configure-form.errors.no-title": "Por favor ingrese un Título",
+  "otpl.lxp.gadget.configure-form.errors.bad-title": "El título debe comenzar con una letra y puede tener un máximo de 50 caracteres",
+  "otpl.lxp.gadget.configure-form.buttons.submit": "Entregar",
+  "otpl.lxp.gadget.configure-form.buttons.cancel": "Cancelar",
+  "otpl.lxp.gadget.configure-form.errors.no-issue-key": "Ingrese una clave de incidencia",
+  "otpl.lxp.gadget.configure-form.errors.bad-issue-key": "Introduzca una clave de incidencia válida",
+  "otpl.lxp.gadget.configure-form.errors.bad-height": "Altura mínima",
+  "otpl.lxp.api.dashboard-gadget-edit-config-error": "No se pudo editar la configuración del gadget",
+  "otpl.lxp.api.dashboard-gadget-edit-title-error": "No se pudo editar el título del gadget"
 }

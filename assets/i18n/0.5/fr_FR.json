@@ -72,6 +72,19 @@
   "otpl.lxp.gh-link-issue-tab": "questions liées",
   "otpl.lxp.gh-link-issue-tab.label": "liens Explorateur",
   "otpl.lxp.gh-link-issue-tab.tooltip": "liens Explorateur",
-  "otpl.lxp.gadget.configure-button.label": "Configurer",
-  "otpl.lxp.gadget.configure-button.description": "Configurer le gadget"
+  "otpl.lxp.gadget.configure-label": "Configurer",
+  "otpl.lxp.gadget.configure-button.description": "Configurer le gadget",
+  "otpl.lxp.gadget.configure-form.description": "* indique un champ obligatoire",
+  "otpl.lxp.gadget.configure-form.fields.title": "Titre",
+  "otpl.lxp.gadget.configure-form.fields.issue-key": "Clé de ticket",
+  "otpl.lxp.gadget.configure-form.fields.height": "Hauteur",
+  "otpl.lxp.gadget.configure-form.errors.no-title": "Veuillez saisir un titre",
+  "otpl.lxp.gadget.configure-form.errors.bad-title": "Le titre doit commencer par une lettre et peut avoir un maximum de 50 caractères",
+  "otpl.lxp.gadget.configure-form.buttons.submit": "Soumettre",
+  "otpl.lxp.gadget.configure-form.buttons.cancel": "Annuler",
+  "otpl.lxp.gadget.configure-form.errors.no-issue-key": "Veuillez entrer une clé de ticket",
+  "otpl.lxp.gadget.configure-form.errors.bad-issue-key": "Veuillez saisir une clé de ticket valide",
+  "otpl.lxp.gadget.configure-form.errors.bad-height": "Hauteur minimale",
+  "otpl.lxp.api.dashboard-gadget-edit-config-error": "Impossible de modifier la configuration du gadget",
+  "otpl.lxp.api.dashboard-gadget-edit-title-error": "Impossible de modifier le titre du gadget"
 }

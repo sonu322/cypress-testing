@@ -9,7 +9,7 @@ interface Props {
 
 export const ConfigureGadgetButton: React.FC<Props> = ({ handleClick }) => {
   const { t } = useTranslation();
-  const configureGadgetLabel = t("otpl.lxp.gadget.configure-button.label");
+  const configureGadgetLabel = t("otpl.lxp.gadget.configure-label");
   const configureGadgetDescription = t(
     "otpl.lxp.gadget.configure-button.description"
   );

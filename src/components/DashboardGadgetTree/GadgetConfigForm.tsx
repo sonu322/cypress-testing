@@ -18,6 +18,7 @@ import { DashboardContext } from "./DashboardContext";
 import JiraCloudImpl from "../../impl/jira/Cloud";
 import APIImpl from "../../impl/Cloud";
 import { ErrorsList } from "../common/ErrorsList";
+import { useTranslation } from "react-i18next";
 
 type ValidationError = Record<string, string>;
 
@@ -43,6 +44,7 @@ export const GadgetConfigurationForm: React.FC = () => {
     updateConfig: updateSavedConfig,
     updateIsConfiguring,
   } = dashboardContext;
+  const { t } = useTranslation();
 
   const api = useMemo(() => createAPI(), []);
   useEffect(() => {
@@ -77,7 +79,7 @@ export const GadgetConfigurationForm: React.FC = () => {
       });
     } catch (error) {
       console.error(error);
-      setApiResponseErrors([error]);
+      setApiResponseErrors((prevErrors) => [...prevErrors, error]);
     }
   };
 
@@ -94,26 +96,42 @@ export const GadgetConfigurationForm: React.FC = () => {
       [name]: parsedValue,
     }));
   };
-
+  const configureLabel = t("otpl.lxp.gadget.configure-label");
+  const configureFormDescription = t(
+    "otpl.lxp.gadget.configure-form.description"
+  );
+  const titleLabel = t("otpl.lxp.gadget.configure-form.fields.title");
+  const issueKeyLabel = t("otpl.lxp.gadget.configure-form.fields.issue-key");
+  const heightLabel = t("otpl.lxp.gadget.configure-form.fields.height");
+  const noTitleError = t("otpl.lxp.gadget.configure-form.errors.no-title");
+  const badTtileError = t("otpl.lxp.gadget.configure-form.errors.bad-title");
+  const submitButtonLabel = t("otpl.lxp.gadget.configure-form.buttons.submit");
+  const cancelButtonLabel = t("otpl.lxp.gadget.configure-form.buttons.cancel");
+  const noIssueKeyError = t(
+    "otpl.lxp.gadget.configure-form.errors.no-issue-key"
+  );
+  const badIssueKeyError = t(
+    "otpl.lxp.gadget.configure-form.errors.bad-issue-key"
+  );
+  const badHeightError = t("otpl.lxp.gadget.configure-form.errors.bad-height");
   const validate = (values: TreeGadgetConfig): ValidationError => {
     const errors: ValidationError = {};
     const titleRegex =
-      /^[a-zA-Z][a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{0,49}$/;
+      /^[a-zA-Z][a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/? ]{0,49}$/;
     if (values.title === undefined || values.title === "") {
-      errors.issueKey = "Please enter a Title";
+      errors.issueKey = noTitleError;
     } else if (!titleRegex.test(values.title)) {
-      errors.title =
-        "Title must start with a letter and can have a maximum of 50 characters";
+      errors.title = badTtileError;
     }
     const issueKeyRegex = /^[A-Z][A-Z0-9]{0,9}-\d+$/; // Regex for issue key pattern
     if (values.issueKey === undefined || values.issueKey === "") {
-      errors.issueKey = "Please enter an issue key";
+      errors.issueKey = noIssueKeyError;
     } else if (!issueKeyRegex.test(values.issueKey)) {
-      errors.issueKey = "Please enter a valid issue key";
+      errors.issueKey = badIssueKeyError;
     }
 
     if (values.height < MIN_GADGET_HEIGHT) {
-      errors.height = `Minimum height: ${MIN_GADGET_HEIGHT} `;
+      errors.height = `${badHeightError} : ${MIN_GADGET_HEIGHT} `;
     }
     return errors;
   };
@@ -126,12 +144,13 @@ export const GadgetConfigurationForm: React.FC = () => {
           return (
             <form {...formProps}>
               <FormHeader
-                title="Configure"
-                description="* indicates a required field"
+                title={configureLabel}
+                // description="* indicates a required field"
+                description={configureFormDescription}
               />
 
               <FormSection>
-                <Field name="title" label="Title" isRequired>
+                <Field name="title" label={titleLabel} isRequired>
                   {({ fieldProps, error }) => (
                     <>
                       <TextField
@@ -143,7 +162,7 @@ export const GadgetConfigurationForm: React.FC = () => {
                     </>
                   )}
                 </Field>
-                <Field name="issueKey" label="Issue Key" isRequired>
+                <Field name="issueKey" label={issueKeyLabel} isRequired>
                   {({ fieldProps, error }) => (
                     <>
                       <TextField
@@ -157,7 +176,7 @@ export const GadgetConfigurationForm: React.FC = () => {
                 </Field>
                 <Field
                   name="height"
-                  label="Height"
+                  label={heightLabel}
                   defaultValue={MIN_GADGET_HEIGHT}
                 >
                   {({ fieldProps, error }) => (
@@ -181,10 +200,10 @@ export const GadgetConfigurationForm: React.FC = () => {
                     appearance="subtle"
                     onClick={handleCancelFormSubmission}
                   >
-                    Cancel
+                    {cancelButtonLabel}
                   </Button>
                   <Button appearance="primary" type="submit">
-                    Submit
+                    {submitButtonLabel}
                   </Button>
                 </ButtonGroup>
               </FormFooter>
