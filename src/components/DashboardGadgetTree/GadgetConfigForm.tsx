@@ -62,7 +62,7 @@ export const GadgetConfigurationForm: React.FC = () => {
     try {
       await Promise.all([
         api.editDashboardItemProperty(
-          "dashboardId",
+          dashboardId,
           dashboardItemId,
           "config",
           inputConfig

@@ -138,6 +138,6 @@ const DashboardGadget: React.FC = () => {
       </SpinnerContainer>
     );
   }
-};;;
+}
 const App = document.getElementById("app");
 ReactDOM.render(<DashboardGadget />, App);
