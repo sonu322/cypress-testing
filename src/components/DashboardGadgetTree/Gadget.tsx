@@ -1,15 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { APIContext } from "../../context/api";
-import APIImpl from "../../impl/Cloud";
-import JiraCloudImpl from "../../impl/jira/Cloud";
+import React from "react";
 import IssueLinksHierarchy from "../../IssueLinksHierarchy";
 
 interface GadgetProps {
   issueKey: string;
 }
 export const Gadget: React.FC<GadgetProps> = ({ issueKey }) => {
-  const jiraCloud = new JiraCloudImpl();
-  const api = new APIImpl(jiraCloud);
   return (
     <IssueLinksHierarchy rootIssueKey={issueKey} isFromDashboardGadget={true} />
   );

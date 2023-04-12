@@ -129,4 +129,21 @@ export default class UnknownImpl implements LXPAPI {
   resizeWindow(width: string | number, height: string | number): void {
     throw new Error("Method not implemented");
   }
+
+  async editDashboardItemProperty(
+    dashboardId: string,
+    dashboardItemId: string,
+    propertyKey: string,
+    propertyValue: Object
+  ): Promise<void> {
+    throw new Error("Method not implemented");
+  }
+
+  async editDashboardItemTitle(
+    dashboardId: string,
+    dashboardItemId: string,
+    title: string
+  ): Promise<void> {
+    throw new Error("Method not implemented");
+  }
 }

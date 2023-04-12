@@ -55,24 +55,19 @@ const DashboardGadget: React.FC = () => {
 
   const api = useMemo(() => createAPI(), []);
 
-  // const api = new APIImpl(jiraCloud);
   useEffect(() => {
-    console.log("resize window called");
-    // Set the height of your gadget using AP.resize
     if (config?.height !== undefined) {
       api.resizeWindow("100%", config.height);
     }
   }, [config, api]);
 
   useEffect(() => {
-    console.log("get config called");
     const getConfig = async (): Promise<void> => {
       try {
         const config = await api.getDashboardGadgetConfig(
           dashboardId,
           dashboardItemId
         );
-        console.log(config);
         setConfig(config.value);
         setIsConfiguring(false);
       } catch (error: unknown) {
@@ -97,7 +92,7 @@ const DashboardGadget: React.FC = () => {
     }
   }, [api]);
 
-  // event handler
+  // event handler to handle click on configure button provided by jira
   AP.require(["jira"], function (jira) {
     jira.DashboardItem.onDashboardItemEdit(function () {
       // render dashboard item configuration now
@@ -143,6 +138,6 @@ const DashboardGadget: React.FC = () => {
       </SpinnerContainer>
     );
   }
-};;
+};;;
 const App = document.getElementById("app");
 ReactDOM.render(<DashboardGadget />, App);
