@@ -925,4 +925,40 @@ export default class APIImpl implements LXPAPI {
   resizeWindow(width: string | number, height: string | number): void {
     this.api.resizeWindow(width, height);
   }
+
+  async editDashboardItemProperty(
+    dashboardId: string,
+    dashboardItemId: string,
+    propertyKey: string,
+    propertyValue: Object
+  ): Promise<void> {
+    try {
+      await this.api.editDashboardItemProperty(
+        dashboardId,
+        dashboardItemId,
+        propertyKey,
+        propertyValue
+      );
+    } catch (error) {
+      console.log(error);
+      throwError("otpl.lxp.api.dashboard-gadget-edit-config-error");
+    }
+  }
+
+  async editDashboardItemTitle(
+    dashboardId: string,
+    dashboardItemId: string,
+    title: string
+  ): Promise<void> {
+    try {
+      await this.api.editDashboardItemTitle(
+        dashboardId,
+        dashboardItemId,
+        title
+      );
+    } catch (error) {
+      console.log(error);
+      throwError("otpl.lxp.api.dashboard-gadget-edit-title-error");
+    }
+  }
 }

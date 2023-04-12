@@ -205,6 +205,33 @@ export default class JiraCloudImpl implements JiraAPI {
     return data;
   };
 
+  editDashboardItemProperty = async (
+    dashboardId: string,
+    dashboardItemId: string,
+    propertyKey: string,
+    propertyValue: Object
+  ): Promise<void> => {
+    await this._AP.request({
+      url: `/rest/api/3/dashboard/${dashboardId}/items/${dashboardItemId}/properties/config`,
+      type: "PUT",
+      contentType: "application/json",
+      data: JSON.stringify(propertyValue),
+    });
+  };
+
+  editDashboardItemTitle = async (
+    dashboardId: string,
+    dashboardItemId: string,
+    title: string
+  ): Promise<void> => {
+    await this._AP.request({
+      url: `/rest/api/3/dashboard/${dashboardId}/gadget/${dashboardItemId}`,
+      type: "PUT",
+      contentType: "application/json",
+      data: JSON.stringify({ title }),
+    });
+  };
+
   resizeWindow(width: string | number, height: string | number): void {
     this._AP.resize(width, height);
   }

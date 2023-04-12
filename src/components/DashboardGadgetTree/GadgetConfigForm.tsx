@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
   DEFAULT_GADGET_HEIGHT,
   DEFAULT_GADGET_TITLE,
@@ -15,14 +15,26 @@ import Form, {
 import TextField from "@atlaskit/textfield";
 import Button, { ButtonGroup } from "@atlaskit/button";
 import { DashboardContext } from "./DashboardContext";
+import JiraCloudImpl from "../../impl/jira/Cloud";
+import APIImpl from "../../impl/Cloud";
+import { ErrorsList } from "../common/ErrorsList";
 
 type ValidationError = Record<string, string>;
+
+const createAPI = () => {
+  const jiraCloud = new JiraCloudImpl();
+  const api = new APIImpl(jiraCloud);
+
+  return api;
+};
+
 export const GadgetConfigurationForm: React.FC = () => {
   const [inputConfig, setInputConfig] = useState<TreeGadgetConfig>({
     title: DEFAULT_GADGET_TITLE,
     issueKey: "",
     height: DEFAULT_GADGET_HEIGHT,
   });
+  const [apiResponseErrors, setApiResponseErrors] = useState<Error[]>([]);
   const dashboardContext = useContext(DashboardContext);
   const {
     dashboardId,
@@ -31,6 +43,8 @@ export const GadgetConfigurationForm: React.FC = () => {
     updateConfig: updateSavedConfig,
     updateIsConfiguring,
   } = dashboardContext;
+
+  const api = useMemo(() => createAPI(), []);
   useEffect(() => {
     if (savedConfig !== undefined) {
       setInputConfig(savedConfig);
@@ -40,30 +54,30 @@ export const GadgetConfigurationForm: React.FC = () => {
     updateIsConfiguring(false);
   };
   const handleSave = async (): ValidationError => {
+    setApiResponseErrors([]);
     const errors = validate(inputConfig);
     if (Object.keys(errors).length > 0) {
       return errors;
     }
     try {
       await Promise.all([
-        AP.request({
-          url: `/rest/api/3/dashboard/${dashboardId}/items/${dashboardItemId}/properties/config`,
-          type: "PUT",
-          contentType: "application/json",
-          data: JSON.stringify(inputConfig),
-        }),
-        AP.request({
-          url: `/rest/api/3/dashboard/${dashboardId}/gadget/${dashboardItemId}`,
-          type: "PUT",
-          contentType: "application/json",
-          data: JSON.stringify({ title: inputConfig.title }),
-        }),
+        api.editDashboardItemProperty(
+          "dashboardId",
+          dashboardItemId,
+          "config",
+          inputConfig
+        ),
+        api.editDashboardItemTitle(
+          dashboardId,
+          dashboardItemId,
+          inputConfig.title
+        ),
       ]).then(() => {
         updateIsConfiguring(false);
-        updateSavedConfig(inputConfig);
       });
     } catch (error) {
       console.error(error);
+      setApiResponseErrors([error]);
     }
   };
 
@@ -105,76 +119,79 @@ export const GadgetConfigurationForm: React.FC = () => {
   };
 
   return (
-    <Form onSubmit={handleSave}>
-      {({ formProps }) => {
-        return (
-          <form {...formProps}>
-            <FormHeader
-              title="Configure"
-              description="* indicates a required field"
-            />
+    <div>
+      <ErrorsList errors={apiResponseErrors} />
+      <Form onSubmit={handleSave}>
+        {({ formProps }) => {
+          return (
+            <form {...formProps}>
+              <FormHeader
+                title="Configure"
+                description="* indicates a required field"
+              />
 
-            <FormSection>
-              <Field name="title" label="Title" isRequired>
-                {({ fieldProps, error }) => (
-                  <>
-                    <TextField
-                      {...fieldProps}
-                      value={inputConfig.title}
-                      onChange={handleInputChange}
-                    />
-                    {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
-                  </>
-                )}
-              </Field>
-              <Field name="issueKey" label="Issue Key" isRequired>
-                {({ fieldProps, error }) => (
-                  <>
-                    <TextField
-                      {...fieldProps}
-                      value={inputConfig.issueKey}
-                      onChange={handleInputChange}
-                    />
-                    {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
-                  </>
-                )}
-              </Field>
-              <Field
-                name="height"
-                label="Height"
-                defaultValue={MIN_GADGET_HEIGHT}
-              >
-                {({ fieldProps, error }) => (
-                  <>
-                    <TextField
-                      {...fieldProps}
-                      value={inputConfig.height}
-                      type="number"
-                      min={MIN_GADGET_HEIGHT}
-                      step="1"
-                      onChange={handleInputChange}
-                    />
-                    {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
-                  </>
-                )}
-              </Field>
-            </FormSection>
-            <FormFooter>
-              <ButtonGroup>
-                <Button
-                  appearance="subtle"
-                  onClick={handleCancelFormSubmission}
+              <FormSection>
+                <Field name="title" label="Title" isRequired>
+                  {({ fieldProps, error }) => (
+                    <>
+                      <TextField
+                        {...fieldProps}
+                        value={inputConfig.title}
+                        onChange={handleInputChange}
+                      />
+                      {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
+                    </>
+                  )}
+                </Field>
+                <Field name="issueKey" label="Issue Key" isRequired>
+                  {({ fieldProps, error }) => (
+                    <>
+                      <TextField
+                        {...fieldProps}
+                        value={inputConfig.issueKey}
+                        onChange={handleInputChange}
+                      />
+                      {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
+                    </>
+                  )}
+                </Field>
+                <Field
+                  name="height"
+                  label="Height"
+                  defaultValue={MIN_GADGET_HEIGHT}
                 >
-                  Cancel
-                </Button>
-                <Button appearance="primary" type="submit">
-                  Submit
-                </Button>
-              </ButtonGroup>
-            </FormFooter>
-          </form>
-        );
-      }}
-    </Form>
+                  {({ fieldProps, error }) => (
+                    <>
+                      <TextField
+                        {...fieldProps}
+                        value={inputConfig.height}
+                        type="number"
+                        min={MIN_GADGET_HEIGHT}
+                        step="1"
+                        onChange={handleInputChange}
+                      />
+                      {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
+                    </>
+                  )}
+                </Field>
+              </FormSection>
+              <FormFooter>
+                <ButtonGroup>
+                  <Button
+                    appearance="subtle"
+                    onClick={handleCancelFormSubmission}
+                  >
+                    Cancel
+                  </Button>
+                  <Button appearance="primary" type="submit">
+                    Submit
+                  </Button>
+                </ButtonGroup>
+              </FormFooter>
+            </form>
+          );
+        }}
+      </Form>
+    </div>
   );
 };
