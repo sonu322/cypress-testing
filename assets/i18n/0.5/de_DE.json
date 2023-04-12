@@ -72,6 +72,19 @@
   "otpl.lxp.gh-link-issue-tab": "Verknüpfte Vorgänge",
   "otpl.lxp.gh-link-issue-tab.label": "Verknüpfungs-Explorer",
   "otpl.lxp.gh-link-issue-tab.tooltip": "Verknüpfungs-Explorer",
-  "otpl.lxp.gadget.configure-button.label": "Konfigurieren",
-  "otpl.lxp.gadget.configure-button.description": "Gadget konfigurieren"
+  "otpl.lxp.gadget.configure-label": "Konfigurieren",
+  "otpl.lxp.gadget.configure-button.description": "Gadget konfigurieren",
+  "otpl.lxp.gadget.configure-form.description": "* Markiert eine notwendiges Feld",
+  "otpl.lxp.gadget.configure-form.fields.title": "Titel",
+  "otpl.lxp.gadget.configure-form.fields.issue-key": "Vorgangsschlüssel",
+  "otpl.lxp.gadget.configure-form.fields.height": "Höhe",
+  "otpl.lxp.gadget.configure-form.errors.no-title": "Bitte geben Sie einen Titel ein",
+  "otpl.lxp.gadget.configure-form.errors.bad-title": "Titel muss mit einem Buchstaben beginnen und darf maximal 50 Zeichen lang sein",
+  "otpl.lxp.gadget.configure-form.buttons.submit": "Einreichen",
+  "otpl.lxp.gadget.configure-form.buttons.cancel": "Stornieren",
+  "otpl.lxp.gadget.configure-form.errors.no-issue-key": "Bitte geben Sie einen Vorgangsschlüssel ein",
+  "otpl.lxp.gadget.configure-form.errors.bad-issue-key": "Bitte geben Sie einen gültigen Vorgangsschlüssel ein",
+  "otpl.lxp.gadget.configure-form.errors.bad-height": "Mindesthöhe",
+  "otpl.lxp.api.dashboard-gadget-edit-config-error": "Die Gadget-Konfiguration konnte nicht bearbeitet werden",
+  "otpl.lxp.api.dashboard-gadget-edit-title-error": "Gadget-Titel konnte nicht bearbeitet werden"
 }
