@@ -42,7 +42,7 @@ const createAPI = () => {
 
 const DashboardGadget: React.FC = () => {
   const [isConfiguring, setIsConfiguring] = useState(true);
-  const [config, setConfig] = useState<TreeGadgetConfig>();
+  const [config, setConfig] = useState<any>();
   const [dashboardId, setDashboardId] = useState();
   const [dashboardItemId, setDashboardItemId] = useState();
 

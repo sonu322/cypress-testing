@@ -69,9 +69,9 @@ const createAPI = () => {
 };
 
 export const GadgetConfigurationForm: React.FC = () => {
-  const [inputConfig, setInputConfig] = useState<TreeGadgetConfig>({
+  const [inputConfig, setInputConfig] = useState<any>({
     title: DEFAULT_GADGET_TITLE,
-    issueKey: "",
+    view: "",
     height: DEFAULT_GADGET_HEIGHT,
   });
   const [apiResponseErrors, setApiResponseErrors] = useState<Error[]>([]);
@@ -188,6 +188,11 @@ export const GadgetConfigurationForm: React.FC = () => {
                         {...rest}
                         options={options}
                         isClearable
+                        value={inputConfig.view}
+                        onChange={(e) => {
+                          console.log(e);
+                          console.log("changed");
+                        }}
                       />
                       {error && <ErrorMessage>{error}</ErrorMessage>}
                     </React.Fragment>
