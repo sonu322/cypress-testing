@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { TreeGadgetConfig } from "../../types/app";
+import { TreeGadgetConfig } from "../../../types/app";
 
 export const DashboardContext = createContext<{
   dashboardId: string;

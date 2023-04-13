@@ -7,7 +7,7 @@ import { HelpLink } from "../common/HelpLink";
 import { useTranslation } from "react-i18next";
 import { APIContext } from "../../context/api";
 import { TreeFilterDropdowns } from "./TreeFilterDropdowns";
-import { DashboardContext } from "../DashboardGadgetTree/DashboardContext";
+import { DashboardContext } from "../common/Dashboard/DashboardContext";
 import { ConfigureGadgetButton } from "../common/Dashboard/CofigureGadgetButton";
 
 interface Props {

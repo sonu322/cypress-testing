@@ -14,7 +14,7 @@ import Form, {
 } from "@atlaskit/form";
 import TextField from "@atlaskit/textfield";
 import Button, { ButtonGroup } from "@atlaskit/button";
-import { DashboardContext } from "./DashboardContext";
+import { DashboardContext } from "../common/Dashboard/DashboardContext";
 import JiraCloudImpl from "../../impl/jira/Cloud";
 import APIImpl from "../../impl/Cloud";
 import { ErrorsList } from "../common/ErrorsList";
@@ -56,6 +56,7 @@ export const GadgetConfigurationForm: React.FC = () => {
     updateIsConfiguring(false);
   };
   const handleSave = async (): ValidationError => {
+    console.log("handle save called");
     setApiResponseErrors([]);
     const errors = validate(inputConfig);
     if (Object.keys(errors).length > 0) {
@@ -75,6 +76,7 @@ export const GadgetConfigurationForm: React.FC = () => {
           inputConfig.title
         ),
       ]).then(() => {
+        updateSavedConfig(inputConfig);
         updateIsConfiguring(false);
       });
     } catch (error) {

@@ -13,7 +13,7 @@ import { GadgetConfigurationForm } from "./GadgetConfigForm";
 import APIImpl from "../../impl/Cloud";
 import JiraCloudImpl from "../../impl/jira/Cloud";
 import { getQueryParam } from "../../util/index";
-import { DashboardContext } from "./DashboardContext";
+import { DashboardContext } from "../common/Dashboard/DashboardContext";
 
 interface ContainerProps {
   height: number;
@@ -64,13 +64,18 @@ const DashboardGadget: React.FC = () => {
   useEffect(() => {
     const getConfig = async (): Promise<void> => {
       try {
+        console.log("dashboardid", dashboardId);
+        console.log("dashboardItemId", dashboardItemId);
         const config = await api.getDashboardGadgetConfig(
           dashboardId,
           dashboardItemId
         );
+        console.log("CONFIG", config);
         setConfig(config.value);
         setIsConfiguring(false);
       } catch (error: unknown) {
+        console.log("ERROR CAUGHT");
+        console.log(error);
         setConfig({
           title: DEFAULT_GADGET_TITLE,
           issueKey: "",
@@ -99,7 +104,7 @@ const DashboardGadget: React.FC = () => {
       setIsConfiguring(true);
     });
   });
-
+  console.log(dashboardId, dashboardItemId, config);
   if (
     dashboardId !== undefined &&
     dashboardItemId !== undefined &&
@@ -118,15 +123,7 @@ const DashboardGadget: React.FC = () => {
           }}
         >
           <Container height={config?.height ?? DEFAULT_GADGET_HEIGHT}>
-            {isConfiguring ? (
-              <GadgetConfigurationForm />
-            ) : (
-              <Gadget
-                issueKey={
-                  config.issueKey?.length > 0 ? config.issueKey : "TNG31-12"
-                }
-              />
-            )}
+            {isConfiguring ? <GadgetConfigurationForm /> : <Gadget />}
           </Container>
         </DashboardContext.Provider>
       </APIContext.Provider>
@@ -134,10 +131,11 @@ const DashboardGadget: React.FC = () => {
   } else {
     return (
       <SpinnerContainer>
+        from else
         <Spinner size={"large"} />
       </SpinnerContainer>
     );
   }
-}
+};
 const App = document.getElementById("app");
 ReactDOM.render(<DashboardGadget />, App);
