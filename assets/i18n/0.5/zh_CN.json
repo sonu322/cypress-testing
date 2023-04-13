@@ -86,5 +86,7 @@
   "otpl.lxp.gadget.configure-form.errors.bad-issue-key": "请输入有效的问题密钥",
   "otpl.lxp.gadget.configure-form.errors.bad-height": "最小高度",
   "otpl.lxp.api.dashboard-gadget-edit-config-error": "无法编辑小工具配置",
-  "otpl.lxp.api.dashboard-gadget-edit-title-error": "无法编辑小工具标题"
+  "otpl.lxp.api.dashboard-gadget-edit-title-error": "无法编辑小工具标题",
+  "otpl.lxp.lxp-tree-gadget.name": "统一树视图",
+  "otpl.lxp.tree.description": "统一树/层次结构视图以树结构显示链接的 Jira 问题的完整层次结构。"
 }
