@@ -86,5 +86,7 @@
   "otpl.lxp.gadget.configure-form.errors.bad-issue-key": "Veuillez saisir une clé de ticket valide",
   "otpl.lxp.gadget.configure-form.errors.bad-height": "Hauteur minimale",
   "otpl.lxp.api.dashboard-gadget-edit-config-error": "Impossible de modifier la configuration du gadget",
-  "otpl.lxp.api.dashboard-gadget-edit-title-error": "Impossible de modifier le titre du gadget"
+  "otpl.lxp.api.dashboard-gadget-edit-title-error": "Impossible de modifier le titre du gadget",
+  "otpl.lxp.lxp-tree-gadget.name": "Arborescence unifiée",
+  "otpl.lxp.tree.description": "La vue arborescente/hiérarchique unifiée affiche la hiérarchie complète des tickets Jira liés dans une structure arborescente."
 }

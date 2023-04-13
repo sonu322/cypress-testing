@@ -72,8 +72,8 @@
     "jiraDashboardItems": [
       {
         "description": {
-          "value": "Dashboard item description",
-
+          "value": "The Unified Tree/Hierarchy View displays complete hierarchy of linked Jira issues in a tree structure.",
+          "i18n": "otpl.lxp.tree.description",
           "authentication": "none"
         },
 
@@ -84,7 +84,8 @@
         "thumbnailUrl": "http://example.com/images/report-example-thumbnail.png",
         "refreshable": true,
         "name": {
-          "value": "LXP Tree Gadget"
+          "value": "LXP Tree Gadget",
+          "i18n": "otpl.lxp.lxp-tree-gadget.name"
         },
         "key": "lxp-gadget"
       }
