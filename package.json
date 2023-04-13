@@ -19,7 +19,7 @@
     "@atlaskit/page": "^10.0.2",
     "@atlaskit/page-header": "^9.0.20",
     "@atlaskit/pagination": "^14.2.7",
-    "@atlaskit/select": "^15.7.2",
+    "@atlaskit/select": "^15.7.7",
     "@atlaskit/spinner": "^15.1.16",
     "@atlaskit/tabs": "^13.3.3",
     "@atlaskit/tag": "^11.4.1",

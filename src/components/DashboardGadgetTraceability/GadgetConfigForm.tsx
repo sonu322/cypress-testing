@@ -19,7 +19,46 @@ import JiraCloudImpl from "../../impl/jira/Cloud";
 import APIImpl from "../../impl/Cloud";
 import { ErrorsList } from "../common/ErrorsList";
 import { useTranslation } from "react-i18next";
+import Select, {
+  components,
+  OptionProps,
+  SingleValueProps,
+  ValueType,
+} from "@atlaskit/select";
 
+interface Option {
+  label: string;
+  value: string;
+}
+
+interface IssueViewOption extends Option {
+  label: "Issue Type View";
+}
+
+interface LinkViewOption extends Option {
+  label: "Link Type View";
+}
+
+interface TreeViewOption extends Option {
+  label: "Tree View";
+}
+
+type ViewOption = IssueViewOption | LinkViewOption | TreeViewOption;
+
+interface FormValues {
+  view: ValueType<ViewOption>;
+}
+
+const options: ViewOption[] = [
+  { label: "Issue Type View", value: "issue" },
+  { label: "Link Type View", value: "link" },
+  { label: "Tree View", value: "tree" },
+];
+interface Category {
+  colors?: ValueType<Option>;
+  icecream?: ValueType<Option[]>;
+  suit?: ValueType<Option[]>;
+}
 type ValidationError = Record<string, string>;
 
 const createAPI = () => {
@@ -106,18 +145,11 @@ export const GadgetConfigurationForm: React.FC = () => {
     "otpl.lxp.gadget.configure-form.description"
   );
   const titleLabel = t("otpl.lxp.gadget.configure-form.fields.title");
-  const issueKeyLabel = t("otpl.lxp.gadget.configure-form.fields.issue-key");
   const heightLabel = t("otpl.lxp.gadget.configure-form.fields.height");
   const noTitleError = t("otpl.lxp.gadget.configure-form.errors.no-title");
   const badTtileError = t("otpl.lxp.gadget.configure-form.errors.bad-title");
   const submitButtonLabel = t("otpl.lxp.gadget.configure-form.buttons.submit");
   const cancelButtonLabel = t("otpl.lxp.gadget.configure-form.buttons.cancel");
-  const noIssueKeyError = t(
-    "otpl.lxp.gadget.configure-form.errors.no-issue-key"
-  );
-  const badIssueKeyError = t(
-    "otpl.lxp.gadget.configure-form.errors.bad-issue-key"
-  );
   const badHeightError = t("otpl.lxp.gadget.configure-form.errors.bad-height");
   const validate = (values: TreeGadgetConfig): ValidationError => {
     const errors: ValidationError = {};
@@ -128,18 +160,11 @@ export const GadgetConfigurationForm: React.FC = () => {
     } else if (!titleRegex.test(values.title)) {
       errors.title = badTtileError;
     }
-    // const issueKeyRegex = /^[A-Z][A-Z0-9]{0,9}-\d+$/; // Regex for issue key pattern
-    // if (values.issueKey === undefined || values.issueKey === "") {
-    //   errors.issueKey = noIssueKeyError;
-    // } else if (!issueKeyRegex.test(values.issueKey)) {
-    //   errors.issueKey = badIssueKeyError;
-    // }
-
     if (values.height < MIN_GADGET_HEIGHT) {
       errors.height = `${badHeightError} : ${MIN_GADGET_HEIGHT} `;
     }
     return errors;
-  };;
+  };
 
   return (
     <div>
@@ -155,6 +180,19 @@ export const GadgetConfigurationForm: React.FC = () => {
               />
 
               <FormSection>
+                <Field<ValueType<ViewOption>> name="view" label="Select a view">
+                  {({ fieldProps: { id, ...rest }, error }) => (
+                    <React.Fragment>
+                      <Select<ViewOption>
+                        inputId={id}
+                        {...rest}
+                        options={options}
+                        isClearable
+                      />
+                      {error && <ErrorMessage>{error}</ErrorMessage>}
+                    </React.Fragment>
+                  )}
+                </Field>
                 <Field name="title" label={titleLabel} isRequired>
                   {({ fieldProps, error }) => (
                     <>
