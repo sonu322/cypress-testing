@@ -75,7 +75,7 @@
     "typescript": "^4.8.4"
   },
   "scripts": {
-    "start": "parcel serve --no-source-maps public/issueTreeModuleEntry.html public/tracebilityReportModuleEntry.html public/lxpViewGadget.html",
+    "start": "parcel serve --no-source-maps public/issueTreeModuleEntry.html public/tracebilityReportModuleEntry.html public/lxpViewGadget.html public/lxpTraceabilityGadget.html",
     "build-data": "npx tsc data/index.ts --outDir dist/data",
     "generate-data": "node dist/data/index.js",
     "prettify": "npx prettier --write .",

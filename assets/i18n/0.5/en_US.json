@@ -92,6 +92,6 @@
   "otpl.lxp.gadget.configure-form.errors.bad-height": "Minimum height",
   "otpl.lxp.api.dashboard-gadget-edit-config-error": "Could not edit gadget configuration",
   "otpl.lxp.api.dashboard-gadget-edit-title-error": "Could not edit gadget title",
-  "otpl.lxp.lxp-tree-gadget.name": "Unified tree view",
+  "otpl.lxp.lxp-tree-gadget.name": "LXP Unified tree view",
   "otpl.lxp.tree.description": "The Unified Tree/Hierarchy View displays complete hierarchy of linked Jira issues in a tree structure."
 }  
