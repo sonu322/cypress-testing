@@ -14,7 +14,7 @@ import Form, {
 } from "@atlaskit/form";
 import TextField from "@atlaskit/textfield";
 import Button, { ButtonGroup } from "@atlaskit/button";
-import { DashboardContext } from "./DashboardContext";
+import { DashboardContext } from "../common/Dashboard/DashboardContext";
 import JiraCloudImpl from "../../impl/jira/Cloud";
 import APIImpl from "../../impl/Cloud";
 import { ErrorsList } from "../common/ErrorsList";
@@ -56,12 +56,16 @@ export const GadgetConfigurationForm: React.FC = () => {
     updateIsConfiguring(false);
   };
   const handleSave = async (): ValidationError => {
+    console.log("handle save called");
     setApiResponseErrors([]);
     const errors = validate(inputConfig);
+    console.log(errors);
     if (Object.keys(errors).length > 0) {
       return errors;
     }
     try {
+      console.log("calling apis");
+
       await Promise.all([
         api.editDashboardItemProperty(
           dashboardId,
@@ -74,9 +78,10 @@ export const GadgetConfigurationForm: React.FC = () => {
           dashboardItemId,
           inputConfig.title
         ),
-      ]).then(() => {
-        updateIsConfiguring(false);
-      });
+      ]);
+      console.log("called apis done");
+      updateIsConfiguring(false);
+      updateSavedConfig(inputConfig);
     } catch (error) {
       console.error(error);
       setApiResponseErrors((prevErrors) => [...prevErrors, error]);
@@ -119,22 +124,22 @@ export const GadgetConfigurationForm: React.FC = () => {
     const titleRegex =
       /^[a-zA-Z][a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/? ]{0,49}$/;
     if (values.title === undefined || values.title === "") {
-      errors.issueKey = noTitleError;
+      errors.title = noTitleError;
     } else if (!titleRegex.test(values.title)) {
       errors.title = badTtileError;
     }
-    const issueKeyRegex = /^[A-Z][A-Z0-9]{0,9}-\d+$/; // Regex for issue key pattern
-    if (values.issueKey === undefined || values.issueKey === "") {
-      errors.issueKey = noIssueKeyError;
-    } else if (!issueKeyRegex.test(values.issueKey)) {
-      errors.issueKey = badIssueKeyError;
-    }
+    // const issueKeyRegex = /^[A-Z][A-Z0-9]{0,9}-\d+$/; // Regex for issue key pattern
+    // if (values.issueKey === undefined || values.issueKey === "") {
+    //   errors.issueKey = noIssueKeyError;
+    // } else if (!issueKeyRegex.test(values.issueKey)) {
+    //   errors.issueKey = badIssueKeyError;
+    // }
 
     if (values.height < MIN_GADGET_HEIGHT) {
       errors.height = `${badHeightError} : ${MIN_GADGET_HEIGHT} `;
     }
     return errors;
-  };
+  };;
 
   return (
     <div>
@@ -156,18 +161,6 @@ export const GadgetConfigurationForm: React.FC = () => {
                       <TextField
                         {...fieldProps}
                         value={inputConfig.title}
-                        onChange={handleInputChange}
-                      />
-                      {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
-                    </>
-                  )}
-                </Field>
-                <Field name="issueKey" label={issueKeyLabel} isRequired>
-                  {({ fieldProps, error }) => (
-                    <>
-                      <TextField
-                        {...fieldProps}
-                        value={inputConfig.issueKey}
                         onChange={handleInputChange}
                       />
                       {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}

@@ -13,7 +13,7 @@ import { GadgetConfigurationForm } from "./GadgetConfigForm";
 import APIImpl from "../../impl/Cloud";
 import JiraCloudImpl from "../../impl/jira/Cloud";
 import { getQueryParam } from "../../util/index";
-import { DashboardContext } from "./DashboardContext";
+import { DashboardContext } from "../common/Dashboard/DashboardContext";
 
 interface ContainerProps {
   height: number;
@@ -101,10 +101,9 @@ const DashboardGadget: React.FC = () => {
   });
 
   if (
-    // dashboardId !== undefined &&
-    // dashboardItemId !== undefined &&
-    // config !== undefined
-    true
+    dashboardId !== undefined &&
+    dashboardItemId !== undefined &&
+    config !== undefined
   ) {
     return (
       <APIContext.Provider value={api}>
@@ -119,13 +118,13 @@ const DashboardGadget: React.FC = () => {
           }}
         >
           <Container height={config?.height ?? DEFAULT_GADGET_HEIGHT}>
-            {false ? (
+            {isConfiguring ? (
               <GadgetConfigurationForm />
             ) : (
               <Gadget
-              // issueKey={
-              //   config.issueKey?.length > 0 ? config.issueKey : "TNG31-12"
-              // }
+                issueKey={
+                  config.issueKey?.length > 0 ? config.issueKey : "TNG31-12"
+                }
               />
             )}
           </Container>
@@ -139,6 +138,6 @@ const DashboardGadget: React.FC = () => {
       </SpinnerContainer>
     );
   }
-};
+}
 const App = document.getElementById("app");
 ReactDOM.render(<DashboardGadget />, App);

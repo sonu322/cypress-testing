@@ -933,6 +933,7 @@ export default class APIImpl implements LXPAPI {
     propertyValue: Object
   ): Promise<void> {
     try {
+      console.log("calling edit");
       await this.api.editDashboardItemProperty(
         dashboardId,
         dashboardItemId,

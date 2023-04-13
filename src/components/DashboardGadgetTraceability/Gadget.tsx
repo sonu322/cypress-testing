@@ -3,7 +3,7 @@ import IssueLinksHierarchy from "../../IssueLinksHierarchy";
 import { TracebilityReportModule } from "../TracebilityReportModule/TracebilityReportModule";
 
 interface GadgetProps {
-  issueKey: string;
+
 }
 export const Gadget: React.FC<GadgetProps> = () => {
   return (
