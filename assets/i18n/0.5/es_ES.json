@@ -87,6 +87,6 @@
   "otpl.lxp.gadget.configure-form.errors.bad-height": "Altura mínima",
   "otpl.lxp.api.dashboard-gadget-edit-config-error": "No se pudo editar la configuración del gadget",
   "otpl.lxp.api.dashboard-gadget-edit-title-error": "No se pudo editar el título del gadget",
-  "otpl.lxp.lxp-tree-gadget.name": "Vista de árbol unificada",
+  "otpl.lxp.lxp-tree-gadget.name": "LXP Vista de árbol unificada",
   "otpl.lxp.tree.description": "La vista de árbol/jerarquía unificada muestra la jerarquía completa de las incidencias de Jira relacionadas en una estructura de árbol."
 }

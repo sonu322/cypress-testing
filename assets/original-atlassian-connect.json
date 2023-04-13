@@ -87,7 +87,26 @@
           "value": "LXP Tree Gadget",
           "i18n": "otpl.lxp.lxp-tree-gadget.name"
         },
-        "key": "lxp-gadget"
+        "key": "lxp-tree"
+      },
+      {
+        "description": {
+          "value": "End to end traceability reports displaying Jira issues and their linked issues in an easy to comprehend tabular format.",
+          "i18n": "otpl.lxp.traceability-report.description",
+          "authentication": "none"
+        },
+
+        "url": "/lxpTraceabilityGadget.html?dashboardItemId={dashboardItem.id}&dashboardId={dashboard.id}&view={dashboardItem.viewType}",
+        "configurable": true,
+        "context": ["dashboard"],
+        "dependencies": ["jquery"],
+        "thumbnailUrl": "http://example.com/images/report-example-thumbnail.png",
+        "refreshable": true,
+        "name": {
+          "value": "LXP Traceability Reports",
+          "i18n": "otpl.lxp.traceability-reports-gadget.name"
+        },
+        "key": "lxp-traceability-reports-gadget"
       }
     ]
   },

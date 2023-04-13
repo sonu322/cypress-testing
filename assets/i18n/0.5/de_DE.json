@@ -87,6 +87,6 @@
   "otpl.lxp.gadget.configure-form.errors.bad-height": "Mindesthöhe",
   "otpl.lxp.api.dashboard-gadget-edit-config-error": "Die Gadget-Konfiguration konnte nicht bearbeitet werden",
   "otpl.lxp.api.dashboard-gadget-edit-title-error": "Gadget-Titel konnte nicht bearbeitet werden",
-  "otpl.lxp.lxp-tree-gadget.name": "Einheitliche Baumansicht",
+  "otpl.lxp.lxp-tree-gadget.name": "LXP Einheitliche Baumansicht",
   "otpl.lxp.tree.description": ""
 }
