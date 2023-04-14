@@ -24,7 +24,9 @@ import Select, {
   OptionProps,
   SingleValueProps,
   ValueType,
+  CreatableSelect,
 } from "@atlaskit/select";
+import { ViewSelect } from "./ViewSelect";
 
 interface Option {
   label: string;
@@ -75,6 +77,11 @@ export const GadgetConfigurationForm: React.FC = () => {
     height: DEFAULT_GADGET_HEIGHT,
   });
   const [apiResponseErrors, setApiResponseErrors] = useState<Error[]>([]);
+  // const [options, setOptions] = useState([
+  //   { label: "Issue Type View", value: "issue" },
+  //   { label: "Link Type View", value: "link" },
+  //   { label: "Tree View", value: "tree" },
+  // ]);
   const dashboardContext = useContext(DashboardContext);
   const {
     dashboardId,
@@ -127,10 +134,8 @@ export const GadgetConfigurationForm: React.FC = () => {
     }
   };
 
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    const { name, value, type } = event.target;
+  const handleInputChange = (name, value, type): void => {
+    console.log("HANDLE INPUT CHANGE CALLED");
     let parsedValue: unknown = value;
     if (type === "number") {
       parsedValue = parseFloat(value);
@@ -144,6 +149,7 @@ export const GadgetConfigurationForm: React.FC = () => {
   const configureFormDescription = t(
     "otpl.lxp.gadget.configure-form.description"
   );
+  const filterLabel = t("otpl.lxp.gadget.configure-form.fields.filter");
   const titleLabel = t("otpl.lxp.gadget.configure-form.fields.title");
   const heightLabel = t("otpl.lxp.gadget.configure-form.fields.height");
   const noTitleError = t("otpl.lxp.gadget.configure-form.errors.no-title");
@@ -175,41 +181,17 @@ export const GadgetConfigurationForm: React.FC = () => {
             <form {...formProps}>
               <FormHeader
                 title={configureLabel}
-                // description="* indicates a required field"
                 description={configureFormDescription}
               />
 
               <FormSection>
-                <Field<ValueType<ViewOption>> name="view" label="Select a view">
-                  {({ fieldProps: { id, ...rest }, error }) => (
-                    <React.Fragment>
-                      <Select<ViewOption>
-                        inputId={id}
-                        {...rest}
-                        options={options}
-                        isClearable
-                        value={inputConfig.view}
-                        onChange={(e) => {
-                          console.log(e);
-                          console.log("changed");
-                        }}
-                      />
-                      {error && <ErrorMessage>{error}</ErrorMessage>}
-                    </React.Fragment>
-                  )}
-                </Field>
-                <Field name="title" label={titleLabel} isRequired>
-                  {({ fieldProps, error }) => (
-                    <>
-                      <TextField
-                        {...fieldProps}
-                        value={inputConfig.title}
-                        onChange={handleInputChange}
-                      />
-                      {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
-                    </>
-                  )}
-                </Field>
+                <ViewSelect
+                  name={"view"}
+                  label={"Select a view"}
+                  options={options}
+                  value={inputConfig.view}
+                  handleInputChange={handleInputChange}
+                />
                 <Field
                   name="height"
                   label={heightLabel}
@@ -223,30 +205,27 @@ export const GadgetConfigurationForm: React.FC = () => {
                         type="number"
                         min={MIN_GADGET_HEIGHT}
                         step="1"
-                        onChange={handleInputChange}
+                        onChange={(value) =>
+                          handleInputChange("height", value, "number")
+                        }
                       />
                       {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
                     </>
                   )}
                 </Field>
               </FormSection>
-              <FormFooter>
-                <ButtonGroup>
-                  <Button
-                    appearance="subtle"
-                    onClick={handleCancelFormSubmission}
-                  >
-                    {cancelButtonLabel}
-                  </Button>
-                  <Button appearance="primary" type="submit">
-                    {submitButtonLabel}
-                  </Button>
-                </ButtonGroup>
-              </FormFooter>
             </form>
           );
         }}
       </Form>
+      <ButtonGroup>
+        <Button appearance="subtle" onClick={handleCancelFormSubmission}>
+          {cancelButtonLabel}
+        </Button>
+        <Button appearance="primary" type="submit" onClick={handleSave}>
+          {submitButtonLabel}
+        </Button>
+      </ButtonGroup>
     </div>
   );
 };
