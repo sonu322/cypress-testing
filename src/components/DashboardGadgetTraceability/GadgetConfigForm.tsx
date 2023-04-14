@@ -183,7 +183,6 @@ export const GadgetConfigurationForm: React.FC = () => {
                 title={configureLabel}
                 description={configureFormDescription}
               />
-
               <FormSection>
                 <ViewSelect
                   name={"view"}
@@ -214,18 +213,27 @@ export const GadgetConfigurationForm: React.FC = () => {
                   )}
                 </Field>
               </FormSection>
+              <FormFooter>
+                <ButtonGroup>
+                  <Button
+                    appearance="subtle"
+                    onClick={handleCancelFormSubmission}
+                  >
+                    {cancelButtonLabel}
+                  </Button>
+                  <Button
+                    appearance="primary"
+                    type="submit"
+                    onClick={handleSave}
+                  >
+                    {submitButtonLabel}
+                  </Button>
+                </ButtonGroup>
+              </FormFooter>
             </form>
           );
         }}
       </Form>
-      <ButtonGroup>
-        <Button appearance="subtle" onClick={handleCancelFormSubmission}>
-          {cancelButtonLabel}
-        </Button>
-        <Button appearance="primary" type="submit" onClick={handleSave}>
-          {submitButtonLabel}
-        </Button>
-      </ButtonGroup>
     </div>
   );
 };
