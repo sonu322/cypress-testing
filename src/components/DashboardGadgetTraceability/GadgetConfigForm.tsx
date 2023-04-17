@@ -28,7 +28,8 @@ import Select, {
 } from "@atlaskit/select";
 import { ViewSelect } from "./ViewSelect";
 import { JQLField } from "./JQLField";
-import { TableFieldsField } from "./TableFieldsField";
+import { TableFieldsField } from "./TableFieldsDropdownField";
+import { IssueCardFieldsDropdownField } from "./IssueCardFieldsDropdownField";
 
 interface Option {
   label: string;
@@ -204,6 +205,15 @@ export const GadgetConfigurationForm: React.FC = () => {
                   }}
                 />
                 <TableFieldsField
+                  selectedOptionIds={[]}
+                  updateSelectedOptionIds={() => {
+                    console.log("updateSelectedoptionids called");
+                  }}
+                  handleNewError={() => {
+                    console.log("handleNewError called");
+                  }}
+                />
+                <IssueCardFieldsDropdownField
                   selectedOptionIds={[]}
                   updateSelectedOptionIds={() => {
                     console.log("updateSelectedoptionids called");
