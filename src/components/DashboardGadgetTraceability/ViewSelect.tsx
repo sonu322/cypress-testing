@@ -7,36 +7,33 @@ interface OptionType {
   value: string;
 }
 
-interface IssueViewOption extends OptionType {
-  label: "Issue Type View";
-}
+// interface IssueViewOption extends OptionType {
+//   label: "Issue Type View";
+// }
 
-interface LinkViewOption extends OptionType {
-  label: "Link Type View";
-}
+// interface LinkViewOption extends OptionType {
+//   label: "Link Type View";
+// }
 
-interface TreeViewOption extends OptionType {
-  label: "Tree View";
-}
+// interface TreeViewOption extends OptionType {
+//   label: "Tree View";
+// }
 
-type Option = IssueViewOption | LinkViewOption | TreeViewOption;
+// type Option = IssueViewOption | LinkViewOption | TreeViewOption;
 
 export const ViewSelect: React.FC<any> = ({
   name,
   label,
   options,
-  value,
   handleInputChange,
   ...rest
 }) => {
   return (
-    <Field<ValueType<Option>> name={name} label={label} {...rest}>
+    <Field<ValueType<OptionType>> name={name} label={label} {...rest}>
       {({ fieldProps: { id, ...rest }, error }) => {
-        console.log("id", id);
-        console.log("rest", rest);
         return (
           <React.Fragment>
-            <Select<Option>
+            <Select<OptionType>
               inputId={id}
               {...rest}
               options={options}
