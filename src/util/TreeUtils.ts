@@ -27,7 +27,7 @@ import {
   orphansTreeBranchName,
 } from "../constants/traceabilityReport";
 import { getItemInLocalStorage, setItemInLocalStorage, addIssueDetails, toCSV } from "./common";
-import { lastSavedTreeConfigKey } from "../constants/common";
+import { EXPAND_ALL_LEVEL, lastSavedTreeConfigKey } from "../constants/common";
 
 // root node
 const root: AtlasTree = {
@@ -400,7 +400,7 @@ export default class TreeUtils {
         setTree((tree) => {
           const loadMoreButtonNode =
             tree.items[
-            `/${orphansTreeBranchName}/${loadMoreOrphansButtonName}`
+              `/${orphansTreeBranchName}/${loadMoreOrphansButtonName}`
             ];
 
           const newButtonData: ButtonTypeTreeNode = {
@@ -712,7 +712,7 @@ export default class TreeUtils {
           if (
             firstNode.nodeType !== TreeNodeType.ButtonNode &&
             (firstNode.data as IssueWithLinkedIssues).linkedIssues !==
-            undefined &&
+              undefined &&
             (firstNode.data as IssueWithLinkedIssues).linkedIssues.length > 0 &&
             firstNode.isExpanded
           ) {
@@ -936,7 +936,7 @@ export default class TreeUtils {
     }
   }
 
-  async handleExpandAllNodes(
+  async handleSingleExpandAllNodes(
     filter: IssueTreeFilter,
     fields: IssueField[],
     prevTree: AtlasTree,
@@ -954,7 +954,7 @@ export default class TreeUtils {
         prevTree.items[this.ROOT_ID].children,
         0,
         fields,
-        setTree
+        EXPAND_ALL_LEVEL
       );
       if (newTree?.items !== undefined) {
         setTree(() => {
@@ -977,14 +977,70 @@ export default class TreeUtils {
     }
   }
 
+  async handleMultipleExpandAllNodes(
+    filter: IssueTreeFilter,
+    fields: IssueField[],
+    prevTree: AtlasTree,
+    setTree,
+    handleError,
+    clearAllErrors,
+    setIsExpandAllLoading
+  ): Promise<void> {
+    setIsExpandAllLoading(true);
+    // NOTE: using setTree without function is ok because, the node ids to be expanded are not being changed from prev tree to now. we just need the node ids. we dont need the most recent value. its ok if batched.
+    try {
+      clearAllErrors();
+      let newTree = await this.expandAllNodes(
+        prevTree,
+        prevTree.items[this.ROOT_ID].children,
+        0,
+        fields,
+        EXPAND_ALL_LEVEL
+      );
+      if (newTree?.items !== undefined) {
+        setTree(() => {
+          newTree = this.applyMultiNodeTreeFilter(
+            newTree,
+            filter,
+            fields,
+            handleError
+          );
+          return newTree;
+        });
+        setIsExpandAllLoading(false);
+      }
+    } catch (error) {
+      setIsExpandAllLoading(false);
+      handleError(error);
+    }
+  }
+
+  getChildIssueNodeIds = (
+    prevTree: AtlasTree,
+    typeNodeIds: string[]
+  ): { newTree?: AtlasTree; childIssueNodeIds: string[] } => {
+    // takes typeNodeIds of an issue node and returns all their child node ids - these will be issues
+    // takes prevTree and expands any collapsed type nodes
+    let newTree = prevTree;
+    let childIssueNodeIds: string[] = [];
+    typeNodeIds.forEach((typeNodeId) => {
+      const typeNode = newTree.items[typeNodeId];
+      if (!typeNode.isExpanded) {
+        newTree = mutateTree(newTree, typeNodeId, { isExpanded: true });
+      }
+      childIssueNodeIds = childIssueNodeIds.concat(typeNode.children);
+    });
+    return { newTree, childIssueNodeIds };
+  };
+
   async expandAllNodes(
     prevTree: AtlasTree,
     nodeIds: string[],
     level: number,
     issueFields: IssueField[],
-    setTree
+    maxLevels: number
   ): Promise<AtlasTree> {
-    if (level >= 3) {
+    if (level >= maxLevels) {
       return prevTree;
     }
     let newTree = this.cloneTree(prevTree);
@@ -1008,13 +1064,14 @@ export default class TreeUtils {
       }
 
       if (node.children.length > 0) {
-        node.children.forEach((typeNodeId) => {
-          const typeNode = newTree.items[typeNodeId];
-          if (!typeNode.isExpanded) {
-            newTree = mutateTree(newTree, typeNodeId, { isExpanded: true });
-          }
-          nextNodeIds = nextNodeIds.concat(typeNode.children);
-        });
+        const childIssueNodesInfo = this.getChildIssueNodeIds(
+          newTree,
+          node.children
+        );
+        if (childIssueNodesInfo.newTree !== undefined) {
+          newTree = childIssueNodesInfo.newTree;
+        }
+        nextNodeIds = nextNodeIds.concat(childIssueNodesInfo.childIssueNodeIds);
       }
     });
 
@@ -1028,6 +1085,19 @@ export default class TreeUtils {
         issueNodeIds.forEach((nodeId) => {
           newTree = mutateTree(newTree, nodeId, { data: issue });
           newTree = this.addChildren(nodeId, newTree);
+          const node = newTree.items[nodeId];
+          if (node.children.length > 0) {
+            const childIssueNodesInfo = this.getChildIssueNodeIds(
+              newTree,
+              node.children
+            );
+            if (childIssueNodesInfo.newTree !== undefined) {
+              newTree = childIssueNodesInfo.newTree;
+            }
+            nextNodeIds = nextNodeIds.concat(
+              childIssueNodesInfo.childIssueNodeIds
+            );
+          }
         });
       }
 
@@ -1037,7 +1107,7 @@ export default class TreeUtils {
         nextNodeIds,
         level + 1,
         issueFields,
-        setTree
+        maxLevels
       );
       return newTree;
     } else {
@@ -1047,14 +1117,14 @@ export default class TreeUtils {
         nextNodeIds,
         level + 1,
         issueFields,
-        setTree
+        maxLevels
       );
       return newTree;
     }
   }
 
   collapseAll(setTree): void {
-    const collapseNode = (tree: AtlasTree, nodeId): void => {
+    const collapseNode = (tree: AtlasTree, nodeId: string): void => {
       const node = tree?.items[nodeId];
       if (node !== undefined) {
         node.isExpanded = false;
@@ -1077,7 +1147,8 @@ export default class TreeUtils {
   exportTree(
     tree: AtlasTree,
     issueFields: IssueField[],
-    selectedIssueFieldIds: string[]): void {
+    selectedIssueFieldIds: string[]
+  ): void {
     const root = tree.items[tree.rootId];
     const headerItems = ["Indent", "Issue Key", "Link"];
     issueFields.forEach((issueField) => {
@@ -1088,7 +1159,11 @@ export default class TreeUtils {
     const contents: any[] = [];
     contents.push(headerItems);
 
-    const process = (item: AtlasTreeNode, indent: number, link: string): void => {
+    const process = (
+      item: AtlasTreeNode,
+      indent: number,
+      link: string
+    ): void => {
       let currentNodeLink = "";
       if (!item || !item.data || item.nodeType === TreeNodeType.ButtonNode) {
         return;

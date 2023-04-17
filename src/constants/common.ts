@@ -15,3 +15,5 @@ export const emptyTreeFilter: IssueTreeFilter = {
   issueTypes: [],
   linkTypes: [],
 };
+
+export const EXPAND_ALL_LEVEL = 3;
