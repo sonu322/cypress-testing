@@ -30,6 +30,7 @@ import { ViewSelect } from "./ViewSelect";
 import { JQLField } from "./JQLField";
 import { TableFieldsField } from "./TableFieldsDropdownField";
 import { IssueCardFieldsDropdownField } from "./IssueCardFieldsDropdownField";
+import { PageSizeDropdownField } from "./PageSizeDropdownField";
 
 interface Option {
   label: string;
@@ -222,6 +223,18 @@ export const GadgetConfigurationForm: React.FC = () => {
                     console.log("handleNewError called");
                   }}
                 />
+
+                <PageSizeDropdownField
+                  updateSelectedLimit={(value: number) => {
+                    console.log(value);
+                    console.log("updateSelectedLimit called");
+                  }}
+                  selectedLimit={50}
+                  handleNewError={() => {
+                    console.log("handleNewError called");
+                  }}
+                />
+
                 <Field
                   name="height"
                   label={heightLabel}
