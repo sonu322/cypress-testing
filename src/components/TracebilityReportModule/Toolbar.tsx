@@ -24,6 +24,7 @@ import { useTranslation } from "react-i18next";
 import { APIContext } from "../../context/api";
 import { viewTabs } from "../../constants/traceabilityReport";
 import { SettingsDropdownTrigger } from "../common/SettingsDropdownTrigger";
+import { LinkIssueButton } from "../common/LinkIssueButton";
 const MainBar = styled.div`
   padding: 8px;
   border-radius: 3px;
@@ -110,6 +111,7 @@ export const Toolbar = ({
             updateSelectedFilterId={updateSelectedJQLString}
             showCustomJQLEditor={showCustomJQLEditor}
           />
+          <LinkIssueButton />
           <RefreshButton refresh={handleRefresh} />
         </FlexContainer>
 
