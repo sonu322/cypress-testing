@@ -27,6 +27,7 @@ import Select, {
   CreatableSelect,
 } from "@atlaskit/select";
 import { ViewSelect } from "./ViewSelect";
+import { JQLField } from "./JQLField";
 
 interface Option {
   label: string;
@@ -191,6 +192,16 @@ export const GadgetConfigurationForm: React.FC = () => {
                   value={inputConfig.view}
                   handleInputChange={handleInputChange}
                 />
+                <JQLField
+                  selectedJQLString=""
+                  updateSelectedJQLString={(value) => {
+                    console.log("updateSelectedJQLString called");
+                    console.log(value);
+                  }}
+                  handleNewError={() => {
+                    console.log("handleNewError called");
+                  }}
+                />
                 <Field
                   name="height"
                   label={heightLabel}
@@ -204,9 +215,14 @@ export const GadgetConfigurationForm: React.FC = () => {
                         type="number"
                         min={MIN_GADGET_HEIGHT}
                         step="1"
-                        onChange={(value) =>
-                          handleInputChange("height", value, "number")
-                        }
+                        onChange={(event) => {
+                          console.log("height", event);
+                          handleInputChange(
+                            "height",
+                            event.target.value,
+                            "number"
+                          );
+                        }}
                       />
                       {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
                     </>
