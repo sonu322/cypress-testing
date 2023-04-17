@@ -22,11 +22,14 @@ export const PageSizeDropdownField: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   return (
-    <Field name="table-fields" label={"Table Fields"}>
+    <Field
+      name="pageSize"
+      label={t("otpl.lxp.traceability-report.fetch-limit-dropdown.name")}
+    >
       {({ fieldProps, error }) => {
         console.log("field props for new comp", fieldProps);
         return (
-          <>
+          <div>
             <DropdownSingleSelect
               options={options}
               dropdownName={
@@ -37,7 +40,7 @@ export const PageSizeDropdownField: React.FC<Props> = ({
               updateSelectedOptionId={updateSelectedLimit}
             />
             {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
-          </>
+          </div>
         );
       }}
     </Field>

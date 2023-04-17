@@ -14,9 +14,6 @@ import { TableFieldsDropdown } from "../TracebilityReportModule/TableFieldsDropd
 import { IssueLinkType, IssueType } from "../../types/api";
 import JiraCloudImpl from "../../impl/jira/Cloud";
 import APIImpl from "../../impl/Cloud";
-const Container = styled.div`
-  display: block;
-`;
 
 interface Props {
   updateSelectedOptionIds: (value: string[]) => void;
@@ -91,14 +88,14 @@ export const TableFieldsField: React.FC<Props> = ({
       {({ fieldProps, error }) => {
         console.log("field props for new comp", fieldProps);
         return (
-          <Container>
+          <div>
             <TableFieldsDropdown
               options={issueTypes}
               selectedOptions={selectedOptionIds}
               updateSelectedOptionIds={updateSelectedOptionIds}
             />
             {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
-          </Container>
+          </div>
         );
       }}
     </Field>

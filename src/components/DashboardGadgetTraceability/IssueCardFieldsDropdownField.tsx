@@ -86,7 +86,7 @@ export const IssueCardFieldsDropdownField: React.FC<Props> = ({
       {({ fieldProps, error }) => {
         console.log("field props for new comp", fieldProps);
         return (
-          <>
+          <div>
             <Dropdown
               dropdownName={t("otpl.lxp.toolbar.issue-card-fields")}
               options={issueCardFields}
@@ -94,7 +94,7 @@ export const IssueCardFieldsDropdownField: React.FC<Props> = ({
               updateSelectedOptionIds={updateSelectedOptionIds}
             />
             {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
-          </>
+          </div>
         );
       }}
     </Field>
