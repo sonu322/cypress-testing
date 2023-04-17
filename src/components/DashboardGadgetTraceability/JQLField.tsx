@@ -21,14 +21,18 @@ interface Props {
   selectedJQLString: string;
   handleNewError: (error: unknown) => void;
   showCustomJQLEditor?: () => void;
+  handleInputChange: (name: any, value: any, type?: any) => void;
 }
 export const JQLField: React.FC<Props> = ({
   selectedJQLString,
-  updateSelectedJQLString,
+  handleInputChange,
   handleNewError,
   showCustomJQLEditor,
 }) => {
   const { t } = useTranslation();
+  const updateSelectedJQLString = (filterId: string): void => {
+    handleInputChange("jql", filterId);
+  };
   return (
     <Field name="jql" label={"JQL"}>
       {({ fieldProps, error }) => {

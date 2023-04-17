@@ -25,30 +25,6 @@ import { TableFieldsField } from "./TableFieldsDropdownField";
 import { IssueCardFieldsDropdownField } from "./IssueCardFieldsDropdownField";
 import { PageSizeDropdownField } from "./PageSizeDropdownField";
 import { viewTabs } from "../../constants/traceabilityReport";
-// interface Option {
-//   label: string;
-//   value: string;
-// }
-
-// interface IssueViewOption extends Option {
-//   label: "Issue Type View";
-// }
-
-// interface LinkViewOption extends Option {
-//   label: "Link Type View";
-// }
-
-// interface TreeViewOption extends Option {
-//   label: "Tree View";
-// }
-
-// type ViewOption = IssueViewOption | LinkViewOption | TreeViewOption;
-
-// const options: ViewOption[] = [
-//   { label: "Issue Type View", value: "issue" },
-//   { label: "Link Type View", value: "link" },
-//   { label: "Tree View", value: "tree" },
-// ];
 
 type ValidationError = Record<string, string>;
 
@@ -85,7 +61,7 @@ export const GadgetConfigurationForm: React.FC = () => {
   const handleCancelFormSubmission = (): void => {
     updateIsConfiguring(false);
   };
-  const handleSave = async (): ValidationError => {
+  const handleSave = async (): Promise<ValidationError> => {
     console.log("handle save called");
     setApiResponseErrors([]);
     const errors = validate(inputConfig);
@@ -177,11 +153,16 @@ export const GadgetConfigurationForm: React.FC = () => {
                   handleInputChange={handleInputChange}
                 />
                 <JQLField
-                  selectedJQLString=""
-                  updateSelectedJQLString={(value) => {
-                    console.log("updateSelectedJQLString called");
-                    console.log(value);
-                  }}
+                  selectedJQLString={inputConfig.jql}
+                  handleInputChange={handleInputChange}
+                  // updateSelectedJQLString={(value) => {
+                  //   console.log("updateSelectedJQLString called");
+                  //   console.log(value);
+                  //   setInputConfig((prevConfig) => ({
+                  //     ...prevConfig,
+                  //     jql: value,
+                  //   }));
+                  // }}
                   handleNewError={() => {
                     console.log("handleNewError called");
                   }}
