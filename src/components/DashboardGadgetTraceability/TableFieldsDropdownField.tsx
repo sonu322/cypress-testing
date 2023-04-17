@@ -14,11 +14,17 @@ import { TableFieldsDropdown } from "../TracebilityReportModule/TableFieldsDropd
 import { IssueLinkType, IssueType } from "../../types/api";
 import JiraCloudImpl from "../../impl/jira/Cloud";
 import APIImpl from "../../impl/Cloud";
+import {
+  ISSUE_TYPE_VIEW_ID,
+  LINK_TYPE_VIEW_ID,
+  TREE_TYPE_VIEW_ID,
+} from "../../constants/traceabilityReport";
 
 interface Props {
-  updateSelectedOptionIds: (value: string[]) => void;
+  handleInputChange: (name: any, value: any, type?: any) => void;
   selectedOptionIds: string[];
-  handleNewError: (error: unknown) => void;
+  handleApiError: (error: unknown) => void;
+  viewType: string;
 }
 
 const createAPI = () => {
@@ -28,11 +34,13 @@ const createAPI = () => {
   return api;
 };
 
-export const TableFieldsField: React.FC<Props> = ({
+export const TableFieldsDropdownField: React.FC<Props> = ({
   selectedOptionIds,
-  updateSelectedOptionIds,
-  handleNewError,
+  handleInputChange,
+  handleApiError,
+  viewType,
 }) => {
+  console.log("Selected option ids", selectedOptionIds);
   const { t } = useTranslation();
   const [issueTypes, setIssueTypes] = useState<IssueType[]>([]);
   const [linkTypes, setLinkTypes] = useState<IssueLinkType[]>([]);
@@ -54,50 +62,60 @@ export const TableFieldsField: React.FC<Props> = ({
 
         setIssueTypes(issueTypes);
         setLinkTypes(linkTypes);
-
-        // if (
-        //   lastSavedReportConfig.selectedIssueTypeIds !== undefined &&
-        //   lastSavedReportConfig.selectedIssueTypeIds !== null
-        // ) {
-        //   setSelectedIssueTypeIds(lastSavedReportConfig.selectedIssueTypeIds);
-        // } else {
-        //   setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
-        // }
-        // if (
-        //   lastSavedReportConfig?.selectedLinkTypeIds !== undefined &&
-        //   lastSavedReportConfig?.selectedLinkTypeIds !== null
-        // ) {
-        //   setSelectedLinkTypeIds(lastSavedReportConfig.selectedLinkTypeIds);
-        // } else {
-        //   setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
-        // }
-
-        // loading state
         setAreOptionsLoading(false);
       } catch (error) {
         setAreOptionsLoading(false);
-        handleNewError(error);
+        handleApiError(error);
       }
     };
     void loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return (
-    <Field name="table-fields" label={"Table Fields"}>
-      {({ fieldProps, error }) => {
-        console.log("field props for new comp", fieldProps);
-        return (
-          <div>
-            <TableFieldsDropdown
-              options={issueTypes}
-              selectedOptions={selectedOptionIds}
-              updateSelectedOptionIds={updateSelectedOptionIds}
-            />
-            {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
-          </div>
-        );
-      }}
-    </Field>
-  );
+  useEffect(() => {
+    if (viewType === ISSUE_TYPE_VIEW_ID) {
+      console.log("view type, ", viewType);
+      const optionIds = issueTypes.map((issueType) => issueType.id);
+      console.log("issuetypeoptionids", optionIds);
+      handleInputChange("tableFields", optionIds);
+    } else if (viewType === LINK_TYPE_VIEW_ID) {
+      console.log("view type, ", viewType);
+      const optionIds = linkTypes.map((linkType) => linkType.id);
+      console.log("linktypeoptionids", optionIds);
+      handleInputChange("tableFields", optionIds);
+    } else {
+      handleInputChange("tableFields", []);
+    }
+  }, [viewType]);
+  let viewTypeOptions = [];
+  if (viewType === ISSUE_TYPE_VIEW_ID) {
+    viewTypeOptions = issueTypes;
+  } else if (viewType === LINK_TYPE_VIEW_ID) {
+    viewTypeOptions = linkTypes;
+  }
+  console.log("selectedOptionIds", selectedOptionIds);
+  if (areOptionsLoading || selectedOptionIds === undefined) {
+    return <em></em>;
+  } else {
+    return (
+      <Field name={"tableFields"} label={"Table Fields"}>
+        {({ error }) => {
+          return (
+            <div>
+              <TableFieldsDropdown
+                isDisabled={true}
+                options={viewTypeOptions}
+                selectedOptions={selectedOptionIds}
+                updateSelectedOptionIds={(updatedList) => {
+                  console.log("UPDATEDLIST", updatedList);
+                  handleInputChange("tableFields", updatedList);
+                }}
+              />
+              {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
+            </div>
+          );
+        }}
+      </Field>
+    );
+  }
 };
