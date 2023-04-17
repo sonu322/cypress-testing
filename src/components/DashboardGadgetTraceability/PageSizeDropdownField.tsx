@@ -27,7 +27,6 @@ export const PageSizeDropdownField: React.FC<Props> = ({
       label={t("otpl.lxp.traceability-report.fetch-limit-dropdown.name")}
     >
       {({ fieldProps, error }) => {
-        console.log("field props for new comp", fieldProps);
         return (
           <div>
             <DropdownSingleSelect

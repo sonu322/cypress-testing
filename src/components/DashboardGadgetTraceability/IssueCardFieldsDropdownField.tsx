@@ -84,7 +84,6 @@ export const IssueCardFieldsDropdownField: React.FC<Props> = ({
   return (
     <Field name="issue-cards-fields" label={"Issue Card Fields"}>
       {({ fieldProps, error }) => {
-        console.log("field props for new comp", fieldProps);
         return (
           <div>
             <Dropdown

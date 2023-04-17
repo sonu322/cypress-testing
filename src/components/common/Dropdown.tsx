@@ -16,6 +16,7 @@ interface Props {
     description: string;
   }>;
   useTitleCaseOptions?: boolean;
+  isDisabled?: boolean;
 }
 
 export const Dropdown = ({
@@ -25,6 +26,7 @@ export const Dropdown = ({
   updateSelectedOptions,
   options,
   useTitleCaseOptions,
+  isDisabled,
 }: Props): JSX.Element => {
   const handleOptionClick = (id: string): void => {
     let updatedList: any[] = [];
@@ -40,6 +42,7 @@ export const Dropdown = ({
     <DropdownMenu
       trigger={dropdownName}
       placement={dropdownNamePlacement ?? "bottom-start"}
+      isDisabled={true}
     >
       <DropdownItemCheckboxGroup id={dropdownName + "-options"}>
         {options?.map((option) => (

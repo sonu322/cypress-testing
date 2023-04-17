@@ -21,10 +21,14 @@ import { ErrorsList } from "../common/ErrorsList";
 import { useTranslation } from "react-i18next";
 import { ViewSelect } from "./ViewSelect";
 import { JQLField } from "./JQLField";
-import { TableFieldsField } from "./TableFieldsDropdownField";
+import { TableFieldsDropdownField } from "./TableFieldsDropdownField";
 import { IssueCardFieldsDropdownField } from "./IssueCardFieldsDropdownField";
 import { PageSizeDropdownField } from "./PageSizeDropdownField";
-import { viewTabs } from "../../constants/traceabilityReport";
+import {
+  ISSUE_TYPE_VIEW_ID,
+  LINK_TYPE_VIEW_ID,
+  viewTabs,
+} from "../../constants/traceabilityReport";
 
 type ValidationError = Record<string, string>;
 
@@ -40,7 +44,10 @@ export const GadgetConfigurationForm: React.FC = () => {
     title: DEFAULT_GADGET_TITLE,
     view: "",
     height: DEFAULT_GADGET_HEIGHT,
+    tableFields: [],
   });
+  console.log("initial");
+  console.log(inputConfig);
   const [apiResponseErrors, setApiResponseErrors] = useState<Error[]>([]);
   const dashboardContext = useContext(DashboardContext);
   const {
@@ -93,6 +100,7 @@ export const GadgetConfigurationForm: React.FC = () => {
 
   const handleInputChange = (name, value, type): void => {
     console.log("HANDLE INPUT CHANGE CALLED");
+    console.log(name, value, type);
     let parsedValue: unknown = value;
     if (type === "number") {
       parsedValue = parseFloat(value);
@@ -130,6 +138,7 @@ export const GadgetConfigurationForm: React.FC = () => {
     label: tab.name,
     value: tab.id,
   }));
+  console.log("INPUT CONFIg", inputConfig);
   return (
     <div>
       <ErrorsList errors={apiResponseErrors} />
@@ -143,7 +152,7 @@ export const GadgetConfigurationForm: React.FC = () => {
               />
               <FormSection>
                 <ViewSelect
-                  name={"view"}
+                  name={"viewType"}
                   label={"Select a view"}
                   options={reportViewOptions}
                   value={inputConfig.view}
@@ -159,15 +168,16 @@ export const GadgetConfigurationForm: React.FC = () => {
                     ]);
                   }}
                 />
-                <TableFieldsField
-                  selectedOptionIds={[]}
-                  updateSelectedOptionIds={() => {
-                    console.log("updateSelectedoptionids called");
-                  }}
-                  handleNewError={() => {
+
+                <TableFieldsDropdownField
+                  viewType={inputConfig.viewType}
+                  selectedOptionIds={inputConfig.tableFields}
+                  handleInputChange={handleInputChange}
+                  handleApiError={() => {
                     console.log("handleNewError called");
                   }}
                 />
+
                 <IssueCardFieldsDropdownField
                   selectedOptionIds={[]}
                   updateSelectedOptionIds={() => {
