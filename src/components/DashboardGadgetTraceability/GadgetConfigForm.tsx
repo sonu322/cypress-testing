@@ -62,7 +62,6 @@ export const GadgetConfigurationForm: React.FC = () => {
     updateIsConfiguring(false);
   };
   const handleSave = async (): Promise<ValidationError> => {
-    console.log("handle save called");
     setApiResponseErrors([]);
     const errors = validate(inputConfig);
     console.log(errors);
@@ -70,8 +69,6 @@ export const GadgetConfigurationForm: React.FC = () => {
       return errors;
     }
     try {
-      console.log("calling apis");
-
       await Promise.all([
         api.editDashboardItemProperty(
           dashboardId,
@@ -155,16 +152,11 @@ export const GadgetConfigurationForm: React.FC = () => {
                 <JQLField
                   selectedJQLString={inputConfig.jql}
                   handleInputChange={handleInputChange}
-                  // updateSelectedJQLString={(value) => {
-                  //   console.log("updateSelectedJQLString called");
-                  //   console.log(value);
-                  //   setInputConfig((prevConfig) => ({
-                  //     ...prevConfig,
-                  //     jql: value,
-                  //   }));
-                  // }}
-                  handleNewError={() => {
-                    console.log("handleNewError called");
+                  handleApiError={(error: Error) => {
+                    setApiResponseErrors((prevErrors) => [
+                      ...prevErrors,
+                      error,
+                    ]);
                   }}
                 />
                 <TableFieldsField

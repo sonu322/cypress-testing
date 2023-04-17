@@ -2,13 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { JQLEditor } from "../JQLEditor";
 import { JQLSelectDropdown } from "../JQLSelectDropdown";
-import Form, {
-  Field,
-  ErrorMessage,
-  FormHeader,
-  FormSection,
-  FormFooter,
-} from "@atlaskit/form";
+import { Field, ErrorMessage } from "@atlaskit/form";
 import { useTranslation } from "react-i18next";
 const FlexContainer = styled.div`
   display: flex;
@@ -17,16 +11,15 @@ const FlexContainer = styled.div`
 `;
 
 interface Props {
-  updateSelectedJQLString: (value: string) => void;
   selectedJQLString: string;
-  handleNewError: (error: unknown) => void;
+  handleApiError: (error: Error) => void;
   showCustomJQLEditor?: () => void;
   handleInputChange: (name: any, value: any, type?: any) => void;
 }
 export const JQLField: React.FC<Props> = ({
   selectedJQLString,
   handleInputChange,
-  handleNewError,
+  handleApiError,
   showCustomJQLEditor,
 }) => {
   const { t } = useTranslation();
@@ -35,15 +28,14 @@ export const JQLField: React.FC<Props> = ({
   };
   return (
     <Field name="jql" label={"JQL"}>
-      {({ fieldProps, error }) => {
-        console.log("field props for new comp", fieldProps);
+      {({ error }) => {
         return (
           <>
             <FlexContainer>
               <JQLSelectDropdown
                 selectedFilterId={selectedJQLString}
                 updateSelectedFilterId={updateSelectedJQLString}
-                handleNewError={handleNewError}
+                handleNewError={handleApiError}
               />
               <span>{t("otpl.lxp.traceability-report.toolbar.or")}</span>
               <JQLEditor
