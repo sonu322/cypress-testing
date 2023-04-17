@@ -19,52 +19,37 @@ import JiraCloudImpl from "../../impl/jira/Cloud";
 import APIImpl from "../../impl/Cloud";
 import { ErrorsList } from "../common/ErrorsList";
 import { useTranslation } from "react-i18next";
-import Select, {
-  components,
-  OptionProps,
-  SingleValueProps,
-  ValueType,
-  CreatableSelect,
-} from "@atlaskit/select";
 import { ViewSelect } from "./ViewSelect";
 import { JQLField } from "./JQLField";
 import { TableFieldsField } from "./TableFieldsDropdownField";
 import { IssueCardFieldsDropdownField } from "./IssueCardFieldsDropdownField";
 import { PageSizeDropdownField } from "./PageSizeDropdownField";
+import { viewTabs } from "../../constants/traceabilityReport";
+// interface Option {
+//   label: string;
+//   value: string;
+// }
 
-interface Option {
-  label: string;
-  value: string;
-}
+// interface IssueViewOption extends Option {
+//   label: "Issue Type View";
+// }
 
-interface IssueViewOption extends Option {
-  label: "Issue Type View";
-}
+// interface LinkViewOption extends Option {
+//   label: "Link Type View";
+// }
 
-interface LinkViewOption extends Option {
-  label: "Link Type View";
-}
+// interface TreeViewOption extends Option {
+//   label: "Tree View";
+// }
 
-interface TreeViewOption extends Option {
-  label: "Tree View";
-}
+// type ViewOption = IssueViewOption | LinkViewOption | TreeViewOption;
 
-type ViewOption = IssueViewOption | LinkViewOption | TreeViewOption;
+// const options: ViewOption[] = [
+//   { label: "Issue Type View", value: "issue" },
+//   { label: "Link Type View", value: "link" },
+//   { label: "Tree View", value: "tree" },
+// ];
 
-interface FormValues {
-  view: ValueType<ViewOption>;
-}
-
-const options: ViewOption[] = [
-  { label: "Issue Type View", value: "issue" },
-  { label: "Link Type View", value: "link" },
-  { label: "Tree View", value: "tree" },
-];
-interface Category {
-  colors?: ValueType<Option>;
-  icecream?: ValueType<Option[]>;
-  suit?: ValueType<Option[]>;
-}
 type ValidationError = Record<string, string>;
 
 const createAPI = () => {
@@ -81,11 +66,6 @@ export const GadgetConfigurationForm: React.FC = () => {
     height: DEFAULT_GADGET_HEIGHT,
   });
   const [apiResponseErrors, setApiResponseErrors] = useState<Error[]>([]);
-  // const [options, setOptions] = useState([
-  //   { label: "Issue Type View", value: "issue" },
-  //   { label: "Link Type View", value: "link" },
-  //   { label: "Tree View", value: "tree" },
-  // ]);
   const dashboardContext = useContext(DashboardContext);
   const {
     dashboardId,
@@ -153,8 +133,6 @@ export const GadgetConfigurationForm: React.FC = () => {
   const configureFormDescription = t(
     "otpl.lxp.gadget.configure-form.description"
   );
-  const filterLabel = t("otpl.lxp.gadget.configure-form.fields.filter");
-  const titleLabel = t("otpl.lxp.gadget.configure-form.fields.title");
   const heightLabel = t("otpl.lxp.gadget.configure-form.fields.height");
   const noTitleError = t("otpl.lxp.gadget.configure-form.errors.no-title");
   const badTtileError = t("otpl.lxp.gadget.configure-form.errors.bad-title");
@@ -175,7 +153,10 @@ export const GadgetConfigurationForm: React.FC = () => {
     }
     return errors;
   };
-
+  const reportViewOptions = viewTabs.tabs.map((tab) => ({
+    label: tab.name,
+    value: tab.id,
+  }));
   return (
     <div>
       <ErrorsList errors={apiResponseErrors} />
@@ -191,7 +172,7 @@ export const GadgetConfigurationForm: React.FC = () => {
                 <ViewSelect
                   name={"view"}
                   label={"Select a view"}
-                  options={options}
+                  options={reportViewOptions}
                   value={inputConfig.view}
                   handleInputChange={handleInputChange}
                 />
