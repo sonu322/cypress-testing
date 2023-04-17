@@ -7,20 +7,6 @@ interface OptionType {
   value: string;
 }
 
-// interface IssueViewOption extends OptionType {
-//   label: "Issue Type View";
-// }
-
-// interface LinkViewOption extends OptionType {
-//   label: "Link Type View";
-// }
-
-// interface TreeViewOption extends OptionType {
-//   label: "Tree View";
-// }
-
-// type Option = IssueViewOption | LinkViewOption | TreeViewOption;
-
 export const ViewSelect: React.FC<any> = ({
   name,
   label,
