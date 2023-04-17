@@ -28,6 +28,7 @@ import Select, {
 } from "@atlaskit/select";
 import { ViewSelect } from "./ViewSelect";
 import { JQLField } from "./JQLField";
+import { TableFieldsField } from "./TableFieldsField";
 
 interface Option {
   label: string;
@@ -197,6 +198,15 @@ export const GadgetConfigurationForm: React.FC = () => {
                   updateSelectedJQLString={(value) => {
                     console.log("updateSelectedJQLString called");
                     console.log(value);
+                  }}
+                  handleNewError={() => {
+                    console.log("handleNewError called");
+                  }}
+                />
+                <TableFieldsField
+                  selectedOptionIds={[]}
+                  updateSelectedOptionIds={() => {
+                    console.log("updateSelectedoptionids called");
                   }}
                   handleNewError={() => {
                     console.log("handleNewError called");
