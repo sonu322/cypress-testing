@@ -12,6 +12,7 @@ export const ViewSelect: React.FC<any> = ({
   label,
   options,
   handleInputChange,
+  selectedViewType,
   ...rest
 }) => {
   return (
@@ -23,8 +24,8 @@ export const ViewSelect: React.FC<any> = ({
               inputId={id}
               {...rest}
               options={options}
-              isClearable
               onChange={(selectedOption) => {
+                console.log("FROM ON CHANGE OF VIEW SELECT");
                 console.log(selectedOption);
                 handleInputChange(name, selectedOption.value);
               }}

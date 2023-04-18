@@ -41,6 +41,7 @@ export const TableFieldsDropdownField: React.FC<Props> = ({
   viewType,
 }) => {
   console.log("Selected option ids", selectedOptionIds);
+  console.log("viewType", viewType);
   const { t } = useTranslation();
   const [issueTypes, setIssueTypes] = useState<IssueType[]>([]);
   const [linkTypes, setLinkTypes] = useState<IssueLinkType[]>([]);
@@ -86,7 +87,7 @@ export const TableFieldsDropdownField: React.FC<Props> = ({
     } else {
       handleInputChange("tableFields", []);
     }
-  }, [viewType]);
+  }, [viewType, issueTypes, linkTypes]);
   let viewTypeOptions = [];
   if (viewType === ISSUE_TYPE_VIEW_ID) {
     viewTypeOptions = issueTypes;
@@ -94,7 +95,12 @@ export const TableFieldsDropdownField: React.FC<Props> = ({
     viewTypeOptions = linkTypes;
   }
   console.log("selectedOptionIds", selectedOptionIds);
-  if (areOptionsLoading || selectedOptionIds === undefined) {
+  if (
+    areOptionsLoading ||
+    selectedOptionIds === undefined ||
+    viewType === undefined ||
+    viewType === ""
+  ) {
     return <em></em>;
   } else {
     return (
