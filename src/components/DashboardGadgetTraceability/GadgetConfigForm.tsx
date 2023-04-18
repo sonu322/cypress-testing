@@ -49,6 +49,7 @@ export const GadgetConfigurationForm: React.FC = () => {
     issueCardFields: [],
     pageSize: 20,
   });
+
   console.log("initial");
   console.log(inputConfig);
   const [apiResponseErrors, setApiResponseErrors] = useState<Error[]>([]);
@@ -60,6 +61,13 @@ export const GadgetConfigurationForm: React.FC = () => {
     updateConfig: updateSavedConfig,
     updateIsConfiguring,
   } = dashboardContext;
+
+  useEffect(() => {
+    if (savedConfig !== undefined) {
+      setInputConfig(savedConfig);
+    }
+  }, [savedConfig, setInputConfig]);
+
   const { t } = useTranslation();
 
   const api = useMemo(() => createAPI(), []);
@@ -86,11 +94,11 @@ export const GadgetConfigurationForm: React.FC = () => {
           "config",
           inputConfig
         ),
-        api.editDashboardItemTitle(
-          dashboardId,
-          dashboardItemId,
-          inputConfig.title
-        ),
+        // api.editDashboardItemTitle(
+        //   dashboardId,
+        //   dashboardItemId,
+        //   inputConfig.title
+        // ),
       ]);
       console.log("called apis done");
       updateIsConfiguring(false);
@@ -142,6 +150,7 @@ export const GadgetConfigurationForm: React.FC = () => {
     value: tab.id,
   }));
   console.log("INPUT CONFIg", inputConfig);
+  console.log(apiResponseErrors);
   return (
     <div>
       <ErrorsList errors={apiResponseErrors} />
