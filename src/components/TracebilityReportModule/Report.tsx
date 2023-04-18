@@ -91,6 +91,17 @@ export const Report = ({
     columnsToDisplay.push(...selectedTableFieldIds);
   }
 
+  const optionsWithOrder = tableFields.map((option, index) => ({
+    value: option.id,
+    order: index,
+  }));
+
+  columnsToDisplay.sort((a, b) => {
+    const aIndex = optionsWithOrder.findIndex((option) => option.value === a);
+    const bIndex = optionsWithOrder.findIndex((option) => option.value === b);
+    return optionsWithOrder[aIndex].order - optionsWithOrder[bIndex].order;
+  });
+
   useEffect(() => {
     const resizeHandler = (): void => {
       setTableHeight(() => {
