@@ -41,14 +41,7 @@ const createAPI = () => {
 };
 
 export const GadgetConfigurationForm: React.FC = () => {
-  const [inputConfig, setInputConfig] = useState<any>({
-    title: DEFAULT_GADGET_TITLE,
-    viewType: "",
-    height: DEFAULT_GADGET_HEIGHT,
-    tableFields: [],
-    issueCardFields: [],
-    pageSize: 20,
-  });
+  const [inputConfig, setInputConfig] = useState<any>();
 
   console.log("initial");
   console.log(inputConfig);
@@ -65,17 +58,28 @@ export const GadgetConfigurationForm: React.FC = () => {
   useEffect(() => {
     if (savedConfig !== undefined) {
       setInputConfig(savedConfig);
+    } else {
+      setInputConfig({
+        title: DEFAULT_GADGET_TITLE,
+        viewType: "",
+        height: DEFAULT_GADGET_HEIGHT,
+        tableFields: undefined,
+        issueCardFields: undefined,
+        pageSize: 20,
+      });
     }
   }, [savedConfig, setInputConfig]);
 
   const { t } = useTranslation();
 
   const api = useMemo(() => createAPI(), []);
-  useEffect(() => {
-    if (savedConfig !== undefined) {
-      setInputConfig(savedConfig);
-    }
-  }, [savedConfig, setInputConfig]);
+  // useEffect(() => {
+  //   console.log("saved confi", savedConfig);
+  //   if (savedConfig !== undefined) {
+  //     console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+  //     setInputConfig(savedConfig);
+  //   }
+  // }, [savedConfig, setInputConfig]);
   const handleCancelFormSubmission = (): void => {
     updateIsConfiguring(false);
   };
@@ -87,6 +91,7 @@ export const GadgetConfigurationForm: React.FC = () => {
       return errors;
     }
     try {
+      updateSavedConfig(inputConfig);
       await Promise.all([
         api.editDashboardItemProperty(
           dashboardId,
@@ -94,15 +99,9 @@ export const GadgetConfigurationForm: React.FC = () => {
           "config",
           inputConfig
         ),
-        // api.editDashboardItemTitle(
-        //   dashboardId,
-        //   dashboardItemId,
-        //   inputConfig.title
-        // ),
       ]);
       console.log("called apis done");
       updateIsConfiguring(false);
-      updateSavedConfig(inputConfig);
     } catch (error) {
       console.error(error);
       setApiResponseErrors((prevErrors) => [...prevErrors, error]);
@@ -151,42 +150,30 @@ export const GadgetConfigurationForm: React.FC = () => {
   }));
   console.log("INPUT CONFIg", inputConfig);
   console.log(apiResponseErrors);
-  return (
-    <div>
-      <ErrorsList errors={apiResponseErrors} />
-      <Form onSubmit={handleSave}>
-        {({ formProps }) => {
-          return (
-            <form {...formProps}>
-              <FormHeader
-                title={configureLabel}
-                description={configureFormDescription}
-              />
-              <FormSection>
-                <ViewSelect
-                  name={"viewType"}
-                  label={"Select a view"}
-                  options={reportViewOptions}
-                  selectedViewType={inputConfig.viewType}
-                  handleInputChange={handleInputChange}
-                  isRequired
+  if (inputConfig !== undefined) {
+    return (
+      <div>
+        <ErrorsList errors={apiResponseErrors} />
+        <Form onSubmit={handleSave}>
+          {({ formProps }) => {
+            return (
+              <form {...formProps}>
+                <FormHeader
+                  title={configureLabel}
+                  description={configureFormDescription}
                 />
-                <JQLField
-                  isRequired
-                  selectedJQLString={inputConfig.jql}
-                  handleInputChange={handleInputChange}
-                  handleApiError={(error: Error) => {
-                    setApiResponseErrors((prevErrors) => [
-                      ...prevErrors,
-                      error,
-                    ]);
-                  }}
-                />
-
-                {inputConfig.viewType !== TREE_TYPE_VIEW_ID && (
-                  <TableFieldsDropdownField
-                    viewType={inputConfig.viewType}
-                    selectedOptionIds={inputConfig.tableFields}
+                <FormSection>
+                  <ViewSelect
+                    name={"viewType"}
+                    label={"Select a view"}
+                    options={reportViewOptions}
+                    selectedViewType={inputConfig.viewType}
+                    handleInputChange={handleInputChange}
+                    isRequired
+                  />
+                  <JQLField
+                    isRequired
+                    selectedJQLString={inputConfig.jql}
                     handleInputChange={handleInputChange}
                     handleApiError={(error: Error) => {
                       setApiResponseErrors((prevErrors) => [
@@ -195,73 +182,92 @@ export const GadgetConfigurationForm: React.FC = () => {
                       ]);
                     }}
                   />
-                )}
 
-                <IssueCardFieldsDropdownField
-                  selectedOptionIds={inputConfig.issueCardFields}
-                  handleInputChange={handleInputChange}
-                  handleApiError={(error: Error) => {
-                    setApiResponseErrors((prevErrors) => [
-                      ...prevErrors,
-                      error,
-                    ]);
-                  }}
-                />
-
-                <PageSizeDropdownField
-                  isRequired
-                  handleInputChange={handleInputChange}
-                  selectedLimit={inputConfig.pageSize}
-                />
-
-                <Field
-                  name="height"
-                  label={heightLabel}
-                  defaultValue={MIN_GADGET_HEIGHT}
-                >
-                  {({ fieldProps, error }) => (
-                    <>
-                      <TextField
-                        {...fieldProps}
-                        value={inputConfig.height}
-                        type="number"
-                        min={MIN_GADGET_HEIGHT}
-                        step="1"
-                        onChange={(event) => {
-                          console.log("height", event);
-                          handleInputChange(
-                            "height",
-                            event.target.value,
-                            "number"
-                          );
-                        }}
-                      />
-                      {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
-                    </>
+                  {inputConfig.viewType !== TREE_TYPE_VIEW_ID && (
+                    <TableFieldsDropdownField
+                      viewType={inputConfig.viewType}
+                      selectedOptionIds={inputConfig.tableFields}
+                      handleInputChange={handleInputChange}
+                      handleApiError={(error: Error) => {
+                        setApiResponseErrors((prevErrors) => [
+                          ...prevErrors,
+                          error,
+                        ]);
+                      }}
+                    />
                   )}
-                </Field>
-              </FormSection>
-              <FormFooter>
-                <ButtonGroup>
-                  <Button
-                    appearance="subtle"
-                    onClick={handleCancelFormSubmission}
+                  {console.log(
+                    "from before field",
+                    inputConfig.issueCardFields
+                  )}
+                  <IssueCardFieldsDropdownField
+                    selectedOptionIds={inputConfig.issueCardFields}
+                    handleInputChange={handleInputChange}
+                    handleApiError={(error: Error) => {
+                      setApiResponseErrors((prevErrors) => [
+                        ...prevErrors,
+                        error,
+                      ]);
+                    }}
+                  />
+
+                  <PageSizeDropdownField
+                    isRequired
+                    handleInputChange={handleInputChange}
+                    selectedLimit={inputConfig.pageSize}
+                  />
+
+                  <Field
+                    name="height"
+                    label={heightLabel}
+                    defaultValue={MIN_GADGET_HEIGHT}
                   >
-                    {cancelButtonLabel}
-                  </Button>
-                  <Button
-                    appearance="primary"
-                    type="submit"
-                    onClick={handleSave}
-                  >
-                    {submitButtonLabel}
-                  </Button>
-                </ButtonGroup>
-              </FormFooter>
-            </form>
-          );
-        }}
-      </Form>
-    </div>
-  );
-};
+                    {({ fieldProps, error }) => (
+                      <>
+                        <TextField
+                          {...fieldProps}
+                          value={inputConfig.height}
+                          type="number"
+                          min={MIN_GADGET_HEIGHT}
+                          step="1"
+                          onChange={(event) => {
+                            console.log("height", event);
+                            handleInputChange(
+                              "height",
+                              event.target.value,
+                              "number"
+                            );
+                          }}
+                        />
+                        {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
+                      </>
+                    )}
+                  </Field>
+                </FormSection>
+                <FormFooter>
+                  <ButtonGroup>
+                    <Button
+                      appearance="subtle"
+                      onClick={handleCancelFormSubmission}
+                    >
+                      {cancelButtonLabel}
+                    </Button>
+                    <Button
+                      appearance="primary"
+                      type="submit"
+                      onClick={handleSave}
+                    >
+                      {submitButtonLabel}
+                    </Button>
+                  </ButtonGroup>
+                </FormFooter>
+              </form>
+            );
+          }}
+        </Form>
+      </div>
+    );
+  } else {
+    return <em>asd</em>;
+  }
+};;
