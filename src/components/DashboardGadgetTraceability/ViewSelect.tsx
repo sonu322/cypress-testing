@@ -24,6 +24,9 @@ export const ViewSelect: React.FC<any> = ({
               inputId={id}
               {...rest}
               options={options}
+              value={options.find(
+                (option) => option.value === selectedViewType
+              )}
               onChange={(selectedOption) => {
                 console.log("FROM ON CHANGE OF VIEW SELECT");
                 console.log(selectedOption);

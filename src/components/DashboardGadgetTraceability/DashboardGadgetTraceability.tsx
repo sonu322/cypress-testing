@@ -14,6 +14,7 @@ import APIImpl from "../../impl/Cloud";
 import JiraCloudImpl from "../../impl/jira/Cloud";
 import { getQueryParam } from "../../util/index";
 import { DashboardContext } from "../common/Dashboard/DashboardContext";
+import { ISSUE_TYPE_VIEW_ID } from "../../constants/traceabilityReport";
 
 interface ContainerProps {
   height: number;
@@ -41,7 +42,7 @@ const createAPI = () => {
 };
 
 const DashboardGadget: React.FC = () => {
-  const [isConfiguring, setIsConfiguring] = useState(true);
+  const [isConfiguring, setIsConfiguring] = useState(false);
   const [config, setConfig] = useState<any>();
   const [dashboardId, setDashboardId] = useState();
   const [dashboardItemId, setDashboardItemId] = useState();
@@ -78,7 +79,7 @@ const DashboardGadget: React.FC = () => {
         console.log(error);
         setConfig({
           title: DEFAULT_GADGET_TITLE,
-          viewType: "",
+          viewType: ISSUE_TYPE_VIEW_ID,
           height: DEFAULT_GADGET_HEIGHT,
           tableFields: [],
           issueCardFields: [],
@@ -113,6 +114,8 @@ const DashboardGadget: React.FC = () => {
     dashboardItemId !== undefined &&
     config !== undefined
   ) {
+    console.log("rendering app");
+    console.log(config);
     return (
       <APIContext.Provider value={api}>
         <DashboardContext.Provider
