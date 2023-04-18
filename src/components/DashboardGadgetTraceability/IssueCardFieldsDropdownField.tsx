@@ -1,17 +1,7 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
-import { JQLEditor } from "../JQLEditor";
-import { JQLSelectDropdown } from "../JQLSelectDropdown";
-import Form, {
-  Field,
-  ErrorMessage,
-  FormHeader,
-  FormSection,
-  FormFooter,
-} from "@atlaskit/form";
+import { Field, ErrorMessage } from "@atlaskit/form";
 import { useTranslation } from "react-i18next";
-import { TableFieldsDropdown } from "../TracebilityReportModule/TableFieldsDropdown";
-import { IssueField, IssueLinkType, IssueType } from "../../types/api";
+import { IssueField } from "../../types/api";
 import JiraCloudImpl from "../../impl/jira/Cloud";
 import APIImpl from "../../impl/Cloud";
 import { Dropdown } from "../common/Dropdown";
@@ -51,24 +41,6 @@ export const IssueCardFieldsDropdownField: React.FC<Props> = ({
         setIssueCardFields(result);
         const issueCardFieldIds = result.map((field) => field.id);
         handleInputChange("issueCardFields", issueCardFieldIds);
-        // if (
-        //   lastSavedReportConfig.selectedIssueTypeIds !== undefined &&
-        //   lastSavedReportConfig.selectedIssueTypeIds !== null
-        // ) {
-        //   setSelectedIssueTypeIds(lastSavedReportConfig.selectedIssueTypeIds);
-        // } else {
-        //   setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
-        // }
-        // if (
-        //   lastSavedReportConfig?.selectedLinkTypeIds !== undefined &&
-        //   lastSavedReportConfig?.selectedLinkTypeIds !== null
-        // ) {
-        //   setSelectedLinkTypeIds(lastSavedReportConfig.selectedLinkTypeIds);
-        // } else {
-        //   setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
-        // }
-
-        // loading state
         setAreOptionsLoading(false);
       } catch (error) {
         setAreOptionsLoading(false);

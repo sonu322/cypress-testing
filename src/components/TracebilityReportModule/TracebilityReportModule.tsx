@@ -159,6 +159,9 @@ export const TracebilityReportModule = ({
         (tab) => tab.id === dashboardContext.config.viewType
       );
       console.log("tabIndex: " + tabIndex);
+
+
+      selectedTableFieldIds(dashboardContext.config.tableFields);
       setSelectedTabIndex(tabIndex);
       setSelectedJQLString(dashboardContext.config.jql);
     }
