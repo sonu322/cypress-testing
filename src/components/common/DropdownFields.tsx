@@ -7,6 +7,7 @@ import { toTitleCase } from "../../util";
 import { TooltipContainer } from "./TooltipContainer";
 import { SearchOption } from "./SearchOption";
 import { SelectClearOption } from "./SelectClearOption";
+import Badge from "@atlaskit/badge";
 interface Props {
   selectedOptions: string[];
   dropdownName: any;
@@ -29,6 +30,8 @@ export const DropdownFields = ({
   useTitleCaseOptions,
 }: Props): JSX.Element => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [isFiltered, setIsFiltered] = useState(false);
+  const isAllSelected = selectedOptions.length === options.length;
 
   const handleOptionClick = (id: string): void => {
     let updatedList: any[] = [];
@@ -38,6 +41,7 @@ export const DropdownFields = ({
       updatedList = [...selectedOptions, id];
     }
     updateSelectedOptions(updatedList);
+    setIsFiltered(updatedList.length !== options.length);
   };
 
   const handleSearch = (searchTerm: string): void => {
@@ -47,10 +51,12 @@ export const DropdownFields = ({
   const handleSelectAll = (): void => {
     const allOptionIds = options.map((option) => option.id);
     updateSelectedOptions(allOptionIds);
+    setIsFiltered(false);
   };
 
   const handleClearAll = (): void => {
     updateSelectedOptions([]);
+    setIsFiltered(true);
   };
 
   const filteredOptions = options.filter((options) =>
@@ -60,7 +66,15 @@ export const DropdownFields = ({
   return (
     <div style={{ position: "relative" }}>
       <DropdownMenu
-        trigger={dropdownName}
+        trigger={
+          <div>
+            {dropdownName}
+            <span style={{ marginLeft: "4px" }}>
+              {!isAllSelected &&
+                (isFiltered ? <Badge appearance="primary"></Badge> : null)}
+            </span>
+          </div>
+        }
         placement={dropdownNamePlacement ?? "bottom-start"}
       >
         <div style={{ position: "sticky", top: 0, zIndex: 1 }}>
