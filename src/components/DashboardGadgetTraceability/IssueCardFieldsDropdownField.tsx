@@ -20,6 +20,7 @@ interface Props {
   handleInputChange: (name: any, value: any, type?: any) => void;
   selectedOptionIds: string[];
   handleApiError: (error: Error) => void;
+  isRequired?: boolean;
 }
 
 const createAPI = () => {
@@ -33,6 +34,7 @@ export const IssueCardFieldsDropdownField: React.FC<Props> = ({
   selectedOptionIds,
   handleInputChange,
   handleApiError,
+  isRequired,
 }) => {
   const { t } = useTranslation();
   const [issueCardFields, setIssueCardFields] = useState<IssueField[]>([]);
@@ -81,7 +83,11 @@ export const IssueCardFieldsDropdownField: React.FC<Props> = ({
     return <em>loading</em>;
   } else {
     return (
-      <Field name="issue-cards-fields" label={"Issue Card Fields"}>
+      <Field
+        name="issue-cards-fields"
+        label={"Issue Card Fields"}
+        isRequired={isRequired}
+      >
         {({ error }) => {
           return (
             <div>

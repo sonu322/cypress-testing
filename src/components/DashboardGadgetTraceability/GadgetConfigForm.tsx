@@ -169,8 +169,10 @@ export const GadgetConfigurationForm: React.FC = () => {
                   options={reportViewOptions}
                   selectedViewType={inputConfig.viewType}
                   handleInputChange={handleInputChange}
+                  isRequired
                 />
                 <JQLField
+                  isRequired
                   selectedJQLString={inputConfig.jql}
                   handleInputChange={handleInputChange}
                   handleApiError={(error: Error) => {
@@ -207,6 +209,7 @@ export const GadgetConfigurationForm: React.FC = () => {
                 />
 
                 <PageSizeDropdownField
+                  isRequired
                   handleInputChange={handleInputChange}
                   selectedLimit={inputConfig.pageSize}
                 />

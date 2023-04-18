@@ -13,15 +13,18 @@ const options = [
 interface Props {
   handleInputChange: (name: any, value: any, type: any) => void;
   selectedLimit: number;
+  isRequired: boolean;
 }
 
 export const PageSizeDropdownField: React.FC<Props> = ({
   selectedLimit,
   handleInputChange,
+  isRequired,
 }) => {
   const { t } = useTranslation();
   return (
     <Field
+      isRequired={isRequired}
       name="pageSize"
       label={t("otpl.lxp.traceability-report.fetch-limit-dropdown.name")}
     >

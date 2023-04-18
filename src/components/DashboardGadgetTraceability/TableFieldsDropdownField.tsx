@@ -15,6 +15,7 @@ interface Props {
   selectedOptionIds: string[];
   handleApiError: (error: unknown) => void;
   viewType: string;
+  isRequired: boolean;
 }
 
 const createAPI = () => {
@@ -29,6 +30,7 @@ export const TableFieldsDropdownField: React.FC<Props> = ({
   handleInputChange,
   handleApiError,
   viewType,
+  isRequired,
 }) => {
   const { t } = useTranslation();
   const [issueTypes, setIssueTypes] = useState<IssueType[]>([]);
@@ -87,7 +89,11 @@ export const TableFieldsDropdownField: React.FC<Props> = ({
     return <em></em>;
   } else {
     return (
-      <Field name={"tableFields"} label={"Table Fields"}>
+      <Field
+        name={"tableFields"}
+        label={"Table Fields"}
+        isRequired={isRequired}
+      >
         {({ error }) => {
           return (
             <div>
