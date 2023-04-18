@@ -78,8 +78,11 @@ const DashboardGadget: React.FC = () => {
         console.log(error);
         setConfig({
           title: DEFAULT_GADGET_TITLE,
-          issueKey: "",
+          viewType: "",
           height: DEFAULT_GADGET_HEIGHT,
+          tableFields: [],
+          issueCardFields: [],
+          pageSize: 20,
         });
         setIsConfiguring(true);
       }

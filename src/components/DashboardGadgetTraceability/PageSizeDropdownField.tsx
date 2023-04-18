@@ -11,14 +11,13 @@ const options = [
 ];
 
 interface Props {
-  updateSelectedLimit: (value: number) => void;
+  handleInputChange: (name: any, value: any, type: any) => void;
   selectedLimit: number;
-  handleNewError: (error: unknown) => void;
 }
 
 export const PageSizeDropdownField: React.FC<Props> = ({
   selectedLimit,
-  updateSelectedLimit,
+  handleInputChange,
 }) => {
   const { t } = useTranslation();
   return (
@@ -36,7 +35,9 @@ export const PageSizeDropdownField: React.FC<Props> = ({
                 ` (${selectedLimit})`
               }
               selectedOptionId={selectedLimit}
-              updateSelectedOptionId={updateSelectedLimit}
+              updateSelectedOptionId={(selectedLimit) => {
+                handleInputChange("pageSize", selectedLimit);
+              }}
             />
             {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
           </div>

@@ -47,6 +47,7 @@ export const GadgetConfigurationForm: React.FC = () => {
     height: DEFAULT_GADGET_HEIGHT,
     tableFields: [],
     issueCardFields: [],
+    pageSize: 20,
   });
   console.log("initial");
   console.log(inputConfig);
@@ -100,7 +101,7 @@ export const GadgetConfigurationForm: React.FC = () => {
     }
   };
 
-  const handleInputChange = (name, value, type): void => {
+  const handleInputChange = (name, value, type?): void => {
     console.log("HANDLE INPUT CHANGE CALLED");
     console.log(name, value, type);
     let parsedValue: unknown = value;
@@ -197,14 +198,8 @@ export const GadgetConfigurationForm: React.FC = () => {
                 />
 
                 <PageSizeDropdownField
-                  updateSelectedLimit={(value: number) => {
-                    console.log(value);
-                    console.log("updateSelectedLimit called");
-                  }}
-                  selectedLimit={50}
-                  handleNewError={() => {
-                    console.log("handleNewError called");
-                  }}
+                  handleInputChange={handleInputChange}
+                  selectedLimit={inputConfig.pageSize}
                 />
 
                 <Field
