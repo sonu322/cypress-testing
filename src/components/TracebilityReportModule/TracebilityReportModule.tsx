@@ -35,6 +35,7 @@ import TreeUtils from "../../util/TreeUtils";
 import { lastSavedReportConfigKey } from "../../constants/common";
 import { LastSavedReportConfig } from "../../types/app";
 import { ExportRecordsLoadingModal } from "./ExportRecordsLoadingModal";
+import { DashboardContext } from "../common/Dashboard/DashboardContext";
 
 const FullWidthContainer = styled.div`
   width: 100%;
@@ -82,6 +83,9 @@ export const TracebilityReportModule = ({
   const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>();
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [isExportReportLoading, setIsExportReportLoading] = useState(false);
+  const dashboardContext = useContext(DashboardContext);
+  console.log("DASHBOARD CONTEXT", dashboardContext);
+
   useEffect(() => {
     if (selectedTabIndex !== undefined) {
       handleSetItemInSavedReportConfig("selectedTabIndex", selectedTabIndex);
@@ -123,7 +127,11 @@ export const TracebilityReportModule = ({
     const lastSavedReportConfig: LastSavedReportConfig = getItemInLocalStorage(
       lastSavedReportConfigKey
     );
-    if (lastSavedReportConfig !== undefined && lastSavedReportConfig !== null) {
+    if (
+      lastSavedReportConfig !== undefined &&
+      lastSavedReportConfig !== null &&
+      !isFromDashboardGadget
+    ) {
       if (
         lastSavedReportConfig.selectedTabIndex !== undefined &&
         lastSavedReportConfig.selectedTabIndex !== null
@@ -141,6 +149,20 @@ export const TracebilityReportModule = ({
       setIsOrphansBranchPresent(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (
+      isFromDashboardGadget &&
+      dashboardContext.config?.viewType !== undefined
+    ) {
+      const tabIndex = viewTabs.tabs.findIndex(
+        (tab) => tab.id === dashboardContext.config.viewType
+      );
+      console.log("tabIndex: " + tabIndex);
+      setSelectedTabIndex(tabIndex);
+      setSelectedJQLString(dashboardContext.config.jql);
+    }
+  }, [dashboardContext, isFromDashboardGadget]);
 
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
