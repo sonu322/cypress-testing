@@ -49,11 +49,13 @@ const GrowContainer = styled.div`
 
 interface Props {
   showCustomJQLEditor?: any;
+  isFromDashboardGadget?: boolean;
 }
 const DEFAULT_ROWS_PER_PAGE = 20;
 
 export const TracebilityReportModule = ({
   showCustomJQLEditor,
+  isFromDashboardGadget,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
   const treeFilterContext = useContext(TreeFilterContext);
@@ -353,6 +355,7 @@ export const TracebilityReportModule = ({
                   ? exportTreeReportOptions
                   : exportTabularReportOptions
               }
+              isFromDashboardGadget={isFromDashboardGadget}
               selectedJQLString={selectedJQLString}
               issueCardOptions={issueFields}
               selectedIssueFieldIds={selectedIssueFieldIds}

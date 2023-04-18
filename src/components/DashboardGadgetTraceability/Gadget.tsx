@@ -8,6 +8,6 @@ interface GadgetProps {
 export const Gadget: React.FC<GadgetProps> = () => {
   return (
     // <IssueLinksHierarchy rootIssueKey={issueKey} isFromDashboardGadget={true} />
-    <TracebilityReportModule />
+    <TracebilityReportModule isFromDashboardGadget={true} />
   );
 };
