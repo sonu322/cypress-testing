@@ -46,6 +46,7 @@ export const GadgetConfigurationForm: React.FC = () => {
     viewType: "",
     height: DEFAULT_GADGET_HEIGHT,
     tableFields: [],
+    issueCardFields: [],
   });
   console.log("initial");
   console.log(inputConfig);
@@ -175,19 +176,23 @@ export const GadgetConfigurationForm: React.FC = () => {
                     viewType={inputConfig.viewType}
                     selectedOptionIds={inputConfig.tableFields}
                     handleInputChange={handleInputChange}
-                    handleApiError={() => {
-                      console.log("handleNewError called");
+                    handleApiError={(error: Error) => {
+                      setApiResponseErrors((prevErrors) => [
+                        ...prevErrors,
+                        error,
+                      ]);
                     }}
                   />
                 )}
 
                 <IssueCardFieldsDropdownField
-                  selectedOptionIds={[]}
-                  updateSelectedOptionIds={() => {
-                    console.log("updateSelectedoptionids called");
-                  }}
-                  handleNewError={() => {
-                    console.log("handleNewError called");
+                  selectedOptionIds={inputConfig.issueCardFields}
+                  handleInputChange={handleInputChange}
+                  handleApiError={(error: Error) => {
+                    setApiResponseErrors((prevErrors) => [
+                      ...prevErrors,
+                      error,
+                    ]);
                   }}
                 />
 

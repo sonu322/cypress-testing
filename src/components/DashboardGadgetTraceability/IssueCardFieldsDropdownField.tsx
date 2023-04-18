@@ -15,16 +15,11 @@ import { IssueField, IssueLinkType, IssueType } from "../../types/api";
 import JiraCloudImpl from "../../impl/jira/Cloud";
 import APIImpl from "../../impl/Cloud";
 import { Dropdown } from "../common/Dropdown";
-const FlexContainer = styled.div`
-  display: flex;
-  gap: 8px;
-  line-height: 32px;
-`;
 
 interface Props {
-  updateSelectedOptionIds: (value: string[]) => void;
+  handleInputChange: (name: any, value: any, type?: any) => void;
   selectedOptionIds: string[];
-  handleNewError: (error: unknown) => void;
+  handleApiError: (error: Error) => void;
 }
 
 const createAPI = () => {
@@ -36,8 +31,8 @@ const createAPI = () => {
 
 export const IssueCardFieldsDropdownField: React.FC<Props> = ({
   selectedOptionIds,
-  updateSelectedOptionIds,
-  handleNewError,
+  handleInputChange,
+  handleApiError,
 }) => {
   const { t } = useTranslation();
   const [issueCardFields, setIssueCardFields] = useState<IssueField[]>([]);
@@ -52,7 +47,8 @@ export const IssueCardFieldsDropdownField: React.FC<Props> = ({
         // setting state - table field options
 
         setIssueCardFields(result);
-
+        const issueCardFieldIds = result.map((field) => field.id);
+        handleInputChange("issueCardFields", issueCardFieldIds);
         // if (
         //   lastSavedReportConfig.selectedIssueTypeIds !== undefined &&
         //   lastSavedReportConfig.selectedIssueTypeIds !== null
@@ -74,28 +70,34 @@ export const IssueCardFieldsDropdownField: React.FC<Props> = ({
         setAreOptionsLoading(false);
       } catch (error) {
         setAreOptionsLoading(false);
-        handleNewError(error);
+        handleApiError(error);
       }
     };
     void loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return (
-    <Field name="issue-cards-fields" label={"Issue Card Fields"}>
-      {({ fieldProps, error }) => {
-        return (
-          <div>
-            <Dropdown
-              dropdownName={t("otpl.lxp.toolbar.issue-card-fields")}
-              options={issueCardFields}
-              selectedOptions={selectedOptionIds}
-              updateSelectedOptionIds={updateSelectedOptionIds}
-            />
-            {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
-          </div>
-        );
-      }}
-    </Field>
-  );
+  if (areOptionsLoading || selectedOptionIds === undefined) {
+    return <em>loading</em>;
+  } else {
+    return (
+      <Field name="issue-cards-fields" label={"Issue Card Fields"}>
+        {({ error }) => {
+          return (
+            <div>
+              <Dropdown
+                dropdownName={t("otpl.lxp.toolbar.issue-card-fields")}
+                options={issueCardFields}
+                selectedOptions={selectedOptionIds}
+                updateSelectedOptions={(value) => {
+                  handleInputChange("issueCardFields", value);
+                }}
+              />
+              {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
+            </div>
+          );
+        }}
+      </Field>
+    );
+  }
 };
