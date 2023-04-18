@@ -15,19 +15,21 @@ interface Props {
   handleApiError: (error: Error) => void;
   showCustomJQLEditor?: () => void;
   handleInputChange: (name: any, value: any, type?: any) => void;
+  isRequired: boolean;
 }
 export const JQLField: React.FC<Props> = ({
   selectedJQLString,
   handleInputChange,
   handleApiError,
   showCustomJQLEditor,
+  isRequired,
 }) => {
   const { t } = useTranslation();
   const updateSelectedJQLString = (filterId: string): void => {
     handleInputChange("jql", filterId);
   };
   return (
-    <Field name="jql" label={"JQL"}>
+    <Field name="jql" label={"JQL"} isRequired={isRequired}>
       {({ error }) => {
         return (
           <>
