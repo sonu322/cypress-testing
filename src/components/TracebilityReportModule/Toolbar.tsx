@@ -145,13 +145,6 @@ export const Toolbar = ({
               description={t("otpl.lxp.common.get-help")}
               href={helpLinkUrl}
             />
-            {isFromDashboardGadget && (
-              <ConfigureGadgetButton
-                handleClick={() => {
-                  dashboardContext.updateIsConfiguring(true);
-                }}
-              />
-            )}
           </ButtonGroup>
         </div>
       </MainBar>
