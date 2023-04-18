@@ -66,14 +66,19 @@ export const TableFieldsDropdownField: React.FC<Props> = ({
   useEffect(() => {
     if (viewType === ISSUE_TYPE_VIEW_ID) {
       const optionIds = issueTypes.map((issueType) => issueType.id);
-      handleInputChange("tableFields", optionIds);
+      if (selectedOptionIds === undefined) {
+        handleInputChange("tableFields", optionIds);
+      }
     } else if (viewType === LINK_TYPE_VIEW_ID) {
       const optionIds = linkTypes.map((linkType) => linkType.id);
-      handleInputChange("tableFields", optionIds);
-    } else {
-      handleInputChange("tableFields", []);
+      if (selectedOptionIds === undefined) {
+        handleInputChange("tableFields", optionIds);
+      }
     }
-  }, [viewType, issueTypes, linkTypes]);
+    // else {
+    //   handleInputChange("tableFields", undefined);
+    // }
+  };, [viewType, issueTypes, linkTypes]);
   let viewTypeOptions = [];
   if (viewType === ISSUE_TYPE_VIEW_ID) {
     viewTypeOptions = issueTypes;

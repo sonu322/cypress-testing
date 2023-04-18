@@ -40,7 +40,9 @@ export const IssueCardFieldsDropdownField: React.FC<Props> = ({
 
         setIssueCardFields(result);
         const issueCardFieldIds = result.map((field) => field.id);
-        handleInputChange("issueCardFields", issueCardFieldIds);
+        if (selectedOptionIds === undefined) {
+          handleInputChange("issueCardFields", issueCardFieldIds);
+        }
         setAreOptionsLoading(false);
       } catch (error) {
         setAreOptionsLoading(false);

@@ -28,6 +28,8 @@ import {
   exportAllRecordsId,
   exportCurrentPageId,
   exportTreeReportOptions,
+  ISSUE_TYPE_VIEW_ID,
+  LINK_TYPE_VIEW_ID,
 } from "../../constants/traceabilityReport";
 import { TreeReportToolbar } from "./TreeReportToolbar";
 import { TreeFilterContext } from "../../context/treeFilterContext";
@@ -158,10 +160,7 @@ export const TracebilityReportModule = ({
       const tabIndex = viewTabs.tabs.findIndex(
         (tab) => tab.id === dashboardContext.config.viewType
       );
-      console.log("tabIndex: " + tabIndex);
 
-
-      selectedTableFieldIds(dashboardContext.config.tableFields);
       setSelectedTabIndex(tabIndex);
       setSelectedJQLString(dashboardContext.config.jql);
     }
@@ -211,6 +210,7 @@ export const TracebilityReportModule = ({
   };
   useEffect(() => {
     const loadData = async (): Promise<void> => {
+      console.log("loaddata called");
       try {
         const result = await Promise.all([
           api.getIssueTypes(),
@@ -225,36 +225,65 @@ export const TracebilityReportModule = ({
         // setting state - selected field ids
 
         // setting state - table field options
-
+        console.log("is form dashboard", isFromDashboardGadget);
         setIssueTypes(issueTypes);
         const lastSavedReportConfig: LastSavedReportConfig =
           getItemInLocalStorage(lastSavedReportConfigKey);
         setLinkTypes(linkTypes);
-        if (
-          lastSavedReportConfig?.selectedIssueTypeIds !== undefined &&
-          lastSavedReportConfig?.selectedIssueTypeIds !== null
-        ) {
-          setSelectedIssueFieldIds(lastSavedReportConfig.selectedIssueFieldIds);
-        } else {
-          const selectedFieldIds = getKeyValues(fields, "id");
-          setSelectedIssueFieldIds(selectedFieldIds);
-        }
+        if (!isFromDashboardGadget) {
+          if (
+            lastSavedReportConfig?.selectedIssueTypeIds !== undefined &&
+            lastSavedReportConfig?.selectedIssueTypeIds !== null
+          ) {
+            setSelectedIssueFieldIds(
+              lastSavedReportConfig.selectedIssueFieldIds
+            );
+          } else {
+            const selectedFieldIds = getKeyValues(fields, "id");
+            setSelectedIssueFieldIds(selectedFieldIds);
+          }
 
-        if (
-          lastSavedReportConfig.selectedIssueTypeIds !== undefined &&
-          lastSavedReportConfig.selectedIssueTypeIds !== null
-        ) {
-          setSelectedIssueTypeIds(lastSavedReportConfig.selectedIssueTypeIds);
+          if (
+            lastSavedReportConfig.selectedIssueTypeIds !== undefined &&
+            lastSavedReportConfig.selectedIssueTypeIds !== null
+          ) {
+            setSelectedIssueTypeIds(lastSavedReportConfig.selectedIssueTypeIds);
+          } else {
+            setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
+          }
+          if (
+            lastSavedReportConfig?.selectedLinkTypeIds !== undefined &&
+            lastSavedReportConfig?.selectedLinkTypeIds !== null
+          ) {
+            setSelectedLinkTypeIds(lastSavedReportConfig.selectedLinkTypeIds);
+          } else {
+            setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
+          }
         } else {
-          setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
-        }
-        if (
-          lastSavedReportConfig?.selectedLinkTypeIds !== undefined &&
-          lastSavedReportConfig?.selectedLinkTypeIds !== null
-        ) {
-          setSelectedLinkTypeIds(lastSavedReportConfig.selectedLinkTypeIds);
-        } else {
-          setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
+          console.log("code from isdashboard");
+          if (dashboardContext.config.issueCardFields !== undefined) {
+            console.log(dashboardContext.config.issueCardFields);
+            setSelectedIssueFieldIds(dashboardContext.config.issueCardFields);
+          } else {
+            const selectedFieldIds = getKeyValues(fields, "id");
+            setSelectedIssueFieldIds(selectedFieldIds);
+          }
+          if (dashboardContext.config.viewType === ISSUE_TYPE_VIEW_ID) {
+            console.log("setting from config");
+            console.log(dashboardContext.config);
+            setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
+            setSelectedIssueTypeIds(dashboardContext.config.tableFields);
+          } else if (dashboardContext.config.viewType === LINK_TYPE_VIEW_ID) {
+            console.log("setting from config");
+            console.log(dashboardContext.config);
+            setSelectedLinkTypeIds(dashboardContext.config.tableFields);
+            setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
+          } else {
+            console.log("setting from else");
+            console.log(dashboardContext.config);
+            setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
+            setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
+          }
         }
 
         // loading state
@@ -299,7 +328,9 @@ export const TracebilityReportModule = ({
   const allTableFieldIds = tableFields.map((field) => field.id);
 
   const emptyEqualsAllTableIds =
-    selectedTableFieldIds.length > 0 ? selectedTableFieldIds : allTableFieldIds;
+    selectedTableFieldIds?.length > 0
+      ? selectedTableFieldIds
+      : allTableFieldIds;
   const title = t("otpl.lxp.traceability-report.name");
   const selectedViewTab = viewTabs.tabs[selectedTabIndex].id;
   const isTreeReport = selectedViewTab === "tree-view";
@@ -369,32 +400,38 @@ export const TracebilityReportModule = ({
       <PageHeader
         bottomBar={
           <>
-            <Toolbar
-              selectedSettingsDropdownIds={selectedSettingsDropdownIds}
-              setSelectedSettingsDropdownIds={setSelectedSettingsDropdownIds}
-              settingsDropdown={reportCellOptions}
-              updateSelectedJQLString={updateSelectedJQLString}
-              exportReport={exportAction}
-              exportDropdownOptions={
-                isTreeReport
-                  ? exportTreeReportOptions
-                  : exportTabularReportOptions
-              }
-              isFromDashboardGadget={isFromDashboardGadget}
-              selectedJQLString={selectedJQLString}
-              issueCardOptions={issueFields}
-              selectedIssueFieldIds={selectedIssueFieldIds}
-              setSelectedIssueFieldIds={setSelectedIssueFieldIds}
-              selectedViewTab={selectedViewTab}
-              selectedTableFieldIds={selectedTableFieldIds}
-              updateSelectedTableFieldIds={updateSelectedTableFieldIds}
-              tableFields={tableFields}
-              showCustomJQLEditor={showCustomJQLEditor}
-              isExportDisabled={isExportDisabled}
-              handleNewError={handleNewError}
-              handleTabOptionSelect={handleTabOptionSelect}
-              selectedTabIndex={selectedTabIndex}
-            />
+            {selectedIssueFieldIds !== undefined &&
+              selectedIssueTypeIds !== undefined &&
+              selectedLinkTypeIds !== undefined && (
+                <Toolbar
+                  selectedSettingsDropdownIds={selectedSettingsDropdownIds}
+                  setSelectedSettingsDropdownIds={
+                    setSelectedSettingsDropdownIds
+                  }
+                  settingsDropdown={reportCellOptions}
+                  updateSelectedJQLString={updateSelectedJQLString}
+                  exportReport={exportAction}
+                  exportDropdownOptions={
+                    isTreeReport
+                      ? exportTreeReportOptions
+                      : exportTabularReportOptions
+                  }
+                  isFromDashboardGadget={isFromDashboardGadget}
+                  selectedJQLString={selectedJQLString}
+                  issueCardOptions={issueFields}
+                  selectedIssueFieldIds={selectedIssueFieldIds}
+                  setSelectedIssueFieldIds={setSelectedIssueFieldIds}
+                  selectedViewTab={selectedViewTab}
+                  selectedTableFieldIds={selectedTableFieldIds}
+                  updateSelectedTableFieldIds={updateSelectedTableFieldIds}
+                  tableFields={tableFields}
+                  showCustomJQLEditor={showCustomJQLEditor}
+                  isExportDisabled={isExportDisabled}
+                  handleNewError={handleNewError}
+                  handleTabOptionSelect={handleTabOptionSelect}
+                  selectedTabIndex={selectedTabIndex}
+                />
+              )}
             {isTreeReport && areTreeNecessitiesPresent && (
               <TreeReportToolbar
                 options={treeFilterContext.options}
