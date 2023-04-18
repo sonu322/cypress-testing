@@ -27,6 +27,7 @@ import { PageSizeDropdownField } from "./PageSizeDropdownField";
 import {
   ISSUE_TYPE_VIEW_ID,
   LINK_TYPE_VIEW_ID,
+  TREE_TYPE_VIEW_ID,
   viewTabs,
 } from "../../constants/traceabilityReport";
 
@@ -42,7 +43,7 @@ const createAPI = () => {
 export const GadgetConfigurationForm: React.FC = () => {
   const [inputConfig, setInputConfig] = useState<any>({
     title: DEFAULT_GADGET_TITLE,
-    view: "",
+    viewType: "",
     height: DEFAULT_GADGET_HEIGHT,
     tableFields: [],
   });
@@ -155,7 +156,7 @@ export const GadgetConfigurationForm: React.FC = () => {
                   name={"viewType"}
                   label={"Select a view"}
                   options={reportViewOptions}
-                  value={inputConfig.view}
+                  selectedViewType={inputConfig.viewType}
                   handleInputChange={handleInputChange}
                 />
                 <JQLField
@@ -169,14 +170,16 @@ export const GadgetConfigurationForm: React.FC = () => {
                   }}
                 />
 
-                <TableFieldsDropdownField
-                  viewType={inputConfig.viewType}
-                  selectedOptionIds={inputConfig.tableFields}
-                  handleInputChange={handleInputChange}
-                  handleApiError={() => {
-                    console.log("handleNewError called");
-                  }}
-                />
+                {inputConfig.viewType !== TREE_TYPE_VIEW_ID && (
+                  <TableFieldsDropdownField
+                    viewType={inputConfig.viewType}
+                    selectedOptionIds={inputConfig.tableFields}
+                    handleInputChange={handleInputChange}
+                    handleApiError={() => {
+                      console.log("handleNewError called");
+                    }}
+                  />
+                )}
 
                 <IssueCardFieldsDropdownField
                   selectedOptionIds={[]}
