@@ -474,6 +474,7 @@ export const TracebilityReportModule = ({
           }}
           tree={tree}
           setTree={setTree}
+          isFromDashboardGadget={isFromDashboardGadget}
         />
       </GrowContainer>
     </FullWidthContainer>

@@ -11,7 +11,7 @@ const options = [
 ];
 
 interface Props {
-  handleInputChange: (name: any, value: any, type: any) => void;
+  handleInputChange: (name: any, value: any, type?: any) => void;
   selectedLimit: number;
   isRequired: boolean;
 }
