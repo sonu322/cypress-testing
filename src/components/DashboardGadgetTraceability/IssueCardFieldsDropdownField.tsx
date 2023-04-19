@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Field, ErrorMessage } from "@atlaskit/form";
 import { useTranslation } from "react-i18next";
 import { IssueField } from "../../types/api";
 import JiraCloudImpl from "../../impl/jira/Cloud";
-import APIImpl from "../../impl/Cloud";
 import { Dropdown } from "../common/Dropdown";
+import { APIContext } from "../../context/api";
 
 interface Props {
   handleInputChange: (name: any, value: any, type?: any) => void;
@@ -12,13 +12,6 @@ interface Props {
   handleApiError: (error: Error) => void;
   isRequired?: boolean;
 }
-
-const createAPI = () => {
-  const jiraCloud = new JiraCloudImpl();
-  const api = new APIImpl(jiraCloud);
-
-  return api;
-};
 
 export const IssueCardFieldsDropdownField: React.FC<Props> = ({
   selectedOptionIds,
@@ -30,7 +23,7 @@ export const IssueCardFieldsDropdownField: React.FC<Props> = ({
   const [issueCardFields, setIssueCardFields] = useState<IssueField[]>([]);
   const [areOptionsLoading, setAreOptionsLoading] = useState(false);
 
-  const api = createAPI();
+  const api = useContext(APIContext);
   useEffect(() => {
     const loadData = async (): Promise<void> => {
       try {

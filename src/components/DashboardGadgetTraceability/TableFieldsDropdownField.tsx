@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Field, ErrorMessage } from "@atlaskit/form";
 import { useTranslation } from "react-i18next";
 import { TableFieldsDropdown } from "../TracebilityReportModule/TableFieldsDropdown";
 import { IssueLinkType, IssueType } from "../../types/api";
-import JiraCloudImpl from "../../impl/jira/Cloud";
-import APIImpl from "../../impl/Cloud";
 import {
   ISSUE_TYPE_VIEW_ID,
   LINK_TYPE_VIEW_ID,
 } from "../../constants/traceabilityReport";
+import { APIContext } from "../../context/api";
 
 interface Props {
   handleInputChange: (name: any, value: any, type?: any) => void;
@@ -18,12 +17,6 @@ interface Props {
   isRequired: boolean;
 }
 
-const createAPI = () => {
-  const jiraCloud = new JiraCloudImpl();
-  const api = new APIImpl(jiraCloud);
-
-  return api;
-};
 
 export const TableFieldsDropdownField: React.FC<Props> = ({
   selectedOptionIds,
@@ -37,7 +30,7 @@ export const TableFieldsDropdownField: React.FC<Props> = ({
   const [linkTypes, setLinkTypes] = useState<IssueLinkType[]>([]);
   const [areOptionsLoading, setAreOptionsLoading] = useState(false);
 
-  const api = createAPI();
+  const api = useContext(APIContext);
   useEffect(() => {
     const loadData = async (): Promise<void> => {
       try {

@@ -30,16 +30,9 @@ import {
   TREE_TYPE_VIEW_ID,
   viewTabs,
 } from "../../constants/traceabilityReport";
+import { APIContext } from "../../context/api";
 
 type ValidationError = Record<string, string>;
-
-const createAPI = () => {
-  const jiraCloud = new JiraCloudImpl();
-  const api = new APIImpl(jiraCloud);
-
-  return api;
-};
-
 export const GadgetConfigurationForm: React.FC = () => {
   const [inputConfig, setInputConfig] = useState<any>();
 
@@ -72,14 +65,7 @@ export const GadgetConfigurationForm: React.FC = () => {
 
   const { t } = useTranslation();
 
-  const api = useMemo(() => createAPI(), []);
-  // useEffect(() => {
-  //   console.log("saved confi", savedConfig);
-  //   if (savedConfig !== undefined) {
-  //     console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-  //     setInputConfig(savedConfig);
-  //   }
-  // }, [savedConfig, setInputConfig]);
+  const api = useContext(APIContext);
   const handleCancelFormSubmission = (): void => {
     updateIsConfiguring(false);
   };
