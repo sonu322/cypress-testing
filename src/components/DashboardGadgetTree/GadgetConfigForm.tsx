@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   DEFAULT_GADGET_HEIGHT,
   DEFAULT_GADGET_TITLE,
@@ -15,19 +15,11 @@ import Form, {
 import TextField from "@atlaskit/textfield";
 import Button, { ButtonGroup } from "@atlaskit/button";
 import { DashboardContext } from "../common/Dashboard/DashboardContext";
-import JiraCloudImpl from "../../impl/jira/Cloud";
-import APIImpl from "../../impl/Cloud";
 import { ErrorsList } from "../common/ErrorsList";
 import { useTranslation } from "react-i18next";
+import { APIContext } from "../../context/api";
 
 type ValidationError = Record<string, string>;
-
-const createAPI = () => {
-  const jiraCloud = new JiraCloudImpl();
-  const api = new APIImpl(jiraCloud);
-
-  return api;
-};
 
 export const GadgetConfigurationForm: React.FC = () => {
   const [inputConfig, setInputConfig] = useState<TreeGadgetConfig>({
@@ -46,7 +38,7 @@ export const GadgetConfigurationForm: React.FC = () => {
   } = dashboardContext;
   const { t } = useTranslation();
 
-  const api = useMemo(() => createAPI(), []);
+  const api = useContext(APIContext);
   useEffect(() => {
     if (savedConfig !== undefined) {
       setInputConfig(savedConfig);
