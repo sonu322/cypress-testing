@@ -81,7 +81,8 @@ const DashboardGadget: React.FC = () => {
           title: DEFAULT_GADGET_TITLE,
           viewType: ISSUE_TYPE_VIEW_ID,
           height: DEFAULT_GADGET_HEIGHT,
-          tableFields: [],
+          selectedIssueTypeIds: [],
+          selectedLinkTypeIds: [],
           issueCardFields: [],
           pageSize: 20,
         });
