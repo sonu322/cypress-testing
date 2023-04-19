@@ -16,6 +16,7 @@ import { useTranslation } from "react-i18next";
 import { DropdownSingleSelect } from "../common/DropdownSingleSelect";
 import { TreeReport } from "./TreeReport";
 import { AtlasTree } from "../../types/app";
+import { DashboardContext } from "../common/Dashboard/DashboardContext";
 const Container = styled.div`
   width: 100%;
 `;
@@ -62,9 +63,10 @@ interface Props {
   updateIsToggleOrphansLoading: (isToggleOrphansLoading: boolean) => void;
   currentPage: number;
   setCurrentPage: (page: number) => void;
+  isFromDashboardGadget?: boolean;
 }
 
-export const Main = ({
+export const Main: React.FC<Props> = ({
   totalNumberOfIssues,
   updateTotalNumberOfIssues,
   DEFAULT_ROWS_PER_PAGE,
@@ -90,13 +92,14 @@ export const Main = ({
   updateIsToggleOrphansLoading,
   currentPage,
   setCurrentPage,
-}: Props): JSX.Element => {
+  isFromDashboardGadget,
+}) => {
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
   const [selectedLimitOptionId, setSelectedLimitOptionId] = useState(
     DEFAULT_ROWS_PER_PAGE
   );
   const updateCurrentPage = (page: number): void => {
-    //In the updateCurrentPage,all the arguments passing to populateIssues should not be undefined
+    // In the updateCurrentPage,all the arguments passing to populateIssues should not be undefined
     setCurrentPage(page);
     const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
     const startIndex = (page - 1) * selectedLimit;
@@ -113,7 +116,7 @@ export const Main = ({
     );
   };
   const updateSelectedLimitOptionId = (limitOptionId: number): void => {
-    //In the updateSelectedLimitOptionId, all the arguments passing to populateIssues should not be undefined
+    // In the updateSelectedLimitOptionId, all the arguments passing to populateIssues should not be undefined
     setSelectedLimitOptionId(limitOptionId);
     setCurrentPage(1);
     const selectedLimit = limitOptionId;
@@ -130,6 +133,13 @@ export const Main = ({
       clearAllErrors
     );
   };
+  const dashboardContext = useContext(DashboardContext);
+  useEffect(() => {
+    if (isFromDashboardGadget) {
+      const savedFetchLimit = dashboardContext.config.pageSize;
+      setSelectedLimitOptionId(savedFetchLimit);
+    }
+  }, []);
   const { t } = useTranslation();
   const api = useContext(APIContext);
   const addMoreIssues = (issues: IssueWithSortedLinks[]): void => {

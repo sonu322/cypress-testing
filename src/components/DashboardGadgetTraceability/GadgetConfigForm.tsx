@@ -94,8 +94,6 @@ export const GadgetConfigurationForm: React.FC = () => {
         title: DEFAULT_GADGET_TITLE,
         viewType: "",
         height: DEFAULT_GADGET_HEIGHT,
-        // selectedIssueTypeIds: [],
-        // selectedLinkTypeIds: [],
         issueCardFields: undefined,
         pageSize: 20,
       });
