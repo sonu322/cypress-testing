@@ -13,7 +13,8 @@ interface Props {
   options: Array<{
     id: string;
     name: string;
-    description: string;
+    description?: string;
+    [key: string]: any;
   }>;
   useTitleCaseOptions?: boolean;
   isDisabled?: boolean;
@@ -26,7 +27,6 @@ export const Dropdown = ({
   updateSelectedOptions,
   options,
   useTitleCaseOptions,
-  isDisabled,
 }: Props): JSX.Element => {
   const handleOptionClick = (id: string): void => {
     let updatedList: any[] = [];

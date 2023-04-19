@@ -272,11 +272,13 @@ export const TracebilityReportModule = ({
             console.log("setting from config");
             console.log(dashboardContext.config);
             setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
-            setSelectedIssueTypeIds(dashboardContext.config.tableFields);
+            setSelectedIssueTypeIds(
+              dashboardContext.config.selectedIssueTypeIds
+            );
           } else if (dashboardContext.config.viewType === LINK_TYPE_VIEW_ID) {
             console.log("setting from config");
             console.log(dashboardContext.config);
-            setSelectedLinkTypeIds(dashboardContext.config.tableFields);
+            setSelectedLinkTypeIds(dashboardContext.config.selectedLinkTypeIds);
             setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
           } else {
             console.log("setting from else");

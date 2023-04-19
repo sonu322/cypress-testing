@@ -15,8 +15,6 @@ import Form, {
 import TextField from "@atlaskit/textfield";
 import Button, { ButtonGroup } from "@atlaskit/button";
 import { DashboardContext } from "../common/Dashboard/DashboardContext";
-import JiraCloudImpl from "../../impl/jira/Cloud";
-import APIImpl from "../../impl/Cloud";
 import { ErrorsList } from "../common/ErrorsList";
 import { useTranslation } from "react-i18next";
 import { ViewSelect } from "./ViewSelect";
@@ -24,9 +22,9 @@ import { JQLField } from "./JQLField";
 import { TableFieldsDropdownField } from "./TableFieldsDropdownField";
 import { IssueCardFieldsDropdownField } from "./IssueCardFieldsDropdownField";
 import { PageSizeDropdownField } from "./PageSizeDropdownField";
+import { IssueLinkType, IssueType } from "../../types/api";
 import {
   ISSUE_TYPE_VIEW_ID,
-  LINK_TYPE_VIEW_ID,
   TREE_TYPE_VIEW_ID,
   viewTabs,
 } from "../../constants/traceabilityReport";
@@ -35,7 +33,47 @@ import { APIContext } from "../../context/api";
 type ValidationError = Record<string, string>;
 export const GadgetConfigurationForm: React.FC = () => {
   const [inputConfig, setInputConfig] = useState<any>();
+  const [issueTypes, setIssueTypes] = useState<IssueType[]>([]);
+  const [linkTypes, setLinkTypes] = useState<IssueLinkType[]>([]);
+  const [areIssueTypesLoading, setAreIssueTypesLoading] =
+    useState<boolean>(false);
+  const [areLinkTypesLoading, setAreLinkTypesLoading] =
+    useState<boolean>(false);
+  useEffect(() => {
+    const loadData = async (): Promise<void> => {
+      setAreIssueTypesLoading(true);
+      setAreLinkTypesLoading(true);
+      try {
+        const result = await Promise.all([
+          api.getIssueTypes(),
+          api.getIssueLinkTypes(),
+        ]);
 
+        const issueTypes = result[0];
+        const linkTypes = result[1];
+
+        // setting state - table field options
+
+        setIssueTypes(issueTypes);
+        setLinkTypes(linkTypes);
+        const issueTypeIds = issueTypes.map((issueType) => issueType.id);
+        const linkTypeIds = issueTypes.map((linkType) => linkType.id);
+        if (savedConfig === undefined) {
+          handleInputChange("selectedIssueTypeIds", issueTypeIds);
+          handleInputChange("selectedLinkTypeIds", linkTypeIds);
+        }
+        console.log("ISSUE TYPES AND LINK TYPES ARE SET");
+        setAreIssueTypesLoading(false);
+        setAreLinkTypesLoading(false);
+      } catch (error) {
+        setAreIssueTypesLoading(false);
+        setAreLinkTypesLoading(false);
+        setApiResponseErrors((prevErrors) => [...prevErrors, error]);
+      }
+    };
+    void loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   console.log("initial");
   console.log(inputConfig);
   const [apiResponseErrors, setApiResponseErrors] = useState<Error[]>([]);
@@ -56,7 +94,8 @@ export const GadgetConfigurationForm: React.FC = () => {
         title: DEFAULT_GADGET_TITLE,
         viewType: "",
         height: DEFAULT_GADGET_HEIGHT,
-        tableFields: undefined,
+        // selectedIssueTypeIds: [],
+        // selectedLinkTypeIds: [],
         issueCardFields: undefined,
         pageSize: 20,
       });
@@ -136,7 +175,11 @@ export const GadgetConfigurationForm: React.FC = () => {
   }));
   console.log("INPUT CONFIg", inputConfig);
   console.log(apiResponseErrors);
+
   if (inputConfig !== undefined) {
+    console.log("INPut Config", inputConfig);
+    const isIssueTypeViewTabSelected =
+      inputConfig.viewType === ISSUE_TYPE_VIEW_ID;
     return (
       <div>
         <ErrorsList errors={apiResponseErrors} />
@@ -149,30 +192,18 @@ export const GadgetConfigurationForm: React.FC = () => {
                   description={configureFormDescription}
                 />
                 <FormSection>
-                  <ViewSelect
-                    name={"viewType"}
-                    label={"Select a view"}
-                    options={reportViewOptions}
-                    selectedViewType={inputConfig.viewType}
-                    handleInputChange={handleInputChange}
-                    isRequired
-                  />
-                  <JQLField
-                    isRequired
-                    selectedJQLString={inputConfig.jql}
-                    handleInputChange={handleInputChange}
-                    handleApiError={(error: Error) => {
-                      setApiResponseErrors((prevErrors) => [
-                        ...prevErrors,
-                        error,
-                      ]);
-                    }}
-                  />
-
-                  {inputConfig.viewType !== TREE_TYPE_VIEW_ID && (
-                    <TableFieldsDropdownField
-                      viewType={inputConfig.viewType}
-                      selectedOptionIds={inputConfig.tableFields}
+                  <>
+                    <ViewSelect
+                      name={"viewType"}
+                      label={"Select a view"}
+                      options={reportViewOptions}
+                      selectedViewType={inputConfig.viewType}
+                      handleInputChange={handleInputChange}
+                      isRequired
+                    />
+                    <JQLField
+                      isRequired
+                      selectedJQLString={inputConfig.jql}
                       handleInputChange={handleInputChange}
                       handleApiError={(error: Error) => {
                         setApiResponseErrors((prevErrors) => [
@@ -181,54 +212,87 @@ export const GadgetConfigurationForm: React.FC = () => {
                         ]);
                       }}
                     />
-                  )}
-                  {console.log(
-                    "from before field",
-                    inputConfig.issueCardFields
-                  )}
-                  <IssueCardFieldsDropdownField
-                    selectedOptionIds={inputConfig.issueCardFields}
-                    handleInputChange={handleInputChange}
-                    handleApiError={(error: Error) => {
-                      setApiResponseErrors((prevErrors) => [
-                        ...prevErrors,
-                        error,
-                      ]);
-                    }}
-                  />
 
-                  <PageSizeDropdownField
-                    isRequired
-                    handleInputChange={handleInputChange}
-                    selectedLimit={inputConfig.pageSize}
-                  />
-
-                  <Field
-                    name="height"
-                    label={heightLabel}
-                    defaultValue={MIN_GADGET_HEIGHT}
-                  >
-                    {({ fieldProps, error }) => (
-                      <>
-                        <TextField
-                          {...fieldProps}
-                          value={inputConfig.height}
-                          type="number"
-                          min={MIN_GADGET_HEIGHT}
-                          step="1"
-                          onChange={(event) => {
-                            console.log("height", event);
-                            handleInputChange(
-                              "height",
-                              event.target.value,
-                              "number"
-                            );
-                          }}
-                        />
-                        {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
-                      </>
+                    {inputConfig.viewType !== TREE_TYPE_VIEW_ID && (
+                      <TableFieldsDropdownField
+                        options={
+                          isIssueTypeViewTabSelected ? issueTypes : linkTypes
+                        }
+                        viewType={inputConfig.viewType}
+                        selectedOptionIds={
+                          isIssueTypeViewTabSelected
+                            ? inputConfig.selectedIssueTypeIds
+                            : inputConfig.selectedLinkTypeIds
+                        }
+                        configKey={
+                          isIssueTypeViewTabSelected
+                            ? "selectedIssueTypeIds"
+                            : "selectedLinkTypeIds"
+                        }
+                        areOptionsLoading={
+                          isIssueTypeViewTabSelected
+                            ? areIssueTypesLoading
+                            : areLinkTypesLoading
+                        }
+                        handleInputChange={handleInputChange}
+                        handleApiError={(error: Error) => {
+                          setApiResponseErrors((prevErrors) => [
+                            ...prevErrors,
+                            error,
+                          ]);
+                        }}
+                      />
                     )}
-                  </Field>
+                    {console.log(
+                      "from before field",
+                      inputConfig.issueCardFields
+                    )}
+                    <IssueCardFieldsDropdownField
+                      selectedOptionIds={inputConfig.issueCardFields}
+                      handleInputChange={handleInputChange}
+                      handleApiError={(error: Error) => {
+                        setApiResponseErrors((prevErrors) => [
+                          ...prevErrors,
+                          error,
+                        ]);
+                      }}
+                    />
+
+                    <PageSizeDropdownField
+                      isRequired
+                      handleInputChange={handleInputChange}
+                      selectedLimit={inputConfig.pageSize}
+                    />
+
+                    <Field
+                      name="height"
+                      label={heightLabel}
+                      defaultValue={MIN_GADGET_HEIGHT}
+                    >
+                      {({ fieldProps, error }) => (
+                        <>
+                          <TextField
+                            {...fieldProps}
+                            value={inputConfig.height}
+                            type="number"
+                            min={MIN_GADGET_HEIGHT}
+                            step="1"
+                            onChange={(event) => {
+                              console.log("height", event);
+                              handleInputChange(
+                                "height",
+                                event.target.value,
+                                "number"
+                              );
+                            }}
+                          />
+                          {Boolean(error) && (
+                            <ErrorMessage>{error}</ErrorMessage>
+                          )}
+                        </>
+                      )}
+                    </Field>
+                  </>
                 </FormSection>
                 <FormFooter>
                   <ButtonGroup>
