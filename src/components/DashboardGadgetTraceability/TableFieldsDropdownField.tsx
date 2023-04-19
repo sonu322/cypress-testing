@@ -31,57 +31,6 @@ export const TableFieldsDropdownField: React.FC<Props> = ({
   configKey,
 }) => {
   const { t } = useTranslation();
-
-  // const [areOptionsLoading, setAreOptionsLoading] = useState(false);
-
-  // const api = useContext(APIContext);
-  // useEffect(() => {
-  //   const loadData = async (): Promise<void> => {
-  //     try {
-  //       const result = await Promise.all([
-  //         api.getIssueTypes(),
-  //         api.getIssueLinkTypes(),
-  //       ]);
-
-  //       const issueTypes = result[0];
-  //       const linkTypes = result[1];
-
-  //       // setting state - table field options
-
-  //       setIssueTypes(issueTypes);
-  //       setLinkTypes(linkTypes);
-  //       setAreOptionsLoading(false);
-  //     } catch (error) {
-  //       setAreOptionsLoading(false);
-  //       handleApiError(error);
-  //     }
-  //   };
-  //   void loadData();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
-  // useEffect(() => {
-  //   if (viewType === ISSUE_TYPE_VIEW_ID) {
-  //     const optionIds = issueTypes.map((issueType) => issueType.id);
-  //     if (selectedOptionIds === undefined) {
-  //       handleInputChange("tableFields", optionIds);
-  //     }
-  //   } else if (viewType === LINK_TYPE_VIEW_ID) {
-  //     const optionIds = linkTypes.map((linkType) => linkType.id);
-  //     if (selectedOptionIds === undefined) {
-  //       handleInputChange("tableFields", optionIds);
-  //     }
-  //   }
-  //   // else {
-  //   //   handleInputChange("tableFields", undefined);
-  //   // }
-  // };, [viewType, issueTypes, linkTypes]);
-  // let viewTypeOptions = [];
-  // if (viewType === ISSUE_TYPE_VIEW_ID) {
-  //   viewTypeOptions = issueTypes;
-  // } else if (viewType === LINK_TYPE_VIEW_ID) {
-  //   viewTypeOptions = linkTypes;
-  // }
   if (
     areOptionsLoading ||
     selectedOptionIds === undefined ||
