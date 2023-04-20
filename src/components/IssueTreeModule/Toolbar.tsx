@@ -29,6 +29,8 @@ export const Container = styled.div`
   display: flex;
   justify-content: space-between;
   width: 100%;
+  flex-wrap: wrap;
+  gap: 4px;
 `;
 
 export const LeftContainer = styled.div`
