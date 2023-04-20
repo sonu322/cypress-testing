@@ -23,7 +23,6 @@ type ValidationError = Record<string, string>;
 
 export const GadgetConfigurationForm: React.FC = () => {
   const [inputConfig, setInputConfig] = useState<TreeGadgetConfig>({
-    title: DEFAULT_GADGET_TITLE,
     issueKey: "",
     height: DEFAULT_GADGET_HEIGHT,
   });
@@ -55,22 +54,17 @@ export const GadgetConfigurationForm: React.FC = () => {
       return errors;
     }
     try {
-      await Promise.all([
-        api.editDashboardItemProperty(
+      await api
+        .editDashboardItemProperty(
           dashboardId,
           dashboardItemId,
           "config",
           inputConfig
-        ),
-        api.editDashboardItemTitle(
-          dashboardId,
-          dashboardItemId,
-          inputConfig.title
-        ),
-      ]).then(() => {
-        updateSavedConfig(inputConfig);
-        updateIsConfiguring(false);
-      });
+        )
+        .then(() => {
+          updateSavedConfig(inputConfig);
+          updateIsConfiguring(false);
+        });
     } catch (error) {
       console.error(error);
       setApiResponseErrors((prevErrors) => [...prevErrors, error]);
@@ -94,7 +88,6 @@ export const GadgetConfigurationForm: React.FC = () => {
   const configureFormDescription = t(
     "otpl.lxp.gadget.configure-form.description"
   );
-  const titleLabel = t("otpl.lxp.gadget.configure-form.fields.title");
   const issueKeyLabel = t("otpl.lxp.gadget.configure-form.fields.issue-key");
   const heightLabel = t("otpl.lxp.gadget.configure-form.fields.height");
   const noTitleError = t("otpl.lxp.gadget.configure-form.errors.no-title");
@@ -110,13 +103,6 @@ export const GadgetConfigurationForm: React.FC = () => {
   const badHeightError = t("otpl.lxp.gadget.configure-form.errors.bad-height");
   const validate = (values: TreeGadgetConfig): ValidationError => {
     const errors: ValidationError = {};
-    const titleRegex =
-      /^[a-zA-Z][a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/? ]{0,49}$/;
-    if (values.title === undefined || values.title === "") {
-      errors.issueKey = noTitleError;
-    } else if (!titleRegex.test(values.title)) {
-      errors.title = badTtileError;
-    }
     const issueKeyRegex = /^[A-Z][A-Z0-9]{0,9}-\d+$/; // Regex for issue key pattern
     if (values.issueKey === undefined || values.issueKey === "") {
       errors.issueKey = noIssueKeyError;
@@ -144,18 +130,6 @@ export const GadgetConfigurationForm: React.FC = () => {
               />
 
               <FormSection>
-                <Field name="title" label={titleLabel} isRequired>
-                  {({ fieldProps, error }) => (
-                    <>
-                      <TextField
-                        {...fieldProps}
-                        value={inputConfig.title}
-                        onChange={handleInputChange}
-                      />
-                      {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
-                    </>
-                  )}
-                </Field>
                 <Field name="issueKey" label={issueKeyLabel} isRequired>
                   {({ fieldProps, error }) => (
                     <>
