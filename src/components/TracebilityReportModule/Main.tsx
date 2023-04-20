@@ -139,7 +139,7 @@ export const Main: React.FC<Props> = ({
       const savedFetchLimit = dashboardContext.config.pageSize;
       setSelectedLimitOptionId(savedFetchLimit);
     }
-  }, []);
+  }, [dashboardContext, isFromDashboardGadget]);
   const { t } = useTranslation();
   const api = useContext(APIContext);
   const addMoreIssues = (issues: IssueWithSortedLinks[]): void => {
