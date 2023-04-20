@@ -1,9 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  DEFAULT_GADGET_HEIGHT,
-  DEFAULT_GADGET_TITLE,
-  MIN_GADGET_HEIGHT,
-} from "../../constants/tree";
+import { DEFAULT_GADGET_HEIGHT, MIN_GADGET_HEIGHT } from "../../constants/tree";
 import { TreeGadgetConfig } from "../../types/app";
 import Form, {
   Field,
@@ -18,6 +14,7 @@ import { DashboardContext } from "../common/Dashboard/DashboardContext";
 import { ErrorsList } from "../common/ErrorsList";
 import { useTranslation } from "react-i18next";
 import { APIContext } from "../../context/api";
+import { IssueKeyField } from "./IssueKeyField";
 
 type ValidationError = Record<string, string>;
 
@@ -90,8 +87,6 @@ export const GadgetConfigurationForm: React.FC = () => {
   );
   const issueKeyLabel = t("otpl.lxp.gadget.configure-form.fields.issue-key");
   const heightLabel = t("otpl.lxp.gadget.configure-form.fields.height");
-  const noTitleError = t("otpl.lxp.gadget.configure-form.errors.no-title");
-  const badTtileError = t("otpl.lxp.gadget.configure-form.errors.bad-title");
   const submitButtonLabel = t("otpl.lxp.gadget.configure-form.buttons.submit");
   const cancelButtonLabel = t("otpl.lxp.gadget.configure-form.buttons.cancel");
   const noIssueKeyError = t(
@@ -130,7 +125,7 @@ export const GadgetConfigurationForm: React.FC = () => {
               />
 
               <FormSection>
-                <Field name="issueKey" label={issueKeyLabel} isRequired>
+                {/* <Field name="issueKey" label={issueKeyLabel} isRequired>
                   {({ fieldProps, error }) => (
                     <>
                       <TextField
@@ -141,7 +136,12 @@ export const GadgetConfigurationForm: React.FC = () => {
                       {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
                     </>
                   )}
-                </Field>
+                </Field> */}
+                <IssueKeyField
+                  issueKeyLabel={issueKeyLabel}
+                  selectedIssueKey={inputConfig.issueKey}
+                  handleInputChange={handleInputChange}
+                />
                 <Field
                   name="height"
                   label={heightLabel}

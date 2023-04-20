@@ -5,6 +5,14 @@ import {
   DEFAULT_GADGET_HEIGHT,
   DEFAULT_GADGET_TITLE,
 } from "../../constants/tree";
+
+import Form, {
+  Field,
+  ErrorMessage,
+  FormHeader,
+  FormSection,
+  FormFooter,
+} from "@atlaskit/form";
 import Spinner from "@atlaskit/spinner";
 import { APIContext } from "../../context/api";
 import { TreeGadgetConfig } from "../../types/app";
@@ -14,6 +22,7 @@ import APIImpl from "../../impl/Cloud";
 import JiraCloudImpl from "../../impl/jira/Cloud";
 import { getQueryParam } from "../../util/index";
 import { DashboardContext } from "../common/Dashboard/DashboardContext";
+import { IssueKeyField } from "./IssueKeyField";
 
 interface ContainerProps {
   height: number;
@@ -121,11 +130,35 @@ const DashboardGadget: React.FC = () => {
             {isConfiguring ? (
               <GadgetConfigurationForm />
             ) : (
-              <Gadget
-                issueKey={
-                  config.issueKey?.length > 0 ? config.issueKey : "TNG31-12"
-                }
-              />
+              <>
+                <Form
+                  onSubmit={(newConfig) => {
+                    updateConfig({ ...config, issueKey: newConfig.issueKey });
+                  }}
+                >
+                  {({ formProps }) => {
+                    return (
+                      <form {...formProps}>
+                        <FormSection>
+                          <IssueKeyField
+                            issueKeyLabel=""
+                            selectedIssueKey={config.issueKey}
+                            handleInputChange={(e) => {
+                              console.log(e);
+                            }}
+                          />
+                        </FormSection>
+                        <FormFooter />
+                      </form>
+                    );
+                  }}
+                </Form>
+                <Gadget
+                  issueKey={
+                    config.issueKey?.length > 0 ? config.issueKey : "TNG31-12"
+                  }
+                />
+              </>
             )}
           </Container>
         </DashboardContext.Provider>
@@ -138,6 +171,6 @@ const DashboardGadget: React.FC = () => {
       </SpinnerContainer>
     );
   }
-}
+};
 const App = document.getElementById("app");
 ReactDOM.render(<DashboardGadget />, App);
