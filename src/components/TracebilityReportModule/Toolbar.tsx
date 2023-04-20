@@ -36,10 +36,6 @@ const MainBar = styled.div<MainBarProps>`
   flex-wrap: wrap;
   gap: 8px;
   overflow-x: auto;
-  ${({ appWidth }) =>
-    appWidth < 880
-      ? "justify-content: center"
-      : "justify-content: space-between"};
 `;
 const FlexContainer = styled.div`
   display: flex;
