@@ -209,6 +209,8 @@ export const TracebilityReportModule = ({
     setErrors([]);
   };
   useEffect(() => {
+    console.log("DAASHBOARD CONTEXT!!!!!!!!!!!!!!!!");
+    console.log(dashboardContext);
     const loadData = async (): Promise<void> => {
       console.log("loaddata called");
       try {

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import { JQLSelectDropdown } from "../JQLSelectDropdown";
@@ -23,12 +23,23 @@ import { APIContext } from "../../context/api";
 import { viewTabs } from "../../constants/traceabilityReport";
 import { SettingsDropdownTrigger } from "../common/SettingsDropdownTrigger";
 import { ConfigureGadgetButton } from "../common/Dashboard/CofigureGadgetButton";
-const MainBar = styled.div`
+
+interface MainBarProps {
+  appWidth: number;
+}
+const MainBar = styled.div<MainBarProps>`
   padding: 8px;
   border-radius: 3px;
   display: flex;
   justify-content: space-between;
   border-bottom: 2px solid ${colors.N30};
+  flex-wrap: wrap;
+  gap: 8px;
+  overflow-x: auto;
+  ${({ appWidth }) =>
+    appWidth < 880
+      ? "justify-content: center"
+      : "justify-content: space-between"};
 `;
 const FlexContainer = styled.div`
   display: flex;
@@ -81,14 +92,22 @@ export const Toolbar = ({
   showCustomJQLEditor,
   selectedViewTab,
   exportDropdownOptions,
-  isFromDashboardGadget,
 }: Props): JSX.Element => {
-  const dashboardContext = useContext(DashboardContext);
   const { t } = useTranslation();
   const api = useContext(APIContext);
   const helpLinkUrl = api.getHelpLinks().traceability;
   const isTreeReport = selectedViewTab === "tree-view";
   const marginTop = api.isJiraCloud() ? "-16px" : "-50px";
+  const [appWidth, setAppWidth] = useState<number>();
+  useEffect(() => {
+    const app = document.getElementById("app");
+    const handleResize = (): void => setAppWidth(app.offsetWidth);
+    // Set initial appWidth state
+    setAppWidth(app.offsetWidth);
+    window.addEventListener("resize", handleResize); // set state each time window is resized
+
+    return () => window.removeEventListener("resize", handleResize); // clean up
+  }, []);
   return (
     <div style={{ marginTop, marginBottom: "-8px" }}>
       <TabGroup
@@ -97,7 +116,7 @@ export const Toolbar = ({
         options={viewTabs.tabs}
         selectedTabIndex={selectedTabIndex}
       />
-      <MainBar>
+      <MainBar appWidth={appWidth}>
         <FlexContainer>
           <JQLSelectDropdown
             selectedFilterId={selectedJQLString}
