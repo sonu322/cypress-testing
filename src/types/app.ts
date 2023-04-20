@@ -56,7 +56,6 @@ export interface LastSavedTreeConfig {
 }
 
 export interface TreeGadgetConfig {
-  title: string;
   issueKey: string;
   height: number;
 }
