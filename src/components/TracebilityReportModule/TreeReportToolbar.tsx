@@ -11,13 +11,12 @@ import {
   IssueType,
 } from "../../types/api";
 import { useTranslation } from "react-i18next";
-import TreeUtils from "../../util/TreeUtils";
-import { APIContext } from "../../context/api";
 const FlexContainer = styled.div`
   display: flex;
   gap: 4px;
   position: relative;
   padding-top: 10px;
+  flex-wrap: wrap;
 `;
 
 const ToolbarContainer = styled.div`
