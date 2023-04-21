@@ -44,7 +44,7 @@ export const IssueTreeSingleNode = ({
     };
     void initTree();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [rootIssueKey]);
 
   return (
     <IssueTree

@@ -2,6 +2,7 @@ import React from "react";
 import { Field, ErrorMessage } from "@atlaskit/form";
 import TextField from "@atlaskit/textfield";
 
+
 interface Props {
   issueKeyLabel: string;
   selectedIssueKey: string;

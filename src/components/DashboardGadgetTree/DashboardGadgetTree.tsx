@@ -23,10 +23,12 @@ import JiraCloudImpl from "../../impl/jira/Cloud";
 import { getQueryParam } from "../../util/index";
 import { DashboardContext } from "../common/Dashboard/DashboardContext";
 import { IssueKeyField } from "./IssueKeyField";
+import { badIssueKeyError, noIssueKeyError } from "../../constants/gadgetTree";
 
 interface ContainerProps {
   height: number;
 }
+type ValidationError = Record<string, string>;
 const Container = styled.div<ContainerProps>`
   height: ${({ height }) => height}px;
   overflow: auto;
@@ -48,13 +50,22 @@ const createAPI = () => {
 
   return api;
 };
-
+const validate = (issueKey: string): ValidationError => {
+  const errors: ValidationError = {};
+  const issueKeyRegex = /^[A-Z][A-Z0-9]{0,9}-\d+$/; // Regex for issue key pattern
+  if (issueKey === undefined || issueKey === "") {
+    errors.issueKey = noIssueKeyError;
+  } else if (!issueKeyRegex.test(issueKey)) {
+    errors.issueKey = badIssueKeyError;
+  }
+  return errors;
+};
 const DashboardGadget: React.FC = () => {
   const [isConfiguring, setIsConfiguring] = useState(true);
   const [config, setConfig] = useState<TreeGadgetConfig>();
   const [dashboardId, setDashboardId] = useState();
   const [dashboardItemId, setDashboardItemId] = useState();
-
+  const [inputIssueKey, setInputIssueKey] = useState<string>();
   const updateConfig = (config: TreeGadgetConfig): void => {
     setConfig(config);
   };
@@ -68,6 +79,7 @@ const DashboardGadget: React.FC = () => {
     if (config?.height !== undefined) {
       api.resizeWindow("100%", config.height);
     }
+    setInputIssueKey(config?.issueKey);
   }, [config, api]);
 
   useEffect(() => {
@@ -81,7 +93,6 @@ const DashboardGadget: React.FC = () => {
         setIsConfiguring(false);
       } catch (error: unknown) {
         setConfig({
-          title: DEFAULT_GADGET_TITLE,
           issueKey: "",
           height: DEFAULT_GADGET_HEIGHT,
         });
@@ -109,6 +120,14 @@ const DashboardGadget: React.FC = () => {
     });
   });
 
+  const handleInputIssueKeyChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    const { name, value, type } = event.target;
+    console.log(name, value, type);
+    setInputIssueKey(value);
+  };
+
   if (
     dashboardId !== undefined &&
     dashboardItemId !== undefined &&
@@ -132,8 +151,16 @@ const DashboardGadget: React.FC = () => {
             ) : (
               <>
                 <Form
-                  onSubmit={(newConfig) => {
-                    updateConfig({ ...config, issueKey: newConfig.issueKey });
+                  onSubmit={() => {
+                    console.log("issueKey", inputIssueKey);
+                    const errors = validate(inputIssueKey);
+                    if (Object.keys(errors).length > 0) {
+                      return errors;
+                    }
+                    setConfig((prevConfig) => ({
+                      ...prevConfig,
+                      issueKey: inputIssueKey,
+                    }));
                   }}
                 >
                   {({ formProps }) => {
@@ -142,10 +169,8 @@ const DashboardGadget: React.FC = () => {
                         <FormSection>
                           <IssueKeyField
                             issueKeyLabel=""
-                            selectedIssueKey={config.issueKey}
-                            handleInputChange={(e) => {
-                              console.log(e);
-                            }}
+                            selectedIssueKey={inputIssueKey}
+                            handleInputChange={handleInputIssueKeyChange}
                           />
                         </FormSection>
                         <FormFooter />
