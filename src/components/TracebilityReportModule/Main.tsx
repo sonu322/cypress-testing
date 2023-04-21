@@ -17,6 +17,7 @@ import { DropdownSingleSelect } from "../common/DropdownSingleSelect";
 import { TreeReport } from "./TreeReport";
 import { AtlasTree } from "../../types/app";
 import { DashboardContext } from "../common/Dashboard/DashboardContext";
+import { PAGE_SIZE_DROPDOWN_NAME } from "../../constants/gadgetTraceability";
 const Container = styled.div`
   width: 100%;
 `;
@@ -136,7 +137,7 @@ export const Main: React.FC<Props> = ({
   const dashboardContext = useContext(DashboardContext);
   useEffect(() => {
     if (isFromDashboardGadget) {
-      const savedFetchLimit = dashboardContext.config.pageSize;
+      const savedFetchLimit = dashboardContext.config[PAGE_SIZE_DROPDOWN_NAME];
       setSelectedLimitOptionId(savedFetchLimit);
     }
   }, [dashboardContext, isFromDashboardGadget]);

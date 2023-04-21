@@ -20,8 +20,6 @@ interface Props {
   configKey: string;
   name: string;
   label: string;
-  selectedIssueTypeIdsKey: string;
-  selectedLinkTypeIdsKey: string;
 }
 
 export const TableFieldsDropdownField: React.FC<Props> = ({

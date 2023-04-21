@@ -3,7 +3,6 @@ import ReactDOM from "react-dom";
 import styled from "styled-components";
 import Spinner from "@atlaskit/spinner";
 import { APIContext } from "../../context/api";
-import { TreeGadgetConfig } from "../../types/app";
 import { Gadget } from "./Gadget";
 import { GadgetConfigurationForm } from "./GadgetConfigForm";
 import APIImpl from "../../impl/Cloud";
@@ -16,6 +15,7 @@ import {
   DEFAULT_GADGET_HEIGHT,
 } from "../../constants/gadgetTraceability";
 import LXPAPI from "../../types/api";
+import { TraceabilityGadgetConfig } from "../../types/app";
 
 interface ContainerProps {
   height: number;
@@ -48,7 +48,7 @@ const DashboardGadget: React.FC = () => {
   const [dashboardId, setDashboardId] = useState();
   const [dashboardItemId, setDashboardItemId] = useState();
 
-  const updateConfig = (config: TreeGadgetConfig): void => {
+  const updateConfig = (config: TraceabilityGadgetConfig): void => {
     setConfig(config);
   };
   const updateIsConfiguring = (isConfiguring: boolean): void => {
