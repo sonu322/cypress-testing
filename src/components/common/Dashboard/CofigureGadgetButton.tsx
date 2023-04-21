@@ -9,9 +9,9 @@ interface Props {
 
 export const ConfigureGadgetButton: React.FC<Props> = ({ handleClick }) => {
   const { t } = useTranslation();
-  const configureGadgetLabel = t("otpl.lxp.gadget.configure-label");
+  const configureGadgetLabel = t("otpl.lxp.gadget-common.configure-label");
   const configureGadgetDescription = t(
-    "otpl.lxp.gadget.configure-button.description"
+    "otpl.lxp.tree-gadget.configure-button.description"
   );
   return (
     <TooltipContainer content={configureGadgetDescription}>

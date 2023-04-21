@@ -108,14 +108,20 @@ export const GadgetConfigurationForm: React.FC<Props> = ({
       [name]: parsedValue,
     }));
   };
-  const configureLabel = t("otpl.lxp.gadget.configure-label");
+  const configureLabel = t("otpl.lxp.gadget-common.configure-label");
   const configureFormDescription = t(
-    "otpl.lxp.gadget.configure-form.description"
+    "otpl.lxp.tree-gadget.configure-form.description"
   );
-  const issueKeyLabel = t("otpl.lxp.gadget.configure-form.fields.issue-key");
-  const heightLabel = t("otpl.lxp.gadget.configure-form.fields.height");
-  const submitButtonLabel = t("otpl.lxp.gadget.configure-form.buttons.submit");
-  const cancelButtonLabel = t("otpl.lxp.gadget.configure-form.buttons.cancel");
+  const issueKeyLabel = t(
+    "otpl.lxp.tree-gadget.configure-form.fields.issue-key"
+  );
+  const heightLabel = t("otpl.lxp.gadget-common.configure-form.fields.height");
+  const submitButtonLabel = t(
+    "otpl.lxp.gadget-common.configure-form.buttons.submit"
+  );
+  const cancelButtonLabel = t(
+    "otpl.lxp.gadget-common.configure-form.buttons.cancel"
+  );
 
   return (
     <div>

@@ -89,7 +89,9 @@ const DashboardGadget: React.FC = () => {
     setInputIssueKey(config?.issueKey);
   }, [config, api]);
 
-  const issueKeyLabel = t("otpl.lxp.gadget.configure-form.fields.issue-key");
+  const issueKeyLabel = t(
+    "otpl.lxp.tree-gadget.configure-form.fields.issue-key"
+  );
 
   useEffect(() => {
     const getConfig = async (): Promise<void> => {
