@@ -16,6 +16,7 @@ export const ViewSelect: React.FC<any> = ({
   selectedViewType,
   ...rest
 }) => {
+  console.log("selecteed view type", selectedViewType);
   return (
     <Field<ValueType<OptionType>> name={name} label={label} {...rest}>
       {({ fieldProps: { id, ...rest }, error }) => {
@@ -30,7 +31,7 @@ export const ViewSelect: React.FC<any> = ({
               )}
               onChange={(selectedOption) => {
                 console.log("FROM ON CHANGE OF VIEW SELECT");
-                console.log(selectedOption);
+                console.log(selectedOption, name);
                 handleInputChange(name, selectedOption.value);
               }}
             />

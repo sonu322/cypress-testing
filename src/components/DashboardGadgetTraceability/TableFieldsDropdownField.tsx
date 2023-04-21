@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React from "react";
 import { Field, ErrorMessage } from "@atlaskit/form";
 import { useTranslation } from "react-i18next";
 import { TableFieldsDropdown } from "../TracebilityReportModule/TableFieldsDropdown";
@@ -13,12 +13,15 @@ import { IssueLinkType, IssueType } from "../../types/api";
 interface Props {
   handleInputChange: (name: any, value: any, type?: any) => void;
   selectedOptionIds: string[];
-  handleApiError: (error: unknown) => void;
   viewType: string;
   isRequired?: boolean;
   options: IssueType[] | IssueLinkType[];
   areOptionsLoading: boolean;
   configKey: string;
+  name: string;
+  label: string;
+  selectedIssueTypeIdsKey: string;
+  selectedLinkTypeIdsKey: string;
 }
 
 export const TableFieldsDropdownField: React.FC<Props> = ({
@@ -29,6 +32,8 @@ export const TableFieldsDropdownField: React.FC<Props> = ({
   options,
   areOptionsLoading,
   configKey,
+  name,
+  label,
 }) => {
   const { t } = useTranslation();
   if (
@@ -41,8 +46,8 @@ export const TableFieldsDropdownField: React.FC<Props> = ({
   } else {
     return (
       <Field
-        name={"tableFields"}
-        label={"Table Fields"}
+        name={name}
+        label={label || "Table Fields"}
         isRequired={isRequired}
       >
         {({ error }) => {
