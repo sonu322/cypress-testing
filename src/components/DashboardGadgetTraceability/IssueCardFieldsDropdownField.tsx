@@ -11,6 +11,8 @@ interface Props {
   selectedOptionIds: string[];
   handleApiError: (error: Error) => void;
   isRequired?: boolean;
+  name: string;
+  label: string;
 }
 
 export const IssueCardFieldsDropdownField: React.FC<Props> = ({
@@ -18,6 +20,8 @@ export const IssueCardFieldsDropdownField: React.FC<Props> = ({
   handleInputChange,
   handleApiError,
   isRequired,
+  name,
+  label,
 }) => {
   const { t } = useTranslation();
   const [issueCardFields, setIssueCardFields] = useState<IssueField[]>([]);
@@ -34,7 +38,7 @@ export const IssueCardFieldsDropdownField: React.FC<Props> = ({
         setIssueCardFields(result);
         const issueCardFieldIds = result.map((field) => field.id);
         if (selectedOptionIds === undefined) {
-          handleInputChange("issueCardFields", issueCardFieldIds);
+          handleInputChange(name, issueCardFieldIds);
         }
         setAreOptionsLoading(false);
       } catch (error) {
@@ -50,20 +54,16 @@ export const IssueCardFieldsDropdownField: React.FC<Props> = ({
     return <em>loading</em>;
   } else {
     return (
-      <Field
-        name="issue-cards-fields"
-        label={"Issue Card Fields"}
-        isRequired={isRequired}
-      >
+      <Field name={name} label={label} isRequired={isRequired}>
         {({ error }) => {
           return (
             <div>
               <Dropdown
-                dropdownName={t("otpl.lxp.toolbar.issue-card-fields")}
+                dropdownName={label}
                 options={issueCardFields}
                 selectedOptions={selectedOptionIds}
                 updateSelectedOptions={(value) => {
-                  handleInputChange("issueCardFields", value);
+                  handleInputChange(name, value);
                 }}
               />
               {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}

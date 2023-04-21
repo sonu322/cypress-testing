@@ -14,21 +14,21 @@ interface Props {
   handleInputChange: (name: any, value: any, type?: any) => void;
   selectedLimit: number;
   isRequired: boolean;
+  name: string;
+  label: string;
 }
 
 export const PageSizeDropdownField: React.FC<Props> = ({
   selectedLimit,
   handleInputChange,
   isRequired,
+  name,
+  label,
 }) => {
   const { t } = useTranslation();
   return (
-    <Field
-      isRequired={isRequired}
-      name="pageSize"
-      label={t("otpl.lxp.traceability-report.fetch-limit-dropdown.name")}
-    >
-      {({ fieldProps, error }) => {
+    <Field isRequired={isRequired} name={name} label={label}>
+      {({ error }) => {
         return (
           <div>
             <DropdownSingleSelect
@@ -39,7 +39,7 @@ export const PageSizeDropdownField: React.FC<Props> = ({
               }
               selectedOptionId={selectedLimit}
               updateSelectedOptionId={(selectedLimit) => {
-                handleInputChange("pageSize", selectedLimit);
+                handleInputChange(name, selectedLimit);
               }}
             />
             {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}

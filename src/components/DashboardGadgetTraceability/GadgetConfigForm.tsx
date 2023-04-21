@@ -3,8 +3,10 @@ import styled from "styled-components";
 import {
   DEFAULT_GADGET_HEIGHT,
   initializationGadgetConfig,
+  ISSUE_CARD_FIELDS_DROPDOWN_NAME,
   JQL_FIELD_NAME,
   MIN_GADGET_HEIGHT,
+  PAGE_SIZE_DROPDOWN_NAME,
   SELECTED_ISSUE_TYPE_IDS_KEY,
   SELECTED_LINK_TYPE_IDS_KEY,
   TABLE_FIELDS_DROPDOWN_NAME,
@@ -202,7 +204,7 @@ export const GadgetConfigurationForm: React.FC = () => {
                         "JQL"
                       }
                       isRequired
-                      selectedJQLString={inputConfig.jql}
+                      selectedJQLString={inputConfig[JQL_FIELD_NAME]}
                       handleInputChange={handleInputChange}
                       handleApiError={(error: Error) => {
                         setApiResponseErrors((prevErrors) => [
@@ -212,7 +214,8 @@ export const GadgetConfigurationForm: React.FC = () => {
                       }}
                     />
 
-                    {inputConfig.viewType !== TREE_TYPE_VIEW_ID && (
+                    {inputConfig[VIEW_TYPE_FIELD_NAME] !==
+                      TREE_TYPE_VIEW_ID && (
                       <TableFieldsDropdownField
                         name={TABLE_FIELDS_DROPDOWN_NAME}
                         selectedIssueTypeIdsKey={SELECTED_ISSUE_TYPE_IDS_KEY}
@@ -243,7 +246,11 @@ export const GadgetConfigurationForm: React.FC = () => {
                       />
                     )}
                     <IssueCardFieldsDropdownField
-                      selectedOptionIds={inputConfig.issueCardFields}
+                      name={ISSUE_CARD_FIELDS_DROPDOWN_NAME}
+                      label={t("otpl.lxp.toolbar.issue-card-fields")}
+                      selectedOptionIds={
+                        inputConfig[ISSUE_CARD_FIELDS_DROPDOWN_NAME]
+                      }
                       handleInputChange={handleInputChange}
                       handleApiError={(error: Error) => {
                         setApiResponseErrors((prevErrors) => [
@@ -254,9 +261,13 @@ export const GadgetConfigurationForm: React.FC = () => {
                     />
 
                     <PageSizeDropdownField
+                      name={PAGE_SIZE_DROPDOWN_NAME}
+                      label={
+                        "otpl.lxp.traceability-report.fetch-limit-dropdown.name"
+                      }
                       isRequired
                       handleInputChange={handleInputChange}
-                      selectedLimit={inputConfig.pageSize}
+                      selectedLimit={inputConfig[PAGE_SIZE_DROPDOWN_NAME]}
                     />
 
                     <Field
