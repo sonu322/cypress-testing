@@ -1,10 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
-import {
-  DEFAULT_GADGET_HEIGHT,
-  DEFAULT_GADGET_TITLE,
-} from "../../constants/tree";
 import Spinner from "@atlaskit/spinner";
 import { APIContext } from "../../context/api";
 import { TreeGadgetConfig } from "../../types/app";
@@ -15,6 +11,10 @@ import JiraCloudImpl from "../../impl/jira/Cloud";
 import { getQueryParam } from "../../util/index";
 import { DashboardContext } from "../common/Dashboard/DashboardContext";
 import { ISSUE_TYPE_VIEW_ID } from "../../constants/traceabilityReport";
+import {
+  DEFAULT_GADGET_HEIGHT,
+  DEFAULT_GADGET_TITLE,
+} from "../../constants/gadgetTraceability";
 
 interface ContainerProps {
   height: number;

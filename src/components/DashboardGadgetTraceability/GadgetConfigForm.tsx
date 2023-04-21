@@ -4,7 +4,7 @@ import {
   DEFAULT_GADGET_HEIGHT,
   DEFAULT_GADGET_TITLE,
   MIN_GADGET_HEIGHT,
-} from "../../constants/tree";
+} from "../../constants/gadgetTraceability";
 import { TreeGadgetConfig } from "../../types/app";
 import Form, {
   Field,
