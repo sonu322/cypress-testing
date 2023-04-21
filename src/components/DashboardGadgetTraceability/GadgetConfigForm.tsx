@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import {
   DEFAULT_GADGET_HEIGHT,
-  DEFAULT_GADGET_TITLE,
+  initializationGadgetConfig,
   MIN_GADGET_HEIGHT,
 } from "../../constants/gadgetTraceability";
 import { TreeGadgetConfig } from "../../types/app";
@@ -91,13 +91,7 @@ export const GadgetConfigurationForm: React.FC = () => {
     if (savedConfig !== undefined) {
       setInputConfig(savedConfig);
     } else {
-      setInputConfig({
-        title: DEFAULT_GADGET_TITLE,
-        viewType: "",
-        height: DEFAULT_GADGET_HEIGHT,
-        issueCardFields: undefined,
-        pageSize: 20,
-      });
+      setInputConfig(initializationGadgetConfig);
     }
   }, [savedConfig, setInputConfig]);
 

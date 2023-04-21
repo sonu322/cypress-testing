@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
 import Spinner from "@atlaskit/spinner";
@@ -12,9 +12,10 @@ import { getQueryParam } from "../../util/index";
 import { DashboardContext } from "../common/Dashboard/DashboardContext";
 import { ISSUE_TYPE_VIEW_ID } from "../../constants/traceabilityReport";
 import {
+  defaultGadgetConfig,
   DEFAULT_GADGET_HEIGHT,
-  DEFAULT_GADGET_TITLE,
 } from "../../constants/gadgetTraceability";
+import LXPAPI from "../../types/api";
 
 interface ContainerProps {
   height: number;
@@ -34,7 +35,7 @@ const SpinnerContainer = styled.span`
   padding-top: 8px;
 `;
 
-const createAPI = () => {
+const createAPI = (): LXPAPI => {
   const jiraCloud = new JiraCloudImpl();
   const api = new APIImpl(jiraCloud);
 
@@ -65,27 +66,16 @@ const DashboardGadget: React.FC = () => {
   useEffect(() => {
     const getConfig = async (): Promise<void> => {
       try {
-        console.log("dashboardid", dashboardId);
-        console.log("dashboardItemId", dashboardItemId);
         const config = await api.getDashboardGadgetConfig(
           dashboardId,
           dashboardItemId
         );
-        console.log("CONFIG", config);
         setConfig(config.value);
         setIsConfiguring(false);
       } catch (error: unknown) {
         console.log("ERROR CAUGHT");
         console.log(error);
-        setConfig({
-          title: DEFAULT_GADGET_TITLE,
-          viewType: ISSUE_TYPE_VIEW_ID,
-          height: DEFAULT_GADGET_HEIGHT,
-          selectedIssueTypeIds: [],
-          selectedLinkTypeIds: [],
-          issueCardFields: [],
-          pageSize: 20,
-        });
+        setConfig(defaultGadgetConfig);
         setIsConfiguring(true);
       }
     };
@@ -115,8 +105,6 @@ const DashboardGadget: React.FC = () => {
     dashboardItemId !== undefined &&
     config !== undefined
   ) {
-    console.log("rendering app");
-    console.log(config);
     return (
       <APIContext.Provider value={api}>
         <DashboardContext.Provider
