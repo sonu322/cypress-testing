@@ -24,6 +24,7 @@ import {
 } from "../../constants/gadgetTree";
 import { useTranslation } from "react-i18next";
 import { ErrorsList } from "../common/ErrorsList";
+import LXPAPI from "../../types/api";
 
 interface ContainerProps {
   height: number;
@@ -48,7 +49,7 @@ const SpinnerContainer = styled.span`
   padding-top: 8px;
 `;
 
-const createAPI = () => {
+const createAPI = (): LXPAPI => {
   const jiraCloud = new JiraCloudImpl();
   const api = new APIImpl(jiraCloud);
 

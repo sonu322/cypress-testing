@@ -1,3 +1,11 @@
+import {
+  HEIGHT_FIELD_NAME,
+  ISSUE_KEY_FIELD_NAME,
+} from "../constants/gadgetTree";
+import {
+  HEIGHT_FIELD_NAME as HEIGHT_FIELD_NAME_TRACEABILITY,
+  ISSUE_KEY_FIELD_NAME as ISSUE_KEY_FIELD_NAME_TRACEABILITY,
+} from "../constants/gadgetTraceability";
 import { ID, Issue, IssueTreeFilter, IssueWithLinkedIssues } from "./api";
 
 export interface AtlasTree {
@@ -56,6 +64,11 @@ export interface LastSavedTreeConfig {
 }
 
 export interface TreeGadgetConfig {
-  issueKey: string;
-  height: number;
+  [ISSUE_KEY_FIELD_NAME]: string;
+  [HEIGHT_FIELD_NAME]: number;
+}
+
+export interface TraceabilityGadgetConfig {
+  [ISSUE_KEY_FIELD_NAME_TRACEABILITY]: string;
+  [HEIGHT_FIELD_NAME_TRACEABILITY]: number;
 }
