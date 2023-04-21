@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import Form, { Field, ErrorMessage } from "@atlaskit/form";
+import React from "react";
+import { Field, ErrorMessage } from "@atlaskit/form";
 import { useTranslation } from "react-i18next";
 import { DropdownSingleSelect } from "../common/DropdownSingleSelect";
 

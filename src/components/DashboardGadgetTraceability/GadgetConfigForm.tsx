@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import {
   DEFAULT_GADGET_HEIGHT,
+  HEIGHT_FIELD_NAME,
   initializationGadgetConfig,
   ISSUE_CARD_FIELDS_DROPDOWN_NAME,
   JQL_FIELD_NAME,
@@ -262,16 +263,16 @@ export const GadgetConfigurationForm: React.FC = () => {
 
                     <PageSizeDropdownField
                       name={PAGE_SIZE_DROPDOWN_NAME}
-                      label={
+                      label={t(
                         "otpl.lxp.traceability-report.fetch-limit-dropdown.name"
-                      }
+                      )}
                       isRequired
                       handleInputChange={handleInputChange}
                       selectedLimit={inputConfig[PAGE_SIZE_DROPDOWN_NAME]}
                     />
 
                     <Field
-                      name="height"
+                      name={HEIGHT_FIELD_NAME}
                       label={heightLabel}
                       defaultValue={MIN_GADGET_HEIGHT}
                     >
@@ -285,7 +286,7 @@ export const GadgetConfigurationForm: React.FC = () => {
                             step="1"
                             onChange={(event) => {
                               handleInputChange(
-                                "height",
+                                HEIGHT_FIELD_NAME,
                                 event.target.value,
                                 "number"
                               );
