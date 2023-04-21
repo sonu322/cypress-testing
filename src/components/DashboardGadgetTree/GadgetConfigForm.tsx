@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import { DEFAULT_GADGET_HEIGHT, MIN_GADGET_HEIGHT } from "../../constants/tree";
 import { TreeGadgetConfig } from "../../types/app";
 import Form, {
   Field,
@@ -11,49 +10,52 @@ import Form, {
 import TextField from "@atlaskit/textfield";
 import Button, { ButtonGroup } from "@atlaskit/button";
 import { DashboardContext } from "../common/Dashboard/DashboardContext";
-import { ErrorsList } from "../common/ErrorsList";
 import { useTranslation } from "react-i18next";
 import { APIContext } from "../../context/api";
 import { IssueKeyField } from "./IssueKeyField";
 import {
   badHeightError,
   badIssueKeyError,
+  DASHBOARD_GADGET_CONFIG_KEY,
+  defaultGadgetConfig,
+  HEIGHT_FIELD_NAME,
+  ISSUE_KEY_FIELD_NAME,
+  MIN_GADGET_HEIGHT,
   noIssueKeyError,
 } from "../../constants/gadgetTree";
 
 interface Props {
-  apiResponseErrors: Error[];
   setApiResponseErrors: React.Dispatch<React.SetStateAction<Error[]>>;
 }
 type ValidationError = Record<string, string>;
 const validate = (values: TreeGadgetConfig): ValidationError => {
   const errors: ValidationError = {};
   const issueKeyRegex = /^[A-Z][A-Z0-9]{0,9}-\d+$/; // Regex for issue key pattern
-  if (values.issueKey === undefined || values.issueKey === "") {
-    errors.issueKey = noIssueKeyError;
-  } else if (!issueKeyRegex.test(values.issueKey)) {
-    errors.issueKey = badIssueKeyError;
+  if (
+    values[ISSUE_KEY_FIELD_NAME] === undefined ||
+    values[ISSUE_KEY_FIELD_NAME] === ""
+  ) {
+    errors[ISSUE_KEY_FIELD_NAME] = noIssueKeyError;
+  } else if (!issueKeyRegex.test(values[ISSUE_KEY_FIELD_NAME])) {
+    errors[ISSUE_KEY_FIELD_NAME] = badIssueKeyError;
   }
 
-  if (values.height < MIN_GADGET_HEIGHT) {
-    errors.height = `${badHeightError} : ${MIN_GADGET_HEIGHT} `;
+  if (values[HEIGHT_FIELD_NAME] < MIN_GADGET_HEIGHT) {
+    errors[HEIGHT_FIELD_NAME] = `${badHeightError} : ${MIN_GADGET_HEIGHT} `;
   }
   return errors;
 };
 
-export const GadgetConfigurationForm: React.FC<Props> = (
-  apiResponseErrors,
-  setApiResponseErrors
-) => {
-  const [inputConfig, setInputConfig] = useState<TreeGadgetConfig>({
-    issueKey: "",
-    height: DEFAULT_GADGET_HEIGHT,
-  });
+export const GadgetConfigurationForm: React.FC<Props> = ({
+  setApiResponseErrors,
+}) => {
+  const [inputConfig, setInputConfig] =
+    useState<TreeGadgetConfig>(defaultGadgetConfig);
   const dashboardContext = useContext(DashboardContext);
   const {
     dashboardId,
     dashboardItemId,
-    config: savedConfig,
+    [DASHBOARD_GADGET_CONFIG_KEY]: savedConfig,
     updateConfig: updateSavedConfig,
     updateIsConfiguring,
   } = dashboardContext;
@@ -68,25 +70,25 @@ export const GadgetConfigurationForm: React.FC<Props> = (
   const handleCancelFormSubmission = (): void => {
     updateIsConfiguring(false);
   };
-  const handleSave = async (): ValidationError => {
-    console.log("handle save called");
+  const handleSave = async (): Promise<ValidationError> => {
     setApiResponseErrors([]);
+    console.log("handle save called", inputConfig, validate(inputConfig));
     const errors = validate(inputConfig);
+    console.log(inputConfig, errors);
     if (Object.keys(errors).length > 0) {
+      console.log(errors);
       return errors;
     }
+    updateSavedConfig(inputConfig);
+    updateIsConfiguring(false);
     try {
-      await api
-        .editDashboardItemProperty(
-          dashboardId,
-          dashboardItemId,
-          "config",
-          inputConfig
-        )
-        .then(() => {
-          updateSavedConfig(inputConfig);
-          updateIsConfiguring(false);
-        });
+      console.log("done");
+      await api.editDashboardItemProperty(
+        dashboardId,
+        dashboardItemId,
+        DASHBOARD_GADGET_CONFIG_KEY,
+        inputConfig
+      );
     } catch (error) {
       console.error(error);
       setApiResponseErrors((prevErrors) => [...prevErrors, error]);
@@ -135,7 +137,7 @@ export const GadgetConfigurationForm: React.FC<Props> = (
                   handleInputChange={handleInputChange}
                 />
                 <Field
-                  name="height"
+                  name={HEIGHT_FIELD_NAME}
                   label={heightLabel}
                   defaultValue={MIN_GADGET_HEIGHT}
                 >
@@ -143,7 +145,7 @@ export const GadgetConfigurationForm: React.FC<Props> = (
                     <>
                       <TextField
                         {...fieldProps}
-                        value={inputConfig.height}
+                        value={inputConfig[HEIGHT_FIELD_NAME]}
                         type="number"
                         min={MIN_GADGET_HEIGHT}
                         step="1"

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
-import { DEFAULT_GADGET_HEIGHT } from "../../constants/tree";
+import { DEFAULT_GADGET_HEIGHT } from "../../constants/gadgetTraceability";
 
 import Form, { FormSection, FormFooter } from "@atlaskit/form";
 import Spinner from "@atlaskit/spinner";
@@ -14,7 +14,14 @@ import JiraCloudImpl from "../../impl/jira/Cloud";
 import { getQueryParam } from "../../util/index";
 import { DashboardContext } from "../common/Dashboard/DashboardContext";
 import { IssueKeyField } from "./IssueKeyField";
-import { badIssueKeyError, noIssueKeyError } from "../../constants/gadgetTree";
+import {
+  badIssueKeyError,
+  DASHBOARD_GADGET_CONFIG_KEY,
+  defaultGadgetConfig,
+  HEIGHT_FIELD_NAME,
+  ISSUE_KEY_FIELD_NAME,
+  noIssueKeyError,
+} from "../../constants/gadgetTree";
 import { useTranslation } from "react-i18next";
 import { ErrorsList } from "../common/ErrorsList";
 
@@ -93,10 +100,7 @@ const DashboardGadget: React.FC = () => {
         setConfig(config.value);
         setIsConfiguring(false);
       } catch (error: unknown) {
-        setConfig({
-          issueKey: "",
-          height: DEFAULT_GADGET_HEIGHT,
-        });
+        setConfig(defaultGadgetConfig);
         setIsConfiguring(true);
       }
     };
@@ -129,15 +133,14 @@ const DashboardGadget: React.FC = () => {
     setInputIssueKey(value);
   };
 
-  const handleInputIssueKeySubmit = async (): ValidationError => {
-    console.log("issueKey", inputIssueKey);
+  const handleInputIssueKeySubmit = async (): Promise<ValidationError> => {
     const errors = validate(inputIssueKey);
     if (Object.keys(errors).length > 0) {
       return errors;
     }
     setConfig((prevConfig) => ({
       ...prevConfig,
-      issueKey: inputIssueKey,
+      [ISSUE_KEY_FIELD_NAME]: inputIssueKey,
     }));
 
     setApiResponseErrors([]);
@@ -145,7 +148,7 @@ const DashboardGadget: React.FC = () => {
       await api.editDashboardItemProperty(
         dashboardId,
         dashboardItemId,
-        "config",
+        DASHBOARD_GADGET_CONFIG_KEY,
         { ...config, issueKey: inputIssueKey }
       );
     } catch (error) {
@@ -171,7 +174,9 @@ const DashboardGadget: React.FC = () => {
             updateIsConfiguring,
           }}
         >
-          <Container height={config?.height ?? DEFAULT_GADGET_HEIGHT}>
+          <Container
+            height={config?.[HEIGHT_FIELD_NAME] ?? DEFAULT_GADGET_HEIGHT}
+          >
             {apiResponseErrors?.length > 0 && (
               <ErrorsList errors={apiResponseErrors} />
             )}
@@ -202,7 +207,9 @@ const DashboardGadget: React.FC = () => {
                 </Form>
                 <Gadget
                   issueKey={
-                    config.issueKey?.length > 0 ? config.issueKey : "TNG31-12"
+                    config[ISSUE_KEY_FIELD_NAME]?.length > 0
+                      ? config[ISSUE_KEY_FIELD_NAME]
+                      : "TNG31-12"
                   }
                 />
               </>
