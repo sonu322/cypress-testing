@@ -1,6 +1,7 @@
 import React from "react";
 import { Field, ErrorMessage } from "@atlaskit/form";
 import Select, { ValueType } from "@atlaskit/select";
+import styled from "styled-components";
 
 interface OptionType {
   label: string;
@@ -19,7 +20,7 @@ export const ViewSelect: React.FC<any> = ({
     <Field<ValueType<OptionType>> name={name} label={label} {...rest}>
       {({ fieldProps: { id, ...rest }, error }) => {
         return (
-          <React.Fragment>
+          <>
             <Select<OptionType>
               inputId={id}
               {...rest}
@@ -34,7 +35,7 @@ export const ViewSelect: React.FC<any> = ({
               }}
             />
             {error && <ErrorMessage>{error}</ErrorMessage>}
-          </React.Fragment>
+          </>
         );
       }}
     </Field>
