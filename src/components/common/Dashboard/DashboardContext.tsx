@@ -1,12 +1,12 @@
 import { createContext } from "react";
 import { DASHBOARD_GADGET_CONFIG_KEY } from "../../../constants/gadgetTree";
-import { TreeGadgetConfig } from "../../../types/app";
+import { TraceabilityGadgetConfig, TreeGadgetConfig } from "../../../types/app";
 
 export const DashboardContext = createContext<{
   dashboardId: string;
   dashboardItemId: string;
-  [DASHBOARD_GADGET_CONFIG_KEY]: TreeGadgetConfig;
-  updateConfig: (config: TreeGadgetConfig) => void;
+  [DASHBOARD_GADGET_CONFIG_KEY]: TreeGadgetConfig | TraceabilityGadgetConfig;
+  updateConfig: (config: TreeGadgetConfig | TraceabilityGadgetConfig) => void;
   isConfiguring: boolean;
   updateIsConfiguring: (isConfiguring: boolean) => void;
 }>({

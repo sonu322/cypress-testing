@@ -38,6 +38,13 @@ import { lastSavedReportConfigKey } from "../../constants/common";
 import { LastSavedReportConfig } from "../../types/app";
 import { ExportRecordsLoadingModal } from "./ExportRecordsLoadingModal";
 import { DashboardContext } from "../common/Dashboard/DashboardContext";
+import {
+  ISSUE_CARD_FIELDS_DROPDOWN_NAME,
+  JQL_FIELD_NAME,
+  SELECTED_ISSUE_TYPE_IDS_KEY,
+  SELECTED_LINK_TYPE_IDS_KEY,
+  VIEW_TYPE_FIELD_NAME,
+} from "../../constants/gadgetTraceability";
 
 const FullWidthContainer = styled.div`
   width: 100%;
@@ -155,14 +162,14 @@ export const TracebilityReportModule = ({
   useEffect(() => {
     if (
       isFromDashboardGadget &&
-      dashboardContext.config?.viewType !== undefined
+      Boolean(dashboardContext.config[VIEW_TYPE_FIELD_NAME])
     ) {
       const tabIndex = viewTabs.tabs.findIndex(
-        (tab) => tab.id === dashboardContext.config.viewType
+        (tab) => tab.id === dashboardContext.config[VIEW_TYPE_FIELD_NAME]
       );
 
       setSelectedTabIndex(tabIndex);
-      setSelectedJQLString(dashboardContext.config.jql);
+      setSelectedJQLString(dashboardContext.config[JQL_FIELD_NAME]);
     }
   }, [dashboardContext, isFromDashboardGadget]);
 
@@ -263,19 +270,36 @@ export const TracebilityReportModule = ({
           }
         } else {
           console.log("code from isdashboard");
-          if (dashboardContext.config.issueCardFields !== undefined) {
-            console.log(dashboardContext.config.issueCardFields);
-            setSelectedIssueFieldIds(dashboardContext.config.issueCardFields);
+          if (
+            dashboardContext.config[ISSUE_CARD_FIELDS_DROPDOWN_NAME] !==
+            undefined
+          ) {
+            console.log(
+              dashboardContext.config[ISSUE_CARD_FIELDS_DROPDOWN_NAME]
+            );
+            setSelectedIssueFieldIds(
+              dashboardContext.config[ISSUE_CARD_FIELDS_DROPDOWN_NAME]
+            );
           } else {
             const selectedFieldIds = getKeyValues(fields, "id");
             setSelectedIssueFieldIds(selectedFieldIds);
           }
-          if (dashboardContext.config?.viewType !== undefined) {
+          if (Boolean(dashboardContext.config[VIEW_TYPE_FIELD_NAME])) {
             console.log("setting from config");
             console.log(dashboardContext.config);
-            setSelectedLinkTypeIds(dashboardContext.config.selectedLinkTypeIds);
+            console.log(
+              SELECTED_LINK_TYPE_IDS_KEY,
+              dashboardContext.config[SELECTED_LINK_TYPE_IDS_KEY]
+            );
+            console.log(
+              SELECTED_ISSUE_TYPE_IDS_KEY,
+              dashboardContext.config[SELECTED_ISSUE_TYPE_IDS_KEY]
+            );
+            setSelectedLinkTypeIds(
+              dashboardContext.config[SELECTED_LINK_TYPE_IDS_KEY]
+            );
             setSelectedIssueTypeIds(
-              dashboardContext.config.selectedIssueTypeIds
+              dashboardContext.config[SELECTED_ISSUE_TYPE_IDS_KEY]
             );
           } else {
             console.log("setting from else");
@@ -399,6 +423,11 @@ export const TracebilityReportModule = ({
       <PageHeader
         bottomBar={
           <>
+            {console.log(
+              selectedIssueFieldIds,
+              selectedLinkTypeIds,
+              selectedIssueTypeIds
+            )}
             {selectedIssueFieldIds !== undefined &&
               selectedIssueTypeIds !== undefined &&
               selectedLinkTypeIds !== undefined && (

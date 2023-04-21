@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import {
-  DEFAULT_GADGET_HEIGHT,
   HEIGHT_FIELD_NAME,
   initializationGadgetConfig,
   ISSUE_CARD_FIELDS_DROPDOWN_NAME,
@@ -69,10 +68,11 @@ export const GadgetConfigurationForm: React.FC = () => {
         setIssueTypes(issueTypes);
         setLinkTypes(linkTypes);
         const issueTypeIds = issueTypes.map((issueType) => issueType.id);
-        const linkTypeIds = issueTypes.map((linkType) => linkType.id);
+        const linkTypeIds = linkTypes.map((linkType) => linkType.id);
+        console.log("link type ids", linkTypeIds);
         if (savedConfig === undefined) {
-          handleInputChange("selectedIssueTypeIds", issueTypeIds);
-          handleInputChange("selectedLinkTypeIds", linkTypeIds);
+          handleInputChange(SELECTED_ISSUE_TYPE_IDS_KEY, issueTypeIds);
+          handleInputChange(SELECTED_LINK_TYPE_IDS_KEY, linkTypeIds);
         }
         setAreIssueTypesLoading(false);
         setAreLinkTypesLoading(false);
@@ -133,6 +133,8 @@ export const GadgetConfigurationForm: React.FC = () => {
   };
 
   const handleInputChange = (name, value, type?): void => {
+    console.log("FROM HANDLE INPUT CHANGE!!!!");
+    console.log(name, value);
     let parsedValue: unknown = value;
     if (type === "number") {
       parsedValue = parseFloat(value);
@@ -170,10 +172,10 @@ export const GadgetConfigurationForm: React.FC = () => {
     label: tab.name,
     value: tab.id,
   }));
-
+  console.log(issueTypes, linkTypes);
   if (inputConfig !== undefined) {
     const isIssueTypeViewTabSelected =
-      inputConfig.viewType === ISSUE_TYPE_VIEW_ID;
+      inputConfig[VIEW_TYPE_FIELD_NAME] === ISSUE_TYPE_VIEW_ID;
     return (
       <>
         <ErrorsList errors={apiResponseErrors} />
@@ -219,8 +221,6 @@ export const GadgetConfigurationForm: React.FC = () => {
                       TREE_TYPE_VIEW_ID && (
                       <TableFieldsDropdownField
                         name={TABLE_FIELDS_DROPDOWN_NAME}
-                        selectedIssueTypeIdsKey={SELECTED_ISSUE_TYPE_IDS_KEY}
-                        selectedLinkTypeIdsKey={SELECTED_LINK_TYPE_IDS_KEY}
                         label={
                           "otpl.lxp.traceability-gadget.configure-form.fields.jql.label"
                         }
@@ -230,8 +230,8 @@ export const GadgetConfigurationForm: React.FC = () => {
                         viewType={inputConfig.viewType}
                         selectedOptionIds={
                           isIssueTypeViewTabSelected
-                            ? inputConfig.selectedIssueTypeIds
-                            : inputConfig.selectedLinkTypeIds
+                            ? inputConfig[SELECTED_ISSUE_TYPE_IDS_KEY]
+                            : inputConfig[SELECTED_LINK_TYPE_IDS_KEY]
                         }
                         configKey={
                           isIssueTypeViewTabSelected
