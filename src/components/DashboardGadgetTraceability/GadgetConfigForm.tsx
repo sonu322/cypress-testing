@@ -3,7 +3,12 @@ import styled from "styled-components";
 import {
   DEFAULT_GADGET_HEIGHT,
   initializationGadgetConfig,
+  JQL_FIELD_NAME,
   MIN_GADGET_HEIGHT,
+  SELECTED_ISSUE_TYPE_IDS_KEY,
+  SELECTED_LINK_TYPE_IDS_KEY,
+  TABLE_FIELDS_DROPDOWN_NAME,
+  VIEW_TYPE_FIELD_NAME,
 } from "../../constants/gadgetTraceability";
 import { TreeGadgetConfig } from "../../types/app";
 import Form, {
@@ -180,14 +185,22 @@ export const GadgetConfigurationForm: React.FC = () => {
                 <FormSection>
                   <Container>
                     <ViewSelect
-                      name={"viewType"}
-                      label={"Select a view"}
+                      name={VIEW_TYPE_FIELD_NAME}
+                      label={
+                        "otpl.lxp.traceability-gadget.configure-form.fields.view-type.label" ||
+                        "Select a view"
+                      }
                       options={reportViewOptions}
-                      selectedViewType={inputConfig.viewType}
+                      selectedViewType={inputConfig[VIEW_TYPE_FIELD_NAME]}
                       handleInputChange={handleInputChange}
                       isRequired
                     />
                     <JQLField
+                      name={JQL_FIELD_NAME}
+                      label={
+                        "otpl.lxp.traceability-gadget.configure-form.fields.jql.label" ||
+                        "JQL"
+                      }
                       isRequired
                       selectedJQLString={inputConfig.jql}
                       handleInputChange={handleInputChange}
@@ -201,6 +214,12 @@ export const GadgetConfigurationForm: React.FC = () => {
 
                     {inputConfig.viewType !== TREE_TYPE_VIEW_ID && (
                       <TableFieldsDropdownField
+                        name={TABLE_FIELDS_DROPDOWN_NAME}
+                        selectedIssueTypeIdsKey={SELECTED_ISSUE_TYPE_IDS_KEY}
+                        selectedLinkTypeIdsKey={SELECTED_LINK_TYPE_IDS_KEY}
+                        label={
+                          "otpl.lxp.traceability-gadget.configure-form.fields.jql.label"
+                        }
                         options={
                           isIssueTypeViewTabSelected ? issueTypes : linkTypes
                         }
@@ -212,8 +231,8 @@ export const GadgetConfigurationForm: React.FC = () => {
                         }
                         configKey={
                           isIssueTypeViewTabSelected
-                            ? "selectedIssueTypeIds"
-                            : "selectedLinkTypeIds"
+                            ? SELECTED_ISSUE_TYPE_IDS_KEY
+                            : SELECTED_LINK_TYPE_IDS_KEY
                         }
                         areOptionsLoading={
                           isIssueTypeViewTabSelected
@@ -221,12 +240,6 @@ export const GadgetConfigurationForm: React.FC = () => {
                             : areLinkTypesLoading
                         }
                         handleInputChange={handleInputChange}
-                        handleApiError={(error: Error) => {
-                          setApiResponseErrors((prevErrors) => [
-                            ...prevErrors,
-                            error,
-                          ]);
-                        }}
                       />
                     )}
                     <IssueCardFieldsDropdownField
