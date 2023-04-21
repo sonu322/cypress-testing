@@ -15,8 +15,27 @@ import { ErrorsList } from "../common/ErrorsList";
 import { useTranslation } from "react-i18next";
 import { APIContext } from "../../context/api";
 import { IssueKeyField } from "./IssueKeyField";
+import {
+  badHeightError,
+  badIssueKeyError,
+  noIssueKeyError,
+} from "../../constants/gadgetTree";
 
 type ValidationError = Record<string, string>;
+const validate = (values: TreeGadgetConfig): ValidationError => {
+  const errors: ValidationError = {};
+  const issueKeyRegex = /^[A-Z][A-Z0-9]{0,9}-\d+$/; // Regex for issue key pattern
+  if (values.issueKey === undefined || values.issueKey === "") {
+    errors.issueKey = noIssueKeyError;
+  } else if (!issueKeyRegex.test(values.issueKey)) {
+    errors.issueKey = badIssueKeyError;
+  }
+
+  if (values.height < MIN_GADGET_HEIGHT) {
+    errors.height = `${badHeightError} : ${MIN_GADGET_HEIGHT} `;
+  }
+  return errors;
+};
 
 export const GadgetConfigurationForm: React.FC = () => {
   const [inputConfig, setInputConfig] = useState<TreeGadgetConfig>({
@@ -89,27 +108,6 @@ export const GadgetConfigurationForm: React.FC = () => {
   const heightLabel = t("otpl.lxp.gadget.configure-form.fields.height");
   const submitButtonLabel = t("otpl.lxp.gadget.configure-form.buttons.submit");
   const cancelButtonLabel = t("otpl.lxp.gadget.configure-form.buttons.cancel");
-  const noIssueKeyError = t(
-    "otpl.lxp.gadget.configure-form.errors.no-issue-key"
-  );
-  const badIssueKeyError = t(
-    "otpl.lxp.gadget.configure-form.errors.bad-issue-key"
-  );
-  const badHeightError = t("otpl.lxp.gadget.configure-form.errors.bad-height");
-  const validate = (values: TreeGadgetConfig): ValidationError => {
-    const errors: ValidationError = {};
-    const issueKeyRegex = /^[A-Z][A-Z0-9]{0,9}-\d+$/; // Regex for issue key pattern
-    if (values.issueKey === undefined || values.issueKey === "") {
-      errors.issueKey = noIssueKeyError;
-    } else if (!issueKeyRegex.test(values.issueKey)) {
-      errors.issueKey = badIssueKeyError;
-    }
-
-    if (values.height < MIN_GADGET_HEIGHT) {
-      errors.height = `${badHeightError} : ${MIN_GADGET_HEIGHT} `;
-    }
-    return errors;
-  };
 
   return (
     <div>
@@ -125,18 +123,6 @@ export const GadgetConfigurationForm: React.FC = () => {
               />
 
               <FormSection>
-                {/* <Field name="issueKey" label={issueKeyLabel} isRequired>
-                  {({ fieldProps, error }) => (
-                    <>
-                      <TextField
-                        {...fieldProps}
-                        value={inputConfig.issueKey}
-                        onChange={handleInputChange}
-                      />
-                      {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
-                    </>
-                  )}
-                </Field> */}
                 <IssueKeyField
                   issueKeyLabel={issueKeyLabel}
                   selectedIssueKey={inputConfig.issueKey}
