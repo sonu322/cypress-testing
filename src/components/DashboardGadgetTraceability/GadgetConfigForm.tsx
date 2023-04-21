@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
+import styled from "styled-components";
 import {
   DEFAULT_GADGET_HEIGHT,
   DEFAULT_GADGET_TITLE,
@@ -30,6 +31,9 @@ import {
 } from "../../constants/traceabilityReport";
 import { APIContext } from "../../context/api";
 
+const Container = styled.div`
+  display: inline-block;
+`;
 type ValidationError = Record<string, string>;
 export const GadgetConfigurationForm: React.FC = () => {
   const [inputConfig, setInputConfig] = useState<any>();
@@ -179,7 +183,7 @@ export const GadgetConfigurationForm: React.FC = () => {
     const isIssueTypeViewTabSelected =
       inputConfig.viewType === ISSUE_TYPE_VIEW_ID;
     return (
-      <div>
+      <>
         <ErrorsList errors={apiResponseErrors} />
         <Form onSubmit={handleSave}>
           {({ formProps }) => {
@@ -190,7 +194,7 @@ export const GadgetConfigurationForm: React.FC = () => {
                   description={configureFormDescription}
                 />
                 <FormSection>
-                  <>
+                  <Container>
                     <ViewSelect
                       name={"viewType"}
                       label={"Select a view"}
@@ -290,7 +294,7 @@ export const GadgetConfigurationForm: React.FC = () => {
                         </>
                       )}
                     </Field>
-                  </>
+                  </Container>
                 </FormSection>
                 <FormFooter>
                   <ButtonGroup>
@@ -313,7 +317,7 @@ export const GadgetConfigurationForm: React.FC = () => {
             );
           }}
         </Form>
-      </div>
+      </>
     );
   } else {
     return <em>asd</em>;
