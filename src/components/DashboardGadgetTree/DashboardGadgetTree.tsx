@@ -134,6 +134,7 @@ const DashboardGadget: React.FC = () => {
   };
 
   const handleInputIssueKeySubmit = async (): Promise<ValidationError> => {
+    setApiResponseErrors(() => []);
     const errors = validate(inputIssueKey);
     if (Object.keys(errors).length > 0) {
       return errors;
@@ -143,7 +144,6 @@ const DashboardGadget: React.FC = () => {
       [ISSUE_KEY_FIELD_NAME]: inputIssueKey,
     }));
 
-    setApiResponseErrors([]);
     try {
       await api.editDashboardItemProperty(
         dashboardId,
@@ -153,7 +153,7 @@ const DashboardGadget: React.FC = () => {
       );
     } catch (error) {
       console.error(error);
-      setApiResponseErrors((prevErrors) => [...prevErrors, error]);
+      setApiResponseErrors([error]);
     }
   };
 
@@ -162,6 +162,7 @@ const DashboardGadget: React.FC = () => {
     dashboardItemId !== undefined &&
     config !== undefined
   ) {
+    console.log(apiResponseErrors);
     return (
       <APIContext.Provider value={api}>
         <DashboardContext.Provider
@@ -177,12 +178,9 @@ const DashboardGadget: React.FC = () => {
           <Container
             height={config?.[HEIGHT_FIELD_NAME] ?? DEFAULT_GADGET_HEIGHT}
           >
-            {apiResponseErrors?.length > 0 && (
-              <ErrorsList errors={apiResponseErrors} />
-            )}
+            {apiResponseErrors && <ErrorsList errors={apiResponseErrors} />}
             {isConfiguring ? (
               <GadgetConfigurationForm
-                apiResponseErrors={apiResponseErrors}
                 setApiResponseErrors={setApiResponseErrors}
               />
             ) : (
