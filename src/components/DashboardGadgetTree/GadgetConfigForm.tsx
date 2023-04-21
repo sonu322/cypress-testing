@@ -21,6 +21,10 @@ import {
   noIssueKeyError,
 } from "../../constants/gadgetTree";
 
+interface Props {
+  apiResponseErrors: Error[];
+  setApiResponseErrors: React.Dispatch<React.SetStateAction<Error[]>>;
+}
 type ValidationError = Record<string, string>;
 const validate = (values: TreeGadgetConfig): ValidationError => {
   const errors: ValidationError = {};
@@ -37,12 +41,14 @@ const validate = (values: TreeGadgetConfig): ValidationError => {
   return errors;
 };
 
-export const GadgetConfigurationForm: React.FC = () => {
+export const GadgetConfigurationForm: React.FC<Props> = (
+  apiResponseErrors,
+  setApiResponseErrors
+) => {
   const [inputConfig, setInputConfig] = useState<TreeGadgetConfig>({
     issueKey: "",
     height: DEFAULT_GADGET_HEIGHT,
   });
-  const [apiResponseErrors, setApiResponseErrors] = useState<Error[]>([]);
   const dashboardContext = useContext(DashboardContext);
   const {
     dashboardId,
@@ -111,7 +117,6 @@ export const GadgetConfigurationForm: React.FC = () => {
 
   return (
     <div>
-      <ErrorsList errors={apiResponseErrors} />
       <Form onSubmit={handleSave}>
         {({ formProps }) => {
           return (
@@ -124,6 +129,7 @@ export const GadgetConfigurationForm: React.FC = () => {
 
               <FormSection>
                 <IssueKeyField
+                  isRequired={true}
                   issueKeyLabel={issueKeyLabel}
                   selectedIssueKey={inputConfig.issueKey}
                   handleInputChange={handleInputChange}

@@ -11,10 +11,7 @@ interface Props {
   rootIssueKey?: string;
   isFromDashboardGadget?: string;
 }
-export const IssueTreeModule = ({
-  rootIssueKey,
-  isFromDashboardGadget,
-}: Props): JSX.Element => {
+export const IssueTreeModule = ({ rootIssueKey }: Props): JSX.Element => {
   const treeFilterContext = useContext(TreeFilterContext);
   const { t } = useTranslation();
   const api = useContext(APIContext);
@@ -115,7 +112,6 @@ export const IssueTreeModule = ({
                 setIsExpandAllLoading
               )
             }
-            isFromDashboardGadget={isFromDashboardGadget}
           />
           <IssueTreeSingleNode
             tree={tree}
