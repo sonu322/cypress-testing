@@ -144,25 +144,33 @@ export const GadgetConfigurationForm: React.FC = () => {
       [name]: parsedValue,
     }));
   };
-  const configureLabel = t("otpl.lxp.gadget.configure-label");
+  const configureLabel = t("otpl.lxp.gadget-common.configure-label");
   const configureFormDescription = t(
-    "otpl.lxp.gadget.configure-form.description"
+    "otpl.lxp.gadget-common.configure-form.description"
   );
-  const heightLabel = t("otpl.lxp.gadget.configure-form.fields.height");
-  const noTitleError = t("otpl.lxp.gadget.configure-form.errors.no-title");
-  const badTtileError = t("otpl.lxp.gadget.configure-form.errors.bad-title");
-  const submitButtonLabel = t("otpl.lxp.gadget.configure-form.buttons.submit");
-  const cancelButtonLabel = t("otpl.lxp.gadget.configure-form.buttons.cancel");
-  const badHeightError = t("otpl.lxp.gadget.configure-form.errors.bad-height");
+  const heightLabel = t("otpl.lxp.gadget-common.configure-form.fields.height");
+  const submitButtonLabel = t(
+    "otpl.lxp.gadget-common.configure-form.buttons.submit"
+  );
+  const cancelButtonLabel = t(
+    "otpl.lxp.gadget-common.configure-form.buttons.cancel"
+  );
+  const badHeightError = t(
+    "otpl.lxp.gadget-common.configure-form.errors.bad-height"
+  );
+  const viewTypeLabel = t(
+    "otpl.lxp.traceability-gadget.configure-form.fields.view-type.label"
+  );
+  const jqlLabel = t(
+    "otpl.lxp.traceability-gadget.configure-form.fields.jql.label"
+  );
+  const tableFieldsLabel = t(
+    "otpl.lxp.traceability-gadget.configure-form.fields.table-fields.label"
+  );
+
+  const issueCardsFieldLabel = t("otpl.lxp.toolbar.issue-card-fields");
   const validate = (values: TreeGadgetConfig): ValidationError => {
     const errors: ValidationError = {};
-    const titleRegex =
-      /^[a-zA-Z][a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/? ]{0,49}$/;
-    if (values.title === undefined || values.title === "") {
-      errors.title = noTitleError;
-    } else if (!titleRegex.test(values.title)) {
-      errors.title = badTtileError;
-    }
     if (values.height < MIN_GADGET_HEIGHT) {
       errors.height = `${badHeightError} : ${MIN_GADGET_HEIGHT} `;
     }
@@ -191,10 +199,7 @@ export const GadgetConfigurationForm: React.FC = () => {
                   <Container>
                     <ViewSelect
                       name={VIEW_TYPE_FIELD_NAME}
-                      label={
-                        "otpl.lxp.traceability-gadget.configure-form.fields.view-type.label" ||
-                        "Select a view"
-                      }
+                      label={viewTypeLabel}
                       options={reportViewOptions}
                       selectedViewType={inputConfig[VIEW_TYPE_FIELD_NAME]}
                       handleInputChange={handleInputChange}
@@ -202,10 +207,7 @@ export const GadgetConfigurationForm: React.FC = () => {
                     />
                     <JQLField
                       name={JQL_FIELD_NAME}
-                      label={
-                        "otpl.lxp.traceability-gadget.configure-form.fields.jql.label" ||
-                        "JQL"
-                      }
+                      label={jqlLabel}
                       isRequired
                       selectedJQLString={inputConfig[JQL_FIELD_NAME]}
                       handleInputChange={handleInputChange}
@@ -221,13 +223,11 @@ export const GadgetConfigurationForm: React.FC = () => {
                       TREE_TYPE_VIEW_ID && (
                       <TableFieldsDropdownField
                         name={TABLE_FIELDS_DROPDOWN_NAME}
-                        label={
-                          "otpl.lxp.traceability-gadget.configure-form.fields.jql.label"
-                        }
+                        label={tableFieldsLabel}
                         options={
                           isIssueTypeViewTabSelected ? issueTypes : linkTypes
                         }
-                        viewType={inputConfig.viewType}
+                        viewType={inputConfig[VIEW_TYPE_FIELD_NAME]}
                         selectedOptionIds={
                           isIssueTypeViewTabSelected
                             ? inputConfig[SELECTED_ISSUE_TYPE_IDS_KEY]
@@ -248,7 +248,7 @@ export const GadgetConfigurationForm: React.FC = () => {
                     )}
                     <IssueCardFieldsDropdownField
                       name={ISSUE_CARD_FIELDS_DROPDOWN_NAME}
-                      label={t("otpl.lxp.toolbar.issue-card-fields")}
+                      label={issueCardsFieldLabel}
                       selectedOptionIds={
                         inputConfig[ISSUE_CARD_FIELDS_DROPDOWN_NAME]
                       }
