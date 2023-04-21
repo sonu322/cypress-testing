@@ -7,8 +7,6 @@ import { HelpLink } from "../common/HelpLink";
 import { useTranslation } from "react-i18next";
 import { APIContext } from "../../context/api";
 import { TreeFilterDropdowns } from "./TreeFilterDropdowns";
-import { DashboardContext } from "../common/Dashboard/DashboardContext";
-import { ConfigureGadgetButton } from "../common/Dashboard/CofigureGadgetButton";
 
 interface Props {
   options;
@@ -50,10 +48,8 @@ export const Toolbar: React.FC<Props> = ({
   expandAll,
   isExportDisabled,
   isExpandAllLoading,
-  isFromDashboardGadget,
 }) => {
   const { t } = useTranslation();
-  const dashboardContext = useContext(DashboardContext);
   const api = useContext(APIContext);
   const helpLinkUrl = api.getHelpLinks().issueTree;
   let areTreeNecessitiesPresent = false;
@@ -100,13 +96,6 @@ export const Toolbar: React.FC<Props> = ({
           description={t("otpl.lxp.common.get-help")}
           href={helpLinkUrl}
         />
-        {isFromDashboardGadget && (
-          <ConfigureGadgetButton
-            handleClick={() => {
-              dashboardContext.updateIsConfiguring(true);
-            }}
-          />
-        )}
       </ButtonGroup>
     </Container>
   );

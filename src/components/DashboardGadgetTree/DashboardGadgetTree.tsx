@@ -1,18 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
-import {
-  DEFAULT_GADGET_HEIGHT,
-  DEFAULT_GADGET_TITLE,
-} from "../../constants/tree";
+import { DEFAULT_GADGET_HEIGHT } from "../../constants/tree";
 
-import Form, {
-  Field,
-  ErrorMessage,
-  FormHeader,
-  FormSection,
-  FormFooter,
-} from "@atlaskit/form";
+import Form, { FormSection, FormFooter } from "@atlaskit/form";
 import Spinner from "@atlaskit/spinner";
 import { APIContext } from "../../context/api";
 import { TreeGadgetConfig } from "../../types/app";
@@ -24,6 +15,8 @@ import { getQueryParam } from "../../util/index";
 import { DashboardContext } from "../common/Dashboard/DashboardContext";
 import { IssueKeyField } from "./IssueKeyField";
 import { badIssueKeyError, noIssueKeyError } from "../../constants/gadgetTree";
+import { useTranslation } from "react-i18next";
+import { ErrorsList } from "../common/ErrorsList";
 
 interface ContainerProps {
   height: number;
@@ -66,6 +59,8 @@ const DashboardGadget: React.FC = () => {
   const [dashboardId, setDashboardId] = useState();
   const [dashboardItemId, setDashboardItemId] = useState();
   const [inputIssueKey, setInputIssueKey] = useState<string>();
+  const [apiResponseErrors, setApiResponseErrors] = useState<Error[]>([]);
+  const { t } = useTranslation();
   const updateConfig = (config: TreeGadgetConfig): void => {
     setConfig(config);
   };
@@ -81,6 +76,8 @@ const DashboardGadget: React.FC = () => {
     }
     setInputIssueKey(config?.issueKey);
   }, [config, api]);
+
+  const issueKeyLabel = t("otpl.lxp.gadget.configure-form.fields.issue-key");
 
   useEffect(() => {
     const getConfig = async (): Promise<void> => {
@@ -128,6 +125,31 @@ const DashboardGadget: React.FC = () => {
     setInputIssueKey(value);
   };
 
+  const handleInputIssueKeySubmit = async (): ValidationError => {
+    console.log("issueKey", inputIssueKey);
+    const errors = validate(inputIssueKey);
+    if (Object.keys(errors).length > 0) {
+      return errors;
+    }
+    setConfig((prevConfig) => ({
+      ...prevConfig,
+      issueKey: inputIssueKey,
+    }));
+
+    setApiResponseErrors([]);
+    try {
+      await api.editDashboardItemProperty(
+        dashboardId,
+        dashboardItemId,
+        "config",
+        { ...config, issueKey: inputIssueKey }
+      );
+    } catch (error) {
+      console.error(error);
+      setApiResponseErrors((prevErrors) => [...prevErrors, error]);
+    }
+  };
+
   if (
     dashboardId !== undefined &&
     dashboardItemId !== undefined &&
@@ -146,29 +168,23 @@ const DashboardGadget: React.FC = () => {
           }}
         >
           <Container height={config?.height ?? DEFAULT_GADGET_HEIGHT}>
+            {apiResponseErrors?.length > 0 && (
+              <ErrorsList errors={apiResponseErrors} />
+            )}
             {isConfiguring ? (
-              <GadgetConfigurationForm />
+              <GadgetConfigurationForm
+                apiResponseErrors={apiResponseErrors}
+                setApiResponseErrors={setApiResponseErrors}
+              />
             ) : (
               <>
-                <Form
-                  onSubmit={() => {
-                    console.log("issueKey", inputIssueKey);
-                    const errors = validate(inputIssueKey);
-                    if (Object.keys(errors).length > 0) {
-                      return errors;
-                    }
-                    setConfig((prevConfig) => ({
-                      ...prevConfig,
-                      issueKey: inputIssueKey,
-                    }));
-                  }}
-                >
+                <Form onSubmit={handleInputIssueKeySubmit}>
                   {({ formProps }) => {
                     return (
                       <form {...formProps}>
                         <FormSection>
                           <IssueKeyField
-                            issueKeyLabel=""
+                            issueKeyLabel={issueKeyLabel}
                             selectedIssueKey={inputIssueKey}
                             handleInputChange={handleInputIssueKeyChange}
                           />
