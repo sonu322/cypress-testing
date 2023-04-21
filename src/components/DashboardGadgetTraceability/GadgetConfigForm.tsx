@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import {
   DEFAULT_GADGET_HEIGHT,
@@ -66,7 +66,6 @@ export const GadgetConfigurationForm: React.FC = () => {
           handleInputChange("selectedIssueTypeIds", issueTypeIds);
           handleInputChange("selectedLinkTypeIds", linkTypeIds);
         }
-        console.log("ISSUE TYPES AND LINK TYPES ARE SET");
         setAreIssueTypesLoading(false);
         setAreLinkTypesLoading(false);
       } catch (error) {
@@ -78,8 +77,6 @@ export const GadgetConfigurationForm: React.FC = () => {
     void loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  console.log("initial");
-  console.log(inputConfig);
   const [apiResponseErrors, setApiResponseErrors] = useState<Error[]>([]);
   const dashboardContext = useContext(DashboardContext);
   const {
@@ -113,7 +110,6 @@ export const GadgetConfigurationForm: React.FC = () => {
   const handleSave = async (): Promise<ValidationError> => {
     setApiResponseErrors([]);
     const errors = validate(inputConfig);
-    console.log(errors);
     if (Object.keys(errors).length > 0) {
       return errors;
     }
@@ -127,7 +123,6 @@ export const GadgetConfigurationForm: React.FC = () => {
           inputConfig
         ),
       ]);
-      console.log("called apis done");
       updateIsConfiguring(false);
     } catch (error) {
       console.error(error);
@@ -136,8 +131,6 @@ export const GadgetConfigurationForm: React.FC = () => {
   };
 
   const handleInputChange = (name, value, type?): void => {
-    console.log("HANDLE INPUT CHANGE CALLED");
-    console.log(name, value, type);
     let parsedValue: unknown = value;
     if (type === "number") {
       parsedValue = parseFloat(value);
@@ -175,11 +168,8 @@ export const GadgetConfigurationForm: React.FC = () => {
     label: tab.name,
     value: tab.id,
   }));
-  console.log("INPUT CONFIg", inputConfig);
-  console.log(apiResponseErrors);
 
   if (inputConfig !== undefined) {
-    console.log("INPut Config", inputConfig);
     const isIssueTypeViewTabSelected =
       inputConfig.viewType === ISSUE_TYPE_VIEW_ID;
     return (
@@ -245,10 +235,6 @@ export const GadgetConfigurationForm: React.FC = () => {
                         }}
                       />
                     )}
-                    {console.log(
-                      "from before field",
-                      inputConfig.issueCardFields
-                    )}
                     <IssueCardFieldsDropdownField
                       selectedOptionIds={inputConfig.issueCardFields}
                       handleInputChange={handleInputChange}
@@ -280,7 +266,6 @@ export const GadgetConfigurationForm: React.FC = () => {
                             min={MIN_GADGET_HEIGHT}
                             step="1"
                             onChange={(event) => {
-                              console.log("height", event);
                               handleInputChange(
                                 "height",
                                 event.target.value,
@@ -322,4 +307,4 @@ export const GadgetConfigurationForm: React.FC = () => {
   } else {
     return <em>asd</em>;
   }
-};;
+};

@@ -26,6 +26,10 @@ const Container = styled.div<ContainerProps>`
   height: ${({ height }) => height}px;
   overflow: auto;
 `;
+
+const InlineContainer = styled.div`
+  display: inline-block;
+`;
 const SpinnerContainer = styled.span`
   display: flex;
   min-width: 24px;
@@ -183,11 +187,13 @@ const DashboardGadget: React.FC = () => {
                     return (
                       <form {...formProps}>
                         <FormSection>
-                          <IssueKeyField
-                            issueKeyLabel={issueKeyLabel}
-                            selectedIssueKey={inputIssueKey}
-                            handleInputChange={handleInputIssueKeyChange}
-                          />
+                          <InlineContainer>
+                            <IssueKeyField
+                              issueKeyLabel={issueKeyLabel}
+                              selectedIssueKey={inputIssueKey}
+                              handleInputChange={handleInputIssueKeyChange}
+                            />
+                          </InlineContainer>
                         </FormSection>
                         <FormFooter />
                       </form>
