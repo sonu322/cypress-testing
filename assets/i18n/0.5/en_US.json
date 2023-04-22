@@ -53,7 +53,7 @@
   "otpl.lxp.traceability-report.toolbar.settingsDropdown.autoHideEmptyColumns.Description": "This option enables automatic hiding of columns that do not contain any information related to the linked issues. However, if a column is manually disabled through the 'Table Fields' dropdown, then it will not be displayed regardless of this option's value.",
   "otpl.lxp.traceability-report.toolbar.exportDropdown.exportCurrentPage": "Export the current page",
   "otpl.lxp.traceability-report.toolbar.exportDropdown.exportAllRecords": "Export all records",
-  "otpl.lxp.traceability-report.fetch-limit-dropdown.name": "Fetch Limit",
+  "otpl.lxp.traceability-report.fetch-limit-dropdown.name": "Page size",
   "otpl.lxp.traceability-report.load-more-issues-button.name": "Load more issues",
   "otpl.lxp.traceability-report.select-filter.text": "Please select filter to view report",
   "otpl.lxp.api.priority-error-main": "Issue priorities not found.",

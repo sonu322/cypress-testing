@@ -25,7 +25,7 @@
   "otpl.lxp.traceability-report.toolbar.exportDropdown.exportCurrentPage": "Aktuelle Seite exportieren",
   "otpl.lxp.traceability-report.toolbar.exportDropdown.exportAllRecords": "Alle Datensätze exportieren",
   "otpl.lxp.traceability-report.select-filter.text": "Bitte wählen Sie Filter, um den Bericht anzuzeigen",
-  "otpl.lxp.traceability-report.fetch-limit-dropdown.name": "Fetch Limit",
+  "otpl.lxp.traceability-report.fetch-limit-dropdown.name": "Taille de la page",
   "otpl.lxp.traceability-report.load-more-issues-button.name": "mehr vorgänge laden",
   "otpl.lxp.traceability-report.tree-view.name": "Baumsicht",
   "otpl.lxp.traceability-report.tree-view.orphans-tree-branch-name": "Verwaiste vorgänge",
@@ -88,5 +88,8 @@
   "otpl.lxp.api.dashboard-gadget-edit-config-error": "Die Gadget-Konfiguration konnte nicht bearbeitet werden",
   "otpl.lxp.api.dashboard-gadget-edit-title-error": "Gadget-Titel konnte nicht bearbeitet werden",
   "otpl.lxp.lxp-tree-gadget.name": "LXP Einheitliche Baumansicht",
-  "otpl.lxp.tree.description": ""
+  "otpl.lxp.tree.description": "",
+  "otpl.lxp.traceability-gadget.configure-form.fields.view-type.label": "Wählen Sie eine Ansicht aus",
+  "otpl.lxp.traceability-gadget.configure-form.fields.table-fields.label": "Tabellenfelder",
+  "otpl.lxp.traceability-gadget.configure-form.fields.jql.label": "Wählen Sie eine JQL-Abfrage aus"
 }
