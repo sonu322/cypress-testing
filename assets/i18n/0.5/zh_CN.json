@@ -16,7 +16,7 @@
   "otpl.lxp.traceability-report.toolbar.jqlDialogOptions.descriptionText": "使用新的 JQL 查询搜索事务",
   "otpl.lxp.traceability-report.toolbar.jqlDialogOptions.submitText": "使用过滤器",
   "otpl.lxp.traceability-report.toolbar.jqlDialogOptions.cancelText": "取消",
-  "otpl.lxp.traceability-report.fetch-limit-dropdown.name": "Fetch Limit",
+  "otpl.lxp.traceability-report.fetch-limit-dropdown.name": "页面大小",
   "otpl.lxp.traceability-report.load-more-issues-button.name": "加载更多事务",
   "otpl.lxp.traceability-report.toolbar.tableFields.name": "表字段",
   "otpl.lxp.traceability-report.toolbar.settingsDropdown.displayAllIssueCards": "显示所有事务卡",
@@ -88,5 +88,8 @@
   "otpl.lxp.api.dashboard-gadget-edit-config-error": "无法编辑小工具配置",
   "otpl.lxp.api.dashboard-gadget-edit-title-error": "无法编辑小工具标题",
   "otpl.lxp.lxp-tree-gadget.name": "LXP 统一树视图",
-  "otpl.lxp.tree.description": "统一树/层次结构视图以树结构显示链接的 Jira 问题的完整层次结构。"
+  "otpl.lxp.tree.description": "统一树/层次结构视图以树结构显示链接的 Jira 问题的完整层次结构。",
+  "otpl.lxp.traceability-gadget.configure-form.fields.view-type.label": "选择一个视图",
+  "otpl.lxp.traceability-gadget.configure-form.fields.table-fields.label": "表字段",
+  "otpl.lxp.traceability-gadget.configure-form.fields.jql.label": "选择一个 JQL 查询"
 }

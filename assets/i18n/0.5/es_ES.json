@@ -23,7 +23,7 @@
   "otpl.lxp.traceability-report.toolbar.exportDropdown.exportAllRecords": "Exportar todos los registros",
   "otpl.lxp.toolbar.loading-export-all-records.title": "Exportación de registros",
   "otpl.lxp.toolbar.loading-export-all-records.message": "Esta operación puede tardar algún tiempo dependiendo del número de registros. Espere por favor...",
-  "otpl.lxp.traceability-report.fetch-limit-dropdown.name": "Fetch Limit",
+  "otpl.lxp.traceability-report.fetch-limit-dropdown.name": "Tamaño de página",
   "otpl.lxp.traceability-report.load-more-issues-button.name": "cargar más incidencias",
   "otpl.lxp.traceability-report.select-filter.text": "Seleccione el filtro para ver el informe",
   "otpl.lxp.traceability-report.tree-view.name": "Vista de árbol",
@@ -88,5 +88,8 @@
   "otpl.lxp.api.dashboard-gadget-edit-config-error": "No se pudo editar la configuración del gadget",
   "otpl.lxp.api.dashboard-gadget-edit-title-error": "No se pudo editar el título del gadget",
   "otpl.lxp.lxp-tree-gadget.name": "LXP Vista de árbol unificada",
-  "otpl.lxp.tree.description": "La vista de árbol/jerarquía unificada muestra la jerarquía completa de las incidencias de Jira relacionadas en una estructura de árbol."
+  "otpl.lxp.tree.description": "La vista de árbol/jerarquía unificada muestra la jerarquía completa de las incidencias de Jira relacionadas en una estructura de árbol.",
+  "otpl.lxp.traceability-gadget.configure-form.fields.view-type.label": "Seleccione una vista",
+  "otpl.lxp.traceability-gadget.configure-form.fields.table-fields.label": "Campos de tabla",
+  "otpl.lxp.traceability-gadget.configure-form.fields.jql.label": "Seleccione una consulta JQL"
 }
