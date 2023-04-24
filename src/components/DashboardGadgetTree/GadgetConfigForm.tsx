@@ -68,7 +68,9 @@ export const GadgetConfigurationForm: React.FC<Props> = ({
     }
   }, [savedConfig, setInputConfig]);
   const handleCancelFormSubmission = (): void => {
-    updateIsConfiguring(false);
+    if (savedConfig[ISSUE_KEY_FIELD_NAME]?.length > 0) {
+      updateIsConfiguring(false);
+    }
   };
   const handleSave = async (): Promise<ValidationError> => {
     setApiResponseErrors([]);
@@ -162,6 +164,7 @@ export const GadgetConfigurationForm: React.FC<Props> = ({
               <FormFooter>
                 <ButtonGroup>
                   <Button
+                    isDisabled={savedConfig[ISSUE_KEY_FIELD_NAME]?.length === 0}
                     appearance="subtle"
                     onClick={handleCancelFormSubmission}
                   >
