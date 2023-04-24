@@ -1,5 +1,4 @@
 import i18n from "../../../i18n";
-import { TreeGadgetConfig } from "../../types/app";
 import {
   JiraAPI,
   JiraFiltersResponse,
@@ -33,7 +32,6 @@ export default class JiraCloudImpl implements JiraAPI {
   getJiraBaseURL(): string {
     return getQueryParam("xdm_e");
   }
-
 
   async getMyself(): Promise<JiraMyself> {
     const response = await this._AP.request("/rest/api/3/myself");
