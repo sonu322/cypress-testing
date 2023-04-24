@@ -35,9 +35,7 @@ export default class JiraCloudImpl implements JiraAPI {
   }
 
   async getToken(): Promise<string> {
-    console.log("get token form impl is called");
     const token = await this._AP.context.getToken();
-    console.log("TOKEN!!!!!!!!!!!", token);
     return token;
   }
 

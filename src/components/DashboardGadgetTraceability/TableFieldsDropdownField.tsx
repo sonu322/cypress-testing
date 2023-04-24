@@ -2,12 +2,7 @@ import React from "react";
 import { Field, ErrorMessage } from "@atlaskit/form";
 import { useTranslation } from "react-i18next";
 import { TableFieldsDropdown } from "../TracebilityReportModule/TableFieldsDropdown";
-
-import {
-  ISSUE_TYPE_VIEW_ID,
-  LINK_TYPE_VIEW_ID,
-} from "../../constants/traceabilityReport";
-import { APIContext } from "../../context/api";
+import Spinner from "@atlaskit/spinner";
 import { IssueLinkType, IssueType } from "../../types/api";
 
 interface Props {
@@ -43,25 +38,30 @@ export const TableFieldsDropdownField: React.FC<Props> = ({
     return <em></em>;
   } else {
     return (
-      <Field
-        name={name}
-        label={label || "Table Fields"}
-        isRequired={isRequired}
-      >
+      <Field name={name} label={label} isRequired={isRequired}>
         {({ error }) => {
-          return (
-            <div>
-              <TableFieldsDropdown
-                isDisabled={true}
-                options={options}
-                selectedOptions={selectedOptionIds}
-                updateSelectedOptionIds={(updatedList) => {
-                  handleInputChange(configKey, updatedList);
-                }}
-              />
-              {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
-            </div>
-          );
+          if (
+            areOptionsLoading ||
+            selectedOptionIds === undefined ||
+            viewType === undefined ||
+            viewType === ""
+          ) {
+            return <Spinner size={"small"} />;
+          } else {
+            return (
+              <div>
+                <TableFieldsDropdown
+                  isDisabled={true}
+                  options={options}
+                  selectedOptions={selectedOptionIds}
+                  updateSelectedOptionIds={(updatedList) => {
+                    handleInputChange(configKey, updatedList);
+                  }}
+                />
+                {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
+              </div>
+            );
+          }
         }}
       </Field>
     );

@@ -74,7 +74,7 @@
   "otpl.lxp.gh-link-issue-tab.tooltip": "liens Explorateur",
   "otpl.lxp.gadget-common.configure-label": "Configurer",
   "otpl.lxp.tree-gadget.configure-button.description": "Configurer le gadget",
-  "otpl.lxp.tree-gadget.configure-form.description": "* indique un champ obligatoire",
+  "otpl.lxp.gadget-common.configure-form.description": "* indique un champ obligatoire",
   "otpl.lxp.tree-gadget.configure-form.fields.title": "Titre",
   "otpl.lxp.tree-gadget.configure-form.fields.issue-key": "Clé de ticket",
   "otpl.lxp.gadget-common.configure-form.fields.height": "Hauteur",
