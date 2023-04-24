@@ -94,6 +94,12 @@ export const TracebilityReportModule = ({
   const [isExportReportLoading, setIsExportReportLoading] = useState(false);
   const dashboardContext = useContext(DashboardContext);
 
+  const [selectedLimitOptionId, setSelectedLimitOptionId] = useState(
+    DEFAULT_ROWS_PER_PAGE
+  );
+  const updatedIssues = (issues: IssueWithSortedLinks[]): void => {
+    setFilteredIssues(issues);
+  };
   useEffect(() => {
     if (selectedTabIndex !== undefined) {
       handleSetItemInSavedReportConfig("selectedTabIndex", selectedTabIndex);
@@ -355,6 +361,20 @@ export const TracebilityReportModule = ({
   const updateTotalNumberOfIssues = (totalNumberOfIssues: number): void => {
     setTotalNumberOfIssues(totalNumberOfIssues);
   };
+  const handleRefresh = (): void => {
+    const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
+    void tracebilityReportUtils.populateIssues(
+      selectedJQLString,
+      issueFields,
+      0,
+      selectedLimit,
+      updatedIssues,
+      setAreIssuesLoading,
+      updateTotalNumberOfIssues,
+      handleNewError,
+      clearAllErrors
+    );
+  };
   const updateIsExportReportLoading = (
     isExportReportLoading: boolean
   ): void => {
@@ -418,7 +438,6 @@ export const TracebilityReportModule = ({
                       ? exportTreeReportOptions
                       : exportTabularReportOptions
                   }
-                  isFromDashboardGadget={isFromDashboardGadget}
                   selectedJQLString={selectedJQLString}
                   issueCardOptions={issueFields}
                   selectedIssueFieldIds={selectedIssueFieldIds}
@@ -432,6 +451,7 @@ export const TracebilityReportModule = ({
                   handleNewError={handleNewError}
                   handleTabOptionSelect={handleTabOptionSelect}
                   selectedTabIndex={selectedTabIndex}
+                  handleRefresh={handleRefresh}
                 />
               )}
             {isTreeReport && areTreeNecessitiesPresent && (
@@ -442,6 +462,11 @@ export const TracebilityReportModule = ({
                 isOrphansBranchPresent={isOrphansBranchPresent}
                 updateIsOrphansBranchPresent={updateIsOrphansBranchPresent}
                 isToggleOrphansLoading={isToggleOrphansLoading}
+                issueFields={issueFields}
+                tree={tree}
+                setTree={setTree}
+                handleNewError={handleNewError}
+                clearAllErrors={clearAllErrors}
               />
             )}
           </>
@@ -452,6 +477,8 @@ export const TracebilityReportModule = ({
       {allErrors.length > 0 && <ErrorsList errors={errors} />}
       <GrowContainer>
         <Main
+          selectedLimitOptionId={selectedLimitOptionId}
+          setSelectedLimitOptionId={setSelectedLimitOptionId}
           totalNumberOfIssues={totalNumberOfIssues}
           updateTotalNumberOfIssues={updateTotalNumberOfIssues}
           selectedJqlString={selectedJQLString}

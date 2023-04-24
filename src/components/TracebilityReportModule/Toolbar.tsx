@@ -3,12 +3,13 @@ import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import { JQLSelectDropdown } from "../JQLSelectDropdown";
 import { ButtonGroup } from "@atlaskit/button";
+import { RefreshButton } from "../common/RefreshButton";
 import { Dropdown } from "../common/Dropdown";
+import { DropdownFields } from "../common/DropdownFields";
 import { HelpLink } from "../common/HelpLink";
 import { ExportContent } from "../common/ExportContent";
 import { JQLEditor } from "../JQLEditor";
 import { TableFieldsDropdown } from "./TableFieldsDropdown";
-import { DashboardContext } from "../common/Dashboard/DashboardContext";
 import {
   CellLimit,
   IssueField,
@@ -22,7 +23,6 @@ import { useTranslation } from "react-i18next";
 import { APIContext } from "../../context/api";
 import { viewTabs } from "../../constants/traceabilityReport";
 import { SettingsDropdownTrigger } from "../common/SettingsDropdownTrigger";
-import { ConfigureGadgetButton } from "../common/Dashboard/CofigureGadgetButton";
 
 interface MainBarProps {
   appWidth: number;
@@ -65,7 +65,7 @@ interface Props {
   showCustomJQLEditor: any;
   selectedViewTab: string;
   exportDropdownOptions: any;
-  isFromDashboardGadget?: boolean;
+  handleRefresh: (refreshTypeId: string) => void;
 }
 
 export const Toolbar = ({
@@ -88,6 +88,7 @@ export const Toolbar = ({
   showCustomJQLEditor,
   selectedViewTab,
   exportDropdownOptions,
+  handleRefresh,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
   const api = useContext(APIContext);
@@ -125,6 +126,7 @@ export const Toolbar = ({
             updateSelectedFilterId={updateSelectedJQLString}
             showCustomJQLEditor={showCustomJQLEditor}
           />
+          <RefreshButton refresh={handleRefresh} />
         </FlexContainer>
 
         <div>
@@ -136,7 +138,7 @@ export const Toolbar = ({
                 options={tableFields}
               />
             )}
-            <Dropdown
+            <DropdownFields
               dropdownName={t("otpl.lxp.toolbar.issue-card-fields")}
               options={issueCardOptions}
               selectedOptions={selectedIssueFieldIds}

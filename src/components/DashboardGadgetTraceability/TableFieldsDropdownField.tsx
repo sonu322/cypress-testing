@@ -51,7 +51,6 @@ export const TableFieldsDropdownField: React.FC<Props> = ({
             return (
               <div>
                 <TableFieldsDropdown
-                  isDisabled={true}
                   options={options}
                   selectedOptions={selectedOptionIds}
                   updateSelectedOptionIds={(updatedList) => {

@@ -106,7 +106,7 @@ export const IssueTreeModule = ({ rootIssueKey }: Props): JSX.Element => {
             collapseAll={() => treeUtils.collapseAll(setTree)}
             isExpandAllLoading={isExpandAllLoading}
             expandAll={async () =>
-              await treeUtils.handleExpandAllNodes(
+              await treeUtils.handleSingleExpandAllNodes(
                 treeFilterContext.filter,
                 issueFields,
                 tree,

@@ -65,6 +65,8 @@ interface Props {
   currentPage: number;
   setCurrentPage: (page: number) => void;
   isFromDashboardGadget?: boolean;
+  selectedLimitOptionId: number;
+  setSelectedLimitOptionId: (limit: number) => void;
 }
 
 export const Main: React.FC<Props> = ({
@@ -94,11 +96,10 @@ export const Main: React.FC<Props> = ({
   currentPage,
   setCurrentPage,
   isFromDashboardGadget,
+  selectedLimitOptionId,
+  setSelectedLimitOptionId,
 }) => {
   const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
-  const [selectedLimitOptionId, setSelectedLimitOptionId] = useState(
-    DEFAULT_ROWS_PER_PAGE
-  );
   const updateCurrentPage = (page: number): void => {
     // In the updateCurrentPage,all the arguments passing to populateIssues should not be undefined
     setCurrentPage(page);

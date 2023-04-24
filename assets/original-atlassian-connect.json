@@ -61,7 +61,7 @@
           "i18n": "otpl.lxp.traceability-report.description"
         },
         "reportCategory": "agile",
-        "thumbnailUrl": "http://example.com/images/report-example-thumbnail.png",
+        "thumbnailUrl": "/images/lxp-thumbnail.png",
         "name": {
           "value": "Links Explorer Report",
           "i18n": "otpl.lxp.traceability-report.name"
