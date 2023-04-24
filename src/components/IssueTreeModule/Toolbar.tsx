@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Dropdown } from "../common/Dropdown";
+import { DropdownFields } from "../common/DropdownFields";
 import { ButtonGroup } from "@atlaskit/button";
 import styled from "styled-components";
 import { ExportButton } from "../common/ExportButton";
@@ -81,7 +81,7 @@ export const Toolbar: React.FC<Props> = ({
         </LeftContainer>
       )}
       <ButtonGroup>
-        <Dropdown
+        <DropdownFields
           dropdownName={t("otpl.lxp.toolbar.issue-card-fields")}
           options={issueCardOptions}
           selectedOptions={selectedIssueFieldIds}
