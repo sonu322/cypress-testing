@@ -145,8 +145,6 @@ export default interface LXPAPI {
 
   getPriorities: () => Promise<IssuePriority[]>;
 
-  getToken: () => Promise<string>;
-
   getIssueTypes: () => Promise<IssueType[]>;
 
   getIssueLinkTypes: () => Promise<IssueLinkType[]>;

@@ -34,10 +34,6 @@ export default class JiraCloudImpl implements JiraAPI {
     return getQueryParam("xdm_e");
   }
 
-  async getToken(): Promise<string> {
-    const token = await this._AP.context.getToken();
-    return token;
-  }
 
   async getMyself(): Promise<JiraMyself> {
     const response = await this._AP.request("/rest/api/3/myself");
