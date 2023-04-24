@@ -131,8 +131,7 @@ const DashboardGadget: React.FC = () => {
   const handleInputIssueKeyChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ): void => {
-    const { name, value, type } = event.target;
-    console.log(name, value, type);
+    const { value } = event.target;
     setInputIssueKey(value);
   };
 
@@ -165,7 +164,6 @@ const DashboardGadget: React.FC = () => {
     dashboardItemId !== undefined &&
     config !== undefined
   ) {
-    console.log(apiResponseErrors);
     return (
       <APIContext.Provider value={api}>
         <DashboardContext.Provider

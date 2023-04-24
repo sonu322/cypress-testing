@@ -74,7 +74,7 @@
   "otpl.lxp.gh-link-issue-tab.tooltip": "链接浏览器",
   "otpl.lxp.gadget-common.configure-label": "配置",
   "otpl.lxp.tree-gadget.configure-button.description": "配置小工具",
-  "otpl.lxp.tree-gadget.configure-form.description": "* 表示必填字段",
+  "otpl.lxp.gadget-common.configure-form.description": "* 表示必填字段",
   "otpl.lxp.tree-gadget.configure-form.fields.title": "标题",
   "otpl.lxp.tree-gadget.configure-form.fields.issue-key": "发行密钥",
   "otpl.lxp.gadget-common.configure-form.fields.height": "高度",

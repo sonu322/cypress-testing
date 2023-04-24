@@ -14,7 +14,6 @@ const Container = styled.div`
   gap: 8px;
 `;
 export const ErrorsList: React.FC<Props> = ({ errors }) => {
-  console.log("errors", errors);
   return (
     <Container>
       {errors.map((error, index) => {

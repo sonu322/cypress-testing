@@ -74,7 +74,7 @@
   "otpl.lxp.gh-link-issue-tab.tooltip": "Verknüpfungs-Explorer",
   "otpl.lxp.gadget-common.configure-label": "Konfigurieren",
   "otpl.lxp.tree-gadget.configure-button.description": "Gadget konfigurieren",
-  "otpl.lxp.tree-gadget.configure-form.description": "* Markiert eine notwendiges Feld",
+  "otpl.lxp.gadget-common.configure-form.description": "* Markiert eine notwendiges Feld",
   "otpl.lxp.tree-gadget.configure-form.fields.title": "Titel",
   "otpl.lxp.tree-gadget.configure-form.fields.issue-key": "Vorgangsschlüssel",
   "otpl.lxp.gadget-common.configure-form.fields.height": "Höhe",

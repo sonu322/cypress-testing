@@ -12,7 +12,7 @@ import {
   TABLE_FIELDS_DROPDOWN_NAME,
   VIEW_TYPE_FIELD_NAME,
 } from "../../constants/gadgetTraceability";
-import { TreeGadgetConfig } from "../../types/app";
+import { TraceabilityGadgetConfig } from "../../types/app";
 import Form, {
   Field,
   ErrorMessage,
@@ -43,7 +43,7 @@ const Container = styled.div`
 `;
 type ValidationError = Record<string, string>;
 export const GadgetConfigurationForm: React.FC = () => {
-  const [inputConfig, setInputConfig] = useState<any>();
+  const [inputConfig, setInputConfig] = useState<TraceabilityGadgetConfig>();
   const [issueTypes, setIssueTypes] = useState<IssueType[]>([]);
   const [linkTypes, setLinkTypes] = useState<IssueLinkType[]>([]);
   const [areIssueTypesLoading, setAreIssueTypesLoading] =
@@ -69,7 +69,6 @@ export const GadgetConfigurationForm: React.FC = () => {
         setLinkTypes(linkTypes);
         const issueTypeIds = issueTypes.map((issueType) => issueType.id);
         const linkTypeIds = linkTypes.map((linkType) => linkType.id);
-        console.log("link type ids", linkTypeIds);
         if (savedConfig === undefined) {
           handleInputChange(SELECTED_ISSUE_TYPE_IDS_KEY, issueTypeIds);
           handleInputChange(SELECTED_LINK_TYPE_IDS_KEY, linkTypeIds);
@@ -133,8 +132,6 @@ export const GadgetConfigurationForm: React.FC = () => {
   };
 
   const handleInputChange = (name, value, type?): void => {
-    console.log("FROM HANDLE INPUT CHANGE!!!!");
-    console.log(name, value);
     let parsedValue: unknown = value;
     if (type === "number") {
       parsedValue = parseFloat(value);
@@ -169,7 +166,7 @@ export const GadgetConfigurationForm: React.FC = () => {
   );
 
   const issueCardsFieldLabel = t("otpl.lxp.toolbar.issue-card-fields");
-  const validate = (values: TreeGadgetConfig): ValidationError => {
+  const validate = (values: TraceabilityGadgetConfig): ValidationError => {
     const errors: ValidationError = {};
     if (values.height < MIN_GADGET_HEIGHT) {
       errors.height = `${badHeightError} : ${MIN_GADGET_HEIGHT} `;
@@ -180,7 +177,6 @@ export const GadgetConfigurationForm: React.FC = () => {
     label: tab.name,
     value: tab.id,
   }));
-  console.log(issueTypes, linkTypes);
   if (inputConfig !== undefined) {
     const isIssueTypeViewTabSelected =
       inputConfig[VIEW_TYPE_FIELD_NAME] === ISSUE_TYPE_VIEW_ID;

@@ -2,10 +2,9 @@ import React, { useState, useEffect, useContext } from "react";
 import { Field, ErrorMessage } from "@atlaskit/form";
 import { useTranslation } from "react-i18next";
 import { IssueField } from "../../types/api";
-import JiraCloudImpl from "../../impl/jira/Cloud";
 import { Dropdown } from "../common/Dropdown";
 import { APIContext } from "../../context/api";
-
+import Spinner from "@atlaskit/spinner";
 interface Props {
   handleInputChange: (name: any, value: any, type?: any) => void;
   selectedOptionIds: string[];
@@ -50,27 +49,30 @@ export const IssueCardFieldsDropdownField: React.FC<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (areOptionsLoading || selectedOptionIds === undefined) {
-    return <em>loading</em>;
-  } else {
-    return (
-      <Field name={name} label={label} isRequired={isRequired}>
-        {({ error }) => {
-          return (
-            <div>
-              <Dropdown
-                dropdownName={label}
-                options={issueCardFields}
-                selectedOptions={selectedOptionIds}
-                updateSelectedOptions={(value) => {
-                  handleInputChange(name, value);
-                }}
-              />
-              {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
-            </div>
-          );
-        }}
-      </Field>
-    );
-  }
-};
+  // if (areOptionsLoading || selectedOptionIds === undefined) {
+  //   return <em>loading</em>;
+  // } else {
+  return (
+    <Field name={name} label={label} isRequired={isRequired}>
+      {({ error }) => {
+        if (areOptionsLoading || selectedOptionIds === undefined) {
+          return <Spinner size={"small"} />;
+        }
+        return (
+          <div>
+            <Dropdown
+              dropdownName={label}
+              options={issueCardFields}
+              selectedOptions={selectedOptionIds}
+              updateSelectedOptions={(value) => {
+                handleInputChange(name, value);
+              }}
+            />
+            {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
+          </div>
+        );
+      }}
+    </Field>
+  );
+  //  }
+};;

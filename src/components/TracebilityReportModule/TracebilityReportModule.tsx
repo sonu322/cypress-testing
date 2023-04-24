@@ -70,7 +70,7 @@ export const TracebilityReportModule = ({
   const { t } = useTranslation();
   const treeFilterContext = useContext(TreeFilterContext);
   const [isOrphansBranchPresent, setIsOrphansBranchPresent] =
-    useState<Boolean>();
+    useState<boolean>();
   const [areOptionsLoading, setAreOptionsLoading] = useState(true);
   const [selectedSettingsDropdownIds, setSelectedSettingsDropdownIds] =
     useState<string[]>([autoHideEmptyColumnsId]);
@@ -93,7 +93,6 @@ export const TracebilityReportModule = ({
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [isExportReportLoading, setIsExportReportLoading] = useState(false);
   const dashboardContext = useContext(DashboardContext);
-  console.log("DASHBOARD CONTEXT", dashboardContext);
 
   useEffect(() => {
     if (selectedTabIndex !== undefined) {
@@ -216,10 +215,7 @@ export const TracebilityReportModule = ({
     setErrors([]);
   };
   useEffect(() => {
-    console.log("DAASHBOARD CONTEXT!!!!!!!!!!!!!!!!");
-    console.log(dashboardContext);
     const loadData = async (): Promise<void> => {
-      console.log("loaddata called");
       try {
         const result = await Promise.all([
           api.getIssueTypes(),
@@ -234,7 +230,6 @@ export const TracebilityReportModule = ({
         // setting state - selected field ids
 
         // setting state - table field options
-        console.log("is form dashboard", isFromDashboardGadget);
         setIssueTypes(issueTypes);
         const lastSavedReportConfig: LastSavedReportConfig =
           getItemInLocalStorage(lastSavedReportConfigKey);
@@ -269,14 +264,10 @@ export const TracebilityReportModule = ({
             setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
           }
         } else {
-          console.log("code from isdashboard");
           if (
             dashboardContext.config[ISSUE_CARD_FIELDS_DROPDOWN_NAME] !==
             undefined
           ) {
-            console.log(
-              dashboardContext.config[ISSUE_CARD_FIELDS_DROPDOWN_NAME]
-            );
             setSelectedIssueFieldIds(
               dashboardContext.config[ISSUE_CARD_FIELDS_DROPDOWN_NAME]
             );
@@ -285,16 +276,6 @@ export const TracebilityReportModule = ({
             setSelectedIssueFieldIds(selectedFieldIds);
           }
           if (Boolean(dashboardContext.config[VIEW_TYPE_FIELD_NAME])) {
-            console.log("setting from config");
-            console.log(dashboardContext.config);
-            console.log(
-              SELECTED_LINK_TYPE_IDS_KEY,
-              dashboardContext.config[SELECTED_LINK_TYPE_IDS_KEY]
-            );
-            console.log(
-              SELECTED_ISSUE_TYPE_IDS_KEY,
-              dashboardContext.config[SELECTED_ISSUE_TYPE_IDS_KEY]
-            );
             setSelectedLinkTypeIds(
               dashboardContext.config[SELECTED_LINK_TYPE_IDS_KEY]
             );
@@ -302,8 +283,6 @@ export const TracebilityReportModule = ({
               dashboardContext.config[SELECTED_ISSUE_TYPE_IDS_KEY]
             );
           } else {
-            console.log("setting from else");
-            console.log(dashboardContext.config);
             setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
             setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
           }
@@ -423,11 +402,6 @@ export const TracebilityReportModule = ({
       <PageHeader
         bottomBar={
           <>
-            {console.log(
-              selectedIssueFieldIds,
-              selectedLinkTypeIds,
-              selectedIssueTypeIds
-            )}
             {selectedIssueFieldIds !== undefined &&
               selectedIssueTypeIds !== undefined &&
               selectedLinkTypeIds !== undefined && (

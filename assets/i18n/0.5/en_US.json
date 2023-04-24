@@ -79,7 +79,7 @@
   "otpl.lxp.gh-link-issue-tab.tooltip": "Links Explorer",
   "otpl.lxp.gadget-common.configure-label": "Configure",
   "otpl.lxp.tree-gadget.configure-button.description": "Configure Gadget",
-  "otpl.lxp.tree-gadget.configure-form.description": "* indicates a required field",
+  "otpl.lxp.gadget-common.configure-form.description": "* indicates a required field",
   "otpl.lxp.tree-gadget.configure-form.fields.title": "Title",
   "otpl.lxp.tree-gadget.configure-form.fields.issue-key": "Issue Key",
   "otpl.lxp.gadget-common.configure-form.fields.height": "Height",

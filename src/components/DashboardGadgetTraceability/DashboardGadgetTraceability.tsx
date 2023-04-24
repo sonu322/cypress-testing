@@ -9,7 +9,6 @@ import APIImpl from "../../impl/Cloud";
 import JiraCloudImpl from "../../impl/jira/Cloud";
 import { getQueryParam } from "../../util/index";
 import { DashboardContext } from "../common/Dashboard/DashboardContext";
-import { ISSUE_TYPE_VIEW_ID } from "../../constants/traceabilityReport";
 import {
   defaultGadgetConfig,
   DEFAULT_GADGET_HEIGHT,
@@ -96,7 +95,6 @@ const DashboardGadget: React.FC = () => {
       setIsConfiguring(true);
     });
   });
-  console.log(dashboardId, dashboardItemId, config);
   if (
     dashboardId !== undefined &&
     dashboardItemId !== undefined &&

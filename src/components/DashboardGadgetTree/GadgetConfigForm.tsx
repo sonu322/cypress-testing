@@ -72,17 +72,13 @@ export const GadgetConfigurationForm: React.FC<Props> = ({
   };
   const handleSave = async (): Promise<ValidationError> => {
     setApiResponseErrors([]);
-    console.log("handle save called", inputConfig, validate(inputConfig));
     const errors = validate(inputConfig);
-    console.log(inputConfig, errors);
     if (Object.keys(errors).length > 0) {
-      console.log(errors);
       return errors;
     }
     updateSavedConfig(inputConfig);
     updateIsConfiguring(false);
     try {
-      console.log("done");
       await api.editDashboardItemProperty(
         dashboardId,
         dashboardItemId,
@@ -110,7 +106,7 @@ export const GadgetConfigurationForm: React.FC<Props> = ({
   };
   const configureLabel = t("otpl.lxp.gadget-common.configure-label");
   const configureFormDescription = t(
-    "otpl.lxp.tree-gadget.configure-form.description"
+    "otpl.lxp.gadget-common.configure-form.description"
   );
   const issueKeyLabel = t(
     "otpl.lxp.tree-gadget.configure-form.fields.issue-key"
