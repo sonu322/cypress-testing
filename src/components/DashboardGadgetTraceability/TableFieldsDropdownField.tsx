@@ -29,40 +29,32 @@ export const TableFieldsDropdownField: React.FC<Props> = ({
   label,
 }) => {
   const { t } = useTranslation();
-  if (
-    areOptionsLoading ||
-    selectedOptionIds === undefined ||
-    viewType === undefined ||
-    viewType === ""
-  ) {
-    return <em></em>;
-  } else {
-    return (
-      <Field name={name} label={label} isRequired={isRequired}>
-        {({ error }) => {
-          if (
-            areOptionsLoading ||
-            selectedOptionIds === undefined ||
-            viewType === undefined ||
-            viewType === ""
-          ) {
-            return <Spinner size={"small"} />;
-          } else {
-            return (
-              <div>
-                <TableFieldsDropdown
-                  options={options}
-                  selectedOptions={selectedOptionIds}
-                  updateSelectedOptionIds={(updatedList) => {
-                    handleInputChange(configKey, updatedList);
-                  }}
-                />
-                {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
-              </div>
-            );
-          }
-        }}
-      </Field>
-    );
-  }
+
+  return (
+    <Field name={name} label={label} isRequired={isRequired}>
+      {({ error }) => {
+        if (
+          areOptionsLoading ||
+          selectedOptionIds === undefined ||
+          viewType === undefined ||
+          viewType === ""
+        ) {
+          return <Spinner size={"small"} />;
+        } else {
+          return (
+            <div>
+              <TableFieldsDropdown
+                options={options}
+                selectedOptions={selectedOptionIds}
+                updateSelectedOptionIds={(updatedList) => {
+                  handleInputChange(configKey, updatedList);
+                }}
+              />
+              {Boolean(error) && <ErrorMessage>{error}</ErrorMessage>}
+            </div>
+          );
+        }
+      }}
+    </Field>
+  );
 };

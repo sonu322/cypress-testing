@@ -2,22 +2,23 @@ import React from "react";
 import { Field, ErrorMessage } from "@atlaskit/form";
 import TextField from "@atlaskit/textfield";
 
-
 interface Props {
-  issueKeyLabel: string;
+  label: string;
+  name: string;
   selectedIssueKey: string;
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   isRequired?: boolean;
 }
 
 export const IssueKeyField: React.FC<Props> = ({
-  issueKeyLabel,
+  label,
+  name,
   selectedIssueKey,
   handleInputChange,
   isRequired,
 }) => {
   return (
-    <Field name="issueKey" label={issueKeyLabel} isRequired={isRequired}>
+    <Field name={name} label={label} isRequired={isRequired}>
       {({ fieldProps, error }) => (
         <>
           <TextField

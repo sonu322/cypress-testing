@@ -49,9 +49,6 @@ export const IssueCardFieldsDropdownField: React.FC<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // if (areOptionsLoading || selectedOptionIds === undefined) {
-  //   return <em>loading</em>;
-  // } else {
   return (
     <Field name={name} label={label} isRequired={isRequired}>
       {({ error }) => {
