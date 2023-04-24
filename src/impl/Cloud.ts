@@ -77,11 +77,6 @@ export default class APIImpl implements LXPAPI {
     this.isServer = isServer;
   }
 
-  async getToken(): Promise<string> {
-    const token = await this.api.getToken();
-    console.log("token", token);
-    return token;
-  }
 
   hasValidLicense(): boolean {
     return this.api.hasValidLicense();
