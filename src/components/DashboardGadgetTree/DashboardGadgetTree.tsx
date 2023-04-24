@@ -195,7 +195,8 @@ const DashboardGadget: React.FC = () => {
                         <FormSection>
                           <InlineContainer>
                             <IssueKeyField
-                              issueKeyLabel={issueKeyLabel}
+                              name={ISSUE_KEY_FIELD_NAME}
+                              label={issueKeyLabel}
                               selectedIssueKey={inputIssueKey}
                               handleInputChange={handleInputIssueKeyChange}
                             />

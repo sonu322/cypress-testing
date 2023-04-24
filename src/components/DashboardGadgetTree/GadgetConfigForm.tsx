@@ -134,7 +134,8 @@ export const GadgetConfigurationForm: React.FC<Props> = ({
               <FormSection>
                 <IssueKeyField
                   isRequired={true}
-                  issueKeyLabel={issueKeyLabel}
+                  name={ISSUE_KEY_FIELD_NAME}
+                  label={issueKeyLabel}
                   selectedIssueKey={inputConfig.issueKey}
                   handleInputChange={handleInputChange}
                 />
