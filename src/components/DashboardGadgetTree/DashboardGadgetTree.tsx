@@ -131,14 +131,13 @@ const DashboardGadget: React.FC = () => {
   const handleInputIssueKeyChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ): void => {
-    setApiResponseErrors([]);
     const { name, value, type } = event.target;
     console.log(name, value, type);
     setInputIssueKey(value);
   };
 
   const handleInputIssueKeySubmit = async (): Promise<ValidationError> => {
-    setApiResponseErrors(() => []);
+    setApiResponseErrors([]);
     const errors = validate(inputIssueKey);
     if (Object.keys(errors).length > 0) {
       return errors;
