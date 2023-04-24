@@ -64,6 +64,10 @@ export const IssueTreeModule = ({ rootIssueKey }: Props): JSX.Element => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    setErrors([]);
+  }, [rootIssueKey]);
+
   const updateFilteredKeyOptions = (
     key: string,
     keyOptions: string[]
