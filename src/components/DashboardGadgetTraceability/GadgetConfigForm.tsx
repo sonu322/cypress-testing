@@ -37,6 +37,7 @@ import {
   viewTabs,
 } from "../../constants/traceabilityReport";
 import { APIContext } from "../../context/api";
+import { DASHBOARD_GADGET_CONFIG_KEY } from "../../constants/gadgetTree";
 
 const Container = styled.div`
   display: inline-block;
@@ -120,7 +121,7 @@ export const GadgetConfigurationForm: React.FC = () => {
         api.editDashboardItemProperty(
           dashboardId,
           dashboardItemId,
-          "config",
+          DASHBOARD_GADGET_CONFIG_KEY,
           inputConfig
         ),
       ]);
