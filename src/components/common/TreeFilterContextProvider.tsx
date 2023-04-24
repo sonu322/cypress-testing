@@ -86,12 +86,13 @@ export const TreeFilterContextProvider = ({
         updateFilter(newFilter);
       }
     };
-    void treeUtils.loadTreeFilterDropdownsData(
+    const request = treeUtils.loadTreeFilterDropdownsData(
       handleInitialUpdateFilter,
       updateOptions,
       updateIsLoading,
       handleNewError
     );
+    return () => {};
   }, []);
   useEffect(() => {
     updateLastSavedInLocalStorage(filter);
