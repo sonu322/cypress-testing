@@ -47,7 +47,6 @@ const DashboardGadget: React.FC = () => {
   const [config, setConfig] = useState<any>();
   const [dashboardId, setDashboardId] = useState();
   const [dashboardItemId, setDashboardItemId] = useState();
-
   const updateConfig = (config: TraceabilityGadgetConfig): void => {
     setConfig(config);
   };
@@ -73,8 +72,6 @@ const DashboardGadget: React.FC = () => {
         setConfig(config.value);
         setIsConfiguring(false);
       } catch (error: unknown) {
-        console.log("ERROR CAUGHT");
-        console.log(error);
         setConfig(defaultGadgetConfig);
         setIsConfiguring(true);
       }
@@ -126,7 +123,6 @@ const DashboardGadget: React.FC = () => {
   } else {
     return (
       <SpinnerContainer>
-        from else
         <Spinner size={"large"} />
       </SpinnerContainer>
     );
