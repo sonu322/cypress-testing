@@ -207,13 +207,7 @@ const DashboardGadget: React.FC = () => {
                     );
                   }}
                 </Form>
-                <Gadget
-                  issueKey={
-                    config[ISSUE_KEY_FIELD_NAME]?.length > 0
-                      ? config[ISSUE_KEY_FIELD_NAME]
-                      : "TNG31-12"
-                  }
-                />
+                <Gadget issueKey={config[ISSUE_KEY_FIELD_NAME]} />
               </>
             )}
           </Container>

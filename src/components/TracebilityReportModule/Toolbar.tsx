@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import { colors } from "@atlaskit/theme";
 import { JQLSelectDropdown } from "../JQLSelectDropdown";
@@ -24,10 +24,7 @@ import { APIContext } from "../../context/api";
 import { viewTabs } from "../../constants/traceabilityReport";
 import { SettingsDropdownTrigger } from "../common/SettingsDropdownTrigger";
 
-interface MainBarProps {
-  appWidth: number;
-}
-const MainBar = styled.div<MainBarProps>`
+const MainBar = styled.div`
   padding: 8px;
   border-radius: 3px;
   display: flex;
@@ -95,16 +92,7 @@ export const Toolbar = ({
   const helpLinkUrl = api.getHelpLinks().traceability;
   const isTreeReport = selectedViewTab === "tree-view";
   const marginTop = api.isJiraCloud() ? "-16px" : "-50px";
-  const [appWidth, setAppWidth] = useState<number>();
-  useEffect(() => {
-    const app = document.getElementById("app");
-    const handleResize = (): void => setAppWidth(app.offsetWidth);
-    // Set initial appWidth state
-    setAppWidth(app.offsetWidth);
-    window.addEventListener("resize", handleResize); // set state each time window is resized
 
-    return () => window.removeEventListener("resize", handleResize); // clean up
-  }, []);
   return (
     <div style={{ marginTop, marginBottom: "-8px" }}>
       <TabGroup
@@ -113,7 +101,7 @@ export const Toolbar = ({
         options={viewTabs.tabs}
         selectedTabIndex={selectedTabIndex}
       />
-      <MainBar appWidth={appWidth}>
+      <MainBar>
         <FlexContainer>
           <JQLSelectDropdown
             selectedFilterId={selectedJQLString}
