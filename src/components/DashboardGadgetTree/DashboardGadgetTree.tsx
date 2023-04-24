@@ -131,6 +131,7 @@ const DashboardGadget: React.FC = () => {
   const handleInputIssueKeyChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ): void => {
+    setApiResponseErrors([]);
     const { name, value, type } = event.target;
     console.log(name, value, type);
     setInputIssueKey(value);
@@ -181,7 +182,9 @@ const DashboardGadget: React.FC = () => {
           <Container
             height={config?.[HEIGHT_FIELD_NAME] ?? DEFAULT_GADGET_HEIGHT}
           >
-            {apiResponseErrors && <ErrorsList errors={apiResponseErrors} />}
+            {apiResponseErrors?.length > 0 && (
+              <ErrorsList errors={apiResponseErrors} />
+            )}
             {isConfiguring ? (
               <GadgetConfigurationForm
                 setApiResponseErrors={setApiResponseErrors}
