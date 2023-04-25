@@ -99,7 +99,6 @@ export const Main: React.FC<Props> = ({
   selectedLimitOptionId,
   setSelectedLimitOptionId,
 }) => {
-  const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
   const updateCurrentPage = (page: number): void => {
     // In the updateCurrentPage,all the arguments passing to populateIssues should not be undefined
     setCurrentPage(page);
@@ -144,13 +143,6 @@ export const Main: React.FC<Props> = ({
   }, [dashboardContext, isFromDashboardGadget]);
   const { t } = useTranslation();
   const api = useContext(APIContext);
-  const addMoreIssues = (issues: IssueWithSortedLinks[]): void => {
-    const newIssues = filteredIssues ?? [];
-    if (issues?.length > 0) {
-      const updatedIssues = newIssues.concat(issues);
-      setFilteredIssues(updatedIssues);
-    }
-  };
   const updateIssues = (issues: IssueWithSortedLinks[]): void => {
     setFilteredIssues(issues);
   };
@@ -175,20 +167,6 @@ export const Main: React.FC<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedJqlString]);
 
-  const fetchMoreIssues = (): void => {
-    const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
-    void tracebilityReportUtils.populateIssues(
-      selectedJqlString,
-      issueFields,
-      filteredIssues.length,
-      selectedLimit,
-      addMoreIssues,
-      setAreMoreIssuesLoading,
-      null,
-      handleNewError,
-      undefined
-    );
-  };
   const isIssueTypeReport = selectedViewTab === "issuetype-view";
   const isTreeReport = selectedViewTab === "tree-view";
   if (areIssuesLoading) {

@@ -30,14 +30,11 @@ interface Props {
 type ValidationError = Record<string, string>;
 const validate = (values: TreeGadgetConfig): ValidationError => {
   const errors: ValidationError = {};
-  const issueKeyRegex = /^[A-Z][A-Z0-9]{0,9}-\d+$/; // Regex for issue key pattern
   if (
     values[ISSUE_KEY_FIELD_NAME] === undefined ||
     values[ISSUE_KEY_FIELD_NAME] === ""
   ) {
     errors[ISSUE_KEY_FIELD_NAME] = noIssueKeyError;
-  } else if (!issueKeyRegex.test(values[ISSUE_KEY_FIELD_NAME])) {
-    errors[ISSUE_KEY_FIELD_NAME] = badIssueKeyError;
   }
 
   if (values[HEIGHT_FIELD_NAME] < MIN_GADGET_HEIGHT) {
