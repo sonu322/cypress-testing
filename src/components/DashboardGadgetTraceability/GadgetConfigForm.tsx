@@ -20,6 +20,7 @@ import Form, {
   FormSection,
   FormFooter,
 } from "@atlaskit/form";
+import Spinner from "@atlaskit/spinner";
 import TextField from "@atlaskit/textfield";
 import Button, { ButtonGroup } from "@atlaskit/button";
 import { DashboardContext } from "../common/Dashboard/DashboardContext";
@@ -321,6 +322,6 @@ export const GadgetConfigurationForm: React.FC = () => {
       </>
     );
   } else {
-    return <em>asd</em>;
+    return <Spinner size={"medium"} />;
   }
 };
