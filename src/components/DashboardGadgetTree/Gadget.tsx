@@ -5,7 +5,5 @@ interface GadgetProps {
   issueKey: string;
 }
 export const Gadget: React.FC<GadgetProps> = ({ issueKey }) => {
-  return (
-    <IssueLinksHierarchy rootIssueKey={issueKey} isFromDashboardGadget={true} />
-  );
+  return <IssueLinksHierarchy rootIssueKey={issueKey} />;
 };

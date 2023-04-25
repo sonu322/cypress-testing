@@ -21,7 +21,6 @@ interface Props {
   expandAll;
   isExportDisabled: boolean;
   isExpandAllLoading: boolean;
-  isFromDashboardGadget: boolean;
 }
 export const Container = styled.div`
   display: flex;

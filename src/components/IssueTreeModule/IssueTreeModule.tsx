@@ -9,7 +9,6 @@ import { useTranslation } from "react-i18next";
 import { TreeFilterContext } from "../../context/treeFilterContext";
 interface Props {
   rootIssueKey?: string;
-  isFromDashboardGadget?: string;
 }
 export const IssueTreeModule = ({ rootIssueKey }: Props): JSX.Element => {
   const treeFilterContext = useContext(TreeFilterContext);

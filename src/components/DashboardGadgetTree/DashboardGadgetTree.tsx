@@ -57,11 +57,8 @@ const createAPI = (): LXPAPI => {
 };
 const validate = (issueKey: string): ValidationError => {
   const errors: ValidationError = {};
-  const issueKeyRegex = /^[A-Z][A-Z0-9]{0,9}-\d+$/; // Regex for issue key pattern
   if (issueKey === undefined || issueKey === "") {
     errors.issueKey = noIssueKeyError;
-  } else if (!issueKeyRegex.test(issueKey)) {
-    errors.issueKey = badIssueKeyError;
   }
   return errors;
 };

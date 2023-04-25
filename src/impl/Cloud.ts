@@ -912,7 +912,6 @@ export default class APIImpl implements LXPAPI {
       }
       return config;
     } catch (error) {
-      console.log("ERROR FETCHING GADGET CONFIG", error);
       throwError("otpl.lxp.api.dashboard-gadget-get-config-error");
     }
   }
@@ -928,7 +927,6 @@ export default class APIImpl implements LXPAPI {
     propertyValue: Object
   ): Promise<void> {
     try {
-      console.log("calling edit");
       await this.api.editDashboardItemProperty(
         dashboardId,
         dashboardItemId,
