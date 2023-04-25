@@ -23,7 +23,7 @@
   "authentication": {
     "type": "none"
   },
-  "scopes": ["read", "write", "READ", "WRITE"],
+  "scopes": ["read", "write"],
   "apiVersion": 1,
   "modules": {
     "jiraIssueTabPanels": [
@@ -80,8 +80,7 @@
         "url": "/lxpViewGadget.html?dashboardItemId={dashboardItem.id}&dashboardId={dashboard.id}&view={dashboardItem.viewType}",
         "configurable": true,
         "context": ["dashboard"],
-        "dependencies": ["jquery"],
-        "thumbnailUrl": "http://example.com/images/report-example-thumbnail.png",
+        "thumbnailUrl": "/images/lxp-thumbnail.png",
         "refreshable": true,
         "name": {
           "value": "LXP Tree Gadget",
@@ -99,8 +98,7 @@
         "url": "/lxpTraceabilityGadget.html?dashboardItemId={dashboardItem.id}&dashboardId={dashboard.id}&view={dashboardItem.viewType}",
         "configurable": true,
         "context": ["dashboard"],
-        "dependencies": ["jquery"],
-        "thumbnailUrl": "http://example.com/images/report-example-thumbnail.png",
+        "thumbnailUrl": "/images/lxp-thumbnail.png",
         "refreshable": true,
         "name": {
           "value": "LXP Traceability Reports",
@@ -109,17 +107,5 @@
         "key": "lxp-traceability-reports-gadget"
       }
     ]
-  },
-  "context": {
-    "modules": {
-      "read": {
-        "url": "/context",
-        "key": "context",
-        "name": {
-          "value": "Context Read"
-        },
-        "scopes": ["read:jira-user", "read:jira-work"]
-      }
-    }
   }
 }
