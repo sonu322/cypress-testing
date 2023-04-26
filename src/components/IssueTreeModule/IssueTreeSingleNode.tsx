@@ -13,6 +13,7 @@ export interface Props {
   selectedIssueFieldIds: ID[];
   handleError: any;
   clearAllErrors: () => void;
+  rootIssueKey?: string;
 }
 
 export const IssueTreeSingleNode = ({
@@ -24,6 +25,7 @@ export const IssueTreeSingleNode = ({
   selectedIssueFieldIds,
   handleError,
   clearAllErrors,
+  rootIssueKey,
 }: Props): JSX.Element => {
   const fieldMap = {};
   issueFields.forEach((field) => {
@@ -32,16 +34,17 @@ export const IssueTreeSingleNode = ({
 
   useEffect(() => {
     const initTree = async (): Promise<void> => {
-      await treeUtils.initTreeHook(
+      await treeUtils.handleInitTree(
         filter,
         treeUtils.findJiraFields(fieldMap, selectedIssueFieldIds),
         setTree,
-        handleError
+        handleError,
+        rootIssueKey
       );
     };
     void initTree();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [rootIssueKey]);
 
   return (
     <IssueTree

@@ -8,17 +8,33 @@ import { useTranslation } from "react-i18next";
 import { APIContext } from "../../context/api";
 import { TreeFilterDropdowns } from "./TreeFilterDropdowns";
 
+interface Props {
+  options;
+  filter;
+  updateFilteredKeyOptions;
+  filterDropdowns;
+  selectedIssueFieldIds;
+  setSelectedIssueFieldIds;
+  issueCardOptions;
+  exportTree;
+  collapseAll;
+  expandAll;
+  isExportDisabled: boolean;
+  isExpandAllLoading: boolean;
+}
 export const Container = styled.div`
   display: flex;
   justify-content: space-between;
   width: 100%;
+  flex-wrap: wrap;
+  gap: 4px;
 `;
 
 export const LeftContainer = styled.div`
   min-width: 450px;
 `;
 
-export const Toolbar = ({
+export const Toolbar: React.FC<Props> = ({
   options,
   filter,
   updateFilteredKeyOptions,
@@ -31,7 +47,7 @@ export const Toolbar = ({
   expandAll,
   isExportDisabled,
   isExpandAllLoading,
-}): JSX.Element => {
+}) => {
   const { t } = useTranslation();
   const api = useContext(APIContext);
   const helpLinkUrl = api.getHelpLinks().issueTree;

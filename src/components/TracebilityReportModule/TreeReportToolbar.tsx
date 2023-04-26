@@ -21,6 +21,7 @@ const FlexContainer = styled.div`
   gap: 4px;
   position: relative;
   padding-top: 10px;
+  flex-wrap: wrap;
 `;
 
 const ToolbarContainer = styled.div`

@@ -62,21 +62,24 @@ export const exportTreeReportOptions = [
   },
 ];
 
+export const ISSUE_TYPE_VIEW_ID = "issuetype-view";
+export const LINK_TYPE_VIEW_ID = "linktype-view";
+export const TREE_TYPE_VIEW_ID = "tree-view";
 export const viewTabs = {
   id: "view-tabs",
   tabs: [
     {
-      id: "issuetype-view",
+      id: ISSUE_TYPE_VIEW_ID,
       name: t("otpl.lxp.traceability-report.issuetype-view.name"),
       description: t("otpl.lxp.traceability-report.issuetype-view.description"),
     },
     {
-      id: "linktype-view",
+      id: LINK_TYPE_VIEW_ID,
       name: t("otpl.lxp.traceability-report.linktype-view.name"),
       description: t("otpl.lxp.traceability-report.linktype-view.description"),
     },
     {
-      id: "tree-view",
+      id: TREE_TYPE_VIEW_ID,
       name: t("otpl.lxp.traceability-report.tree-view.name"),
       description: t("otpl.lxp.traceability-report.tree-view.description"),
     },
@@ -89,4 +92,5 @@ export const orphansTreeBranchName = t(
 export const loadMoreOrphansButtonName = t(
   "otpl.lxp.traceability-report.tree-view.orphans-load-more-button-name"
 );
+
 export const orphansMaxResults = 20;

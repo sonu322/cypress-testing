@@ -16,6 +16,8 @@ import { useTranslation } from "react-i18next";
 import { DropdownSingleSelect } from "../common/DropdownSingleSelect";
 import { TreeReport } from "./TreeReport";
 import { AtlasTree } from "../../types/app";
+import { DashboardContext } from "../common/Dashboard/DashboardContext";
+import { PAGE_SIZE_DROPDOWN_NAME } from "../../constants/gadgetTraceability";
 const Container = styled.div`
   width: 100%;
 `;
@@ -62,11 +64,12 @@ interface Props {
   updateIsToggleOrphansLoading: (isToggleOrphansLoading: boolean) => void;
   currentPage: number;
   setCurrentPage: (page: number) => void;
+  isFromDashboardGadget?: boolean;
   selectedLimitOptionId: number;
   setSelectedLimitOptionId: (limit: number) => void;
 }
 
-export const Main = ({
+export const Main: React.FC<Props> = ({
   totalNumberOfIssues,
   updateTotalNumberOfIssues,
   DEFAULT_ROWS_PER_PAGE,
@@ -92,12 +95,12 @@ export const Main = ({
   updateIsToggleOrphansLoading,
   currentPage,
   setCurrentPage,
+  isFromDashboardGadget,
   selectedLimitOptionId,
   setSelectedLimitOptionId,
-}: Props): JSX.Element => {
-  const [areMoreIssuesLoading, setAreMoreIssuesLoading] = useState(false);
+}) => {
   const updateCurrentPage = (page: number): void => {
-    //In the updateCurrentPage,all the arguments passing to populateIssues should not be undefined
+    // In the updateCurrentPage,all the arguments passing to populateIssues should not be undefined
     setCurrentPage(page);
     const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
     const startIndex = (page - 1) * selectedLimit;
@@ -114,7 +117,7 @@ export const Main = ({
     );
   };
   const updateSelectedLimitOptionId = (limitOptionId: number): void => {
-    //In the updateSelectedLimitOptionId, all the arguments passing to populateIssues should not be undefined
+    // In the updateSelectedLimitOptionId, all the arguments passing to populateIssues should not be undefined
     setSelectedLimitOptionId(limitOptionId);
     setCurrentPage(1);
     const selectedLimit = limitOptionId;
@@ -131,15 +134,15 @@ export const Main = ({
       clearAllErrors
     );
   };
+  const dashboardContext = useContext(DashboardContext);
+  useEffect(() => {
+    if (isFromDashboardGadget) {
+      const savedFetchLimit = dashboardContext.config[PAGE_SIZE_DROPDOWN_NAME];
+      setSelectedLimitOptionId(savedFetchLimit);
+    }
+  }, [dashboardContext, isFromDashboardGadget]);
   const { t } = useTranslation();
   const api = useContext(APIContext);
-  const addMoreIssues = (issues: IssueWithSortedLinks[]): void => {
-    const newIssues = filteredIssues ?? [];
-    if (issues?.length > 0) {
-      const updatedIssues = newIssues.concat(issues);
-      setFilteredIssues(updatedIssues);
-    }
-  };
   const updateIssues = (issues: IssueWithSortedLinks[]): void => {
     setFilteredIssues(issues);
   };
@@ -164,20 +167,6 @@ export const Main = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedJqlString]);
 
-  const fetchMoreIssues = (): void => {
-    const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
-    void tracebilityReportUtils.populateIssues(
-      selectedJqlString,
-      issueFields,
-      filteredIssues.length,
-      selectedLimit,
-      addMoreIssues,
-      setAreMoreIssuesLoading,
-      null,
-      handleNewError,
-      undefined
-    );
-  };
   const isIssueTypeReport = selectedViewTab === "issuetype-view";
   const isTreeReport = selectedViewTab === "tree-view";
   if (areIssuesLoading) {

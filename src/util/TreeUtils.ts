@@ -68,6 +68,7 @@ export default class TreeUtils {
     }
   };
 
+
   handleSetItemInSavedTreeConfig = (key: string, value: any): void => {
     const lastSavedTreeConfig = getItemInLocalStorage(lastSavedTreeConfigKey);
     let newReportConfig: Object;
@@ -193,15 +194,23 @@ export default class TreeUtils {
     return node;
   }
 
-  async initTreeHook(
+  async handleInitTree(
     filter: IssueTreeFilter,
     fields: IssueField[],
     setTree,
-    handleError
+    handleError,
+    rootIssueKey?: string
   ): Promise<void> {
     try {
       const tree = this.getRootTree();
-      await this.initTree(tree, filter, fields, setTree, handleError);
+      await this.initTree(
+        tree,
+        filter,
+        fields,
+        setTree,
+        handleError,
+        rootIssueKey
+      );
     } catch (error) {
       console.log(error);
       handleError(error);
@@ -217,11 +226,12 @@ export default class TreeUtils {
     filter: IssueTreeFilter,
     fields: IssueField[],
     setTree,
-    handleError
+    handleError,
+    rootIssueKey?: string
   ): Promise<void> {
     try {
       const tree = this.cloneTree(prevTree);
-      const issue = await this.api.getIssueWithLinks(fields);
+      const issue = await this.api.getIssueWithLinks(fields, rootIssueKey);
       const mainNode = this.createTreeNode(
         tree,
         "",

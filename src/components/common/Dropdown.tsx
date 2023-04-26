@@ -13,7 +13,8 @@ interface Props {
   options: Array<{
     id: string;
     name: string;
-    description: string;
+    description?: string;
+    [key: string]: any;
   }>;
   useTitleCaseOptions?: boolean;
 }
