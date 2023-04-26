@@ -77,6 +77,7 @@ export default class APIImpl implements LXPAPI {
     this.isServer = isServer;
   }
 
+
   hasValidLicense(): boolean {
     return this.api.hasValidLicense();
   }
@@ -758,7 +759,6 @@ export default class APIImpl implements LXPAPI {
         0
       );
       linkedIssues = linkedIssuesResult.data;
-
     }
 
     const populatedIssues = this._populateIssueLinks(issues, linkedIssues);
@@ -896,5 +896,63 @@ export default class APIImpl implements LXPAPI {
     query: string
   ): Promise<JiraAutoCompleteSuggestionsResult> {
     return await this.api.getAutoCompleteSuggestions(query);
+  }
+
+  async getDashboardGadgetConfig(
+    dashboardId: string,
+    dashboardItemId: string
+  ): Promise<any> {
+    try {
+      const config = await this.api.getDashboardGadgetConfig(
+        dashboardId,
+        dashboardItemId
+      );
+      if (config.value === undefined) {
+        throwError("otpl.lxp.api.dashboard-gadget-get-config-error");
+      }
+      return config;
+    } catch (error) {
+      throwError("otpl.lxp.api.dashboard-gadget-get-config-error");
+    }
+  }
+
+  resizeWindow(width: string | number, height: string | number): void {
+    this.api.resizeWindow(width, height);
+  }
+
+  async editDashboardItemProperty(
+    dashboardId: string,
+    dashboardItemId: string,
+    propertyKey: string,
+    propertyValue: Object
+  ): Promise<void> {
+    try {
+      await this.api.editDashboardItemProperty(
+        dashboardId,
+        dashboardItemId,
+        propertyKey,
+        propertyValue
+      );
+    } catch (error) {
+      console.log(error);
+      throwError("otpl.lxp.api.dashboard-gadget-edit-config-error");
+    }
+  }
+
+  async editDashboardItemTitle(
+    dashboardId: string,
+    dashboardItemId: string,
+    title: string
+  ): Promise<void> {
+    try {
+      await this.api.editDashboardItemTitle(
+        dashboardId,
+        dashboardItemId,
+        title
+      );
+    } catch (error) {
+      console.log(error);
+      throwError("otpl.lxp.api.dashboard-gadget-edit-title-error");
+    }
   }
 }
