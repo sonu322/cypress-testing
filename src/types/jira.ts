@@ -145,8 +145,7 @@ export interface JiraProject {
   properties: JiraProjectProperties;
 }
 
-export interface JiraProjectProperties { }
-
+export interface JiraProjectProperties {}
 export interface JiraRoles {
   [roleName: string]: string;
 }
@@ -271,6 +270,12 @@ interface SuggestionResult {
 }
 
 export interface JiraAPI {
+  linkIssueType(
+    inwardIssueKey: string,
+    jiraLinkTypeId: string,
+    outwardIssueKey: string
+  ): Promise<void>;
+
   isJiraCloud(): boolean;
 
   hasValidLicense(): boolean;

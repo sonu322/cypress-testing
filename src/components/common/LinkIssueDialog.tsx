@@ -1,150 +1,20 @@
-// import React from "react";
-// import ModalDialog, { ModalFooter, ModalHeader } from "@atlaskit/modal-dialog";
-// import Button from "@atlaskit/button";
-// import TextField from "@atlaskit/textfield";
-
-// interface Props {
-//   onClose: () => void;
-// }
-
-// export const LinkIssueDialog = ({ onClose }: Props) => {
-//   return (
-//     <ModalDialog onClose={onClose}>
-//       {/* <ModalHeader>Link Issue</ModalHeader> */}
-//       <form>
-//         <div>
-//           <label htmlFor="main-issue">Main Issue</label>
-//           <TextField id="main-issue" placeholder="Search for issue" />
-//         </div>
-//         <div>
-//           <label htmlFor="link-type">Link Type</label>
-//           <TextField id="link-type" placeholder="Enter link type" />
-//         </div>
-//         <div>
-//           <label htmlFor="target-issues">Target Issues</label>
-//           <TextField id="target-issues" placeholder="Search target issues" />
-//         </div>
-//       </form>
-//       <ModalFooter>
-//         <Button appearance="primary" onClick={onClose}>
-//           Link
-//         </Button>
-//         <Button appearance="subtle" onClick={onClose}>
-//           Cancel
-//         </Button>
-//       </ModalFooter>
-//     </ModalDialog>
-//   );
-// };
-
-import React, { useState } from "react";
-
+import React, { useContext, useEffect, useState } from "react";
 import ModalDialog, {
   ModalBody,
   ModalFooter,
   ModalHeader,
 } from "@atlaskit/modal-dialog";
 import Button from "@atlaskit/button";
-import TextField from "@atlaskit/textfield";
 import styled from "styled-components";
 import { IssueSearchField } from "./IssueSearchField";
-//
-import Form, {
-  Field,
-  FormHeader,
-  FormSection,
-  FormFooter,
-} from "@atlaskit/form";
-// try
-// interface Props {
-//   onClose: () => void;
-// }
-
-// const FormWrap = styled.form`
-//   display: flex;
-//   flex-direction: column;
-//   gap: 8px;
-//   margin: 16px;
-// `;
-
-// const FieldWrapper = styled.div`
-//   display: flex;
-//   flex-direction: row;
-//   justify-content: space-between;
-//   align-items: center;
-// `;
-
-// const Label = styled.label`
-//   width: 150px;
-//   margin-right: 16px;
-// `;
-
-// export const LinkIssueDialog = ({ onClose }: Props): JSX.Element => {
-//   const [searchQuery, setSearchQuery] = useState("");
-//   const handleSearch = (query: string) => {
-//     setSearchQuery(query.toLowerCase());
-//   };
-//   return (
-//     <ModalDialog onClose={onClose}>
-//       <ModalHeader></ModalHeader>
-//       <ModalBody>
-//         <FormWrap>
-//           <Form onSubmit={() => console.log("submit")}>
-//             {({ formProps, submitting }) => (
-//               <form {...formProps}>
-//                 <FormSection>
-//                   <FieldWrapper>
-//                     <Label htmlFor="main-issue">Main Issue</Label>
-//                     <IssueSearchField
-//                       isMultiValued={true}
-//                       onSearch={handleSearch}
-//                       searchQuery={searchQuery}
-//                     />
-//                   </FieldWrapper>
-//                 </FormSection>
-//                 <FormSection>
-//                   <FieldWrapper>
-//                     <Label htmlFor="link-type">Link Type</Label>
-//                     <Field name="linkType" defaultValue="">
-//                       {({ fieldProps }) => (
-//                         <TextField
-//                           {...fieldProps}
-//                           placeholder="Enter link type"
-//                           style={{ width: "50%" }}
-//                         />
-//                       )}
-//                     </Field>
-//                   </FieldWrapper>
-//                 </FormSection>
-//                 <FormSection>
-//                   <FieldWrapper>
-//                     <Label htmlFor="target-issues">Target Issues</Label>
-//                     <IssueSearchField
-//                       isMultiValued={true}
-//                       onSearch={handleSearch}
-//                       searchQuery={searchQuery}
-//                     />
-//                   </FieldWrapper>
-//                 </FormSection>
-//               </form>
-//             )}
-//           </Form>
-//         </FormWrap>
-//       </ModalBody>
-//       <ModalFooter>
-//         <Button appearance="primary" onClick={onClose}>
-//           Link
-//         </Button>
-//         <Button appearance="subtle" onClick={onClose}>
-//           Cancel
-//         </Button>
-//       </ModalFooter>
-//     </ModalDialog>
-//   );
-// };
+import Form, { FormSection } from "@atlaskit/form";
+import Select from "@atlaskit/select";
+import { APIContext } from "../../context/api";
+import Spinner from "@atlaskit/spinner";
 
 interface Props {
   onClose: () => void;
+  autoRefresh: () => void;
 }
 
 // const ModalDialog = styled.div`
@@ -195,18 +65,72 @@ const FieldWrapper = styled.div`
 
 const Label = styled.label`
   width: 150px;
-  margin-right: 16px;
+  margin-right: 6px;
+  font-weight: bold;
 `;
 
 const TextFieldWrapper = styled.div`
-  width: 50%;
+  width: 70%;
 `;
 
-export const LinkIssueDialog = ({ onClose }: Props): JSX.Element => {
+export const LinkIssueDialog = ({
+  onClose,
+  autoRefresh,
+}: Props): JSX.Element => {
   const [searchQuery, setSearchQuery] = useState("");
   const handleSearch = (query: string) => {
     setSearchQuery(query.toLowerCase());
   };
+  const api = useContext(APIContext);
+  const [mainIssue, setMainIssue] = useState<string>("");
+  const [linkType, setLinkType] = useState<string>("");
+  const [targetIssues, setTargetIssues] = useState<string[]>([]);
+  const [linkTypesOptions, setLinkTypesOptions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [allFieldsFilled, setAllFieldsFilled] = useState(false);
+
+  const checkFieldsFilled = () => {
+    if (mainIssue !== "" && linkType !== "" && targetIssues.length > 0) {
+      setAllFieldsFilled(true);
+    } else {
+      setAllFieldsFilled(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchLinkTypes = async () => {
+      try {
+        const result = await api.getIssueLinkTypes(true);
+        setLinkTypesOptions(
+          result.map((option) => ({
+            label: option.name,
+            value: option.id,
+          }))
+        );
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    fetchLinkTypes();
+  }, []);
+
+  useEffect(() => {
+    checkFieldsFilled();
+  }, [mainIssue, linkType, targetIssues]);
+
+  const handleLinkClick = async () => {
+    setIsLoading(true);
+    try {
+      await api.linkIssue(mainIssue, linkType, targetIssues);
+      onClose();
+      autoRefresh();
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <ModalDialog>
       <ModalHeader></ModalHeader>
@@ -220,9 +144,10 @@ export const LinkIssueDialog = ({ onClose }: Props): JSX.Element => {
                     <Label htmlFor="main-issue">Main Issue</Label>
                     <TextFieldWrapper>
                       <IssueSearchField
-                        isMultiValued={true}
+                        isMultiValued={false}
                         onSearch={handleSearch}
                         searchQuery={searchQuery}
+                        onChange={(issue) => setMainIssue(issue)}
                       />
                     </TextFieldWrapper>
                   </FieldWrapper>
@@ -231,15 +156,11 @@ export const LinkIssueDialog = ({ onClose }: Props): JSX.Element => {
                   <FieldWrapper>
                     <Label htmlFor="link-type">Link Type</Label>
                     <TextFieldWrapper>
-                      <Field name="linkType" defaultValue="">
-                        {({ fieldProps }) => (
-                          <TextField
-                            {...fieldProps}
-                            placeholder="Enter link type"
-                            style={{ width: "100%" }}
-                          />
-                        )}
-                      </Field>
+                      <Select
+                        options={linkTypesOptions}
+                        placeholder="Select link type"
+                        onChange={(option) => setLinkType(option.value)}
+                      />
                     </TextFieldWrapper>
                   </FieldWrapper>
                 </FormSection>
@@ -251,6 +172,7 @@ export const LinkIssueDialog = ({ onClose }: Props): JSX.Element => {
                         isMultiValued={true}
                         onSearch={handleSearch}
                         searchQuery={searchQuery}
+                        onChange={(issueKeys) => setTargetIssues(issueKeys)}
                       />
                     </TextFieldWrapper>
                   </FieldWrapper>
@@ -261,8 +183,12 @@ export const LinkIssueDialog = ({ onClose }: Props): JSX.Element => {
         </FormWrap>
       </ModalBody>
       <ModalFooter>
-        <Button appearance="primary" onClick={onClose}>
-          Link
+        <Button
+          appearance={allFieldsFilled ? "primary" : "subtle"}
+          onClick={handleLinkClick}
+          isDisabled={!allFieldsFilled}
+        >
+          {isLoading ? <Spinner size="small" appearance="invert" /> : "Link"}
         </Button>
         <Button appearance="subtle" onClick={onClose}>
           Cancel
@@ -271,46 +197,3 @@ export const LinkIssueDialog = ({ onClose }: Props): JSX.Element => {
     </ModalDialog>
   );
 };
-
-// later
-// return (
-//   <ModalDialog onClose={onClose}>
-//     <ModalHeader></ModalHeader>
-//     <ModalBody>
-//       <Form>
-//         <FieldWrapper>
-//           <Label htmlFor="main-issue">Main Issue</Label>
-//           <IssueSearchField
-//             isMultiValued={true}
-//             onSearch={handleSearch}
-//             searchQuery={searchQuery}
-//           />
-//         </FieldWrapper>
-//         <FieldWrapper>
-//           <Label htmlFor="link-type">Link Type</Label>
-//           <TextField
-//             id="link-type"
-//             placeholder="Enter link type"
-//             style={{ width: "50%" }}
-//           />
-//         </FieldWrapper>
-//         <FieldWrapper>
-//           <Label htmlFor="target-issues">Target Issues</Label>
-//           <IssueSearchField
-//             isMultiValued={true}
-//             onSearch={handleSearch}
-//             searchQuery={searchQuery}
-//           />
-//         </FieldWrapper>
-//       </Form>
-//     </ModalBody>
-//     <ModalFooter>
-//       <Button appearance="primary" onClick={onClose}>
-//         Link
-//       </Button>
-//       <Button appearance="subtle" onClick={onClose}>
-//         Cancel
-//       </Button>
-//     </ModalFooter>
-//   </ModalDialog>
-// );

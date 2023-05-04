@@ -36,6 +36,25 @@ export default class JiraServerImpl implements JiraAPI {
     return true; // TODO: fix me
   }
 
+  async linkIssueType(
+    inwardIssueKey: string,
+    jiraLinkTypeId: string,
+    outwardIssueKey: string
+  ): Promise<void> {
+    const linkIssuesBody = {
+      inwardIssueKey,
+      jiraLinkTypeId,
+      outwardIssueKey,
+    };
+    // Toda: check for error
+    await this._AJS.$.ajax({
+      type: "POST",
+      contentType: "application/json; charset=utf-8",
+      url: "/rest/api/3/issueLink",
+      data: JSON.stringify(linkIssuesBody),
+    });
+  }
+
   getJiraBaseURL(): string {
     return this.contextPath;
   }
