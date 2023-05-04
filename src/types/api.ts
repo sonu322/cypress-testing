@@ -100,7 +100,10 @@ export interface IssueType extends IssueOption {
   iconUrl: string;
 }
 
-export interface IssueLinkType extends IssueOption {}
+export interface IssueLinkType extends IssueOption {
+  direction: string;
+  jiraTypeId: string;
+}
 
 export interface Filter {
   expand: string;
@@ -137,6 +140,8 @@ export enum Constants {
 }
 
 export default interface LXPAPI {
+  linkIssue: (mainIssue, linkType, targetIssue) => Promise<void>;
+
   hasValidLicense: () => boolean;
 
   isJiraCloud: () => boolean;

@@ -23,7 +23,7 @@
   "authentication": {
     "type": "none"
   },
-  "scopes": ["read"],
+  "scopes": ["read", "write"],
   "apiVersion": 1,
   "modules": {
     "jiraIssueTabPanels": [

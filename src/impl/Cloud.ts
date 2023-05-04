@@ -165,35 +165,47 @@ export default class APIImpl implements LXPAPI {
     }
   }
 
-  async getIssueLinkTypes(): Promise<IssueLinkType[]> {
+  async getIssueLinkTypes(excludeDefaults = false): Promise<IssueLinkType[]> {
     try {
       const items: JiraLinkType[] = await this.api.getIssueLinkTypes();
-
       items || throwError("otpl.lxp.api.link-type-error-main");
 
       const result = [];
-      result.push({
-        id: CustomLinkType.PARENT,
-        name: Labels.PARENT,
-      });
-      result.push({
-        id: CustomLinkType.SUBTASKS,
-        name: Labels.SUBTASKS,
-      });
-      result.push({
-        id: CustomLinkType.CHILD_ISSUES,
-        name: Labels.CHILD_ISSUES,
-      });
+
+      if (!excludeDefaults) {
+        result.push({
+          id: CustomLinkType.PARENT,
+          name: Labels.PARENT,
+          jiraTypeId: null,
+          direction: null,
+        });
+        result.push({
+          id: CustomLinkType.SUBTASKS,
+          name: Labels.SUBTASKS,
+          jiraTypeId: null,
+          direction: null,
+        });
+        result.push({
+          id: CustomLinkType.CHILD_ISSUES,
+          name: Labels.CHILD_ISSUES,
+          jiraTypeId: null,
+          direction: null,
+        });
+      }
 
       items.forEach((item) => {
         result.push({
           id: `${item.id}-${item.inward}`,
           name: item.inward,
+          jiraTypeId: item.id,
+          direction: "inward",
         });
         if (item.inward !== item.outward) {
           result.push({
             id: `${item.id}-${item.outward}`,
             name: item.outward,
+            jiraTypeId: item.id,
+            direction: "outward",
           });
         }
       });
@@ -440,6 +452,45 @@ export default class APIImpl implements LXPAPI {
 
   async getCurrentIssueId(): Promise<string> {
     return await this.api.getCurrentIssueId();
+  }
+
+  async linkIssue(
+    mainIssueKey: string,
+    linkTypeId: string,
+    targetIssueKeys: string[]
+  ): Promise<void> {
+    try {
+      const issueLinkTypes: IssueLinkType[] = await this.getIssueLinkTypes();
+
+      const selectedLinkType: IssueLinkType = issueLinkTypes.find(
+        (linkTypeObj) => linkTypeObj.id === linkTypeId
+      );
+
+      if (!selectedLinkType) {
+        console.error("Invalid link type");
+        return;
+      }
+
+      const promises = targetIssueKeys.map(async (targetIssueKey) => {
+        let inwardIssueKey = targetIssueKey;
+        let outwardIssueKey = mainIssueKey;
+
+        if (selectedLinkType.direction === "outward") {
+          inwardIssueKey = mainIssueKey;
+          outwardIssueKey = targetIssueKey;
+        }
+
+        await this.api.linkIssueType(
+          inwardIssueKey,
+          selectedLinkType.jiraTypeId,
+          outwardIssueKey
+        );
+      });
+
+      await Promise.all(promises);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   private _convertIssueStatus(status: JiraIssueStatus): IssueStatus {
@@ -758,7 +809,6 @@ export default class APIImpl implements LXPAPI {
         0
       );
       linkedIssues = linkedIssuesResult.data;
-
     }
 
     const populatedIssues = this._populateIssueLinks(issues, linkedIssues);

@@ -24,6 +24,31 @@ export default class JiraCloudImpl implements JiraAPI {
     return true;
   }
 
+  async linkIssueType(
+    inwardIssueKey: string,
+    jiraLinkTypeId: string,
+    outwardIssueKey: string
+  ): Promise<void> {
+    const linkIssueBody = {
+      inwardIssue: {
+        key: inwardIssueKey,
+      },
+      outwardIssue: {
+        key: outwardIssueKey,
+      },
+      type: {
+        id: jiraLinkTypeId,
+      },
+    };
+    await this._AP.request({
+      url: "/rest/api/3/issueLink",
+      type: "POST",
+      contentType: "application/json",
+
+      data: JSON.stringify(linkIssueBody),
+    });
+  }
+
   hasValidLicense(): boolean {
     const lic = getQueryParam("lic");
     return !(lic && lic === "none");
