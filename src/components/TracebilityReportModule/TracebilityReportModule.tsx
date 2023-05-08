@@ -285,11 +285,15 @@ export const TracebilityReportModule = ({
             setSelectedIssueFieldIds(selectedFieldIds);
           }
           if (Boolean(dashboardContext.config[VIEW_TYPE_FIELD_NAME])) {
-            setSelectedLinkTypeIds(
-              dashboardContext.config[SELECTED_LINK_TYPE_IDS_KEY]
-            );
             setSelectedIssueTypeIds(
-              dashboardContext.config[SELECTED_ISSUE_TYPE_IDS_KEY]
+              dashboardContext.config[SELECTED_ISSUE_TYPE_IDS_KEY] !== undefined
+                ? dashboardContext.config[SELECTED_ISSUE_TYPE_IDS_KEY]
+                : getKeyValues(issueTypes, "id")
+            );
+            setSelectedLinkTypeIds(
+              dashboardContext.config[SELECTED_LINK_TYPE_IDS_KEY] !== undefined
+                ? dashboardContext.config[SELECTED_LINK_TYPE_IDS_KEY]
+                : getKeyValues(linkTypes, "id")
             );
           } else {
             setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
