@@ -8,9 +8,13 @@ import { APIContext } from "./context/api";
 
 interface Props {
   showCustomJQLEditor?: any;
+  isFromDashboardGadget?: boolean;
 }
 
-const TracebilityReport = ({ showCustomJQLEditor }: Props): JSX.Element => {
+const TracebilityReport: React.FC<Props> = ({
+  showCustomJQLEditor,
+  isFromDashboardGadget,
+}) => {
   const { i18n } = useTranslation();
   const api = useContext(APIContext);
   useEffect(() => {
@@ -24,10 +28,11 @@ const TracebilityReport = ({ showCustomJQLEditor }: Props): JSX.Element => {
       void handleLocale();
     }
   }, [api, i18n]);
-  if (api.hasValidLicense()) {
+  if (true) {
     return (
       <TreeFilterContextProvider localStorageKey={lastSavedReportConfigKey}>
         <TracebilityReportModule
+          isFromDashboardGadget={isFromDashboardGadget}
           showCustomJQLEditor={showCustomJQLEditor}
         ></TracebilityReportModule>
       </TreeFilterContextProvider>
