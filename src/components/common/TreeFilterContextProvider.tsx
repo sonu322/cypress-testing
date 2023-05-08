@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { treeFilterDropdowns } from "../../constants/common";
 import { APIContext } from "../../context/api";
 import {
@@ -25,6 +25,7 @@ export const TreeFilterContextProvider = ({
   children,
   localStorageKey,
 }: Props): JSX.Element => {
+  const isMounted = useRef(true);
   const api = useContext(APIContext);
   // TODO: fix type
   const treeUtils = new TreeUtils(api);
@@ -62,19 +63,29 @@ export const TreeFilterContextProvider = ({
     issueTypes: IssueType[];
     linkTypes: IssueLinkType[];
   }): void => {
-    setOptions(options);
+    if (isMounted.current) {
+      setOptions(options);
+    }
   };
 
   const updateIsLoading = (isLoading: boolean): void => {
-    setIsLoading(isLoading);
+    if (isMounted.current) {
+      setIsLoading(isLoading);
+    }
   };
   const handleNewError = (error: unknown): void => {
-    setErrors((prevErrors) => [...prevErrors, error] as any);
+    if (isMounted.current) {
+      setErrors((prevErrors) => [...prevErrors, error] as any);
+    }
   };
 
   useEffect(() => {
     const handleInitialUpdateFilter = (newFilter: IssueTreeFilter): void => {
       const store = getItemInLocalStorage(localStorageKey);
+      console.log(isMounted.current);
+      if (!isMounted.current) {
+        return;
+      }
       if (store !== null) {
         const storedFilter = store.treeFilter;
         if (storedFilter !== undefined && storedFilter !== null) {
@@ -86,16 +97,29 @@ export const TreeFilterContextProvider = ({
         updateFilter(newFilter);
       }
     };
-    const request = treeUtils.loadTreeFilterDropdownsData(
-      handleInitialUpdateFilter,
-      updateOptions,
-      updateIsLoading,
-      handleNewError
-    );
-    return () => {};
+    const loadData = async (): Promise<void> => {
+      const request = await treeUtils.loadTreeFilterDropdownsData(
+        handleInitialUpdateFilter,
+        updateOptions,
+        updateIsLoading,
+        handleNewError
+      );
+      return request;
+    };
+    if (isMounted.current) {
+      void loadData();
+    }
+    return () => {
+      isMounted.current = false;
+    };
   }, []);
   useEffect(() => {
-    updateLastSavedInLocalStorage(filter);
+    if (isMounted.current) {
+      updateLastSavedInLocalStorage(filter);
+    }
+    return () => {
+      isMounted.current = false;
+    };
   }, [filter]);
   const contextValue: TreeFilterContextValue = {
     errors,

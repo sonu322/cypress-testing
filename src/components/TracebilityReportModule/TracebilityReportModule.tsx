@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import { APIContext } from "../../context/api";
 import PageHeader from "@atlaskit/page-header";
@@ -220,6 +220,8 @@ export const TracebilityReportModule = ({
   const clearAllErrors = (): void => {
     setErrors([]);
   };
+
+  const isMounted = useRef(true);
   useEffect(() => {
     const loadData = async (): Promise<void> => {
       try {
@@ -228,6 +230,7 @@ export const TracebilityReportModule = ({
           api.getIssueLinkTypes(),
           api.getIssueFields(),
         ]);
+        if (!isMounted.current) return;
 
         const issueTypes = result[0];
         const linkTypes = result[1];
@@ -302,6 +305,9 @@ export const TracebilityReportModule = ({
       }
     };
     void loadData();
+    return () => {
+      isMounted.current = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const isExportDisabled =
