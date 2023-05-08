@@ -28,7 +28,7 @@ const TracebilityReport: React.FC<Props> = ({
       void handleLocale();
     }
   }, [api, i18n]);
-  if (true) {
+  if (api.hasValidLicense()) {
     return (
       <TreeFilterContextProvider localStorageKey={lastSavedReportConfigKey}>
         <TracebilityReportModule
