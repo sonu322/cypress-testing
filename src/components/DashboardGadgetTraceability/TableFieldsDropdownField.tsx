@@ -28,8 +28,6 @@ export const TableFieldsDropdownField: React.FC<Props> = ({
   name,
   label,
 }) => {
-  const { t } = useTranslation();
-
   return (
     <Field name={name} label={label} isRequired={isRequired}>
       {({ error }) => {

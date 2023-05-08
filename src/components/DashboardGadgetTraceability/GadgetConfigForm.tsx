@@ -71,8 +71,10 @@ export const GadgetConfigurationForm: React.FC = () => {
         setLinkTypes(linkTypes);
         const issueTypeIds = issueTypes.map((issueType) => issueType.id);
         const linkTypeIds = linkTypes.map((linkType) => linkType.id);
-        if (savedConfig === undefined) {
+        if (!Boolean(savedConfig[SELECTED_ISSUE_TYPE_IDS_KEY])) {
           handleInputChange(SELECTED_ISSUE_TYPE_IDS_KEY, issueTypeIds);
+        }
+        if (!Boolean(savedConfig[SELECTED_LINK_TYPE_IDS_KEY])) {
           handleInputChange(SELECTED_LINK_TYPE_IDS_KEY, linkTypeIds);
         }
         setAreIssueTypesLoading(false);
