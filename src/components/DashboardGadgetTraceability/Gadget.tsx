@@ -1,6 +1,5 @@
 import React from "react";
-import { TracebilityReportModule } from "../TracebilityReportModule/TracebilityReportModule";
-
+import TracebilityReport from "../../TracebilityReport";
 export const Gadget: React.FC = () => {
-  return <TracebilityReportModule isFromDashboardGadget={true} />;
+  return <TracebilityReport isFromDashboardGadget={true} />;
 };
