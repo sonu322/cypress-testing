@@ -79,7 +79,11 @@ export const DropdownFields = ({
         placement={dropdownNamePlacement ?? "bottom-start"}
       >
         <div style={{ position: "sticky", top: 0, zIndex: 1 }}>
-          <SearchOption placeholder="Search" onSearch={handleSearch} />
+          <SearchOption
+            placeholder="Search"
+            onSearch={handleSearch}
+            searchTerm={searchTerm}
+          />
         </div>
         <DropdownItemCheckboxGroup id={dropdownName + "-options"}>
           {filteredOptions?.map((option) => (
