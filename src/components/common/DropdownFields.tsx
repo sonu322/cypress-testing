@@ -8,6 +8,7 @@ import { TooltipContainer } from "./TooltipContainer";
 import { SearchOption } from "./SearchOption";
 import { SelectClearOption } from "./SelectClearOption";
 import Badge from "@atlaskit/badge";
+
 interface Props {
   selectedOptions: string[];
   dropdownName: any;
@@ -71,7 +72,7 @@ export const DropdownFields = ({
             {dropdownName}
             <span style={{ marginLeft: "4px" }}>
               {!isAllSelected &&
-                (isFiltered ? <Badge appearance="primary"></Badge> : null)}
+                (isFiltered ? <Badge appearance="primary">&nbsp;</Badge> : null)}
             </span>
           </div>
         }
