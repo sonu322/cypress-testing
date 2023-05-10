@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import { APIContext } from "../../context/api";
 import PageHeader from "@atlaskit/page-header";
@@ -220,6 +220,8 @@ export const TracebilityReportModule = ({
   const clearAllErrors = (): void => {
     setErrors([]);
   };
+
+  const isMounted = useRef(true);
   useEffect(() => {
     const loadData = async (): Promise<void> => {
       try {
@@ -228,6 +230,7 @@ export const TracebilityReportModule = ({
           api.getIssueLinkTypes(),
           api.getIssueFields(),
         ]);
+        if (!isMounted.current) return;
 
         const issueTypes = result[0];
         const linkTypes = result[1];
@@ -282,11 +285,15 @@ export const TracebilityReportModule = ({
             setSelectedIssueFieldIds(selectedFieldIds);
           }
           if (Boolean(dashboardContext.config[VIEW_TYPE_FIELD_NAME])) {
-            setSelectedLinkTypeIds(
-              dashboardContext.config[SELECTED_LINK_TYPE_IDS_KEY]
-            );
             setSelectedIssueTypeIds(
-              dashboardContext.config[SELECTED_ISSUE_TYPE_IDS_KEY]
+              dashboardContext.config[SELECTED_ISSUE_TYPE_IDS_KEY] !== undefined
+                ? dashboardContext.config[SELECTED_ISSUE_TYPE_IDS_KEY]
+                : getKeyValues(issueTypes, "id")
+            );
+            setSelectedLinkTypeIds(
+              dashboardContext.config[SELECTED_LINK_TYPE_IDS_KEY] !== undefined
+                ? dashboardContext.config[SELECTED_LINK_TYPE_IDS_KEY]
+                : getKeyValues(linkTypes, "id")
             );
           } else {
             setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
@@ -302,6 +309,9 @@ export const TracebilityReportModule = ({
       }
     };
     void loadData();
+    return () => {
+      isMounted.current = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const isExportDisabled =
