@@ -1,6 +1,6 @@
 {
   "name": "Links Explorer",
-  "description": "This is simple links tree view plugin",
+  "description": "Links Explorer (LXP) is the #1 user-rated Traceability app for Jira. Create Traceability reports, display Jira Issues links and hierarchy in a tree view at any depth.",
   "key": "com.otpl.jira.plugins.lxp",
   "baseUrl": "https://lxp.optimizoryapps.com",
   "vendor": {
@@ -57,13 +57,13 @@
       {
         "url": "/tracebilityReportModuleEntry.html",
         "description": {
-          "value": "This is a traceability report",
+          "value": "End to end traceability reports displaying Jira issues and their linked issues in an easy to comprehend tabular format.",
           "i18n": "otpl.lxp.traceability-report.description"
         },
         "reportCategory": "agile",
         "thumbnailUrl": "/images/lxp-thumbnail.png",
         "name": {
-          "value": "Links Explorer Report",
+          "value": "Links Explorer - Traceability Reports",
           "i18n": "otpl.lxp.traceability-report.name"
         },
         "key": "lxp-traceability-reports"
@@ -83,7 +83,7 @@
         "thumbnailUrl": "/images/lxp-thumbnail.png",
         "refreshable": true,
         "name": {
-          "value": "LXP Tree Gadget",
+          "value": "LXP Tree View",
           "i18n": "otpl.lxp.lxp-tree-gadget.name"
         },
         "key": "lxp-tree"

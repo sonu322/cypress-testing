@@ -32,8 +32,7 @@ export default class JiraServerImpl implements JiraAPI {
   }
 
   hasValidLicense(): boolean {
-    // return this.isValidLicense;
-    return true; // TODO: fix me
+    return this.isValidLicense;
   }
 
   getJiraBaseURL(): string {
