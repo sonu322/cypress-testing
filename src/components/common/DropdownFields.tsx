@@ -38,9 +38,7 @@ export const DropdownFields = ({
   useTitleCaseOptions,
 }: Props): JSX.Element => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [isFiltered, setIsFiltered] = useState(
-    localStorage.getItem("filterState") === "true" || false
-  );
+  const [isFiltered, setIsFiltered] = useState(false);
   const isAllSelected = selectedOptions.length === options.length;
 
   const handleOptionClick = (id: string): void => {
@@ -72,11 +70,6 @@ export const DropdownFields = ({
   const filteredOptions = options.filter((options) =>
     options.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  useEffect(() => {
-    localStorage.setItem("filterState", isFiltered ? "true" : "false");
-  }, [isFiltered]);
-
   return (
     <div style={{ position: "relative" }}>
       <DropdownMenu
