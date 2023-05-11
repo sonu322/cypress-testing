@@ -1,0 +1,14 @@
+[
+    {
+        "hostname": "v1",
+        "description": "V1",
+        "version": "1.0",
+        "git-tag-name": "master"
+    },
+    {
+        "hostname": "v2",
+        "description": "V2",
+        "version": "2.0",
+        "git-tag-name": "master"
+    }
+]
