@@ -15,7 +15,6 @@ import { getQueryParam } from "../../util/index";
 import { DashboardContext } from "../common/Dashboard/DashboardContext";
 import { IssueKeyField } from "./IssueKeyField";
 import {
-  badIssueKeyError,
   DASHBOARD_GADGET_CONFIG_KEY,
   defaultGadgetConfig,
   HEIGHT_FIELD_NAME,
@@ -25,6 +24,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { ErrorsList } from "../common/ErrorsList";
 import LXPAPI from "../../types/api";
+import LicenseContainer from "../common/LicenseContainer"; // Make sure the path is correct
 
 interface ContainerProps {
   height: number;
@@ -156,7 +156,9 @@ const DashboardGadget: React.FC = () => {
     }
   };
 
-  if (
+  if (!api.hasValidLicense()) {
+    return <LicenseContainer />;
+  } else if (
     dashboardId !== undefined &&
     dashboardItemId !== undefined &&
     config !== undefined
