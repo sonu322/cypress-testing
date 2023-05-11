@@ -373,10 +373,11 @@ export const TracebilityReportModule = ({
   };
   const handleRefresh = (): void => {
     const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
+    const startIndex = (currentPage - 1) * selectedLimit;
     void tracebilityReportUtils.populateIssues(
       selectedJQLString,
       issueFields,
-      0,
+      startIndex,
       selectedLimit,
       updatedIssues,
       setAreIssuesLoading,
