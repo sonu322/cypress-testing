@@ -24,7 +24,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { ErrorsList } from "../common/ErrorsList";
 import LXPAPI from "../../types/api";
-import LicenseContainer from "../common/LicenseContainer"; // Make sure the path is correct
+import LicenseContainer from "../common/LicenseContainer";
 
 interface ContainerProps {
   height: number;
