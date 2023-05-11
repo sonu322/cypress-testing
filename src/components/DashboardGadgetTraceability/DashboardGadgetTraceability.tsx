@@ -15,6 +15,7 @@ import {
 } from "../../constants/gadgetTraceability";
 import LXPAPI from "../../types/api";
 import { TraceabilityGadgetConfig } from "../../types/app";
+import LicenseContainer from "../common/LicenseContainer";
 
 interface ContainerProps {
   height: number;
@@ -95,7 +96,9 @@ const DashboardGadget: React.FC = () => {
       setIsConfiguring(true);
     });
   });
-  if (
+  if (!api.hasValidLicense()) {
+    return <LicenseContainer />;
+  } else if (
     dashboardId !== undefined &&
     dashboardItemId !== undefined &&
     config !== undefined
