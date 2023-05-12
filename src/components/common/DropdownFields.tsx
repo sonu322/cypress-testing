@@ -70,6 +70,11 @@ export const DropdownFields = ({
   const filteredOptions = options.filter((options) =>
     options.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  useEffect(() => {
+    setIsFiltered(!isAllSelected && selectedOptions.length > 0);
+  }, [selectedOptions, options]);
+
   return (
     <div style={{ position: "relative" }}>
       <DropdownMenu
