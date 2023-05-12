@@ -5,10 +5,10 @@ import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import * as cf from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import * as envParams from '../lib/resource/env.json'
-import * as certificatemanager from '@aws-cdk/aws-certificatemanager';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import * as targets from 'aws-cdk-lib/aws-route53-targets';
 import * as route53 from 'aws-cdk-lib/aws-route53';
+import {buildFromGitBranch } from './branchBuildScript.js';
 export const Envjson = envParams["dev"];
 export class LxpCdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -19,7 +19,7 @@ export class LxpCdkStack extends cdk.Stack {
     // const hostedzone = cdk.aws_route53.HostedZone.fromLookup(this, 'HostedZone', {
     //   domainName: 'lxpcloud.com',
     // });
-    
+
     
      const certificatearn = `${Envjson.certificate}`;
      const certifiate_lxpdev = Certificate.fromCertificateArn(this, 'Certificate', certificatearn);
@@ -38,7 +38,7 @@ export class LxpCdkStack extends cdk.Stack {
     });
     // s3 bucket deployment
     new BucketDeployment(this, 'LxpBucketDeployment', {
-      sources: [Source.asset('C:/Users/dell/lxp-cloud/app_test')], // have to replace with app data app_test is for testing
+      sources: [Source.asset('C:/Users/pulkit/Desktop/lxp/lxp-cloud/dist')], // have to replace with app data app_test is for testing
       destinationBucket: lxpBucket,
     });
     // origin access identity
@@ -71,7 +71,7 @@ export class LxpCdkStack extends cdk.Stack {
 
     // cloudfront distribution
     const distribution = new cf.Distribution(this, 'LxpDistribution',{
-      defaultRootObject : 'test2.html',  // default page to load when accessing the website
+      defaultRootObject : 'issueTreeModuleEntry.html',  // default page to load when accessing the website
       defaultBehavior: {
         origin: new S3Origin(lxpBucket,{originAccessIdentity}),
         viewerProtocolPolicy: cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
@@ -98,11 +98,11 @@ export class LxpCdkStack extends cdk.Stack {
       recordName: 'v1',
       target: route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(distribution)),
     });
-    new route53.CnameRecord(this, 'CnameRecord', {
-      zone,
-      recordName: 'v2',
-      domainName: distribution.distributionDomainName,
-    });
+    // new route53.CnameRecord(this, 'CnameRecord', {
+    //   zone,
+    //   recordName: 'v1',
+    //   domainName: distribution.distributionDomainName,
+    // });
 
     }
 }
