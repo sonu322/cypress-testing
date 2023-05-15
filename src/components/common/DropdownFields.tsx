@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import DropdownMenu, {
   DropdownItemCheckboxGroup,
   DropdownItemCheckbox,
@@ -49,7 +49,6 @@ export const DropdownFields = ({
       updatedList = [...selectedOptions, id];
     }
     updateSelectedOptions(updatedList);
-    setIsFiltered(updatedList.length !== options.length);
   };
 
   const handleSearch = (searchTerm: string): void => {
@@ -59,12 +58,10 @@ export const DropdownFields = ({
   const handleSelectAll = (): void => {
     const allOptionIds = options.map((option) => option.id);
     updateSelectedOptions(allOptionIds);
-    setIsFiltered(false);
   };
 
   const handleClearAll = (): void => {
     updateSelectedOptions([]);
-    setIsFiltered(true);
   };
 
   const filteredOptions = options.filter((options) =>
