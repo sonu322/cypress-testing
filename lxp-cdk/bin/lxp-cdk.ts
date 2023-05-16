@@ -2,23 +2,14 @@
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { LxpCdkStack } from '../lib/lxp-cdk-stack';
-//import { createTempDirAndBuildApp} from '../lib/filedir';
-//import * as version from '../lib/resource/version.json';
-//import * as fs from 'fs';
+import * as envParams from '../lib/resource/env.json'
+const Envjson = envParams["dev"];
 
-// interface versionData{
-//   host: string;
-//   dis: string;
-//   version: string;
-//   git: string;
-// }
 
-// const versionfile = fs.readFileSync('../lib/resource/version.json', 'utf8');
-// const versionjson: versionData = JSON.parse(versionfile);
+
 
 
 const app = new cdk.App();
-//createTempDirAndBuildApp('https://github.com/Optimizory/lxp-cloud.git', 'main');
 
 
 new LxpCdkStack(app, 'LxpCdkStack', {
@@ -33,7 +24,7 @@ new LxpCdkStack(app, 'LxpCdkStack', {
 
   /* Uncomment the next line if you know exactly what Account and Region you
    * want to deploy the stack to. */
-   env: { account: '950078608654', region: 'us-east-1' },
+   env: { account: `${Envjson.accountNumber}`, region: `${Envjson.region}` },
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 });
