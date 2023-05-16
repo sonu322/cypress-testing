@@ -41,6 +41,7 @@ function lxpbuilds() {
 
         rm -rf original-atlassian-connect.json
         echo "deleted file"
+        echo "--------- new file ---------"
     done
 
     echo "$buildDirectory"
