@@ -1,14 +1,16 @@
 [
     {
         "hostname": "v1",
-        "description": "V1",
+        "description": "V2",
         "version": "1.0",
-        "git_tag_name": "master"
+        "git_tag_name": "master",
+        "build_sync": "false"
     },
     {
         "hostname": "v2",
-        "description": "V2",
+        "description": "V1",
         "version": "2.0",
-        "git_tag_name": "devlop"
+        "git_tag_name": "develop",
+        "build_sync": "false"
     }
 ]
