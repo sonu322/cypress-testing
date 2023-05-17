@@ -41,10 +41,10 @@ export const TreeFilterContextProvider = ({
   const updateFilter = (
     filter:
       | {
-          priorities: string[];
-          issueTypes: string[];
-          linkTypes: string[];
-        }
+        priorities: string[];
+        issueTypes: string[];
+        linkTypes: string[];
+      }
       | ((prevFilter: IssueTreeFilter) => IssueTreeFilter)
   ): void => {
     setFilter(filter);
@@ -82,7 +82,6 @@ export const TreeFilterContextProvider = ({
   useEffect(() => {
     const handleInitialUpdateFilter = (newFilter: IssueTreeFilter): void => {
       const store = getItemInLocalStorage(localStorageKey);
-      console.log(isMounted.current);
       if (!isMounted.current) {
         return;
       }
