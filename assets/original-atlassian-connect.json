@@ -24,7 +24,7 @@
     "type": "none"
   },
   "scopes": ["read", "write"],
-  "apiVersion": 1,
+  "apiVersion": 2,
   "modules": {
     "jiraIssueTabPanels": [
       {
