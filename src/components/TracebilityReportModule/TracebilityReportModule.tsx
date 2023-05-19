@@ -28,8 +28,6 @@ import {
   exportAllRecordsId,
   exportCurrentPageId,
   exportTreeReportOptions,
-  ISSUE_TYPE_VIEW_ID,
-  LINK_TYPE_VIEW_ID,
 } from "../../constants/traceabilityReport";
 import { TreeReportToolbar } from "./TreeReportToolbar";
 import { TreeFilterContext } from "../../context/treeFilterContext";
@@ -473,11 +471,6 @@ export const TracebilityReportModule = ({
                 isOrphansBranchPresent={isOrphansBranchPresent}
                 updateIsOrphansBranchPresent={updateIsOrphansBranchPresent}
                 isToggleOrphansLoading={isToggleOrphansLoading}
-                issueFields={issueFields}
-                tree={tree}
-                setTree={setTree}
-                handleNewError={handleNewError}
-                clearAllErrors={clearAllErrors}
               />
             )}
           </>
