@@ -81,25 +81,12 @@ export const TreeReportToolbar = ({
       <Heading level={"h300"}>{treeToolBarHeading}</Heading>
       <FlexContainer>
         <TreeFilterDropdowns
+          isMultiNodeTree
           options={options}
           filter={filter}
           filterDropdowns={treeFilterDropdowns}
           updateFilteredKeyOptions={updateFilteredKeyOptions}
-          expandAll={async () =>
-            await treeUtils.handleMultipleExpandAllNodes(
-              treeFilterContext.filter,
-              issueFields,
-              tree,
-              setTree,
-              handleNewError,
-              clearAllErrors,
-              setIsExpandAllLoading
-            )
-          }
           isExpandAllLoading={isExpandAllLoading}
-          collapseAll={() => {
-            treeUtils.collapseAll(setTree);
-          }}
         />
         <LoadingButton
           onClick={toggleOrphans}

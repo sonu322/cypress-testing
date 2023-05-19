@@ -24,17 +24,19 @@ interface Props {
     label: string;
   }>;
   updateFilteredKeyOptions: (key: string, keyOptions: string[]) => void;
-  expandAll: () => Promise<void>;
+  expandAll?: () => Promise<void>;
   isExpandAllLoading: boolean;
-  collapseAll: () => void;
+  collapseAll?: () => void;
+  isMultiNodeTree?: boolean;
 }
 export const TreeFilterDropdowns = ({
   options,
   filter,
   filterDropdowns,
   updateFilteredKeyOptions,
-  expandAll,
   isExpandAllLoading,
+  isMultiNodeTree = false,
+  expandAll,
   collapseAll,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
@@ -51,22 +53,26 @@ export const TreeFilterDropdowns = ({
         />
       ))}
 
-      <TooltipContainer content={t("otpl.lxp.toolbar.expand-all.title")}>
-        <LoadingButton
-          appearance="default"
-          iconBefore={<ExpandIcon label={""} />}
-          onClick={expandAll}
-          isLoading={isExpandAllLoading}
-          isDisabled={isExpandAllLoading}
-        />
-      </TooltipContainer>
-      <TooltipContainer content={t("otpl.lxp.toolbar.collapse-all.title")}>
-        <Button
-          appearance="default"
-          iconBefore={<CollapseIcon label={""} />}
-          onClick={collapseAll}
-        />
-      </TooltipContainer>
+      {!isMultiNodeTree && (
+        <>
+          <TooltipContainer content={t("otpl.lxp.toolbar.expand-all.title")}>
+            <LoadingButton
+              appearance="default"
+              iconBefore={<ExpandIcon label={""} />}
+              onClick={expandAll}
+              isLoading={isExpandAllLoading}
+              isDisabled={isExpandAllLoading}
+            />
+          </TooltipContainer>
+          <TooltipContainer content={t("otpl.lxp.toolbar.collapse-all.title")}>
+            <Button
+              appearance="default"
+              iconBefore={<CollapseIcon label={""} />}
+              onClick={collapseAll}
+            />
+          </TooltipContainer>
+        </>
+      )}
     </ButtonGroup>
   );
 };
