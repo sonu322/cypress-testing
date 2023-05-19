@@ -25,7 +25,7 @@ interface Props {
   }>;
   updateFilteredKeyOptions: (key: string, keyOptions: string[]) => void;
   expandAll?: () => Promise<void>;
-  isExpandAllLoading: boolean;
+  isExpandAllLoading?: boolean;
   collapseAll?: () => void;
   isMultiNodeTree?: boolean;
 }

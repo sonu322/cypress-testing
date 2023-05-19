@@ -39,11 +39,6 @@ interface Props {
   isOrphansBranchPresent: boolean;
   updateIsOrphansBranchPresent: (treeHasOnlyOptions: boolean) => void;
   isToggleOrphansLoading: boolean;
-  issueFields: IssueField[];
-  tree: AtlasTree;
-  setTree: React.Dispatch<React.SetStateAction<AtlasTree>>;
-  handleNewError: (err: unknown) => void;
-  clearAllErrors: () => void;
 }
 export const TreeReportToolbar = ({
   options,
@@ -52,13 +47,7 @@ export const TreeReportToolbar = ({
   isOrphansBranchPresent,
   updateIsOrphansBranchPresent,
   isToggleOrphansLoading,
-  issueFields,
-  tree,
-  setTree,
-  handleNewError,
-  clearAllErrors,
 }: Props): JSX.Element => {
-  const [isExpandAllLoading, setIsExpandAllLoading] = useState(false);
   const { t } = useTranslation();
   const hideOrphanText = t(
     "otpl.lxp.traceability-report.tree-view.hide-orphan-issues"
@@ -72,9 +61,6 @@ export const TreeReportToolbar = ({
   const toggleOrphans = (): void => {
     updateIsOrphansBranchPresent(!isOrphansBranchPresent);
   };
-  const api = useContext(APIContext);
-  const treeUtils = new TreeUtils(api);
-  const treeFilterContext = useContext(TreeFilterContext);
 
   return (
     <ToolbarContainer>
@@ -86,7 +72,6 @@ export const TreeReportToolbar = ({
           filter={filter}
           filterDropdowns={treeFilterDropdowns}
           updateFilteredKeyOptions={updateFilteredKeyOptions}
-          isExpandAllLoading={isExpandAllLoading}
         />
         <LoadingButton
           onClick={toggleOrphans}
