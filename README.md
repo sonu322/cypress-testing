@@ -13,15 +13,21 @@
 
 ##### For Lxp-cdk development
 
-1. install all dependence in lxp-cdk derectory `npm install`
-2. install jq in machine
-   for windows: https://stedolan.github.io/jq/download/
-   or install from chocolatey: https://chocolatey.org/packages/jq
-   cmd command to install chocalatey : `@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command " [System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"`
-   make sure to run cmd as administrator
-   cmd command to install jq using chocolatey : `choco install jq`
-3. Run lxpbuild.sh script to build the all version of lxp from versions.json file `./lxpbuild.sh`
-   in lxp-cloud/lxp-cdk/lib/scripts directory
-4. run cdk diff to see the changes `npx cdk diff`
-5. run cdk synth to synthesize the changes `npx cdk synth`
-6. run cdk deploy to deploy the changes `npx cdk deploy`
+1. Install all dependencies in the lxp-cdk directory:
+   `npm install`
+2. Install jq on your machine. Choose one of the following methods based on your operating system:
+   For Windows:
+   Download `jq` from the official website: https://stedolan.github.io/jq/download/
+   Alternatively, install `jq` using Chocolatey package manager: https://chocolatey.org/packages/jq Or, run the following commands in an elevated PowerShell session:
+   To install Chocolatey using PowerShell (run as administrator):
+   `@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command " [System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"`
+   To install jq using Chocolatey:
+   `choco install jq`
+3. Run the lxpbuild.sh script to build all versions of lxp from the versions.json file. Navigate to the lxp-cloud/ lxp-cdk/lib/scripts directory and execute the following command:  
+   ./lxpbuild.sh
+4. Run cdk diff to see the changes:
+   `npx cdk diff`
+5. Run cdk synth to synthesize the changes:
+   `npx cdk synth`
+6. Run cdk deploy to deploy the changes:
+   `npx cdk deploy`
