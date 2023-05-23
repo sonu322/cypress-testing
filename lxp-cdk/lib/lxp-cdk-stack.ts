@@ -14,14 +14,14 @@ import * as targets from "aws-cdk-lib/aws-route53-targets";
 import * as route53 from "aws-cdk-lib/aws-route53";
 import * as fs from "fs";
 import * as path from "path";
-export const EnvJSON = envParams["dev"];
+export const envJSON = envParams["dev"];
 const buildDirectory = path.join(__dirname, "builds");
 
 export class LxpCdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const certificatearn = `${EnvJSON.certificate}`;
+    const certificatearn = `${envJSON.certificate}`;
     const certifiate_lxpdev = Certificate.fromCertificateArn(
       this,
       "Certificate",
@@ -29,12 +29,13 @@ export class LxpCdkStack extends cdk.Stack {
     );
     // route53
     const zone = route53.HostedZone.fromLookup(this, "hostedzone", {
-      domainName: `${EnvJSON.hostedZone}`,
+      domainName: `${envJSON.hostedZone}`,
     });
 
     // The code that defines your stack goes here
     // s3 bucket
     const lxpBucket = new Bucket(this, "LxpBucket", {
+      bucketName: `${envJSON.S3bucket}`,
       versioned: true,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       blockPublicAccess: BlockPublicAccess.BLOCK_ACLS,

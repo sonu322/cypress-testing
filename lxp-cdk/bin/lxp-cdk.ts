@@ -3,7 +3,7 @@ import "source-map-support/register";
 import * as cdk from "aws-cdk-lib";
 import { LxpCdkStack } from "../lib/lxp-cdk-stack";
 import * as envParams from "../lib/resource/env.json";
-const EnvJSON = envParams["dev"];
+const envJSON = envParams["dev"];
 
 const app = new cdk.App();
 
@@ -18,7 +18,7 @@ new LxpCdkStack(app, "LxpCdkStack", {
 
   /* Uncomment the next line if you know exactly what Account and Region you
    * want to deploy the stack to. */
-  env: { account: `${EnvJSON.accountNumber}`, region: `${EnvJSON.region}` },
+  env: { account: `${envJSON.accountNumber}`, region: `${envJSON.region}` },
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 });
