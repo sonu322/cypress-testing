@@ -40,8 +40,12 @@ import {
   JiraAutoCompleteSuggestionsResult,
 } from "../types/jira";
 
-function throwError(msg: string) {
-  throw new Error(i18n.t(msg));
+function throwError(msg: string, error = null): void {
+  msg = i18n.t(msg);
+  if (error) {
+    msg += ` - ${error.message}`;
+  }
+  throw new Error(msg);
 }
 // use secondary id field
 export default class APIImpl implements LXPAPI {
@@ -382,7 +386,7 @@ export default class APIImpl implements LXPAPI {
       return { ...issue, linkedIssues };
     } catch (error) {
       console.log(error);
-      throwError(`Error fetching issue ${issueId}`);
+      throwError(`Error fetching issue ${issueId} - ${error.message}`);
     }
   }
 
@@ -435,7 +439,7 @@ export default class APIImpl implements LXPAPI {
       return result;
     } catch (error) {
       console.log(error);
-      throwError(`Error fetching issues ${issueIds.join(",")}`);
+      throwError(`Error fetching issues ${issueIds.join(",")} - ${error.message}`);
     }
   }
 
@@ -525,7 +529,7 @@ export default class APIImpl implements LXPAPI {
     return result;
   }
 
-  private _convertIssue(issue: JiraIssueFull, fields: IssueField[]): Issue {
+  private async _convertIssue(issue: JiraIssueFull, fields: IssueField[], epicLinkFieldId: string = null): Promise<Issue> {
     let sprintFieldId, storyPointsFieldId, storyPointEstimateFieldId;
     if (fields && fields.length) {
       for (const field of fields) {
@@ -547,6 +551,16 @@ export default class APIImpl implements LXPAPI {
     } else if (issue.fields[storyPointEstimateFieldId] !== undefined) {
       storyPoints = issue.fields[storyPointEstimateFieldId];
     }
+    let parent = issue.fields.parent;
+    if (epicLinkFieldId && !parent) {
+      const parentId = issue.fields[epicLinkFieldId];
+      if (parentId) {
+        const fieldIds = this._getFieldIds(fields);
+        fieldIds.push(epicLinkFieldId);
+        const query = "?fields=" + fieldIds.join(",");
+        parent = await this.api.getIssueById(parentId, query);
+      }
+    }
     return {
       id: issue.id,
       issueKey: issue.key,
@@ -557,7 +571,7 @@ export default class APIImpl implements LXPAPI {
       links: this._convertLinks(
         issue.fields?.issuelinks || [],
         issue.fields?.subtasks || [],
-        issue.fields.parent
+        parent
       ),
       assignee: this._convertIssueAssignee(issue.fields.assignee),
       fixVersions: this._convertVersions(issue.fields.fixVersions || []),
@@ -596,19 +610,34 @@ export default class APIImpl implements LXPAPI {
       return await this.searchIssues(query, fields);
     } catch (error) {
       console.log(error);
-      throwError(`Error getting child issues of issue ${issue.issueKey}`);
+      throwError(`Error getting child issues of issue ${issue.issueKey} - ${error.message}`);
     }
+  }
+
+  async getEpicLinkFieldIdForServer(): Promise<string> {
+    const fields = await this.getAllIssueFields();
+    let fieldId = null;
+    for (const field of fields) {
+      if (field.name === "Epic Link") {
+        fieldId = field.id;
+      }
+    }
+    return fieldId;
   }
 
   async getIssueById(fields: IssueField[], issueId?: string): Promise<Issue> {
     try {
       issueId = issueId || (await this.getCurrentIssueId());
       const fieldIds = this._getFieldIds(fields);
+      let epicLinkFieldId = null;
+      if (!this.api.isJiraCloud()) {
+        epicLinkFieldId = await this.getEpicLinkFieldIdForServer();
+        fieldIds.push(epicLinkFieldId);
+      }
       const query = "?fields=" + fieldIds.join(",");
       const issue: JiraIssueFull = await this.api.getIssueById(issueId, query);
       issue || throwError("otpl.lxp.api.issue-by-id-error-main");
-
-      return this._convertIssue(issue, fields);
+      return await this._convertIssue(issue, fields, epicLinkFieldId);
     } catch (error) {
       console.error(error);
       const prefix = i18n.t("otpl.lxp.api.issue-by-id-error-prefix");
@@ -646,14 +675,18 @@ export default class APIImpl implements LXPAPI {
   ): Promise<{ data: Issue[]; total: number }> {
     try {
       const fieldIds = this._getFieldIds(fields);
+      let epicLinkFieldId = null;
+      if (!this.api.isJiraCloud()) {
+        epicLinkFieldId = await this.getEpicLinkFieldIdForServer();
+        fieldIds.push(epicLinkFieldId);
+      }
       const issuesSearchResult: JiraIssueSearchResult =
         await this.api.searchAllIssues(jql, fieldIds, start, max);
-
       const result: Issue[] = [];
       const total = issuesSearchResult.total;
       const jiraIssues = issuesSearchResult?.issues || [];
       for (const issue of jiraIssues) {
-        result.push(this._convertIssue(issue, fields));
+        result.push(await this._convertIssue(issue, fields, epicLinkFieldId));
       }
       return { data: result, total };
     } catch (error) {
@@ -833,7 +866,7 @@ export default class APIImpl implements LXPAPI {
       }
     } catch (error) {
       console.log(error);
-      throwError("otpl.lxp.api.search-issues-error");
+      throwError("otpl.lxp.api.search-issues-error", error);
     }
   }
 
