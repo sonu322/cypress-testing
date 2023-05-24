@@ -82,7 +82,7 @@ export default class JiraServerImpl implements JiraAPI {
     return await this._AJS.$.ajax({
       type: "POST",
       contentType: "application/json; charset=utf-8",
-      url: "/rest/api/2/search",
+      url: this.contextPath + "/rest/api/2/search",
       data: JSON.stringify(data),
     });
   }
@@ -186,7 +186,7 @@ export default class JiraServerImpl implements JiraAPI {
     query: string
   ): Promise<JiraAutoCompleteSuggestionsResult> {
     return await this._AJS.$.getJSON(
-      "/rest/api/2/jql/autocompletedata/suggestions?" + query
+      this.contextPath + "/rest/api/2/jql/autocompletedata/suggestions?" + query
     );
   }
 }
