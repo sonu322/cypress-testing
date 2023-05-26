@@ -347,7 +347,7 @@ export default class APIImpl implements LXPAPI {
 
   _addEpicChildrenToLinks(issue: Issue, childIssues: Issue[]): void {
     childIssues.forEach((child) => {
-      if (this._shouldAddChildIssue(child)) {
+      if (child.type.id !== "subtask") {
         issue.links.push({
           linkTypeId: CustomLinkType.CHILD_ISSUES,
           name: Labels.CHILD_ISSUES,
@@ -358,13 +358,8 @@ export default class APIImpl implements LXPAPI {
     });
   }
 
-  // TODO: for the time being allowing jira server to add child issues
   private _shouldAddChildIssues(issue: Issue): boolean {
-    return !this.api.isJiraCloud() || (issue.type.id === "epic" || issue.type.id === "initiative");
-  }
-
-  private _shouldAddChildIssue(issue: Issue): boolean {
-    return this.isJiraCloud() || issue.type.id !== "subtask";
+    return true;
   }
 
   async getIssueWithLinks(
@@ -632,7 +627,7 @@ export default class APIImpl implements LXPAPI {
   getEpicLinkFieldIdForServer(fields: JiraIssueField[]): string {
     let fieldId = null;
     for (const field of fields) {
-      if (field.name === "Epic Link") {
+      if (field.name === Constants.EPIC_LINK_FLD) {
         fieldId = field.id;
       }
     }
@@ -642,7 +637,7 @@ export default class APIImpl implements LXPAPI {
   getParentLinkFieldIdForServer(fields: JiraIssueField[]): string {
     let fieldId = null;
     for (const field of fields) {
-      if (field.name === "Parent Link") {
+      if (field.name === Constants.PARENT_LINK_FLD) {
         fieldId = field.id;
       }
     }
@@ -743,20 +738,16 @@ export default class APIImpl implements LXPAPI {
     });
 
     const jqlComponents = ids.map((id) => `id=${id}`);
-    const epicIssues = issues.filter((issue) => issue.type.id === "epic");
-    epicIssues.forEach((epic) => {
-      jqlComponents.push(
-        `parent = ${epic.issueKey} OR "${Constants.EPIC_LINK_FLD}" = ${epic.issueKey}`
-      );
-    });
-
-    const initiativeIssues = issues.filter(
-      (issue) => issue.type.id === "initiative"
-    );
-    initiativeIssues.forEach((initiative) => {
-      jqlComponents.push(
-        `"${Constants.PARENT_LINK_FLD}" = ${initiative.issueKey}`
-      );
+    issues.forEach((issue) => {
+      if (issue.type.id === "epic") {
+        jqlComponents.push(
+          `parent = ${issue.issueKey} OR "${Constants.EPIC_LINK_FLD}" = ${issue.issueKey}`
+        );
+      } else {
+        jqlComponents.push(
+          `"${Constants.PARENT_LINK_FLD}" = ${issue.issueKey}`
+        );
+      }
     });
 
     const jqlString = jqlComponents.join(" OR ");
@@ -785,7 +776,7 @@ export default class APIImpl implements LXPAPI {
         }
       });
       // add epic child issues
-      if (issue.type.id === "epic" || issue.type.id === "initiative") {
+      if (this._shouldAddChildIssues(issue)) {
         sortedLinks[CustomLinkType.CHILD_ISSUES] = linkedIssues.filter(
           (linkedIssue) => {
             const parent = linkedIssue.links?.find(
