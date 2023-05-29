@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 import "source-map-support/register";
 import * as cdk from "aws-cdk-lib";
-import { LxpCdkStack } from "../lib/lxp-cdk-stack";
-import * as envParams from "../lib/resource/env.json";
-const envJSON = envParams["dev"];
+import { LxpCdkStack, envJSON } from "../lib/lxp-cdk-stack";
 
 const app = new cdk.App();
 
