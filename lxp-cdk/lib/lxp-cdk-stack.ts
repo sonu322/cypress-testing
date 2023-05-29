@@ -9,33 +9,36 @@ import { BucketDeployment, Source } from "aws-cdk-lib/aws-s3-deployment";
 import * as cf from "aws-cdk-lib/aws-cloudfront";
 import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
 import * as envParams from "../lib/resource/env.json";
-import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
+import {
+  Certificate,
+  CertificateValidation,
+} from "aws-cdk-lib/aws-certificatemanager";
 import * as targets from "aws-cdk-lib/aws-route53-targets";
 import * as route53 from "aws-cdk-lib/aws-route53";
 import * as fs from "fs";
 import * as path from "path";
+// change the envJSON to point to the correct environment
 export const envJSON = envParams["dev"];
-const buildDirectory = path.join(__dirname, "builds");
+const buildDirectory = path.join(__dirname, "../builds");
 
 export class LxpCdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const certificatearn = `${envJSON.certificate}`;
-    const certifiate_lxpdev = Certificate.fromCertificateArn(
-      this,
-      "Certificate",
-      certificatearn
-    );
     // route53
     const zone = route53.HostedZone.fromLookup(this, "hostedzone", {
       domainName: `${envJSON.hostedZone}`,
     });
 
+    // create certificate for the domain
+    const lxpCertificate = new Certificate(this, "LxpCertificate", {
+      domainName: "*." + `${envJSON.hostedZone}`,
+      validation: CertificateValidation.fromDns(zone),
+    });
+
     // The code that defines your stack goes here
     // s3 bucket
     const lxpBucket = new Bucket(this, "LxpBucket", {
-      bucketName: `${envJSON.S3bucket}`,
       versioned: true,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       blockPublicAccess: BlockPublicAccess.BLOCK_ACLS,
@@ -70,7 +73,7 @@ export class LxpCdkStack extends cdk.Stack {
           viewerProtocolPolicy: cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
           allowedMethods: cf.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
         },
-        certificate: certifiate_lxpdev,
+        certificate: lxpCertificate,
         domainNames: [`${dirName}.dev.lxp.optimizoryapps.com`],
       });
       // map the domain name to the cloudfront distribution with alias record in route53
@@ -82,5 +85,10 @@ export class LxpCdkStack extends cdk.Stack {
         ),
       });
     });
+    // print bucket name
+    new cdk.CfnOutput(this, "LxpBucketName", {
+      value: lxpBucket.bucketName,
+    });
+    console.log("LxpBucketName: ", lxpBucket.bucketName);
   }
 }
