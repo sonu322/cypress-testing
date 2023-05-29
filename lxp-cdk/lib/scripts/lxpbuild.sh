@@ -24,7 +24,7 @@ function lxpbuilds() {
         echo "$verdirectory"
         # if directory exists overwrite with empty directory
         if [ -d "$verdirectory" ]; then
-            echo "version directory exists. overwritting..."
+            echo "version directory exists. overwriting..."
             rm -rf "$verdirectory"
         fi
         mkdir -p "$verdirectory"
