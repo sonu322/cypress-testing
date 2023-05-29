@@ -1,9 +1,8 @@
 [
   {
-    "hostname": "v1",
-    "description": "V1",
-    "version": "1.0",
-    "git_tag_name": "develop",
-    "build_sync": "false"
+    "hostname": "v2-1-0",
+    "description": "v2.1.0",
+    "version": "v2.1.0",
+    "git_tag_name": "v2.1.0"
   }
 ]
