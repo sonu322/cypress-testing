@@ -74,7 +74,7 @@ export class LxpCdkStack extends cdk.Stack {
           allowedMethods: cf.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
         },
         certificate: lxpCertificate,
-        domainNames: [`${dirName}.dev.lxp.optimizoryapps.com`],
+        domainNames: [`${dirName}.${envJSON.hostedZone}`],
       });
       // map the domain name to the cloudfront distribution with alias record in route53
       new route53.ARecord(this, `AliasRecord_${dirName}`, {
