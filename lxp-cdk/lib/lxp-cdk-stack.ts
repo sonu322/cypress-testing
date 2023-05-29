@@ -89,6 +89,5 @@ export class LxpCdkStack extends cdk.Stack {
     new cdk.CfnOutput(this, "LxpBucketName", {
       value: lxpBucket.bucketName,
     });
-    console.log("LxpBucketName: ", lxpBucket.bucketName);
   }
 }
