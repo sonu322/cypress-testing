@@ -7,7 +7,7 @@ function lxpbuilds() {
     versionfile=$(cat "../resource/version.json")
     echo "$versionfile"
     versionjson=$(echo "$versionfile" | jq -c '.')
-    buildDirectory=$(realpath "../builds")
+    buildDirectory=$(realpath "../../builds")
 
     if [ ! -d "$buildDirectory" ]; then
         echo "buildDirectory does not exist. Creating..."
@@ -22,6 +22,11 @@ function lxpbuilds() {
 
         verdirectory=$(realpath "$buildDirectory/$verhostname")
         echo "$verdirectory"
+        # if directory exists overwrite with empty directory
+        if [ -d "$verdirectory" ]; then
+            echo "version directory exists. overwriting..."
+            rm -rf "$verdirectory"
+        fi
         mkdir -p "$verdirectory"
         echo "directory created"
 
