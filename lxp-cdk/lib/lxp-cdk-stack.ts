@@ -39,7 +39,7 @@ export class LxpCdkStack extends cdk.Stack {
     // The code that defines your stack goes here
     // s3 bucket
     const lxpBucket = new Bucket(this, "LxpBucket", {
-      versioned: true,
+      versioned: false,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       blockPublicAccess: BlockPublicAccess.BLOCK_ACLS,
       accessControl: BucketAccessControl.BUCKET_OWNER_FULL_CONTROL,
