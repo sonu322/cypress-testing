@@ -32,13 +32,7 @@ export class LxpCdkStack extends cdk.Stack {
       domainName: `${envJSON.hostedZone}`,
     });
 
-    // create certificate for the domain
     const lxpCertificate = new Certificate(this, "LxpCertificate", {
-      domainName: `${envJSON.hostedZone}`,
-      validation: CertificateValidation.fromDns(zone),
-    });
-
-    const lxpCertificate2 = new Certificate(this, "LxpCertificate2", {
       domainName: "*." + `${envJSON.hostedZone}`,
       validation: CertificateValidation.fromDns(zone),
     });
@@ -82,20 +76,6 @@ export class LxpCdkStack extends cdk.Stack {
         destinationKeyPrefix: dirName,
       });
 
-      // cloudfornt diployment for the version
-      var fqdn = "";
-      var cert;
-      var recordName;
-      if (dirName === "v3") {
-        fqdn = "dev.lxp.optimizoryapps.com";
-        cert = lxpCertificate;
-        recordName = "";
-      } else {
-        fqdn = `${dirName}.${envJSON.hostedZone}`;
-        cert = lxpCertificate2;
-        recordName = "v2-1-0";
-      }
-
       const cloudfront = new cf.Distribution(this, cloud_front_name, {
         defaultRootObject: "issueTreeModuleEntry.html", // default page to load when accessing the website
         defaultBehavior: {
@@ -107,13 +87,13 @@ export class LxpCdkStack extends cdk.Stack {
           allowedMethods: cf.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
           responseHeadersPolicy: hstsBehavior,
         },
-        certificate: cert,
-        domainNames: [fqdn],
+        certificate: lxpCertificate,
+        domainNames: [dirName + `.${envJSON.hostedZone}`],
       });
       // map the domain name to the cloudfront distribution with alias record in route53
       new route53.ARecord(this, `AliasRecord_${dirName}`, {
         zone,
-        recordName: recordName,
+        recordName: dirName,
         target: route53.RecordTarget.fromAlias(
           new targets.CloudFrontTarget(cloudfront)
         ),
