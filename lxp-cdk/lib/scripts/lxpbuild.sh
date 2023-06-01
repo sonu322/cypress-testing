@@ -17,7 +17,7 @@ function lxpbuilds() {
     for ver in $(echo "$versionjson" | jq -c '.[]'); do
         cd "$buildDirectory"
 
-        verhostname=$(echo "$ver" | jq -r '.hostname')
+        verhostname=$(echo "$ver" | jq -r '.version')
         echo "$verhostname"
 
         verdirectory=$(realpath "$buildDirectory/$verhostname")
