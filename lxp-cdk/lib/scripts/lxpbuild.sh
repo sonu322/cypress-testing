@@ -38,7 +38,8 @@ function lxpbuilds() {
         echo "changed directory"
         git checkout $(echo "$ver" | jq -r '.git_tag_name')
 
-        npm install && npm run update-descriptor && npm run build-prod
+        # TODO: Make this descriptor URL parameterized
+        npm install && npm run update-descriptor https://connect.dev.lxp.optimizoryapps.com && npm run build-prod
         echo "build done"
 
         cd dist
