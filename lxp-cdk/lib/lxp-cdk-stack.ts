@@ -20,7 +20,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { Duration } from "aws-cdk-lib";
 // change the envJSON to point to the correct environment
-export const envJSON = envParams["dev"];
+export const envJSON = envParams["prod"];
 const buildDirectory = path.join(__dirname, "../builds");
 
 export class LxpCdkStack extends cdk.Stack {
@@ -60,7 +60,7 @@ export class LxpCdkStack extends cdk.Stack {
           accessControlMaxAge: Duration.seconds(31536000),
           includeSubdomains: true,
           override: true,
-          preload: true,
+          preload: false,
         },
       },
     });
