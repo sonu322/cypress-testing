@@ -38,7 +38,7 @@ function lxpbuilds() {
         echo "changed directory"
         git checkout $(echo "$ver" | jq -r '.git_tag_name')
 
-        npm install && npm run build
+        npm install && npm run update-descriptor && npm run build-prod
         echo "build done"
 
         cd dist
