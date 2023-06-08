@@ -8,6 +8,7 @@ import { TooltipContainer } from "./TooltipContainer";
 import { SearchOption } from "./SearchOption";
 import { SelectClearOption } from "./SelectClearOption";
 import styled from "styled-components";
+import { Icon } from "./Icon";
 
 const FilterContainer = styled.sup`
   padding-left: 4px;
@@ -25,6 +26,7 @@ interface Props {
     id: string;
     name: string;
     description: string;
+    iconUrl?: string;
   }>;
   useTitleCaseOptions?: boolean;
 }
@@ -72,6 +74,23 @@ export const DropdownFields = ({
     setIsFiltered(!isAllSelected && selectedOptions.length > 0);
   }, [selectedOptions, options]);
 
+  const renderOptionWithIcon = (option) => {
+    const { iconUrl } = option;
+
+    return (
+      <div style={{ display: "flex", alignItems: "center" }}>
+        {iconUrl && (
+          <div style={{ marginRight: "4px" }}>
+            <Icon src={iconUrl} />
+          </div>
+        )}
+        <span>
+          {useTitleCaseOptions ? toTitleCase(option.name) : option.name}
+        </span>
+      </div>
+    );
+  };
+
   return (
     <div style={{ position: "relative" }}>
       <DropdownMenu
@@ -100,7 +119,7 @@ export const DropdownFields = ({
               onClick={() => handleOptionClick(option.id)}
             >
               <TooltipContainer content={option.description}>
-                {useTitleCaseOptions ? toTitleCase(option.name) : option.name}
+                {renderOptionWithIcon(option)}
               </TooltipContainer>
             </DropdownItemCheckbox>
           ))}
