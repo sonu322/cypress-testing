@@ -16,7 +16,16 @@ export const Td = styled.td`
   padding: 8px !important;
 `;
 export const IssueTd = styled(Td)`
-  background-color: ${colors.N20A};
+  background-color: #f8f8ff;
+  position: sticky;
+  left: 30px;
+  z-index: 2;
+`;
+export const SNoTd = styled(Td)`
+  position: sticky;
+  left: 0;
+  background-color: #fffff9;
+  z-index: 2;
 `;
 export const MaxWidthContainer = styled.div`
   max-width: 540px;
@@ -51,7 +60,7 @@ export const IssueTypeRow = ({
       </MaxWidthContainer>
     </IssueTd>
   );
-  const snoCell = <Td key="sno">{rowSno}.</Td>;
+  const snoCell = <SNoTd key="sno">{rowSno}.</SNoTd>;
 
   cells.push(snoCell);
   cells.push(issueCell);
