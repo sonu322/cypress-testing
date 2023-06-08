@@ -9,18 +9,16 @@ import { BucketDeployment, Source } from "aws-cdk-lib/aws-s3-deployment";
 import * as cf from "aws-cdk-lib/aws-cloudfront";
 import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
 import * as envParams from "../lib/resource/env.json";
-import * as versions from "../lib/resource/version.json";
 import {
   Certificate,
   CertificateValidation,
 } from "aws-cdk-lib/aws-certificatemanager";
 import * as targets from "aws-cdk-lib/aws-route53-targets";
 import * as route53 from "aws-cdk-lib/aws-route53";
-import * as fs from "fs";
 import * as path from "path";
 import { Duration } from "aws-cdk-lib";
 // change the envJSON to point to the correct environment
-export const envJSON = envParams["prod"];
+export const envJSON = envParams["dev"];
 const buildDirectory = path.join(__dirname, "../builds");
 
 export class LxpCdkStack extends cdk.Stack {
@@ -64,42 +62,35 @@ export class LxpCdkStack extends cdk.Stack {
         },
       },
     });
-
-    // read the directory and deploy the build to s3 bucket
-    fs.readdirSync(buildDirectory).forEach((dirName) => {
-      const fullPath = path.join(buildDirectory, dirName + `/lxp-cloud/dist/`);
-      const deployment_name = dirName + `-deployment`;
-      const cloud_front_name = dirName + `-CF`;
-      new BucketDeployment(this, deployment_name, {
-        sources: [Source.asset(fullPath)],
-        destinationBucket: lxpBucket,
-        destinationKeyPrefix: dirName,
-      });
-
-      const cloudfront = new cf.Distribution(this, cloud_front_name, {
-        defaultRootObject: "issueTreeModuleEntry.html", // default page to load when accessing the website
-        defaultBehavior: {
-          origin: new S3Origin(lxpBucket, {
-            originPath: `/${dirName}`,
-            originAccessIdentity,
-          }),
-          viewerProtocolPolicy: cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-          allowedMethods: cf.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
-          responseHeadersPolicy: hstsBehavior,
-        },
-        certificate: lxpCertificate,
-        domainNames: [dirName + `.${envJSON.hostedZone}`],
-      });
-      // map the domain name to the cloudfront distribution with alias record in route53
-      new route53.ARecord(this, `AliasRecord_${dirName}`, {
-        zone,
-        recordName: dirName,
-        target: route53.RecordTarget.fromAlias(
-          new targets.CloudFrontTarget(cloudfront)
-        ),
-      });
+    const full_upload_path = path.join(buildDirectory, `lxp-cloud/dist/`);
+    // deploy the build to s3 bucket
+    new BucketDeployment(this, "LxpDeployment", {
+      sources: [Source.asset(full_upload_path)],
+      destinationBucket: lxpBucket,
+      destinationKeyPrefix: "lxp-cloud",
     });
-    // print bucket name
+    const cloudfront = new cf.Distribution(this, "connect-CF", {
+      defaultRootObject: "issueTreeModuleEntry.html", // default page to load when accessing the website
+      defaultBehavior: {
+        origin: new S3Origin(lxpBucket, {
+          originPath: `/lxp-cloud`,
+          originAccessIdentity,
+        }),
+        viewerProtocolPolicy: cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        allowedMethods: cf.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+        responseHeadersPolicy: hstsBehavior,
+      },
+      certificate: lxpCertificate,
+      domainNames: ["connect" + `.${envJSON.hostedZone}`],
+    });
+    // route53 alias record
+    new route53.ARecord(this, "AliasRecord_connect", {
+      zone,
+      recordName: "connect",
+      target: route53.RecordTarget.fromAlias(
+        new targets.CloudFrontTarget(cloudfront)
+      ),
+    });
     new cdk.CfnOutput(this, "LxpBucketName", {
       value: lxpBucket.bucketName,
     });
