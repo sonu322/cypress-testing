@@ -26,7 +26,7 @@ const IssueTh = styled(Th)`
 `;
 const SNoTh = styled(Th)`
   position: sticky;
-  position: webkit-sticky;
+  position: -webkit-sticky;
   left: 0;
   background-color: #fffff9;
   z-index: 3;

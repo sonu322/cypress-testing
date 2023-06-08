@@ -18,11 +18,13 @@ export const Td = styled.td`
 export const IssueTd = styled(Td)`
   background-color: #f8f8ff;
   position: sticky;
+  position: -webkit-sticky;
   left: 30px;
   z-index: 2;
 `;
 export const SNoTd = styled(Td)`
   position: sticky;
+  position: -webkit-sticky;
   left: 0;
   background-color: #fffff9;
   z-index: 2;
