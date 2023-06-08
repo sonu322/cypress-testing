@@ -27,6 +27,7 @@ interface Props {
     description: string;
   }>;
   useTitleCaseOptions?: boolean;
+  showFilterIndicatorOnClearAll?: boolean;
 }
 
 export const DropdownFields = ({
@@ -36,9 +37,12 @@ export const DropdownFields = ({
   updateSelectedOptions,
   options,
   useTitleCaseOptions,
+  showFilterIndicatorOnClearAll = false,
 }: Props): JSX.Element => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isFiltered, setIsFiltered] = useState(false);
+  const [showFilterIndicator, setShowFilterIndicator] = useState(false);
+
   const isAllSelected = selectedOptions.length === options.length;
 
   const handleOptionClick = (id: string): void => {
@@ -61,6 +65,9 @@ export const DropdownFields = ({
   };
 
   const handleClearAll = (): void => {
+    if (showFilterIndicatorOnClearAll) {
+      setShowFilterIndicator(true);
+    }
     updateSelectedOptions([]);
   };
 
@@ -79,7 +86,9 @@ export const DropdownFields = ({
           <div>
             {dropdownName}
             {!isAllSelected &&
-              (isFiltered ? <FilterContainer>*</FilterContainer> : null)}
+              (isFiltered || showFilterIndicator ? (
+                <FilterContainer>*</FilterContainer>
+              ) : null)}
           </div>
         }
         placement={dropdownNamePlacement ?? "bottom-start"}
