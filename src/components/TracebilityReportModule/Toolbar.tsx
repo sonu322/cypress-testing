@@ -131,6 +131,7 @@ export const Toolbar = ({
               options={issueCardOptions}
               selectedOptions={selectedIssueFieldIds}
               updateSelectedOptions={setSelectedIssueFieldIds}
+              showFilterIndicatorOnClearAll={true}
             />
             {!isTreeReport && (
               <Dropdown
