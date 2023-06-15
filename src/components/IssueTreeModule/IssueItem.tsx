@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import styled, { css } from "styled-components";
-import { colors } from "@atlaskit/theme";
 import { IssueCard } from "../common/issueCard/IssueCard";
 import { ExpansionToggler } from "./ExpansionToggler";
 import { LoadingButton } from "@atlaskit/button";
@@ -14,6 +13,7 @@ import {
   LinkTypeTreeNode,
   TreeNodeType,
 } from "../../types/app";
+import { token } from "@atlaskit/tokens";
 const PADDING_LEVEL = 30;
 const LinkTypeContainer = styled.div`
   display: flex;
@@ -22,8 +22,8 @@ const LinkTypeContainer = styled.div`
   border: none;
   border-radius: 3px;
   box-sizing: border-box;
-  background-color: ${colors.N30}
-  fill: ${colors.N30};
+  background-color: ${token("elevation.surface.raised")};
+  fill: ${token("elevation.surface.raised")};
   padding-left: 6px;
   padding-right: 6px;
   font-weight: 500;
