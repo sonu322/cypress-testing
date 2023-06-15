@@ -1,9 +1,9 @@
-import { colors } from "@atlaskit/theme";
 import React from "react";
 import styled from "styled-components";
 import { IssueField, IssueLinkType, IssueType } from "../../types/api";
 import { toTitleCase } from "../../util";
 import { HeaderCell } from "./HeaderCell";
+import { token } from "@atlaskit/tokens";
 
 interface Props {
   fields: IssueType[] | IssueLinkType[];
@@ -12,23 +12,23 @@ interface Props {
 
 // TODO: sticky header will not work in IE11
 const Th = styled.th`
-  border: 1px solid ${colors.N40};
+  border: 1px solid ${token("color.border")};
   position: -webkit-sticky; // this is for all Safari (Desktop & iOS), not for Chrome
   position: sticky;
   top: 0;
   z-index: 1; // any positive value, layer order is global
-  background-color: #fff; // any bg-color to overlap
+  background-color: ${token("elevation.surface.overlay")};
 `;
 const IssueTh = styled(Th)`
   left: 30px;
   z-index: 3;
-  background-color: #f8f8ff;
+  background-color: ${token("elevation.surface.overlay")};
 `;
 const SNoTh = styled(Th)`
   position: sticky;
   position: -webkit-sticky;
   left: 0;
-  background-color: #fffff9;
+  background-color: ${token("elevation.surface.overlay")};
   z-index: 3;
 `;
 export const ReportHeader = ({

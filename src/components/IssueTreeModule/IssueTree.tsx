@@ -6,8 +6,11 @@ import { ID, IssueField, IssueTreeFilter } from "../../types/api";
 import { AtlasTree, TreeNodeType } from "../../types/app";
 import { useTranslation } from "react-i18next";
 import Tree from "@atlaskit/tree";
+import { token } from "@atlaskit/tokens";
+
 const Container = styled.div`
   display: flex;
+  background-color: ${token("elevation.surface.sunken")};
 `;
 
 export interface Props {
@@ -115,31 +118,31 @@ export const IssueTree = ({
   const onCollapse = (itemId: string): void => {
     treeUtils.collapseNode(itemId, setTree);
   };
- if (tree?.items !== undefined) {
-   return (
-     <Container>
-       <Tree
-         tree={tree}
-         renderItem={({ ...props }) => {
-           return (
-             // @ts-expect-error
-             <IssueItem
-               {...props}
-               selectedIssueFieldIds={selectedIssueFieldIds}
-               selectedJqlString={selectedJqlString}
-               issueFields={issueFields}
-               setTree={setTree}
-               handleError={handleError}
-             />
-           );
-         }}
-         onExpand={onExpand}
-         onCollapse={onCollapse}
-         isDragEnabled={false}
-       />
-     </Container>
-   );
- } else {
-   return <em>{loadingText}</em>;
- }
+  if (tree?.items !== undefined) {
+    return (
+      <Container>
+        <Tree
+          tree={tree}
+          renderItem={({ ...props }) => {
+            return (
+              // @ts-expect-error
+              <IssueItem
+                {...props}
+                selectedIssueFieldIds={selectedIssueFieldIds}
+                selectedJqlString={selectedJqlString}
+                issueFields={issueFields}
+                setTree={setTree}
+                handleError={handleError}
+              />
+            );
+          }}
+          onExpand={onExpand}
+          onCollapse={onCollapse}
+          isDragEnabled={false}
+        />
+      </Container>
+    );
+  } else {
+    return <em>{loadingText}</em>;
+  }
 };
