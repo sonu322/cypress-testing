@@ -32,8 +32,7 @@ export default class JiraServerImpl implements JiraAPI {
   }
 
   hasValidLicense(): boolean {
-    // return this.isValidLicense;
-    return true; // TODO: fix me
+    return this.isValidLicense;
   }
 
   async linkIssueType(
@@ -46,13 +45,36 @@ export default class JiraServerImpl implements JiraAPI {
       jiraLinkTypeId,
       outwardIssueKey,
     };
-    // Toda: check for error
     await this._AJS.$.ajax({
       type: "POST",
       contentType: "application/json; charset=utf-8",
       url: "/rest/api/3/issueLink",
       data: JSON.stringify(linkIssuesBody),
     });
+  }
+
+  async checkIssueLinkExists(
+    inwardIssueKey: string,
+    jiraLinkTypeId: string,
+    outwardIssueKey: string
+  ): Promise<boolean> {
+    try {
+      const response = await this._AJS.$.ajax({
+        type: "GET",
+        contentType: "application/json; charset=utf-8",
+        url: "/rest/api/3/issueLink",
+        data: {
+          inwardIssue: inwardIssueKey,
+          outwardIssue: outwardIssueKey,
+          type: jiraLinkTypeId,
+        },
+      });
+
+      return response.total > 0;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
   }
 
   getJiraBaseURL(): string {
@@ -102,7 +124,7 @@ export default class JiraServerImpl implements JiraAPI {
     return await this._AJS.$.ajax({
       type: "POST",
       contentType: "application/json; charset=utf-8",
-      url: "/rest/api/2/search",
+      url: this.contextPath + "/rest/api/2/search",
       data: JSON.stringify(data),
     });
   }
@@ -206,7 +228,7 @@ export default class JiraServerImpl implements JiraAPI {
     query: string
   ): Promise<JiraAutoCompleteSuggestionsResult> {
     return await this._AJS.$.getJSON(
-      "/rest/api/2/jql/autocompletedata/suggestions?" + query
+      this.contextPath + "/rest/api/2/jql/autocompletedata/suggestions?" + query
     );
   }
 }

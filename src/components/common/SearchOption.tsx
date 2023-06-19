@@ -5,13 +5,15 @@ import EditorSearchIcon from "@atlaskit/icon/glyph/editor/search";
 interface Props {
   placeholder: string;
   onSearch: (searchTerm: string) => void;
+  searchTerm: string;
 }
 
-export const SearchOption = ({ placeholder, onSearch }: Props): JSX.Element => {
-  const [searchTerm, setSearchTerm] = useState("");
-
+export const SearchOption = ({
+  placeholder,
+  onSearch,
+  searchTerm,
+}: Props): JSX.Element => {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setSearchTerm(e.target.value);
     onSearch(e.target.value);
   };
 

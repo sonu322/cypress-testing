@@ -1,5 +1,4 @@
 import React from "react";
-window.React = React;
 import ReactDOM from "react-dom";
 import IssueLinksHierarchy from "./IssueLinksHierarchy";
 import APIImpl from "./impl/Cloud";

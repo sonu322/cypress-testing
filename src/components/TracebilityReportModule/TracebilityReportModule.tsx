@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import { APIContext } from "../../context/api";
 import PageHeader from "@atlaskit/page-header";
@@ -35,6 +35,14 @@ import TreeUtils from "../../util/TreeUtils";
 import { lastSavedReportConfigKey } from "../../constants/common";
 import { LastSavedReportConfig } from "../../types/app";
 import { ExportRecordsLoadingModal } from "./ExportRecordsLoadingModal";
+import { DashboardContext } from "../common/Dashboard/DashboardContext";
+import {
+  ISSUE_CARD_FIELDS_DROPDOWN_NAME,
+  JQL_FIELD_NAME,
+  SELECTED_ISSUE_TYPE_IDS_KEY,
+  SELECTED_LINK_TYPE_IDS_KEY,
+  VIEW_TYPE_FIELD_NAME,
+} from "../../constants/gadgetTraceability";
 
 const FullWidthContainer = styled.div`
   width: 100%;
@@ -49,11 +57,13 @@ const GrowContainer = styled.div`
 
 interface Props {
   showCustomJQLEditor?: any;
+  isFromDashboardGadget?: boolean;
 }
 const DEFAULT_ROWS_PER_PAGE = 20;
 
 export const TracebilityReportModule = ({
   showCustomJQLEditor,
+  isFromDashboardGadget,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
   const treeFilterContext = useContext(TreeFilterContext);
@@ -80,6 +90,8 @@ export const TracebilityReportModule = ({
   const [selectedTabIndex, setSelectedTabIndex] = useState<SelectedType>();
   const [totalNumberOfIssues, setTotalNumberOfIssues] = useState(0);
   const [isExportReportLoading, setIsExportReportLoading] = useState(false);
+  const dashboardContext = useContext(DashboardContext);
+
   const [selectedLimitOptionId, setSelectedLimitOptionId] = useState(
     DEFAULT_ROWS_PER_PAGE
   );
@@ -127,7 +139,11 @@ export const TracebilityReportModule = ({
     const lastSavedReportConfig: LastSavedReportConfig = getItemInLocalStorage(
       lastSavedReportConfigKey
     );
-    if (lastSavedReportConfig !== undefined && lastSavedReportConfig !== null) {
+    if (
+      lastSavedReportConfig !== undefined &&
+      lastSavedReportConfig !== null &&
+      !isFromDashboardGadget
+    ) {
       if (
         lastSavedReportConfig.selectedTabIndex !== undefined &&
         lastSavedReportConfig.selectedTabIndex !== null
@@ -145,6 +161,20 @@ export const TracebilityReportModule = ({
       setIsOrphansBranchPresent(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (
+      isFromDashboardGadget &&
+      Boolean(dashboardContext.config[VIEW_TYPE_FIELD_NAME])
+    ) {
+      const tabIndex = viewTabs.tabs.findIndex(
+        (tab) => tab.id === dashboardContext.config[VIEW_TYPE_FIELD_NAME]
+      );
+
+      setSelectedTabIndex(tabIndex);
+      setSelectedJQLString(dashboardContext.config[JQL_FIELD_NAME]);
+    }
+  }, [dashboardContext, isFromDashboardGadget]);
 
   const api = useContext(APIContext);
   const treeUtils = new TreeUtils(api);
@@ -188,6 +218,8 @@ export const TracebilityReportModule = ({
   const clearAllErrors = (): void => {
     setErrors([]);
   };
+
+  const isMounted = useRef(true);
   useEffect(() => {
     const loadData = async (): Promise<void> => {
       try {
@@ -196,6 +228,7 @@ export const TracebilityReportModule = ({
           api.getIssueLinkTypes(),
           api.getIssueFields(),
         ]);
+        if (!isMounted.current) return;
 
         const issueTypes = result[0];
         const linkTypes = result[1];
@@ -204,36 +237,66 @@ export const TracebilityReportModule = ({
         // setting state - selected field ids
 
         // setting state - table field options
-
         setIssueTypes(issueTypes);
         const lastSavedReportConfig: LastSavedReportConfig =
           getItemInLocalStorage(lastSavedReportConfigKey);
         setLinkTypes(linkTypes);
-        if (
-          lastSavedReportConfig?.selectedIssueTypeIds !== undefined &&
-          lastSavedReportConfig?.selectedIssueTypeIds !== null
-        ) {
-          setSelectedIssueFieldIds(lastSavedReportConfig.selectedIssueFieldIds);
-        } else {
-          const selectedFieldIds = getKeyValues(fields, "id");
-          setSelectedIssueFieldIds(selectedFieldIds);
-        }
+        if (!isFromDashboardGadget) {
+          if (
+            lastSavedReportConfig?.selectedIssueTypeIds !== undefined &&
+            lastSavedReportConfig?.selectedIssueTypeIds !== null
+          ) {
+            setSelectedIssueFieldIds(
+              lastSavedReportConfig.selectedIssueFieldIds
+            );
+          } else {
+            const selectedFieldIds = getKeyValues(fields, "id");
+            setSelectedIssueFieldIds(selectedFieldIds);
+          }
 
-        if (
-          lastSavedReportConfig.selectedIssueTypeIds !== undefined &&
-          lastSavedReportConfig.selectedIssueTypeIds !== null
-        ) {
-          setSelectedIssueTypeIds(lastSavedReportConfig.selectedIssueTypeIds);
+          if (
+            lastSavedReportConfig.selectedIssueTypeIds !== undefined &&
+            lastSavedReportConfig.selectedIssueTypeIds !== null
+          ) {
+            setSelectedIssueTypeIds(lastSavedReportConfig.selectedIssueTypeIds);
+          } else {
+            setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
+          }
+          if (
+            lastSavedReportConfig?.selectedLinkTypeIds !== undefined &&
+            lastSavedReportConfig?.selectedLinkTypeIds !== null
+          ) {
+            setSelectedLinkTypeIds(lastSavedReportConfig.selectedLinkTypeIds);
+          } else {
+            setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
+          }
         } else {
-          setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
-        }
-        if (
-          lastSavedReportConfig?.selectedLinkTypeIds !== undefined &&
-          lastSavedReportConfig?.selectedLinkTypeIds !== null
-        ) {
-          setSelectedLinkTypeIds(lastSavedReportConfig.selectedLinkTypeIds);
-        } else {
-          setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
+          if (
+            dashboardContext.config[ISSUE_CARD_FIELDS_DROPDOWN_NAME] !==
+            undefined
+          ) {
+            setSelectedIssueFieldIds(
+              dashboardContext.config[ISSUE_CARD_FIELDS_DROPDOWN_NAME]
+            );
+          } else {
+            const selectedFieldIds = getKeyValues(fields, "id");
+            setSelectedIssueFieldIds(selectedFieldIds);
+          }
+          if (Boolean(dashboardContext.config[VIEW_TYPE_FIELD_NAME])) {
+            setSelectedIssueTypeIds(
+              dashboardContext.config[SELECTED_ISSUE_TYPE_IDS_KEY] !== undefined
+                ? dashboardContext.config[SELECTED_ISSUE_TYPE_IDS_KEY]
+                : getKeyValues(issueTypes, "id")
+            );
+            setSelectedLinkTypeIds(
+              dashboardContext.config[SELECTED_LINK_TYPE_IDS_KEY] !== undefined
+                ? dashboardContext.config[SELECTED_LINK_TYPE_IDS_KEY]
+                : getKeyValues(linkTypes, "id")
+            );
+          } else {
+            setSelectedLinkTypeIds(getKeyValues(linkTypes, "id"));
+            setSelectedIssueTypeIds(getKeyValues(issueTypes, "id"));
+          }
         }
 
         // loading state
@@ -244,6 +307,9 @@ export const TracebilityReportModule = ({
       }
     };
     void loadData();
+    return () => {
+      isMounted.current = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const isExportDisabled =
@@ -278,7 +344,9 @@ export const TracebilityReportModule = ({
   const allTableFieldIds = tableFields.map((field) => field.id);
 
   const emptyEqualsAllTableIds =
-    selectedTableFieldIds.length > 0 ? selectedTableFieldIds : allTableFieldIds;
+    selectedTableFieldIds?.length > 0
+      ? selectedTableFieldIds
+      : allTableFieldIds;
   const title = t("otpl.lxp.traceability-report.name");
   const selectedViewTab = viewTabs.tabs[selectedTabIndex].id;
   const isTreeReport = selectedViewTab === "tree-view";
@@ -303,10 +371,11 @@ export const TracebilityReportModule = ({
   };
   const handleRefresh = (): void => {
     const selectedLimit = selectedLimitOptionId ?? DEFAULT_ROWS_PER_PAGE;
+    const startIndex = (currentPage - 1) * selectedLimit;
     void tracebilityReportUtils.populateIssues(
       selectedJQLString,
       issueFields,
-      0,
+      startIndex,
       selectedLimit,
       updatedIssues,
       setAreIssuesLoading,
@@ -362,32 +431,38 @@ export const TracebilityReportModule = ({
       <PageHeader
         bottomBar={
           <>
-            <Toolbar
-              selectedSettingsDropdownIds={selectedSettingsDropdownIds}
-              setSelectedSettingsDropdownIds={setSelectedSettingsDropdownIds}
-              settingsDropdown={reportCellOptions}
-              updateSelectedJQLString={updateSelectedJQLString}
-              exportReport={exportAction}
-              exportDropdownOptions={
-                isTreeReport
-                  ? exportTreeReportOptions
-                  : exportTabularReportOptions
-              }
-              handleRefresh={handleRefresh}
-              selectedJQLString={selectedJQLString}
-              issueCardOptions={issueFields}
-              selectedIssueFieldIds={selectedIssueFieldIds}
-              setSelectedIssueFieldIds={setSelectedIssueFieldIds}
-              selectedViewTab={selectedViewTab}
-              selectedTableFieldIds={selectedTableFieldIds}
-              updateSelectedTableFieldIds={updateSelectedTableFieldIds}
-              tableFields={tableFields}
-              showCustomJQLEditor={showCustomJQLEditor}
-              isExportDisabled={isExportDisabled}
-              handleNewError={handleNewError}
-              handleTabOptionSelect={handleTabOptionSelect}
-              selectedTabIndex={selectedTabIndex}
-            />
+            {selectedIssueFieldIds !== undefined &&
+              selectedIssueTypeIds !== undefined &&
+              selectedLinkTypeIds !== undefined && (
+                <Toolbar
+                  selectedSettingsDropdownIds={selectedSettingsDropdownIds}
+                  setSelectedSettingsDropdownIds={
+                    setSelectedSettingsDropdownIds
+                  }
+                  settingsDropdown={reportCellOptions}
+                  updateSelectedJQLString={updateSelectedJQLString}
+                  exportReport={exportAction}
+                  exportDropdownOptions={
+                    isTreeReport
+                      ? exportTreeReportOptions
+                      : exportTabularReportOptions
+                  }
+                  selectedJQLString={selectedJQLString}
+                  issueCardOptions={issueFields}
+                  selectedIssueFieldIds={selectedIssueFieldIds}
+                  setSelectedIssueFieldIds={setSelectedIssueFieldIds}
+                  selectedViewTab={selectedViewTab}
+                  selectedTableFieldIds={selectedTableFieldIds}
+                  updateSelectedTableFieldIds={updateSelectedTableFieldIds}
+                  tableFields={tableFields}
+                  showCustomJQLEditor={showCustomJQLEditor}
+                  isExportDisabled={isExportDisabled}
+                  handleNewError={handleNewError}
+                  handleTabOptionSelect={handleTabOptionSelect}
+                  selectedTabIndex={selectedTabIndex}
+                  handleRefresh={handleRefresh}
+                />
+              )}
             {isTreeReport && areTreeNecessitiesPresent && (
               <TreeReportToolbar
                 options={treeFilterContext.options}
@@ -396,11 +471,6 @@ export const TracebilityReportModule = ({
                 isOrphansBranchPresent={isOrphansBranchPresent}
                 updateIsOrphansBranchPresent={updateIsOrphansBranchPresent}
                 isToggleOrphansLoading={isToggleOrphansLoading}
-                issueFields={issueFields}
-                tree={tree}
-                setTree={setTree}
-                handleNewError={handleNewError}
-                clearAllErrors={clearAllErrors}
               />
             )}
           </>
@@ -440,6 +510,7 @@ export const TracebilityReportModule = ({
           }}
           tree={tree}
           setTree={setTree}
+          isFromDashboardGadget={isFromDashboardGadget}
         />
       </GrowContainer>
     </FullWidthContainer>

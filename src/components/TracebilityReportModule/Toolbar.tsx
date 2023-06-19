@@ -10,7 +10,6 @@ import { HelpLink } from "../common/HelpLink";
 import { ExportContent } from "../common/ExportContent";
 import { JQLEditor } from "../JQLEditor";
 import { TableFieldsDropdown } from "./TableFieldsDropdown";
-
 import {
   CellLimit,
   IssueField,
@@ -31,6 +30,9 @@ const MainBar = styled.div`
   display: flex;
   justify-content: space-between;
   border-bottom: 2px solid ${colors.N30};
+  flex-wrap: wrap;
+  gap: 8px;
+  overflow-x: auto;
 `;
 const FlexContainer = styled.div`
   display: flex;
@@ -90,6 +92,7 @@ export const Toolbar = ({
   const helpLinkUrl = api.getHelpLinks().traceability;
   const isTreeReport = selectedViewTab === "tree-view";
   const marginTop = api.isJiraCloud() ? "-16px" : "-50px";
+
   return (
     <div style={{ marginTop, marginBottom: "-8px" }}>
       <TabGroup
@@ -129,6 +132,7 @@ export const Toolbar = ({
               options={issueCardOptions}
               selectedOptions={selectedIssueFieldIds}
               updateSelectedOptions={setSelectedIssueFieldIds}
+              showFilterIndicatorOnClearAll={true}
             />
             {!isTreeReport && (
               <Dropdown

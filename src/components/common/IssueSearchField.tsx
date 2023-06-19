@@ -20,7 +20,6 @@ export const IssueSearchField = ({
   let issues: Issue[] = [];
   const handleInputChange = async (inputValue: string) => {
     setInputValue(inputValue);
-    console.log("input valueeee", inputValue);
     const searchByKeyPromise = api.searchIssues(
       `issueKey = "${inputValue.toUpperCase()}"`
     );

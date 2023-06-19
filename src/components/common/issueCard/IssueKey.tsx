@@ -24,7 +24,7 @@ export interface Props {
   isResolved: boolean;
 }
 
-export const IssueKey = ({ issueKey, isResolved }: Props) => {
+export const IssueKey = ({ issueKey, isResolved }: Props): JSX.Element => {
   const api = useContext(APIContext);
   const issueUrl = `${api.getJiraBaseURL()}/browse/${issueKey}`;
   return (

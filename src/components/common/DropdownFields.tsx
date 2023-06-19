@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DropdownMenu, {
   DropdownItemCheckboxGroup,
   DropdownItemCheckbox,
@@ -7,7 +7,15 @@ import { toTitleCase } from "../../util";
 import { TooltipContainer } from "./TooltipContainer";
 import { SearchOption } from "./SearchOption";
 import { SelectClearOption } from "./SelectClearOption";
-import Badge from "@atlaskit/badge";
+import styled from "styled-components";
+
+const FilterContainer = styled.sup`
+  padding-left: 4px;
+  vertical-align: top;
+  font-size: 16px;
+  color: #e1422c;
+`;
+
 interface Props {
   selectedOptions: string[];
   dropdownName: any;
@@ -19,6 +27,7 @@ interface Props {
     description: string;
   }>;
   useTitleCaseOptions?: boolean;
+  showFilterIndicatorOnClearAll?: boolean;
 }
 
 export const DropdownFields = ({
@@ -28,9 +37,12 @@ export const DropdownFields = ({
   updateSelectedOptions,
   options,
   useTitleCaseOptions,
+  showFilterIndicatorOnClearAll = false,
 }: Props): JSX.Element => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isFiltered, setIsFiltered] = useState(false);
+  const [showFilterIndicator, setShowFilterIndicator] = useState(false);
+
   const isAllSelected = selectedOptions.length === options.length;
 
   const handleOptionClick = (id: string): void => {
@@ -41,7 +53,6 @@ export const DropdownFields = ({
       updatedList = [...selectedOptions, id];
     }
     updateSelectedOptions(updatedList);
-    setIsFiltered(updatedList.length !== options.length);
   };
 
   const handleSearch = (searchTerm: string): void => {
@@ -51,17 +62,22 @@ export const DropdownFields = ({
   const handleSelectAll = (): void => {
     const allOptionIds = options.map((option) => option.id);
     updateSelectedOptions(allOptionIds);
-    setIsFiltered(false);
   };
 
   const handleClearAll = (): void => {
+    if (showFilterIndicatorOnClearAll) {
+      setShowFilterIndicator(true);
+    }
     updateSelectedOptions([]);
-    setIsFiltered(true);
   };
 
   const filteredOptions = options.filter((options) =>
     options.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  useEffect(() => {
+    setIsFiltered(!isAllSelected && selectedOptions.length > 0);
+  }, [selectedOptions, options]);
 
   return (
     <div style={{ position: "relative" }}>
@@ -69,16 +85,20 @@ export const DropdownFields = ({
         trigger={
           <div>
             {dropdownName}
-            <span style={{ marginLeft: "4px" }}>
-              {!isAllSelected &&
-                (isFiltered ? <Badge appearance="primary"></Badge> : null)}
-            </span>
+            {!isAllSelected &&
+              (isFiltered || showFilterIndicator ? (
+                <FilterContainer>*</FilterContainer>
+              ) : null)}
           </div>
         }
         placement={dropdownNamePlacement ?? "bottom-start"}
       >
         <div style={{ position: "sticky", top: 0, zIndex: 1 }}>
-          <SearchOption placeholder="Search" onSearch={handleSearch} />
+          <SearchOption
+            placeholder="Search"
+            onSearch={handleSearch}
+            searchTerm={searchTerm}
+          />
         </div>
         <DropdownItemCheckboxGroup id={dropdownName + "-options"}>
           {filteredOptions?.map((option) => (

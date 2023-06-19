@@ -57,8 +57,8 @@ export const IssueCard = ({
   issueData,
   selectedIssueFieldIds,
 }: Props): JSX.Element => {
-  let selectedMap = {};
-  for (let issueFieldId of selectedIssueFieldIds) {
+  const selectedMap = {};
+  for (const issueFieldId of selectedIssueFieldIds) {
     selectedMap[issueFieldId] = true;
   }
   const storyPointsInfo = issueData.storyPoints;
