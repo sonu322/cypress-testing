@@ -1,6 +1,6 @@
 {
   "name": "Links Explorer",
-  "description": "This is simple links tree view plugin",
+  "description": "Links Explorer (LXP) is the #1 user-rated Traceability app for Jira. Create Traceability reports, display Jira Issues links and hierarchy in a tree view at any depth.",
   "key": "com.otpl.jira.plugins.lxp",
   "baseUrl": "https://lxp.optimizoryapps.com",
   "vendor": {
@@ -14,17 +14,17 @@
   "enableLicensing": true,
   "translations": {
     "paths": {
-      "en-US": "/i18n/0.4/en_US.json",
-      "de-DE": "/i18n/0.4/de_DE.json",
-      "es-ES": "/i18n/0.4/es_ES.json",
-      "fr-FR": "/i18n/0.4/fr_FR.json"
+      "en-US": "/i18n/0.5/en_US.json",
+      "de-DE": "/i18n/0.5/de_DE.json",
+      "es-ES": "/i18n/0.5/es_ES.json",
+      "fr-FR": "/i18n/0.5/fr_FR.json"
     }
   },
   "authentication": {
     "type": "none"
   },
   "scopes": ["read", "write"],
-  "apiVersion": 1,
+  "apiVersion": 2,
   "modules": {
     "jiraIssueTabPanels": [
       {
@@ -53,21 +53,59 @@
         "key": "lxp-home-page"
       }
     ],
-      "jiraReports": [
+    "jiraReports": [
       {
         "url": "/tracebilityReportModuleEntry.html",
         "description": {
-          "value": "This is a traceability report",
+          "value": "End to end traceability reports displaying Jira issues and their linked issues in an easy to comprehend tabular format.",
           "i18n": "otpl.lxp.traceability-report.description"
         },
         "reportCategory": "agile",
         "thumbnailUrl": "/images/lxp-thumbnail.png",
         "name": {
-          "value": "Links Explorer Report",
+          "value": "Links Explorer - Traceability Reports",
           "i18n": "otpl.lxp.traceability-report.name"
         },
         "key": "lxp-traceability-reports"
       }
-    ]  
+    ],
+    "jiraDashboardItems": [
+      {
+        "description": {
+          "value": "The Unified Tree/Hierarchy View displays complete hierarchy of linked Jira issues in a tree structure.",
+          "i18n": "otpl.lxp.tree.description",
+          "authentication": "none"
+        },
+
+        "url": "/lxpViewGadget.html?dashboardItemId={dashboardItem.id}&dashboardId={dashboard.id}&view={dashboardItem.viewType}",
+        "configurable": true,
+        "context": ["dashboard"],
+        "thumbnailUrl": "/images/lxp-thumbnail.png",
+        "refreshable": true,
+        "name": {
+          "value": "LXP Tree View",
+          "i18n": "otpl.lxp.lxp-tree-gadget.name"
+        },
+        "key": "lxp-tree"
+      },
+      {
+        "description": {
+          "value": "End to end traceability reports displaying Jira issues and their linked issues in an easy to comprehend tabular format.",
+          "i18n": "otpl.lxp.traceability-report.description",
+          "authentication": "none"
+        },
+
+        "url": "/lxpTraceabilityGadget.html?dashboardItemId={dashboardItem.id}&dashboardId={dashboard.id}&view={dashboardItem.viewType}",
+        "configurable": true,
+        "context": ["dashboard"],
+        "thumbnailUrl": "/images/lxp-thumbnail.png",
+        "refreshable": true,
+        "name": {
+          "value": "LXP Traceability Reports",
+          "i18n": "otpl.lxp.traceability-reports-gadget.name"
+        },
+        "key": "lxp-traceability-reports-gadget"
+      }
+    ]
   }
 }

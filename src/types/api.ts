@@ -35,6 +35,7 @@ export interface ExportOptions {
 }
 
 export interface Issue {
+  fields: any;
   id: ID;
   priority: IssuePriority;
   type: IssueType;
@@ -140,6 +141,8 @@ export enum Constants {
 }
 
 export default interface LXPAPI {
+  checkLinkExists: (mainIssue, linkType, targetIssues) => Promise<string>;
+
   linkIssue: (mainIssue, linkType, targetIssue) => Promise<void>;
 
   hasValidLicense: () => boolean;
@@ -199,4 +202,24 @@ export default interface LXPAPI {
   getAutoCompleteSuggestions: (
     query: string
   ) => Promise<JiraAutoCompleteSuggestionsResult>;
+
+  getDashboardGadgetConfig: (
+    dashboardId: string,
+    dashboardItemId: string
+  ) => Promise<any>;
+
+  resizeWindow: (width: string | number, height: string | number) => void;
+
+  editDashboardItemProperty: (
+    dashboardId: string,
+    dashboardItemId: string,
+    propertyKey: string,
+    propertyValue: Object
+  ) => Promise<void>;
+
+  editDashboardItemTitle: (
+    dashboardId: string,
+    dashboardItemId: string,
+    title: string
+  ) => Promise<void>;
 }

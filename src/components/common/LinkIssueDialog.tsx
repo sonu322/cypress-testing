@@ -11,41 +11,13 @@ import Form, { FormSection } from "@atlaskit/form";
 import Select from "@atlaskit/select";
 import { APIContext } from "../../context/api";
 import Spinner from "@atlaskit/spinner";
+import Banner from "@atlaskit/banner";
+import ErrorIcon from "@atlaskit/icon/glyph/error";
 
 interface Props {
   onClose: () => void;
   autoRefresh: () => void;
 }
-
-// const ModalDialog = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: space-between;
-//   height: 300px;
-// `;
-
-// const ModalHeader = styled.div`
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   height: 50px;
-//   font-weight: bold;
-//   font-size: 20px;
-// `;
-
-// const ModalBody = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   height: 200px;
-// `;
-
-// const ModalFooter = styled.div`
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   height: 50px;
-// `;
 
 const FormWrap = styled.form`
   display: flex;
@@ -73,6 +45,12 @@ const TextFieldWrapper = styled.div`
   width: 70%;
 `;
 
+const ErrorBanner = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: center;
+`;
+
 export const LinkIssueDialog = ({
   onClose,
   autoRefresh,
@@ -88,6 +66,7 @@ export const LinkIssueDialog = ({
   const [linkTypesOptions, setLinkTypesOptions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [allFieldsFilled, setAllFieldsFilled] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const checkFieldsFilled = () => {
     if (mainIssue !== "" && linkType !== "" && targetIssues.length > 0) {
@@ -121,11 +100,26 @@ export const LinkIssueDialog = ({
   const handleLinkClick = async () => {
     setIsLoading(true);
     try {
-      await api.linkIssue(mainIssue, linkType, targetIssues);
-      onClose();
-      autoRefresh();
+      const existingLink = await api.checkLinkExists(
+        mainIssue,
+        linkType,
+        targetIssues
+      );
+      if (existingLink !== null) {
+        const selectedLinkType = linkTypesOptions.find(
+          (option) => option.value === linkType
+        );
+        const linkTypeName = selectedLinkType ? selectedLinkType.label : "";
+        setErrorMessage(
+          `The link type '${linkTypeName}' already exists between issues '${existingLink}'.`
+        );
+      } else {
+        await api.linkIssue(mainIssue, linkType, targetIssues);
+        onClose();
+        autoRefresh();
+      }
     } catch (e) {
-      console.log(e);
+      setErrorMessage("An error occurred while checking the link");
     } finally {
       setIsLoading(false);
     }
@@ -133,11 +127,23 @@ export const LinkIssueDialog = ({
 
   return (
     <ModalDialog>
-      <ModalHeader></ModalHeader>
+      <ModalHeader>
+        <ErrorBanner>
+          {errorMessage && (
+            <Banner
+              icon={<ErrorIcon label="Error" />}
+              isOpen={true}
+              appearance="error"
+            >
+              {errorMessage}
+            </Banner>
+          )}
+        </ErrorBanner>
+      </ModalHeader>
       <ModalBody>
         <FormWrap>
-          <Form onSubmit={() => console.log("submit")}>
-            {({ formProps, submitting }) => (
+          <Form onSubmit={() => {}}>
+            {({ formProps }) => (
               <form {...formProps}>
                 <FormSection>
                   <FieldWrapper>

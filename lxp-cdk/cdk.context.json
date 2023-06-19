@@ -1,0 +1,10 @@
+{
+  "hosted-zone:account=950078608654:domainName=dev.lxp.optimizoryapps.com:region=us-east-1": {
+    "Id": "/hostedzone/Z07770891LTBKM5CB82W5",
+    "Name": "dev.lxp.optimizoryapps.com."
+  },
+  "hosted-zone:account=951177206355:domainName=app.lxp.optimizoryapps.com:region=us-east-1": {
+    "Id": "/hostedzone/Z0945204NZDHZEHL9CHQ",
+    "Name": "app.lxp.optimizoryapps.com."
+  }
+}

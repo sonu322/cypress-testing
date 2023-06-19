@@ -1,4 +1,4 @@
-import { mutateTree } from "@atlaskit/tree";
+import { mutateTree as mutateTreeMain } from "@atlaskit/tree";
 import i18n from "../../i18n";
 import LXPAPI, {
   ID,
@@ -28,6 +28,20 @@ import {
 } from "../constants/traceabilityReport";
 import { getItemInLocalStorage, setItemInLocalStorage, addIssueDetails, toCSV } from "./common";
 import { EXPAND_ALL_LEVEL, lastSavedTreeConfigKey } from "../constants/common";
+
+function mutateTree(tree: AtlasTree, id, updateData, mutateMain = true): AtlasTree {
+  if (mutateMain) {
+    return mutateTreeMain(tree, id, updateData);
+  } else {
+    const node = tree.items[id];
+    if (node !== undefined) {
+      for (const key in updateData) {
+        node[key] = updateData[key];
+      }
+    }
+    return tree;
+  }
+}
 
 // root node
 const root: AtlasTree = {
@@ -67,6 +81,7 @@ export default class TreeUtils {
       return "";
     }
   };
+
 
   handleSetItemInSavedTreeConfig = (key: string, value: any): void => {
     const lastSavedTreeConfig = getItemInLocalStorage(lastSavedTreeConfigKey);
@@ -193,15 +208,23 @@ export default class TreeUtils {
     return node;
   }
 
-  async initTreeHook(
+  async handleInitTree(
     filter: IssueTreeFilter,
     fields: IssueField[],
     setTree,
-    handleError
+    handleError,
+    rootIssueKey?: string
   ): Promise<void> {
     try {
       const tree = this.getRootTree();
-      await this.initTree(tree, filter, fields, setTree, handleError);
+      await this.initTree(
+        tree,
+        filter,
+        fields,
+        setTree,
+        handleError,
+        rootIssueKey
+      );
     } catch (error) {
       console.log(error);
       handleError(error);
@@ -217,11 +240,12 @@ export default class TreeUtils {
     filter: IssueTreeFilter,
     fields: IssueField[],
     setTree,
-    handleError
+    handleError,
+    rootIssueKey?: string
   ): Promise<void> {
     try {
       const tree = this.cloneTree(prevTree);
-      const issue = await this.api.getIssueWithLinks(fields);
+      const issue = await this.api.getIssueWithLinks(fields, rootIssueKey);
       const mainNode = this.createTreeNode(
         tree,
         "",
@@ -400,7 +424,7 @@ export default class TreeUtils {
         setTree((tree) => {
           const loadMoreButtonNode =
             tree.items[
-              `/${orphansTreeBranchName}/${loadMoreOrphansButtonName}`
+            `/${orphansTreeBranchName}/${loadMoreOrphansButtonName}`
             ];
 
           const newButtonData: ButtonTypeTreeNode = {
@@ -590,16 +614,12 @@ export default class TreeUtils {
 
     for (const link of issueLinks) {
       const linkedIssue: Issue = issueMap[link.issueId];
-      let foundNodeId: string;
-      if (linkedIssue !== undefined) {
-        foundNodeId = Object.keys(tree.items).find((nodeId) => {
-          return nodeId === prefix + "/" + link.name + "/" + linkedIssue.id;
-        });
-      }
       let node: AtlasTreeNode;
-      if (foundNodeId !== undefined) {
-        node = tree.items[foundNodeId];
-      } else {
+      if (linkedIssue !== undefined) {
+        node = tree.items[prefix + "/" + link.name + "/" + linkedIssue.id];
+      }
+
+      if (node === undefined) {
         node = this.createTreeNode(
           tree,
           prefix + "/" + link.name,
@@ -621,13 +641,8 @@ export default class TreeUtils {
     const types = Object.keys(typeMap);
     if (types.length > 0) {
       for (const type of types) {
-        let typeNode: AtlasTreeNode;
-        const typeNodeId = Object.keys(tree.items).find(
-          (nodeId) => nodeId === prefix + "/" + type
-        );
-        if (typeNodeId !== undefined) {
-          typeNode = tree.items[typeNodeId];
-        } else {
+        let typeNode: AtlasTreeNode = tree.items[prefix + "/" + type];
+        if (typeNode === undefined) {
           typeNode = this.createTypeNode(tree, prefix, type);
         }
         if (typeNode !== undefined) {
@@ -712,7 +727,7 @@ export default class TreeUtils {
           if (
             firstNode.nodeType !== TreeNodeType.ButtonNode &&
             (firstNode.data as IssueWithLinkedIssues).linkedIssues !==
-              undefined &&
+            undefined &&
             (firstNode.data as IssueWithLinkedIssues).linkedIssues.length > 0 &&
             firstNode.isExpanded
           ) {
@@ -780,13 +795,8 @@ export default class TreeUtils {
 
       for (const link of filteredLinks) {
         const linkedIssue: Issue = issueMap[link.issueId];
-        const linkedIssueNodeId = Object.keys(tree.items).find((nodeId) => {
-          return nodeId === prefix + "/" + link.name + "/" + linkedIssue.id;
-        });
-        let linkedIssueNode: AtlasTreeNode;
-        if (linkedIssueNodeId !== undefined) {
-          linkedIssueNode = tree.items[linkedIssueNodeId];
-        } else {
+        const linkedIssueNode: AtlasTreeNode = tree.items[prefix + "/" + link.name + "/" + linkedIssue.id];
+        if (linkedIssueNode === undefined) {
           throw new Error(i18n.t("otpl.lxp.api.filters-error"));
         }
         if (typeMap[link.name] === undefined) {
@@ -804,20 +814,15 @@ export default class TreeUtils {
       const types = Object.keys(typeMap);
       if (types.length > 0) {
         for (const type of types) {
-          let typeNode: AtlasTreeNode;
-          const typeNodeId = Object.keys(tree.items).find(
-            (nodeId) => nodeId === prefix + "/" + type
-          );
-          if (typeNodeId !== undefined) {
-            typeNode = tree.items[typeNodeId];
-          } else {
+          const typeNode: AtlasTreeNode = tree.items[prefix + "/" + type];
+          if (typeNode === undefined) {
             throw new Error(i18n.t("otpl.lxp.api.filters-error"));
           }
           if (typeNode !== undefined) {
-            tree = mutateTree(tree, typeNodeId, {
+            tree = mutateTree(tree, typeNode.id, {
               children: typeMap[type],
             });
-            mainNodeChildIds.push(typeNodeId);
+            mainNodeChildIds.push(typeNode.id);
           } else {
             throw new Error(i18n.t("otpl.lxp.api.filters-error"));
           }
@@ -995,7 +1000,9 @@ export default class TreeUtils {
         prevTree.items[this.ROOT_ID].children,
         0,
         fields,
-        EXPAND_ALL_LEVEL
+        EXPAND_ALL_LEVEL,
+        true,
+        false
       );
       if (newTree?.items !== undefined) {
         setTree(() => {
@@ -1017,7 +1024,8 @@ export default class TreeUtils {
 
   getChildIssueNodeIds = (
     prevTree: AtlasTree,
-    typeNodeIds: string[]
+    typeNodeIds: string[],
+    mutateMain = true
   ): { newTree?: AtlasTree; childIssueNodeIds: string[] } => {
     // takes typeNodeIds of an issue node and returns all their child node ids - these will be issues
     // takes prevTree and expands any collapsed type nodes
@@ -1026,7 +1034,7 @@ export default class TreeUtils {
     typeNodeIds.forEach((typeNodeId) => {
       const typeNode = newTree.items[typeNodeId];
       if (!typeNode.isExpanded) {
-        newTree = mutateTree(newTree, typeNodeId, { isExpanded: true });
+        newTree = mutateTree(newTree, typeNodeId, { isExpanded: true }, mutateMain);
       }
       childIssueNodeIds = childIssueNodeIds.concat(typeNode.children);
     });
@@ -1038,19 +1046,27 @@ export default class TreeUtils {
     nodeIds: string[],
     level: number,
     issueFields: IssueField[],
-    maxLevels: number
+    maxLevels: number,
+    cloneTree = true,
+    mutateMain = true
   ): Promise<AtlasTree> {
     if (level >= maxLevels) {
       return prevTree;
     }
-    let newTree = this.cloneTree(prevTree);
+    let newTree;
+    if (cloneTree) {
+      newTree = this.cloneTree(prevTree);
+    } else {
+      newTree = prevTree;
+    }
+
     let nextNodeIds: string[] = [];
     const issueNodeIdMap = new Map<string, string[]>();
     const issuesToFetch: string[] = [];
     nodeIds.forEach((nodeId) => {
       const node = prevTree.items[nodeId];
       if (!node.isExpanded) {
-        newTree = mutateTree(newTree, nodeId, { isExpanded: true });
+        newTree = mutateTree(newTree, nodeId, { isExpanded: true }, mutateMain);
       }
 
       if (!node.hasChildrenLoaded) {
@@ -1059,14 +1075,15 @@ export default class TreeUtils {
         if (issueNodeIdMap[issueId] === undefined) {
           issueNodeIdMap[issueId] = [nodeId];
         } else {
-          issueNodeIdMap[issueId] = issueNodeIdMap[issueId].concat([nodeId]);
+          issueNodeIdMap[issueId].push(nodeId);
         }
       }
 
       if (node.children.length > 0) {
         const childIssueNodesInfo = this.getChildIssueNodeIds(
           newTree,
-          node.children
+          node.children,
+          mutateMain
         );
         if (childIssueNodesInfo.newTree !== undefined) {
           newTree = childIssueNodesInfo.newTree;
@@ -1083,13 +1100,14 @@ export default class TreeUtils {
       for (const issue of issues) {
         const issueNodeIds = issueNodeIdMap[issue.id];
         issueNodeIds.forEach((nodeId) => {
-          newTree = mutateTree(newTree, nodeId, { data: issue });
+          newTree = mutateTree(newTree, nodeId, { data: issue }, mutateMain);
           newTree = this.addChildren(nodeId, newTree);
           const node = newTree.items[nodeId];
           if (node.children.length > 0) {
             const childIssueNodesInfo = this.getChildIssueNodeIds(
               newTree,
-              node.children
+              node.children,
+              mutateMain
             );
             if (childIssueNodesInfo.newTree !== undefined) {
               newTree = childIssueNodesInfo.newTree;
@@ -1107,7 +1125,9 @@ export default class TreeUtils {
         nextNodeIds,
         level + 1,
         issueFields,
-        maxLevels
+        maxLevels,
+        false,
+        mutateMain
       );
       return newTree;
     } else {
@@ -1117,7 +1137,9 @@ export default class TreeUtils {
         nextNodeIds,
         level + 1,
         issueFields,
-        maxLevels
+        maxLevels,
+        false,
+        mutateMain
       );
       return newTree;
     }

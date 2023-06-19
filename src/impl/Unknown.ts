@@ -16,6 +16,14 @@ import {
 } from "../types/jira";
 
 export default class UnknownImpl implements LXPAPI {
+  checkLinkExists(
+    mainIssue: string,
+    linkType: string,
+    targetIssues: string[]
+  ): Promise<string> {
+    throw new Error("Method not implemented.");
+  }
+
   linkIssue(
     mainIssueKey: string,
     jiraLinkTypeId: string,
@@ -125,5 +133,33 @@ export default class UnknownImpl implements LXPAPI {
     query: string
   ): Promise<JiraAutoCompleteSuggestionsResult> {
     throw new Error("Method not implemented.");
+  }
+
+  async getDashboardGadgetConfig(
+    dashboardId: string,
+    dashboardItemId: string
+  ): Promise<any> {
+    throw new Error("Method not implemented");
+  }
+
+  resizeWindow(width: string | number, height: string | number): void {
+    throw new Error("Method not implemented");
+  }
+
+  async editDashboardItemProperty(
+    dashboardId: string,
+    dashboardItemId: string,
+    propertyKey: string,
+    propertyValue: Object
+  ): Promise<void> {
+    throw new Error("Method not implemented");
+  }
+
+  async editDashboardItemTitle(
+    dashboardId: string,
+    dashboardItemId: string,
+    title: string
+  ): Promise<void> {
+    throw new Error("Method not implemented");
   }
 }

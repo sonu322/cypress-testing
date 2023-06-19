@@ -49,6 +49,48 @@ export default class JiraCloudImpl implements JiraAPI {
     });
   }
 
+  async checkIssueLinkExists(
+    inwardIssueKey: string,
+    jiraLinkTypeId: string,
+    outwardIssueKey: string
+  ): Promise<boolean> {
+    try {
+      const inwardIssue = await this.getIssueById(
+        inwardIssueKey,
+        "?fields=issuelinks"
+      );
+      const outwardIssue = await this.getIssueById(
+        outwardIssueKey,
+        "?fields=issuelinks"
+      );
+
+      if (
+        inwardIssue &&
+        inwardIssue.fields &&
+        inwardIssue.fields.issuelinks &&
+        outwardIssue &&
+        outwardIssue.fields &&
+        outwardIssue.fields.issuelinks
+      ) {
+        const linkExists = inwardIssue.fields.issuelinks.some((link) => {
+          return (
+            link.type &&
+            link.type.id === jiraLinkTypeId &&
+            link.outwardIssue &&
+            link.outwardIssue.key === outwardIssueKey
+          );
+        });
+
+        return linkExists;
+      }
+
+      return false;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+
   hasValidLicense(): boolean {
     const lic = getQueryParam("lic");
     return !(lic && lic === "none");
@@ -209,5 +251,47 @@ export default class JiraCloudImpl implements JiraAPI {
       "/rest/api/3/jql/autocompletedata/suggestions?" + query
     );
     return response.body && JSON.parse(response.body);
+  }
+
+  getDashboardGadgetConfig = async (
+    dashboardId: string,
+    dashboardItemId: string
+  ): Promise<any> => {
+    const response = await this._AP.request({
+      url: `/rest/api/3/dashboard/${dashboardId}/items/${dashboardItemId}/properties/config`,
+    });
+    const data = JSON.parse(response.body);
+    return data;
+  };
+
+  editDashboardItemProperty = async (
+    dashboardId: string,
+    dashboardItemId: string,
+    propertyKey: string,
+    propertyValue: Object
+  ): Promise<void> => {
+    await this._AP.request({
+      url: `/rest/api/3/dashboard/${dashboardId}/items/${dashboardItemId}/properties/config`,
+      type: "PUT",
+      contentType: "application/json",
+      data: JSON.stringify(propertyValue),
+    });
+  };
+
+  editDashboardItemTitle = async (
+    dashboardId: string,
+    dashboardItemId: string,
+    title: string
+  ): Promise<void> => {
+    await this._AP.request({
+      url: `/rest/api/3/dashboard/${dashboardId}/gadget/${dashboardItemId}`,
+      type: "PUT",
+      contentType: "application/json",
+      data: JSON.stringify({ title }),
+    });
+  };
+
+  resizeWindow(width: string | number, height: string | number): void {
+    this._AP.resize(width, height);
   }
 }

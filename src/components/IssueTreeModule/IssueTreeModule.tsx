@@ -7,7 +7,10 @@ import { APIContext } from "../../context/api";
 import { IssueField } from "../../types/api";
 import { useTranslation } from "react-i18next";
 import { TreeFilterContext } from "../../context/treeFilterContext";
-export const IssueTreeModule = () => {
+interface Props {
+  rootIssueKey?: string;
+}
+export const IssueTreeModule = ({ rootIssueKey }: Props): JSX.Element => {
   const treeFilterContext = useContext(TreeFilterContext);
   const { t } = useTranslation();
   const api = useContext(APIContext);
@@ -59,6 +62,10 @@ export const IssueTreeModule = () => {
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    setErrors([]);
+  }, [rootIssueKey]);
 
   const updateFilteredKeyOptions = (
     key: string,
@@ -118,6 +125,7 @@ export const IssueTreeModule = () => {
             selectedIssueFieldIds={selectedIssueFieldIds}
             handleError={handleNewError}
             clearAllErrors={clearAllErrors}
+            rootIssueKey={rootIssueKey}
           />
         </>
       )}
