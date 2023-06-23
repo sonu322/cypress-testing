@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { IssueWithSortedLinks } from "../../types/api";
 import { IssueCard } from "../common/issueCard/IssueCard";
 import { EmptyCell } from "./EmptyCell";
-import { IssueTd, MaxWidthContainer, Td } from "./IssueTypeRow";
+import { IssueTd, MaxWidthContainer, Td, SNoTd } from "./IssueTypeRow";
 import { IssueCell } from "./IssueCell";
 export interface Props {
   selectedTableFieldIds;
@@ -28,7 +28,7 @@ export const LinkTypeRow = ({
       </MaxWidthContainer>
     </IssueTd>
   );
-  const snoCell = <Td key="sno">{rowSno}.</Td>;
+  const snoCell = <SNoTd key="sno">{rowSno}.</SNoTd>;
 
   cells.push(snoCell);
   cells.push(issueCell);

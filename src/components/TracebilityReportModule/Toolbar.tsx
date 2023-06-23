@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
-import { colors } from "@atlaskit/theme";
 import { JQLSelectDropdown } from "../JQLSelectDropdown";
 import { ButtonGroup } from "@atlaskit/button";
 import { RefreshButton } from "../common/RefreshButton";
@@ -23,13 +22,14 @@ import { useTranslation } from "react-i18next";
 import { APIContext } from "../../context/api";
 import { viewTabs } from "../../constants/traceabilityReport";
 import { SettingsDropdownTrigger } from "../common/SettingsDropdownTrigger";
+import { token } from "@atlaskit/tokens";
 
 const MainBar = styled.div`
   padding: 8px;
   border-radius: 3px;
   display: flex;
   justify-content: space-between;
-  border-bottom: 2px solid ${colors.N30};
+  border-bottom: 2px solid ${token("color.border")};
   flex-wrap: wrap;
   gap: 8px;
   overflow-x: auto;
@@ -131,6 +131,7 @@ export const Toolbar = ({
               options={issueCardOptions}
               selectedOptions={selectedIssueFieldIds}
               updateSelectedOptions={setSelectedIssueFieldIds}
+              showFilterIndicatorOnClearAll={true}
             />
             {!isTreeReport && (
               <Dropdown
