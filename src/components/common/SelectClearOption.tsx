@@ -1,5 +1,6 @@
 import React from "react";
 import Button from "@atlaskit/button";
+import { token } from "@atlaskit/tokens";
 
 interface Props {
   onSelectAll: () => void;
@@ -16,7 +17,7 @@ export const SelectClearOption = ({
         borderTop: "1px solid #eee",
         display: "flex",
         justifyContent: "space-between",
-        backgroundColor: "#f9f9f9",
+        backgroundColor: token("elevation.surface.overlay"),
       }}
     >
       <Button appearance="subtle-link" onClick={onSelectAll}>

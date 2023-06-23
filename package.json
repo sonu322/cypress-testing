@@ -25,6 +25,7 @@
     "@atlaskit/tag": "^11.4.1",
     "@atlaskit/textfield": "^5.3.6",
     "@atlaskit/theme": "^12.2.1",
+    "@atlaskit/tokens": "^1.5.2",
     "@atlaskit/tooltip": "^17.5.17",
     "@atlaskit/tree": "^6.0.0",
     "@atlassianlabs/jql-editor": "^1.2.0",
