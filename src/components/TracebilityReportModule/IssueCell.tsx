@@ -4,12 +4,15 @@ import styled from "styled-components";
 import { displayAllIssueCardsId } from "../../constants/traceabilityReport";
 import ChevronDownIcon from "@atlaskit/icon/glyph/chevron-down";
 import ChevronUpIcon from "@atlaskit/icon/glyph/chevron-up";
+import Button from "@atlaskit/button";
 export interface Props {
   selectedSettingsDropdownIds: string[];
   issueCards: JSX.Element[];
 }
 
 const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
   margin-top: 8px;
 `;
 
@@ -47,13 +50,23 @@ export const IssueCell = ({ selectedSettingsDropdownIds, issueCards }) => {
       <MaxWidthContainer>{issueCardsToShow}</MaxWidthContainer>
       {issueCards.length > 3 && (
         <ButtonContainer>
-          <ExpandButton onClick={handleClick}>
-            {isExpanded ? (
-              <ChevronUpIcon size="medium" label="Collapse" />
-            ) : (
-              <ChevronDownIcon size="medium" label="Expand" />
-            )}
-          </ExpandButton>
+          <div style={{ alignSelf: "flex-end" }}>
+            <ExpandButton onClick={handleClick}>
+              {isExpanded ? (
+                <Button
+                  iconAfter={<ChevronUpIcon size="medium" label="Collapse" />}
+                >
+                  Less
+                </Button>
+              ) : (
+                <Button
+                  iconAfter={<ChevronDownIcon size="medium" label="Expand" />}
+                >
+                  More
+                </Button>
+              )}
+            </ExpandButton>
+          </div>
         </ButtonContainer>
       )}
     </div>
