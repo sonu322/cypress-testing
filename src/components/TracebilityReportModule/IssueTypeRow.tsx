@@ -1,4 +1,3 @@
-import { colors } from "@atlaskit/theme";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
@@ -11,12 +10,13 @@ import { getUniqueValues } from "../../util/common";
 import { IssueCard } from "../common/issueCard/IssueCard";
 import { EmptyCell } from "./EmptyCell";
 import { IssueCell } from "./IssueCell";
+import { token } from "@atlaskit/tokens";
 export const Td = styled.td`
-  border: 1px solid ${colors.N40};
+  border: 1px solid ${token("color.border")};
   padding: 8px !important;
 `;
 export const IssueTd = styled(Td)`
-  background-color: #f8f8ff;
+  background-color: ${token("elevation.surface.sunken")};
   position: sticky;
   position: -webkit-sticky;
   left: 30px;
@@ -26,7 +26,7 @@ export const SNoTd = styled(Td)`
   position: sticky;
   position: -webkit-sticky;
   left: 0;
-  background-color: #fffff9;
+  background-color: ${token("elevation.surface.sunken")};
   z-index: 2;
 `;
 export const MaxWidthContainer = styled.div`

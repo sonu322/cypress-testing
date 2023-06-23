@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark:dark light:light" data-color-mode="auto">
   <head>
     <meta charset="utf-8" />
     <link
@@ -76,6 +76,7 @@
       </div>
     </div>
     <script>
+      window.AP.theming.initializeTheming();
       AP.jira.initJQLEditor();
       // Prepares the JQL Editor dialog in preparation for fast rendering.
       // This method should be called on iframe load if it contains a JQL editor trigger.

@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
-import { colors } from "@atlaskit/theme";
 import {
   IssueField,
   IssueTreeFilter,
@@ -11,11 +10,12 @@ import { APIContext } from "../../context/api";
 import TreeUtils from "../../util/TreeUtils";
 import { AtlasTree } from "../../types/app";
 import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
+import { token } from "@atlaskit/tokens";
 
 const Container = styled.div`
   width: 100%;
   overflow: scroll;
-  border: 1px solid ${colors.N40};
+  border: 1px solid ${token("color.border")};
   border-radius: 10px;
 `;
 
