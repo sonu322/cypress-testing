@@ -8,12 +8,13 @@ import { TooltipContainer } from "./TooltipContainer";
 import { SearchOption } from "./SearchOption";
 import { SelectClearOption } from "./SelectClearOption";
 import styled from "styled-components";
+import { token } from "@atlaskit/tokens";
 
 const FilterContainer = styled.sup`
   padding-left: 4px;
   vertical-align: top;
   font-size: 16px;
-  color: #e1422c;
+  color: ${token("color.text.accent.red")};
 `;
 
 interface Props {
