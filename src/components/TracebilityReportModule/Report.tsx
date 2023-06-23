@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
-import { colors } from "@atlaskit/theme";
 import { LinkTypeRow } from "./LinkTypeRow";
 import { ReportHeader } from "./ReportHeader";
 import {
@@ -12,21 +11,23 @@ import { IssueTypeRow } from "./IssueTypeRow";
 import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
 import { APIContext } from "../../context/api";
 import { autoHideEmptyColumnsId } from "../../constants/traceabilityReport";
+import { token } from "@atlaskit/tokens";
 const Container = styled.div`
+  background-color: ${token("elevation.surface.sunken")};
   width: 100%;
   // height: 100%;
   overflow: scroll;
-  border: 1px solid ${colors.N40};
+  border: 1px solid ${token("color.border")};
   border-radius: 10px;
 `;
 const BorderTr = styled.tr`
-  border-bottom: 1px solid ${colors.N40};
+  border-bottom: 1px solid ${token("color.border")};
   &:hover {
-    background-color: #091e420a;
+    background-color: ${token("elevation.surface.raised.hovered")};
   }
 `;
 const Table = styled.table`
-  border: 1px solid ${colors.N40};
+  border: 1px solid ${token("color.border")};
   border-collapse: collapse;
 `;
 

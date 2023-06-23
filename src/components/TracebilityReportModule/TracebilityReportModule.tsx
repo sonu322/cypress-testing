@@ -43,7 +43,7 @@ import {
   SELECTED_LINK_TYPE_IDS_KEY,
   VIEW_TYPE_FIELD_NAME,
 } from "../../constants/gadgetTraceability";
-
+import { token } from "@atlaskit/tokens";
 const FullWidthContainer = styled.div`
   width: 100%;
   display: flex;
@@ -54,7 +54,9 @@ const GrowContainer = styled.div`
   flex-grow: 1;
   display: flex;
 `;
-
+const TitleStyle = styled.div`
+  color: ${token("color.text")};
+`;
 interface Props {
   showCustomJQLEditor?: any;
   isFromDashboardGadget?: boolean;
@@ -476,7 +478,7 @@ export const TracebilityReportModule = ({
           </>
         }
       >
-        {api.isJiraCloud() && title}
+        {api.isJiraCloud() && <TitleStyle>{title}</TitleStyle>}
       </PageHeader>
       {allErrors.length > 0 && <ErrorsList errors={errors} />}
       <GrowContainer>

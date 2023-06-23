@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import { colors } from "@atlaskit/theme";
 import { useTranslation } from "react-i18next";
+import { token } from "@atlaskit/tokens";
 const NoLicense = styled.div`
-  color: ${colors.R500};
+  color: ${token("color.text.danger")};
 `;
 
 // TODO: Add a link to acquire the license in this screen.
