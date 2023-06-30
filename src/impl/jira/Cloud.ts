@@ -21,7 +21,9 @@ export default class JiraCloudImpl implements JiraAPI {
   private readonly _AP: any = AP;
 
   isJiraCloud(): boolean {
-    return true;
+    const isInsideJira =
+      typeof window !== "undefined" && window.location.href.includes("jira");
+    return isInsideJira;
   }
 
   hasValidLicense(): boolean {
