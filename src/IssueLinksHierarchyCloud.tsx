@@ -4,6 +4,7 @@ import IssueLinksHierarchy from "./IssueLinksHierarchy";
 import APIImpl from "./impl/Cloud";
 import JiraCloudImpl from "./impl/jira/Cloud";
 import { APIContext } from "./context/api";
+import JiraErrorContainer from "./components/common/JiraErrorContainer";
 const jiraCloud = new JiraCloudImpl();
 const api = new APIImpl(jiraCloud);
 
@@ -11,8 +12,12 @@ const api = new APIImpl(jiraCloud);
 const App = document.getElementById("app");
 
 ReactDOM.render(
-  <APIContext.Provider value={api}>
-    <IssueLinksHierarchy />
-  </APIContext.Provider>,
+  api.isJiraCloud() ? (
+    <APIContext.Provider value={api}>
+      <IssueLinksHierarchy />
+    </APIContext.Provider>
+  ) : (
+    <JiraErrorContainer />
+  ),
   App
 );
