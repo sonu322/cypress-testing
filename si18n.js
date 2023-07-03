@@ -20,7 +20,7 @@ fs.mkdirSync(nonAsciiDist);
 // convert json to properties file
 jsonToProps.process({
   config: {
-    src: "./assets/i18n/0.4", // change the version folder name when version is upgraded
+    src: "./assets/i18n/0.6", // change the version folder name when version is upgraded
     dist: nonAsciiDist,
   },
 }); // this method is not synchronous, so we used setTimeout below.

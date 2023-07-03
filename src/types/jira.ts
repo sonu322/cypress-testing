@@ -39,6 +39,7 @@ export interface JiraIssueType {
 }
 
 export interface JiraLinkType {
+  jiraTypeId: string;
   id: string;
   name: string;
   inward: string;
@@ -145,8 +146,7 @@ export interface JiraProject {
   properties: JiraProjectProperties;
 }
 
-export interface JiraProjectProperties { }
-
+export interface JiraProjectProperties {}
 export interface JiraRoles {
   [roleName: string]: string;
 }
@@ -271,6 +271,18 @@ interface SuggestionResult {
 }
 
 export interface JiraAPI {
+  linkIssueType(
+    inwardIssueKey: string,
+    jiraLinkTypeId: string,
+    outwardIssueKey: string
+  ): Promise<void>;
+
+  checkIssueLinkExists(
+    inwardIssueKey: string,
+    jiraLinkTypeId: string,
+    outwardIssueKey: string
+  ): Promise<boolean>;
+
   isJiraCloud(): boolean;
 
   hasValidLicense(): boolean;
@@ -278,7 +290,6 @@ export interface JiraAPI {
   getJiraBaseURL(): string;
 
   getPriorities(): Promise<JiraIssuePriorityFull[]>;
-
 
   getMyself(): Promise<JiraMyself>;
 
