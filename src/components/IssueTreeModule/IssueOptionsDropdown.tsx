@@ -1,5 +1,6 @@
 import React from "react";
 import { DropdownFields } from "../common/DropdownFields";
+import { Icon } from "../common/Icon";
 export const IssueOptionsDropdown = ({
   keyName,
   dropdownName,
@@ -10,6 +11,17 @@ export const IssueOptionsDropdown = ({
   const updateSelectedFieldOptions = (updatedList) => {
     updateSelectedOptions(keyName, updatedList);
   };
+
+  const renderOptionWithIcon = (option) => {
+    const { iconUrl } = option;
+    return (
+      <div>
+        {iconUrl && <Icon src={iconUrl} />}
+        {option.name}
+      </div>
+    );
+  };
+
   return (
     <DropdownFields
       useTitleCaseOptions
@@ -18,6 +30,7 @@ export const IssueOptionsDropdown = ({
       options={options}
       selectedOptions={selectedOptions}
       updateSelectedOptions={updateSelectedFieldOptions}
+      renderOptionWithIcon={renderOptionWithIcon}
     />
   );
 };
