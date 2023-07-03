@@ -23,7 +23,7 @@ import { APIContext } from "../../context/api";
 import { viewTabs } from "../../constants/traceabilityReport";
 import { SettingsDropdownTrigger } from "../common/SettingsDropdownTrigger";
 import { token } from "@atlaskit/tokens";
-
+import { LinkIssueButton } from "../common/LinkIssueButton";
 const MainBar = styled.div`
   padding: 8px;
   border-radius: 3px;
@@ -114,6 +114,7 @@ export const Toolbar = ({
             updateSelectedFilterId={updateSelectedJQLString}
             showCustomJQLEditor={showCustomJQLEditor}
           />
+          <LinkIssueButton autoRefresh={handleRefresh} />
           <RefreshButton refresh={handleRefresh} />
         </FlexContainer>
 
