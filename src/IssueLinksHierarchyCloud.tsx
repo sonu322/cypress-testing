@@ -11,8 +11,11 @@ const api = new APIImpl(jiraCloud);
 // eslint-disable-next-line no-undef
 const App = document.getElementById("app");
 
+const isInsideJira =
+  typeof window !== "undefined" && window.location.href.includes("jira");
+
 ReactDOM.render(
-  api.isJiraCloud() ? (
+  isInsideJira ? (
     <APIContext.Provider value={api}>
       <IssueLinksHierarchy />
     </APIContext.Provider>
