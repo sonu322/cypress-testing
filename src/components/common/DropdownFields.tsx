@@ -8,12 +8,14 @@ import { TooltipContainer } from "./TooltipContainer";
 import { SearchOption } from "./SearchOption";
 import { SelectClearOption } from "./SelectClearOption";
 import styled from "styled-components";
+import { Icon } from "./Icon";
+import { token } from "@atlaskit/tokens";
 
 const FilterContainer = styled.sup`
   padding-left: 4px;
   vertical-align: top;
   font-size: 16px;
-  color: #e1422c;
+  color: ${token("color.text.accent.red")};
 `;
 
 interface Props {
@@ -25,8 +27,10 @@ interface Props {
     id: string;
     name: string;
     description: string;
+    iconUrl?: string;
   }>;
   useTitleCaseOptions?: boolean;
+  showFilterIndicatorOnClearAll?: boolean;
 }
 
 export const DropdownFields = ({
@@ -36,9 +40,12 @@ export const DropdownFields = ({
   updateSelectedOptions,
   options,
   useTitleCaseOptions,
+  showFilterIndicatorOnClearAll = false,
 }: Props): JSX.Element => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isFiltered, setIsFiltered] = useState(false);
+  const [showFilterIndicator, setShowFilterIndicator] = useState(false);
+
   const isAllSelected = selectedOptions.length === options.length;
 
   const handleOptionClick = (id: string): void => {
@@ -61,6 +68,9 @@ export const DropdownFields = ({
   };
 
   const handleClearAll = (): void => {
+    if (showFilterIndicatorOnClearAll) {
+      setShowFilterIndicator(true);
+    }
     updateSelectedOptions([]);
   };
 
@@ -72,6 +82,23 @@ export const DropdownFields = ({
     setIsFiltered(!isAllSelected && selectedOptions.length > 0);
   }, [selectedOptions, options]);
 
+  const renderOptionWithIcon = (option) => {
+    const { iconUrl } = option;
+
+    return (
+      <div style={{ display: "flex", alignItems: "center" }}>
+        {iconUrl && (
+          <div style={{ marginRight: "4px" }}>
+            <Icon src={iconUrl} />
+          </div>
+        )}
+        <span>
+          {useTitleCaseOptions ? toTitleCase(option.name) : option.name}
+        </span>
+      </div>
+    );
+  };
+
   return (
     <div style={{ position: "relative" }}>
       <DropdownMenu
@@ -79,7 +106,9 @@ export const DropdownFields = ({
           <div>
             {dropdownName}
             {!isAllSelected &&
-              (isFiltered ? <FilterContainer>*</FilterContainer> : null)}
+              (isFiltered || showFilterIndicator ? (
+                <FilterContainer>*</FilterContainer>
+              ) : null)}
           </div>
         }
         placement={dropdownNamePlacement ?? "bottom-start"}
@@ -100,7 +129,7 @@ export const DropdownFields = ({
               onClick={() => handleOptionClick(option.id)}
             >
               <TooltipContainer content={option.description}>
-                {useTitleCaseOptions ? toTitleCase(option.name) : option.name}
+                {renderOptionWithIcon(option)}
               </TooltipContainer>
             </DropdownItemCheckbox>
           ))}

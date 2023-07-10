@@ -85,6 +85,7 @@ export const Toolbar: React.FC<Props> = ({
           options={issueCardOptions}
           selectedOptions={selectedIssueFieldIds}
           updateSelectedOptions={setSelectedIssueFieldIds}
+          showFilterIndicatorOnClearAll={true}
         />
         <ExportButton
           isDisabled={isExportDisabled}

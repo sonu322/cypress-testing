@@ -35,6 +35,48 @@ export default class JiraServerImpl implements JiraAPI {
     return this.isValidLicense;
   }
 
+  async linkIssueType(
+    inwardIssueKey: string,
+    jiraLinkTypeId: string,
+    outwardIssueKey: string
+  ): Promise<void> {
+    const linkIssuesBody = {
+      inwardIssueKey,
+      jiraLinkTypeId,
+      outwardIssueKey,
+    };
+    await this._AJS.$.ajax({
+      type: "POST",
+      contentType: "application/json; charset=utf-8",
+      url: "/rest/api/3/issueLink",
+      data: JSON.stringify(linkIssuesBody),
+    });
+  }
+
+  async checkIssueLinkExists(
+    inwardIssueKey: string,
+    jiraLinkTypeId: string,
+    outwardIssueKey: string
+  ): Promise<boolean> {
+    try {
+      const response = await this._AJS.$.ajax({
+        type: "GET",
+        contentType: "application/json; charset=utf-8",
+        url: "/rest/api/3/issueLink",
+        data: {
+          inwardIssue: inwardIssueKey,
+          outwardIssue: outwardIssueKey,
+          type: jiraLinkTypeId,
+        },
+      });
+
+      return response.total > 0;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+
   getJiraBaseURL(): string {
     return this.contextPath;
   }

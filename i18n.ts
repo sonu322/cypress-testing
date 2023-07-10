@@ -4,11 +4,11 @@ import { initReactI18next } from "react-i18next";
 import Backend from "i18next-http-backend";
 import LanguageDetector from "i18next-browser-languagedetector";
 
-import translationEN from "./assets/i18n/0.5/en_US.json";
-import translationDE from "./assets/i18n/0.5/de_DE.json";
-import translationES from "./assets/i18n/0.5/es_ES.json";
-import translationFR from "./assets/i18n/0.5/fr_FR.json";
-import translationCN from "./assets/i18n/0.5/zh_CN.json";
+import translationEN from "./assets/i18n/0.6/en_US.json";
+import translationDE from "./assets/i18n/0.6/de_DE.json";
+import translationES from "./assets/i18n/0.6/es_ES.json";
+import translationFR from "./assets/i18n/0.6/fr_FR.json";
+import translationCN from "./assets/i18n/0.6/zh_CN.json";
 // don't want to use this?
 // have a look at the Quick start guide
 // for passing in lng and translations on init

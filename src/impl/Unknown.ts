@@ -9,9 +9,29 @@ import LXPAPI, {
   IssueWithSortedLinks,
   Project,
 } from "../types/api";
-import { HelpLinks, JiraAutoCompleteResult, JiraAutoCompleteSuggestionsResult } from "../types/jira";
+import {
+  HelpLinks,
+  JiraAutoCompleteResult,
+  JiraAutoCompleteSuggestionsResult,
+} from "../types/jira";
 
 export default class UnknownImpl implements LXPAPI {
+  checkLinkExists(
+    mainIssue: string,
+    linkType: string,
+    targetIssues: string[]
+  ): Promise<string> {
+    throw new Error("Method not implemented.");
+  }
+
+  linkIssue(
+    mainIssueKey: string,
+    jiraLinkTypeId: string,
+    outwardIssueKey: string[]
+  ): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+
   hasValidLicense(): boolean {
     throw new Error("Method not implemented.");
   }
@@ -27,7 +47,6 @@ export default class UnknownImpl implements LXPAPI {
   async getPriorities(): Promise<IssuePriority[]> {
     throw new Error("Method not implemented.");
   }
-
 
   async getLocale(): Promise<string> {
     throw new Error("Method not implemented");

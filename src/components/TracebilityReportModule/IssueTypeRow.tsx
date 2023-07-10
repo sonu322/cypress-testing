@@ -1,4 +1,3 @@
-import { colors } from "@atlaskit/theme";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
@@ -11,12 +10,24 @@ import { getUniqueValues } from "../../util/common";
 import { IssueCard } from "../common/issueCard/IssueCard";
 import { EmptyCell } from "./EmptyCell";
 import { IssueCell } from "./IssueCell";
+import { token } from "@atlaskit/tokens";
 export const Td = styled.td`
-  border: 1px solid ${colors.N40};
+  border: 1px solid ${token("color.border")};
   padding: 8px !important;
 `;
 export const IssueTd = styled(Td)`
-  background-color: ${colors.N20A};
+  background-color: ${token("elevation.surface.sunken")};
+  position: sticky;
+  position: -webkit-sticky;
+  left: 30px;
+  z-index: 2;
+`;
+export const SNoTd = styled(Td)`
+  position: sticky;
+  position: -webkit-sticky;
+  left: 0;
+  background-color: ${token("elevation.surface.sunken")};
+  z-index: 2;
 `;
 export const MaxWidthContainer = styled.div`
   max-width: 540px;
@@ -51,7 +62,7 @@ export const IssueTypeRow = ({
       </MaxWidthContainer>
     </IssueTd>
   );
-  const snoCell = <Td key="sno">{rowSno}.</Td>;
+  const snoCell = <SNoTd key="sno">{rowSno}.</SNoTd>;
 
   cells.push(snoCell);
   cells.push(issueCell);
