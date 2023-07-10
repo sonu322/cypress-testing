@@ -24,6 +24,73 @@ export default class JiraCloudImpl implements JiraAPI {
     return true;
   }
 
+  async linkIssueType(
+    inwardIssueKey: string,
+    jiraLinkTypeId: string,
+    outwardIssueKey: string
+  ): Promise<void> {
+    const linkIssueBody = {
+      inwardIssue: {
+        key: inwardIssueKey,
+      },
+      outwardIssue: {
+        key: outwardIssueKey,
+      },
+      type: {
+        id: jiraLinkTypeId,
+      },
+    };
+    await this._AP.request({
+      url: "/rest/api/3/issueLink",
+      type: "POST",
+      contentType: "application/json",
+
+      data: JSON.stringify(linkIssueBody),
+    });
+  }
+
+  async checkIssueLinkExists(
+    inwardIssueKey: string,
+    jiraLinkTypeId: string,
+    outwardIssueKey: string
+  ): Promise<boolean> {
+    try {
+      const inwardIssue = await this.getIssueById(
+        inwardIssueKey,
+        "?fields=issuelinks"
+      );
+      const outwardIssue = await this.getIssueById(
+        outwardIssueKey,
+        "?fields=issuelinks"
+      );
+
+      if (
+        inwardIssue &&
+        inwardIssue.fields &&
+        inwardIssue.fields.issuelinks &&
+        outwardIssue &&
+        outwardIssue.fields &&
+        outwardIssue.fields.issuelinks
+      ) {
+        const linkExists = inwardIssue.fields.issuelinks.some((link) => {
+          return (
+            link.type &&
+            link.type.id === jiraLinkTypeId &&
+            link.outwardIssue &&
+            link.outwardIssue.key === outwardIssueKey
+          );
+        });
+
+        return linkExists;
+      }
+
+      return false;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+
   hasValidLicense(): boolean {
     const lic = getQueryParam("lic");
     return !(lic && lic === "none");
