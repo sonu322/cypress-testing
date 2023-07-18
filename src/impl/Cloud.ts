@@ -81,7 +81,6 @@ export default class APIImpl implements LXPAPI {
     this.isServer = isServer;
   }
 
-
   hasValidLicense(): boolean {
     return this.api.hasValidLicense();
   }
@@ -445,7 +444,9 @@ export default class APIImpl implements LXPAPI {
       return result;
     } catch (error) {
       console.log(error);
-      throwError(`Error fetching issues ${issueIds.join(",")} - ${error.message}`);
+      throwError(
+        `Error fetching issues ${issueIds.join(",")} - ${error.message}`
+      );
     }
   }
 
@@ -535,7 +536,12 @@ export default class APIImpl implements LXPAPI {
     return result;
   }
 
-  private async _convertIssue(issue: JiraIssueFull, fields: IssueField[], epicLinkFieldId: string = null, parentLinkFieldId = null): Promise<Issue> {
+  private async _convertIssue(
+    issue: JiraIssueFull,
+    fields: IssueField[],
+    epicLinkFieldId: string = null,
+    parentLinkFieldId = null
+  ): Promise<Issue> {
     let sprintFieldId, storyPointsFieldId, storyPointEstimateFieldId;
     if (fields && fields.length) {
       for (const field of fields) {
@@ -620,7 +626,9 @@ export default class APIImpl implements LXPAPI {
       return await this.searchIssues(query, fields);
     } catch (error) {
       console.log(error);
-      throwError(`Error getting child issues of issue ${issue.issueKey} - ${error.message}`);
+      throwError(
+        `Error getting child issues of issue ${issue.issueKey} - ${error.message}`
+      );
     }
   }
 
@@ -660,7 +668,12 @@ export default class APIImpl implements LXPAPI {
       const query = "?fields=" + fieldIds.join(",");
       const issue: JiraIssueFull = await this.api.getIssueById(issueId, query);
       issue || throwError("otpl.lxp.api.issue-by-id-error-main");
-      return await this._convertIssue(issue, fields, epicLinkFieldId, parentLinkFieldId);
+      return await this._convertIssue(
+        issue,
+        fields,
+        epicLinkFieldId,
+        parentLinkFieldId
+      );
     } catch (error) {
       console.error(error);
       const prefix = i18n.t("otpl.lxp.api.issue-by-id-error-prefix");
@@ -713,7 +726,14 @@ export default class APIImpl implements LXPAPI {
       const total = issuesSearchResult.total;
       const jiraIssues = issuesSearchResult?.issues || [];
       for (const issue of jiraIssues) {
-        result.push(await this._convertIssue(issue, fields, epicLinkFieldId, parentLinkFieldId));
+        result.push(
+          await this._convertIssue(
+            issue,
+            fields,
+            epicLinkFieldId,
+            parentLinkFieldId
+          )
+        );
       }
       return { data: result, total };
     } catch (error) {

@@ -7,12 +7,11 @@ import { APIContext } from "./context/api";
 import JiraErrorContainer from "./components/common/JiraErrorContainer";
 const jiraCloud = new JiraCloudImpl();
 const api = new APIImpl(jiraCloud);
+// @ts-expect-error
+const isInsideJira = AP.request !== undefined;
 
 // eslint-disable-next-line no-undef
 const App = document.getElementById("app");
-
-const isInsideJira =
-  typeof window !== "undefined" && window.location.href.includes("jira");
 
 ReactDOM.render(
   isInsideJira ? (
