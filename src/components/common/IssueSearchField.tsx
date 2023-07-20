@@ -7,12 +7,14 @@ interface Props {
   onSearch: (query: string) => void;
   searchQuery: string;
   onChange: (issueKeys: string[]) => void;
+  placeholder: string;
 }
 
 export const IssueSearchField = ({
   isMultiValued,
   searchQuery,
   onChange,
+  placeholder
 }: Props): JSX.Element => {
   const [options, setOptions] = useState([]);
   const [inputValue, setInputValue] = useState("");
@@ -52,6 +54,7 @@ export const IssueSearchField = ({
   return (
     <div>
       <SearchableSelect
+        placeholder={placeholder}
         isMultiValued={isMultiValued}
         inputValue={inputValue}
         onSearch={handleInputChange}
