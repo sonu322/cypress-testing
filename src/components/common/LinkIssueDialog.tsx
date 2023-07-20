@@ -150,6 +150,7 @@ export const LinkIssueDialog = ({
                     <Label htmlFor="main-issue">Main Issue</Label>
                     <TextFieldWrapper>
                       <IssueSearchField
+                        placeholder="Search for issue"
                         isMultiValued={false}
                         onSearch={handleSearch}
                         searchQuery={searchQuery}
@@ -166,6 +167,7 @@ export const LinkIssueDialog = ({
                         options={linkTypesOptions}
                         placeholder="Select link type"
                         onChange={(option) => setLinkType(option.value)}
+                        menuPosition="fixed"
                       />
                     </TextFieldWrapper>
                   </FieldWrapper>
@@ -175,6 +177,7 @@ export const LinkIssueDialog = ({
                     <Label htmlFor="target-issues">Target Issues</Label>
                     <TextFieldWrapper>
                       <IssueSearchField
+                        placeholder="Search for issue"
                         isMultiValued={true}
                         onSearch={handleSearch}
                         searchQuery={searchQuery}
@@ -200,6 +203,6 @@ export const LinkIssueDialog = ({
           Cancel
         </Button>
       </ModalFooter>
-    </ModalDialog>
+    </ModalDialog> 
   );
 };
