@@ -6,6 +6,7 @@ interface Props {
   options: Array<{ label: string; value: string }>;
   inputValue: string;
   onChange: (issueKeys: string[]) => void;
+  placeholder: string;
 }
 export const SearchableSelect = ({
   isMultiValued,
@@ -13,6 +14,7 @@ export const SearchableSelect = ({
   options,
   inputValue,
   onChange,
+  placeholder
 }: Props): JSX.Element => {
   const handleInputChange = (inputValue: string) => {
     onSearch(inputValue);
@@ -20,7 +22,8 @@ export const SearchableSelect = ({
   return (
     <Select
       id="issue-search"
-      placeholder="Search for issue"
+      menuPosition="fixed"
+      placeholder={placeholder}
       inputValue={inputValue}
       onInputChange={handleInputChange}
       style={{ width: "50%" }}
