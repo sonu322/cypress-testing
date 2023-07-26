@@ -40,7 +40,9 @@ export default class JiraServerImpl implements JiraAPI {
   }
 
   async getPriorities(): Promise<JiraIssuePriorityFull[]> {
-    return await this._AJS.$.getJSON(this.contextPath + "/rest/api/2/priority");
+    // @ts-expect-error
+    return priorities; // This variable is handled through lxp-server repo in velocity template
+    // return await this._AJS.$.getJSON(this.contextPath + "/rest/api/2/priority");
   }
 
   async getIssueTypes(): Promise<JiraIssueType[]> {
