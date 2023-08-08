@@ -41,8 +41,10 @@ export default class JiraServerImpl implements JiraAPI {
 
   async getPriorities(): Promise<JiraIssuePriorityFull[]> {
     // @ts-expect-error
-    return priorities; // This variable is handled through lxp-server repo in velocity template
-    // return await this._AJS.$.getJSON(this.contextPath + "/rest/api/2/priority");
+    if(typeof lxpPriorities !== "undefined") return lxpPriorities; // This variable is handled through lxp-server repo in velocity template
+    else {
+      return await this._AJS.$.getJSON(this.contextPath + "/rest/api/2/priority");
+    }
   }
 
   async getIssueTypes(): Promise<JiraIssueType[]> {
@@ -140,7 +142,7 @@ export default class JiraServerImpl implements JiraAPI {
 
   async getFilters(): Promise<JiraFiltersResponse> {
     // @ts-expect-error
-    const res = filters; // This variable is handled through lxp-server repo in velocity template
+    const res = typeof lxpFilters !== "undefined" ? lxpFilters : []; // This variable is handled through lxp-server repo in velocity template
     return {
       self: null,
       maxResults: res.length,
