@@ -77,6 +77,8 @@ export default class APIImpl implements LXPAPI {
   isServer: boolean;
 
   constructor(api: JiraAPI, isServer: boolean = false) {
+    // this console statement is written to easily find out our batch script in Jira server environment
+    console.log("=== Links Explorer ===");
     this.api = api;
     this.isServer = isServer;
   }
