@@ -478,7 +478,7 @@ export const TracebilityReportModule = ({
       >
         {api.isJiraCloud() && title}
       </PageHeader>
-      {allErrors.length > 0 && <ErrorsList errors={errors} />}
+      {allErrors.length > 0 && <ErrorsList errors={allErrors} />}
       {(!isTreeReport || (isTreeReport && areTreeNecessitiesPresent)) && (
         <>
           <GrowContainer>
