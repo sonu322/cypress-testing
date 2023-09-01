@@ -27,7 +27,7 @@ import {
   orphansTreeBranchName,
 } from "../constants/traceabilityReport";
 import { getItemInLocalStorage, setItemInLocalStorage, addIssueDetails, toCSV } from "./common";
-import { EXPAND_ALL_LEVEL, lastSavedTreeConfigKey } from "../constants/common";
+import { EXPAND_ALL_LEVEL, lastSavedTreeConfigKey, NOT_SET } from "../constants/common";
 
 function mutateTree(tree: AtlasTree, id, updateData, mutateMain = true): AtlasTree {
   if (mutateMain) {
@@ -567,12 +567,14 @@ export default class TreeUtils {
       !filter.linkTypes.includes(issueLink.linkTypeId)
     ) {
       return false;
-    } else if (
-      filter.priorities.length > 0 &&
-      !filter.priorities.includes(linkedIssue.priority?.id)
-    ) {
-      return false;
-    } else if (parentIssueId?.length > 0 && parentIssueId === linkedIssue.id) {
+    } else if (filter.priorities.length > 0){
+      if(!linkedIssue.priority && !filter.priorities.includes(NOT_SET)){
+        return false;
+      } else if(linkedIssue.priority && !filter.priorities.includes(linkedIssue.priority.id)){
+        return false;
+      }
+    } 
+    if (parentIssueId?.length > 0 && parentIssueId === linkedIssue.id) {
       return false;
     }
     return true;
@@ -802,11 +804,7 @@ export default class TreeUtils {
         if (typeMap[link.name] === undefined) {
           typeMap[link.name] = [];
         }
-        if (linkedIssueNode !== undefined) {
-          typeMap[link.name].push(linkedIssueNode.id);
-        } else {
-          throw new Error(i18n.t("otpl.lxp.api.filters-error"));
-        }
+        typeMap[link.name].push(linkedIssueNode.id);
       }
       // get type nodes corresponding to filtered links
       // add filtered linked issue nodes as children to type nodes
@@ -818,14 +816,10 @@ export default class TreeUtils {
           if (typeNode === undefined) {
             throw new Error(i18n.t("otpl.lxp.api.filters-error"));
           }
-          if (typeNode !== undefined) {
-            tree = mutateTree(tree, typeNode.id, {
-              children: typeMap[type],
-            });
-            mainNodeChildIds.push(typeNode.id);
-          } else {
-            throw new Error(i18n.t("otpl.lxp.api.filters-error"));
-          }
+          tree = mutateTree(tree, typeNode.id, {
+            children: typeMap[type],
+          });
+          mainNodeChildIds.push(typeNode.id);
         }
       }
       // set filtered type nodes as children of main node

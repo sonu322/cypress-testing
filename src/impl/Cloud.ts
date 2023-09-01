@@ -1,4 +1,5 @@
 import i18n from "../../i18n";
+import { NOT_SET } from "../constants/common";
 import LXPAPI, {
   Constants,
   CustomLinkType,
@@ -115,6 +116,15 @@ export default class APIImpl implements LXPAPI {
     try {
       const items: JiraIssuePriorityFull[] = await this.api.getPriorities();
       items || throwError("otpl.lxp.api.priority-error-main");
+      
+      items.unshift({
+        self: "",
+        iconUrl: null,
+        name: "Not Set",
+        id: NOT_SET,
+        description: "",
+        statusColor: ""
+      });
 
       return items.map((item) => this._convertPriority(item));
     } catch (error) {
@@ -570,10 +580,14 @@ export default class APIImpl implements LXPAPI {
         fieldIds.push(epicLinkFieldId);
         fieldIds.push(parentLinkFieldId);
         const query = "?fields=" + fieldIds.join(",");
-        parent = await this.api.getIssueById(parentId, query);
+        try {
+          parent = await this.api.getIssueById(parentId, query);
+        } catch(err){
+          console.error(err);
+        }
       }
     }
-    return {
+    let result = {
       id: issue.id,
       issueKey: issue.key,
       summary: issue.fields?.summary,
@@ -591,6 +605,7 @@ export default class APIImpl implements LXPAPI {
       storyPoints,
       sprints: sprintFieldId ? issue.fields[sprintFieldId] : null,
     };
+    return result;
   }
 
   private _getFieldIds(fields: IssueField[]): string[] {

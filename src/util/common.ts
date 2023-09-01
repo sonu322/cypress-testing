@@ -144,9 +144,9 @@ export const addIssueDetails = (issue: Issue, issueFields: IssueField[], selecte
     if (selectedIssueFieldIds.includes(issueField.id)) {
       let value = "";
       if (issueField.id === "issueType") {
-        value = issue.type?.name;
+        value = issue.type?.name || "";
       } else if (issueField.id === "priority") {
-        value = issue.priority?.name;
+        value = issue.priority?.name || "";
       } else if (issueField.id === "storyPoints") {
         value = (isNaN(issue.storyPoints) || issue.storyPoints === null) ?
           "" : String(issue.storyPoints);
@@ -161,9 +161,9 @@ export const addIssueDetails = (issue: Issue, issueFields: IssueField[], selecte
           i++;
         });
       } else if (issueField.id === "status") {
-        value = issue.status?.name;
+        value = issue.status?.name || "";
       } else if (issueField.id === "assignee") {
-        const assignee = issue.assignee?.displayName;
+        const assignee = issue.assignee?.displayName || "";
         value = assignee !== undefined ? assignee : "";
       } else if (issueField.id === "summary") {
         value = issue.summary;
