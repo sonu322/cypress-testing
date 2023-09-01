@@ -83,7 +83,7 @@ export const IssueTreeModule = ({ rootIssueKey }: Props): JSX.Element => {
   ) : (
     <div>
       {allErrors !== undefined && allErrors.length > 0 && (
-        <ErrorsList errors={errors} />
+        <ErrorsList errors={allErrors} />
       )}
 
       {treeFilterContext.filter !== undefined && (
