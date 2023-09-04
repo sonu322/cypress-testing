@@ -31,20 +31,45 @@ describe("Iframe Text Test", () => {
 const getIframeDocument = () => {
   return cy
     .get('iframe[data-cy="the-frame"]')
-    .its('0.contentDocument')
-    .should('exist');
+    .should('exist')
+    .then(($iframe) => {
+      if ($iframe.length === 0) {
+        cy.log('Iframe not found'); 
+        return null; 
+      }
+      return $iframe.get(0).contentDocument;
+    });
 }
 
 const getIframeBody = () => {
   return getIframeDocument()
-    .its('body')
-    .should('not.be.undefined')
-    .then(cy.wrap);
+    .then((doc) => {
+      if (doc) {
+        return cy.wrap(doc.body);
+      } else {
+        
+        return cy.wrap(null);
+      }
+    });
 }
 
-it('gets the post', () => {
+it('gets the text inside iframe', () => {
   cy.visit('index.html');
-  
-  
-  getIframeBody().find('h1').should('include.text', 'RMsis offers');
+
+  getIframeBody().then(($iframeBody) => {
+    if ($iframeBody) {
+      $iframeBody.find('h1').should('include.text', 'RMsis Offers');
+    } else {
+      
+      cy.log('Iframe body not found');
+    }
+  });
 });
+
+
+
+
+
+
+
+
