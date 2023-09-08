@@ -133,10 +133,13 @@ export enum Labels {
 
 export enum Constants {
   EPIC_LINK_FLD = "Epic Link",
+  EPIC_LINK_SCHEMA = "com.pyxis.greenhopper.jira:gh-epic-link",
   PARENT_LINK_FLD = "Parent Link",
+  PARENT_LINK_SCHEMA = "com.atlassian.jpo:jpo-custom-field-parent"
 }
 
 export default interface LXPAPI {
+  init: () => void;
   hasValidLicense: () => boolean;
 
   isJiraCloud: () => boolean;

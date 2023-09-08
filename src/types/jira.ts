@@ -180,6 +180,8 @@ export interface JiraIssueField {
 export interface JiraIssueFieldSchema {
   type: string;
   system: string;
+  custom?: string;
+  customId?: number;
 }
 
 export interface JiraVersion {
