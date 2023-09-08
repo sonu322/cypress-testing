@@ -12,6 +12,8 @@ const render = async (): Promise<void> => {
   if (App !== null) {
     const jiraServer = new JiraServerImpl(App);
     const api = new APIImpl(jiraServer);
+    await api.init();
+
     ReactDOM.render(
       <APIContext.Provider value={api}>
         <IssueLinksHierarchy />
