@@ -557,6 +557,9 @@ export default class TreeUtils {
     filter: IssueTreeFilter,
     parentIssueId: ID
   ): boolean {
+    if(!linkedIssue){
+      return false;
+    }
     if (
       filter.issueTypes.length > 0 &&
       !filter.issueTypes.includes(linkedIssue.type?.id)
@@ -613,30 +616,28 @@ export default class TreeUtils {
       issueMap[linkedIssue.id] = linkedIssue;
     });
     const issueLinks = issue.links;
-
     for (const link of issueLinks) {
       const linkedIssue: Issue = issueMap[link.issueId];
       let node: AtlasTreeNode;
       if (linkedIssue !== undefined) {
         node = tree.items[prefix + "/" + link.name + "/" + linkedIssue.id];
-      }
-
-      if (node === undefined) {
-        node = this.createTreeNode(
-          tree,
-          prefix + "/" + link.name,
-          linkedIssue,
-          issue.id,
-          TreeNodeType.IssueNode
-        );
-      }
-      if (typeMap[link.name] === undefined) {
-        typeMap[link.name] = [];
-      }
-      if (node !== undefined) {
-        typeMap[link.name].push(node.id);
-      } else {
-        throw new Error(i18n.t("otpl.lxp.api.add-node-children-error"));
+        if (node === undefined) {
+          node = this.createTreeNode(
+            tree,
+            prefix + "/" + link.name,
+            linkedIssue,
+            issue.id,
+            TreeNodeType.IssueNode
+          );
+        }
+        if (typeMap[link.name] === undefined) {
+          typeMap[link.name] = [];
+        }
+        if (node !== undefined) {
+          typeMap[link.name].push(node.id);
+        } else {
+          throw new Error(i18n.t("otpl.lxp.api.add-node-children-error"));
+        }
       }
     }
     const result: AtlasTreeNode[] = [];

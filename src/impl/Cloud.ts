@@ -41,6 +41,8 @@ import {
   JiraAutoCompleteSuggestionsResult,
 } from "../types/jira";
 
+import { removeDuplicates } from "../util/common";
+
 function throwError(msg: string, error = null): void {
   msg = i18n.t(msg);
   if (error) {
@@ -405,11 +407,11 @@ export default class APIImpl implements LXPAPI {
         linkedIssues = childIssuesData.data;
       }
       if (linkedIds?.length > 0) {
-        const result = await this.searchIssues(
-          `id in (${linkedIds.join(",")})`,
+        const result = await this.searchIssuesByIds(
+          linkedIds,
           fields
         );
-        linkedIssues = linkedIssues.concat(result.data);
+        linkedIssues = linkedIssues.concat(result);
       }
 
       return { ...issue, linkedIssues };
@@ -729,15 +731,37 @@ export default class APIImpl implements LXPAPI {
     ids: string[],
     fields: IssueField[]
   ): Promise<Issue[]> {
+    ids = removeDuplicates(ids);
     const jql = `id in (${ids.join(",")})`;
     let result = await this.searchIssues(jql, fields);
-    let allIssues = result.data;
+    let allIssues = result.data || [];
     const maxIterations = 100; // to eliminate the infinite looping danger
     let iteration = 0;
     while (allIssues.length < result.total && iteration < maxIterations) {
       result = await this.searchIssues(jql, fields, allIssues.length);
       allIssues = allIssues.concat(result.data);
       iteration++;
+    }
+
+    // archived issues handling
+    if(allIssues.length < ids.length){
+      const map = {};
+      for(const issue of allIssues){
+        map[issue.id] = issue;
+      }
+      const missingIssueIds: string[] = [];
+      for(const id of ids){
+        if(map[id] === undefined){
+          missingIssueIds.push(id);
+        }
+      }
+      for(const id of missingIssueIds){
+        try {
+          allIssues.push(await this.getIssueById(fields, id));
+        } catch(err){
+          console.error(`Error in fetching the issue with id ${id}.`);
+        }
+      }
     }
     return allIssues;
   }
@@ -830,7 +854,7 @@ export default class APIImpl implements LXPAPI {
         if (linkedIssue !== undefined) {
           sortedLinks[link.linkTypeId].push(linkedIssue);
         } else {
-          throwError(`search could not fetch linked issues of ${link.issueId}`);
+          console.warn(`search could not fetch linked issues of ${link.issueId}`);
         }
       });
       // add epic child issues
