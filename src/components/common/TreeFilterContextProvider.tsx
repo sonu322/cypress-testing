@@ -113,12 +113,9 @@ export const TreeFilterContextProvider = ({
     };
   }, []);
   useEffect(() => {
-    if (isMounted.current) {
+    if(filter){
       updateLastSavedInLocalStorage(filter);
     }
-    return () => {
-      isMounted.current = false;
-    };
   }, [filter]);
   const contextValue: TreeFilterContextValue = {
     errors,
