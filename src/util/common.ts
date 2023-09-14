@@ -36,6 +36,20 @@ export const setItemInLocalStorage = (key: string, value: any): void => {
   window.localStorage.setItem(key, JSON.stringify(value));
 };
 
+export const removeDuplicates = (items: string[]): string[] => {
+  const result: string[] = [];
+  const map = {};
+  if(items && items.length > 0){
+    for(const item of items){
+      if(map[item] === undefined){
+        result.push(item);
+        map[item] = item;
+      }
+    }
+  }
+  return result;
+};
+
 
 
 
