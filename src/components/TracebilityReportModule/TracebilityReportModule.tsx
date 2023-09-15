@@ -245,8 +245,8 @@ export const TracebilityReportModule = ({
         setLinkTypes(linkTypes);
         if (!isFromDashboardGadget) {
           if (
-            lastSavedReportConfig?.selectedIssueTypeIds !== undefined &&
-            lastSavedReportConfig?.selectedIssueTypeIds !== null
+            lastSavedReportConfig?.selectedIssueFieldIds !== undefined &&
+            lastSavedReportConfig?.selectedIssueFieldIds !== null
           ) {
             setSelectedIssueFieldIds(
               lastSavedReportConfig.selectedIssueFieldIds
@@ -257,8 +257,8 @@ export const TracebilityReportModule = ({
           }
 
           if (
-            lastSavedReportConfig.selectedIssueTypeIds !== undefined &&
-            lastSavedReportConfig.selectedIssueTypeIds !== null
+            lastSavedReportConfig?.selectedIssueTypeIds !== undefined &&
+            lastSavedReportConfig?.selectedIssueTypeIds !== null
           ) {
             setSelectedIssueTypeIds(lastSavedReportConfig.selectedIssueTypeIds);
           } else {
