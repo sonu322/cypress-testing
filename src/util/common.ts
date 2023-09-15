@@ -13,31 +13,37 @@ export const getKeyValues = (
 };
 // TODO: add types so that, all objects contain the selected key property
 
-
-
-export const handleGetItemInSavedReportConfig = (
-  key: string
-): LastSavedReportConfig => {
-  const lastSavedReportConfig: LastSavedReportConfig = getItemInLocalStorage(
-    lastSavedReportConfigKey
-  );
-  return lastSavedReportConfig[key];
-};
-
-
-
 export const getItemInLocalStorage = (key: string): any => {
-  const strigifiedLastSavedReportConfig = window.localStorage.getItem(key);
-  const lastSavedReportConfig = JSON.parse(strigifiedLastSavedReportConfig);
-  return lastSavedReportConfig;
+  try {
+    const strigifiedLastSavedReportConfig = window.localStorage.getItem(key);
+    const lastSavedReportConfig = JSON.parse(strigifiedLastSavedReportConfig);
+    return lastSavedReportConfig;
+  } catch(err){
+    console.error(err);
+  }
 };
 
 export const setItemInLocalStorage = (key: string, value: any): void => {
-  window.localStorage.setItem(key, JSON.stringify(value));
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch(err){
+    console.error(err);
+  }
 };
 
-
-
+export const removeDuplicates = (items: string[]): string[] => {
+  const result: string[] = [];
+  const map = {};
+  if(items && items.length > 0){
+    for(const item of items){
+      if(map[item] === undefined){
+        result.push(item);
+        map[item] = item;
+      }
+    }
+  }
+  return result;
+};
 
 export const getKeyMap = (
   map: Map<
@@ -144,9 +150,9 @@ export const addIssueDetails = (issue: Issue, issueFields: IssueField[], selecte
     if (selectedIssueFieldIds.includes(issueField.id)) {
       let value = "";
       if (issueField.id === "issueType") {
-        value = issue.type?.name;
+        value = issue.type?.name || "";
       } else if (issueField.id === "priority") {
-        value = issue.priority?.name;
+        value = issue.priority?.name || "";
       } else if (issueField.id === "storyPoints") {
         value = (isNaN(issue.storyPoints) || issue.storyPoints === null) ?
           "" : String(issue.storyPoints);
@@ -161,9 +167,9 @@ export const addIssueDetails = (issue: Issue, issueFields: IssueField[], selecte
           i++;
         });
       } else if (issueField.id === "status") {
-        value = issue.status?.name;
+        value = issue.status?.name || "";
       } else if (issueField.id === "assignee") {
-        const assignee = issue.assignee?.displayName;
+        const assignee = issue.assignee?.displayName || "";
         value = assignee !== undefined ? assignee : "";
       } else if (issueField.id === "summary") {
         value = issue.summary;

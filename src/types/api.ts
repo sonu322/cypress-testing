@@ -137,13 +137,17 @@ export enum Labels {
 
 export enum Constants {
   EPIC_LINK_FLD = "Epic Link",
+  EPIC_LINK_SCHEMA = "com.pyxis.greenhopper.jira:gh-epic-link",
   PARENT_LINK_FLD = "Parent Link",
+  PARENT_LINK_SCHEMA = "com.atlassian.jpo:jpo-custom-field-parent"
 }
 
 export default interface LXPAPI {
   checkLinkExists: (mainIssue, linkType, targetIssues) => Promise<string>;
 
   linkIssue: (mainIssue, linkType, targetIssue) => Promise<void>;
+
+  init: () => Promise<void>;
 
   hasValidLicense: () => boolean;
 
@@ -222,4 +226,4 @@ export default interface LXPAPI {
     dashboardItemId: string,
     title: string
   ) => Promise<void>;
-}
+};
