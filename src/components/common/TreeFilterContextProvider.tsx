@@ -53,8 +53,10 @@ export const TreeFilterContextProvider = ({
   const updateLastSavedInLocalStorage = (newFilter: IssueTreeFilter): void => {
     if (newFilter !== undefined && localStorageKey !== undefined) {
       const lastSavedConfig = getItemInLocalStorage(localStorageKey);
-      const newSavedConfig = { ...lastSavedConfig, treeFilter: newFilter };
-      setItemInLocalStorage(localStorageKey, newSavedConfig);
+      if(lastSavedConfig){
+        const newSavedConfig = { ...lastSavedConfig, treeFilter: newFilter };
+        setItemInLocalStorage(localStorageKey, newSavedConfig);
+      }
     }
   };
 
@@ -85,7 +87,7 @@ export const TreeFilterContextProvider = ({
       if (!isMounted.current) {
         return;
       }
-      if (store !== null) {
+      if (store !== null && store !== undefined) {
         const storedFilter = store.treeFilter;
         if (storedFilter !== undefined && storedFilter !== null) {
           updateFilter(store.treeFilter);
