@@ -13,27 +13,22 @@ export const getKeyValues = (
 };
 // TODO: add types so that, all objects contain the selected key property
 
-
-
-export const handleGetItemInSavedReportConfig = (
-  key: string
-): LastSavedReportConfig => {
-  const lastSavedReportConfig: LastSavedReportConfig = getItemInLocalStorage(
-    lastSavedReportConfigKey
-  );
-  return lastSavedReportConfig[key];
-};
-
-
-
 export const getItemInLocalStorage = (key: string): any => {
-  const strigifiedLastSavedReportConfig = window.localStorage.getItem(key);
-  const lastSavedReportConfig = JSON.parse(strigifiedLastSavedReportConfig);
-  return lastSavedReportConfig;
+  try {
+    const strigifiedLastSavedReportConfig = window.localStorage.getItem(key);
+    const lastSavedReportConfig = JSON.parse(strigifiedLastSavedReportConfig);
+    return lastSavedReportConfig;
+  } catch(err){
+    console.error(err);
+  }
 };
 
 export const setItemInLocalStorage = (key: string, value: any): void => {
-  window.localStorage.setItem(key, JSON.stringify(value));
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch(err){
+    console.error(err);
+  }
 };
 
 export const removeDuplicates = (items: string[]): string[] => {
@@ -49,9 +44,6 @@ export const removeDuplicates = (items: string[]): string[] => {
   }
   return result;
 };
-
-
-
 
 export const getKeyMap = (
   map: Map<

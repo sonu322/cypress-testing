@@ -93,10 +93,8 @@ export default class APIImpl implements LXPAPI {
 
   async init(): Promise<void> {
     this.jiraIssueFields = await this.getAllIssueFields();
-    if(!this.isJiraCloud()){
-      this.epicLinkField = this.getEpicLinkFieldForServer(this.jiraIssueFields);
-      this.parentLinkField = this.getParentLinkFieldForServer(this.jiraIssueFields);
-    }
+    this.epicLinkField = this.getEpicLinkField(this.jiraIssueFields);
+    this.parentLinkField = this.getParentLinkField(this.jiraIssueFields);
   }
 
   hasValidLicense(): boolean {
@@ -254,6 +252,16 @@ export default class APIImpl implements LXPAPI {
         storyPointEstimateFieldId = field.id;
       } else if (name === "sprints") {
         sprintFieldId = field.id;
+      } else {
+        let clauses = field.clauseNames;
+        if(clauses && clauses.length) {
+          for(let clause of clauses){
+            const clauseName = clause.toLowerCase().replace(/ /g, "");
+            if(clauseName === storyPointFieldName){
+              storyPointsFieldId = field.id;
+            }
+          }
+        }
       }
     }
 
@@ -586,10 +594,16 @@ export default class APIImpl implements LXPAPI {
     if(!parent){
       let parentId;
       if(epicLinkFieldId){
-        parentId = issue.fields[epicLinkFieldId];
+        let epicParentId = issue.fields[epicLinkFieldId];
+        if(epicParentId && typeof epicParentId === "string"){
+          parentId = epicParentId;
+        }
       }
       if (parentLinkFieldId && !parentId) {
-        parentId = issue.fields[parentLinkFieldId];
+        let parentLinkParentId = issue.fields[parentLinkFieldId];
+        if(parentLinkParentId && typeof parentLinkParentId === "string"){
+          parentId = parentLinkParentId;
+        }
       }
       if (parentId) {
         const fieldIds = this._getFieldIds(fields);
@@ -674,7 +688,7 @@ export default class APIImpl implements LXPAPI {
     }
   }
 
-  getEpicLinkFieldForServer(fields: JiraIssueField[]): JiraIssueField {
+  getEpicLinkField(fields: JiraIssueField[]): JiraIssueField {
     let epicField = null;
     for (const field of fields) {
       if (field.name === Constants.EPIC_LINK_FLD || field.schema?.custom === Constants.EPIC_LINK_SCHEMA) {
@@ -684,7 +698,7 @@ export default class APIImpl implements LXPAPI {
     return epicField;
   }
 
-  getParentLinkFieldForServer(fields: JiraIssueField[]): JiraIssueField {
+  getParentLinkField(fields: JiraIssueField[]): JiraIssueField {
     let parentField = null;
     for (const field of fields) {
       if (field.name === Constants.PARENT_LINK_FLD || field.schema?.custom === Constants.PARENT_LINK_SCHEMA) {
@@ -700,16 +714,13 @@ export default class APIImpl implements LXPAPI {
       const fieldIds = this._getFieldIds(fields);
       let epicLinkField = null;
       let parentLinkField = null;
-      if (!this.api.isJiraCloud()) {
-        const fields = this.jiraIssueFields;
-        epicLinkField = this.getEpicLinkFieldForServer(fields);
-        parentLinkField = this.getParentLinkFieldForServer(fields);
-        if(epicLinkField){
-          fieldIds.push(epicLinkField.id);
-        }
-        if(parentLinkField){
-          fieldIds.push(parentLinkField.id);
-        }
+      epicLinkField = this.getEpicLinkField(this.jiraIssueFields);
+      parentLinkField = this.getParentLinkField(this.jiraIssueFields);
+      if(epicLinkField){
+        fieldIds.push(epicLinkField.id);
+      }
+      if(parentLinkField){
+        fieldIds.push(parentLinkField.id);
       }
       const query = "?fields=" + fieldIds.join(",");
       const issue: JiraIssueFull = await this.api.getIssueById(issueId, query);
@@ -776,17 +787,15 @@ export default class APIImpl implements LXPAPI {
       const fieldIds = this._getFieldIds(fields);
       let epicLinkField = null;
       let parentLinkField = null;
-      if (!this.api.isJiraCloud()) {
-        const fields = this.jiraIssueFields;
-        epicLinkField = await this.getEpicLinkFieldForServer(fields);
-        parentLinkField = await this.getParentLinkFieldForServer(fields);
-        if(epicLinkField){
-          fieldIds.push(epicLinkField.id);
-        }
-        if(parentLinkField){
-          fieldIds.push(parentLinkField.id);
-        }
+      epicLinkField = await this.getEpicLinkField(this.jiraIssueFields);
+      parentLinkField = await this.getParentLinkField(this.jiraIssueFields);
+      if(epicLinkField){
+        fieldIds.push(epicLinkField.id);
       }
+      if(parentLinkField){
+        fieldIds.push(parentLinkField.id);
+      }
+      
       const issuesSearchResult: JiraIssueSearchResult =
         await this.api.searchAllIssues(jql, fieldIds, start, max);
       const result: Issue[] = [];
