@@ -4,9 +4,11 @@ import IssueLinksHierarchy from "./IssueLinksHierarchy";
 import APIImpl from "./impl/Cloud";
 import JiraCloudImpl from "./impl/jira/Cloud";
 import { APIContext } from "./context/api";
+import JiraErrorContainer from "./components/common/JiraErrorContainer";
+// @ts-expect-error
+const isInsideJira = AP.request !== undefined;
 
 const render = async (): Promise<void> => {
-
   const jiraCloud = new JiraCloudImpl();
   const api = new APIImpl(jiraCloud);
   await api.init();
@@ -15,9 +17,13 @@ const render = async (): Promise<void> => {
   const App = document.getElementById("app");
 
   ReactDOM.render(
-    <APIContext.Provider value={api}>
-      <IssueLinksHierarchy />
-    </APIContext.Provider>,
+    isInsideJira ? (
+      <APIContext.Provider value={api}>
+        <IssueLinksHierarchy />
+      </APIContext.Provider>
+    ) : (
+      <JiraErrorContainer />
+    ),
     App
   );
 };
