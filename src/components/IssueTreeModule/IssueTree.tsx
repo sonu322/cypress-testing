@@ -6,11 +6,9 @@ import { ID, IssueField, IssueTreeFilter } from "../../types/api";
 import { AtlasTree, TreeNodeType } from "../../types/app";
 import { useTranslation } from "react-i18next";
 import Tree from "@atlaskit/tree";
-import { token } from "@atlaskit/tokens";
 
 const Container = styled.div`
   display: flex;
-  background-color: ${token("elevation.surface.sunken")};
 `;
 
 export interface Props {

@@ -44,6 +44,10 @@ export const IssueCell = ({ selectedSettingsDropdownIds, issueCards }) => {
   if (issueCards.length > 3 && !isExpanded) {
     issueCardsToShow = issueCards.slice(0, 3);
   }
+  let icon = <ChevronUpIcon size="medium" label="Collapse" />;
+  if(!isExpanded){
+    icon = <ChevronDownIcon size="medium" label="Expand" />;
+  }
 
   return (
     <div>
@@ -51,21 +55,9 @@ export const IssueCell = ({ selectedSettingsDropdownIds, issueCards }) => {
       {issueCards.length > 3 && (
         <ButtonContainer>
           <div style={{ alignSelf: "flex-end" }}>
-            <ExpandButton onClick={handleClick}>
-              {isExpanded ? (
-                <Button
-                  iconAfter={<ChevronUpIcon size="medium" label="Collapse" />}
-                >
-                  Less
-                </Button>
-              ) : (
-                <Button
-                  iconAfter={<ChevronDownIcon size="medium" label="Expand" />}
-                >
-                  More
-                </Button>
-              )}
-            </ExpandButton>
+            <Button onClick={handleClick} iconAfter={icon}>
+              {isExpanded ? "Less" : "More"}
+            </Button>
           </div>
         </ButtonContainer>
       )}
