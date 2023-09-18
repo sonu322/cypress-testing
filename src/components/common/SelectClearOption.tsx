@@ -17,7 +17,7 @@ export const SelectClearOption = ({
         borderTop: "1px solid #eee",
         display: "flex",
         justifyContent: "space-between",
-        backgroundColor: token("elevation.surface.overlay"),
+        backgroundColor: token("elevation.surface.overlay", "#f9f9f9"),
       }}
     >
       <Button appearance="subtle-link" onClick={onSelectAll}>

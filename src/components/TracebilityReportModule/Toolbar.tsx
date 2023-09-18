@@ -24,12 +24,13 @@ import { viewTabs } from "../../constants/traceabilityReport";
 import { SettingsDropdownTrigger } from "../common/SettingsDropdownTrigger";
 import { token } from "@atlaskit/tokens";
 import { LinkIssueButton } from "../common/LinkIssueButton";
+import { colors } from "@atlaskit/theme";
 const MainBar = styled.div`
   padding: 8px;
   border-radius: 3px;
   display: flex;
   justify-content: space-between;
-  border-bottom: 2px solid ${token("color.border")};
+  border-bottom: 2px solid ${token("color.border", colors.N30)};
   flex-wrap: wrap;
   gap: 8px;
   overflow-x: auto;

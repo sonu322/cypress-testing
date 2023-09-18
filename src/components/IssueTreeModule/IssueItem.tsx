@@ -14,6 +14,7 @@ import {
   TreeNodeType,
 } from "../../types/app";
 import { token } from "@atlaskit/tokens";
+import { colors } from "@atlaskit/theme";
 const PADDING_LEVEL = 30;
 const LinkTypeContainer = styled.div`
   display: flex;
@@ -22,8 +23,8 @@ const LinkTypeContainer = styled.div`
   border: none;
   border-radius: 3px;
   box-sizing: border-box;
-  background-color: ${token("elevation.surface.raised")};
-  fill: ${token("elevation.surface.raised")};
+  background-color: ${token("elevation.surface.raised", colors.N30)};
+  fill: ${token("elevation.surface.raised", colors.N30)};
   padding-left: 6px;
   padding-right: 6px;
   font-weight: 500;

@@ -11,11 +11,15 @@ import { Issue, IssueWithLinkedIssues } from "../../../types/api";
 import { StatusText } from "./StatusInfo";
 import { FixVersion } from "./FixVersion";
 import { token } from "@atlaskit/tokens";
+import { colors } from "@atlaskit/theme";
 
 const Container = styled.div`
-  background-color: ${token("elevation.surface.raised")};
-  color: ${token("color.text")};
-  box-shadow: ${token("elevation.shadow.raised")};
+  background-color: ${token("elevation.surface.raised", "#fff")};
+  color: ${token("color.text", colors.N800)};
+  box-shadow: ${token(
+    "elevation.shadow.raised",
+    "rgba(23, 43, 77, 0.2) 0px 1px 1px 0px, rgba(23, 43, 77, 0.2) 0px 0px 1px 0px"
+  )};
   border-radius: 4px;
   padding-top: 1px;
   padding-left: 5px;
@@ -26,7 +30,7 @@ const Container = styled.div`
   min-width: 162px;
   width: 100%;
   max-width: 500px;
-  border: 1px solid ${token("color.border")};
+  border: 1px solid ${token("color.border", "#dfe1e6")};
   border-spacing: 10px 0px;
   box-sizing: border-box;
 
