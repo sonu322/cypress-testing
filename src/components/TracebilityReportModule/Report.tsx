@@ -12,22 +12,23 @@ import TracebilityReportUtils from "../../util/tracebilityReportsUtils";
 import { APIContext } from "../../context/api";
 import { autoHideEmptyColumnsId } from "../../constants/traceabilityReport";
 import { token } from "@atlaskit/tokens";
+import { colors } from "@atlaskit/theme";
 const Container = styled.div`
   background-color: ${token("elevation.surface.sunken")};
   width: 100%;
   // height: 100%;
   overflow: scroll;
-  border: 1px solid ${token("color.border")};
+  border: 1px solid ${token("color.border", colors.N40)};
   border-radius: 10px;
 `;
 const BorderTr = styled.tr`
-  border-bottom: 1px solid ${token("color.border")};
+  border-bottom: 1px solid ${token("color.border", colors.N40)};
   &:hover {
-    background-color: ${token("elevation.surface.raised.hovered")};
+    background-color: ${token("elevation.surface.raised.hovered", "#091e420a")};
   }
 `;
 const Table = styled.table`
-  border: 1px solid ${token("color.border")};
+  border: 1px solid ${token("color.border", colors.N40)};
   border-collapse: collapse;
 `;
 

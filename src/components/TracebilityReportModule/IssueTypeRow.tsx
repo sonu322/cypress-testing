@@ -11,12 +11,13 @@ import { IssueCard } from "../common/issueCard/IssueCard";
 import { EmptyCell } from "./EmptyCell";
 import { IssueCell } from "./IssueCell";
 import { token } from "@atlaskit/tokens";
+import { colors } from "@atlaskit/theme";
 export const Td = styled.td`
-  border: 1px solid ${token("color.border")};
+  border: 1px solid ${token("color.border", colors.N40)};
   padding: 8px !important;
 `;
 export const IssueTd = styled(Td)`
-  background-color: ${token("elevation.surface.sunken")};
+  background-color: ${token("elevation.surface.sunken", "#f8f8ff")};
   position: sticky;
   position: -webkit-sticky;
   left: 30px;
@@ -26,7 +27,7 @@ export const SNoTd = styled(Td)`
   position: sticky;
   position: -webkit-sticky;
   left: 0;
-  background-color: ${token("elevation.surface.sunken")};
+  background-color: ${token("elevation.surface.sunken", "#fffff9")};
   z-index: 2;
 `;
 export const MaxWidthContainer = styled.div`
