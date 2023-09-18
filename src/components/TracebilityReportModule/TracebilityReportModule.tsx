@@ -55,7 +55,7 @@ const GrowContainer = styled.div`
   display: flex;
 `;
 const TitleStyle = styled.div`
-  color: ${token("color.text")};
+  color: ${token("color.text", "#000000")};
 `;
 interface Props {
   showCustomJQLEditor?: any;

@@ -3,12 +3,13 @@ import { TooltipContainer } from "../TooltipContainer";
 import styled, { css } from "styled-components";
 import { APIContext } from "../../../context/api";
 import { token } from "@atlaskit/tokens";
+import { colors } from "@atlaskit/theme";
 
 const StyledIssueKey = styled.a<any>`
   text-overflow: ellipsis;
   font-size: 12px;
   font-weight: 600;
-  color: ${token("color.text.brand")};
+  color: ${token("color.text.brand", colors.B400)};
   text-decoration: none;
   cursor: pointer;
   white-space: nowrap;

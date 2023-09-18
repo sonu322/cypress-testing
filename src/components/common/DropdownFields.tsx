@@ -15,7 +15,7 @@ const FilterContainer = styled.sup`
   padding-left: 4px;
   vertical-align: top;
   font-size: 16px;
-  color: ${token("color.text.accent.red")};
+  color: ${token("color.text.accent.red", "#e1422c")};
 `;
 
 interface Props {
