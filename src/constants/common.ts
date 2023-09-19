@@ -17,3 +17,5 @@ export const emptyTreeFilter: IssueTreeFilter = {
 };
 
 export const EXPAND_ALL_LEVEL = 3;
+
+export const NOT_SET = "NOT_SET";

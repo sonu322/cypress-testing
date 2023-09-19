@@ -55,7 +55,7 @@ const GrowContainer = styled.div`
   display: flex;
 `;
 const TitleStyle = styled.div`
-  color: ${token("color.text")};
+  color: ${token("color.text", "#000000")};
 `;
 interface Props {
   showCustomJQLEditor?: any;
@@ -245,8 +245,8 @@ export const TracebilityReportModule = ({
         setLinkTypes(linkTypes);
         if (!isFromDashboardGadget) {
           if (
-            lastSavedReportConfig?.selectedIssueTypeIds !== undefined &&
-            lastSavedReportConfig?.selectedIssueTypeIds !== null
+            lastSavedReportConfig?.selectedIssueFieldIds !== undefined &&
+            lastSavedReportConfig?.selectedIssueFieldIds !== null
           ) {
             setSelectedIssueFieldIds(
               lastSavedReportConfig.selectedIssueFieldIds
@@ -257,8 +257,8 @@ export const TracebilityReportModule = ({
           }
 
           if (
-            lastSavedReportConfig.selectedIssueTypeIds !== undefined &&
-            lastSavedReportConfig.selectedIssueTypeIds !== null
+            lastSavedReportConfig?.selectedIssueTypeIds !== undefined &&
+            lastSavedReportConfig?.selectedIssueTypeIds !== null
           ) {
             setSelectedIssueTypeIds(lastSavedReportConfig.selectedIssueTypeIds);
           } else {
@@ -480,41 +480,47 @@ export const TracebilityReportModule = ({
       >
         {api.isJiraCloud() && <TitleStyle>{title}</TitleStyle>}
       </PageHeader>
-      {allErrors.length > 0 && <ErrorsList errors={errors} />}
-      <GrowContainer>
-        <Main
-          selectedLimitOptionId={selectedLimitOptionId}
-          setSelectedLimitOptionId={setSelectedLimitOptionId}
-          totalNumberOfIssues={totalNumberOfIssues}
-          updateTotalNumberOfIssues={updateTotalNumberOfIssues}
-          selectedJqlString={selectedJQLString}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          DEFAULT_ROWS_PER_PAGE={DEFAULT_ROWS_PER_PAGE}
-          handleNewError={handleNewError}
-          clearAllErrors={clearAllErrors}
-          issueFields={issueFields}
-          selectedIssueFieldIds={selectedIssueFieldIds}
-          selectedSettingsDropdownIds={selectedSettingsDropdownIds}
-          tableFields={tableFields}
-          selectedTableFieldIds={emptyEqualsAllTableIds}
-          filteredIssues={filteredIssues}
-          setFilteredIssues={setFilteredIssues}
-          areIssuesLoading={areIssuesLoading}
-          setAreIssuesLoading={setAreIssuesLoading}
-          selectedViewTab={viewTabs.tabs[selectedTabIndex].id}
-          errors={errors}
-          issueTreeFilter={treeFilterContext.filter}
-          isOrphansBranchPresent={isOrphansBranchPresent}
-          isToggleOrphansLoading={isToggleOrphansLoading}
-          updateIsToggleOrphansLoading={(isToggleOrphansLoading: boolean) => {
-            setIsToggleOrphansLoading(isToggleOrphansLoading);
-          }}
-          tree={tree}
-          setTree={setTree}
-          isFromDashboardGadget={isFromDashboardGadget}
-        />
-      </GrowContainer>
+      {allErrors.length > 0 && <ErrorsList errors={allErrors} />}
+      {(!isTreeReport || (isTreeReport && areTreeNecessitiesPresent)) && (
+        <>
+          <GrowContainer>
+            <Main
+              selectedLimitOptionId={selectedLimitOptionId}
+              setSelectedLimitOptionId={setSelectedLimitOptionId}
+              totalNumberOfIssues={totalNumberOfIssues}
+              updateTotalNumberOfIssues={updateTotalNumberOfIssues}
+              selectedJqlString={selectedJQLString}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              DEFAULT_ROWS_PER_PAGE={DEFAULT_ROWS_PER_PAGE}
+              handleNewError={handleNewError}
+              clearAllErrors={clearAllErrors}
+              issueFields={issueFields}
+              selectedIssueFieldIds={selectedIssueFieldIds}
+              selectedSettingsDropdownIds={selectedSettingsDropdownIds}
+              tableFields={tableFields}
+              selectedTableFieldIds={emptyEqualsAllTableIds}
+              filteredIssues={filteredIssues}
+              setFilteredIssues={setFilteredIssues}
+              areIssuesLoading={areIssuesLoading}
+              setAreIssuesLoading={setAreIssuesLoading}
+              selectedViewTab={viewTabs.tabs[selectedTabIndex].id}
+              errors={errors}
+              issueTreeFilter={treeFilterContext.filter}
+              isOrphansBranchPresent={isOrphansBranchPresent}
+              isToggleOrphansLoading={isToggleOrphansLoading}
+              updateIsToggleOrphansLoading={(
+                isToggleOrphansLoading: boolean
+              ) => {
+                setIsToggleOrphansLoading(isToggleOrphansLoading);
+              }}
+              tree={tree}
+              setTree={setTree}
+              isFromDashboardGadget={isFromDashboardGadget}
+            />
+          </GrowContainer>
+        </>
+      )}
     </FullWidthContainer>
   );
 };
