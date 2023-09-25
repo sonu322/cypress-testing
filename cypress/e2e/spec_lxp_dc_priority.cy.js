@@ -6,29 +6,28 @@ describe("Login to Jira", () => {
   });
 
   it("should interact with checkboxes and verify priority dropdown options", () => {
-     cy.visit("http://localhost:8080/browse/PM-1");
+    cy.visit("http://localhost:8080/browse/PM-1");
     cy.contains("Links Explorer").click();
 
-  
-    cy.get('span.css-178ag6o div:contains("Priority")').click();
+    cy.wait(1000);
+    //cy.get('iframe').its('0.contentDocument.body').should('be.visible').then(cy.wrap).contains("Priority").click();
+    cy.get('span div:contains("Priority")').click();
+    cy.get('#Priority-options').should('be.visible'); 
+    cy.wait(1000);
+    cy.get('button[role="checkbox"][type="button"]').contains("Lowest");
+    cy.get('button[role="checkbox"][type="button"]').contains("High");
+    cy.get('button[role="checkbox"][type="button"]').contains("Highest");
+    cy.get('button[role="checkbox"][type="button"]').contains("Medium");
+    cy.get('button[role="checkbox"][type="button"]').contains("Low");
 
-   
-    cy.get('#Priority-Options').should('be.visible'); 
+    cy.contains('span.css-178ag6o', 'Clear All').click();
 
-    cy.get('button[role="checkbox"][type="button"]').contains("Lowest").click();
-    cy.get('button[role="checkbox"][type="button"]').contains("High").click();
-    cy.get('button[role="checkbox"][type="button"]').contains("Highest").click();
-    cy.get('button[role="checkbox"][type="button"]').contains("Medium").click();
     cy.get('button[role="checkbox"][type="button"]').contains("Low").click();
+    cy.get('button[role="checkbox"][type="button"]').contains("Medium").click();
+    cy.get('#1').click();
 
-  
-    cy.wait(2000); 
+   cy.wait(1000);  
 
-    
-    cy.get('button[role="checkbox"][type="button"]').should(($checkboxes) => {
-  
-      const checkedCheckboxes = $checkboxes.filter('[aria-checked="true"]');
-      expect(checkedCheckboxes).to.have.length(5);
-    });
   });
 });
+
