@@ -5,7 +5,7 @@ describe("Login to Jira", () => {
     cy.wait(2000);
   });
 
-  it("should interact with checkboxes and verify priority dropdown options", () => {
+  it("should interact with checkboxes and verify issue link type dropdown options", () => {
     cy.visit("http://localhost:8080/browse/PM-1");
     cy.contains("Links Explorer").click();
 
