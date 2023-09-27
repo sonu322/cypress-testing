@@ -14,3 +14,4 @@ assets/atlassian-connect.json
 .parcel-cache/
 .idea/
 node_modules
+cypress/config.ts
