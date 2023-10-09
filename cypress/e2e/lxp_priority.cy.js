@@ -27,6 +27,12 @@ describe('Jira login Test', () => {
     cy.get(selectors.priorityOptions).contains("Highest").click();
     cy.get(selectors.priorityOptions).contains("Not Set").click();
 
+    // Verify that the selected priorities are visible
+   cy.get(selectors.priorityOptions).should('contain', 'Lowest');
+   cy.get(selectors.priorityOptions).should('contain', 'Highest');
+   cy.get(selectors.priorityOptions).should('contain', 'Not Set');
+   cy.get(selectors.priorityOptions).should('exist');
+
     // Interaction with the search bar
     cy.get(selectors.searchInput).type('Medium');
     cy.get(selectors.searchInput).should('have.value', 'Medium');
