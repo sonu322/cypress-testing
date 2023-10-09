@@ -28,6 +28,12 @@ describe('Jira login Test', () => {
     cy.get(selectors.issueLinkTypeOptions).contains('Blocks').click();
     cy.wait(3000);
 
+    // Verify that the selected issue link types are visible and exist
+   cy.get(selectors.issueLinkTypeOptions).should('contain', 'Parent');
+   cy.get(selectors.issueLinkTypeOptions).should('contain', 'Clones');
+   cy.get(selectors.issueLinkTypeOptions).should('contain', 'Blocks');
+   cy.get(selectors.issueLinkTypeOptions).should('exist');
+
     // Interaction with the search bar
     const searchText = 'x'; // Replace with your search query
     cy.get(selectors.searchInput).type(searchText);
