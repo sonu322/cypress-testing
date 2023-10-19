@@ -146,7 +146,8 @@ export interface JiraProject {
   properties: JiraProjectProperties;
 }
 
-export interface JiraProjectProperties {}
+export interface JiraProjectProperties {};
+
 export interface JiraRoles {
   [roleName: string]: string;
 }
@@ -167,7 +168,7 @@ export interface JiraProjectLead {
 
 export interface JiraIssueField {
   id: string;
-  key?: string; //only available in Jira Cloud
+  key?: string; // only available in Jira Cloud
   name: string;
   custom: boolean;
   orderable: boolean;
@@ -272,6 +273,17 @@ interface SuggestionResult {
   displayName: string;
 }
 
+export interface LXPIssueLink {
+  sourceId: number;
+  linkTypeId: number;
+  isInward: boolean;
+  inwardLink: string;
+  outwardLink: string;
+  name: string;
+  id: number;
+  destinationId: number;
+}
+
 export interface JiraAPI {
   linkIssueType(
     inwardIssueKey: string,
@@ -351,4 +363,6 @@ export interface JiraAPI {
     dashboardItemId: string,
     title: string
   ) => Promise<void>;
+
+  getLXPIssueLinks: (issueId: string) => Promise<LXPIssueLink[]>;
 }

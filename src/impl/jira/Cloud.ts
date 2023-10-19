@@ -12,6 +12,7 @@ import {
   JiraProject,
   HelpLinks,
   JiraAutoCompleteResult,
+  LXPIssueLink,
 } from "../../types/jira";
 
 import { getQueryParam } from "../../util/index";
@@ -293,5 +294,9 @@ export default class JiraCloudImpl implements JiraAPI {
 
   resizeWindow(width: string | number, height: string | number): void {
     this._AP.resize(width, height);
+  }
+
+  async getLXPIssueLinks(issueId: string): Promise<LXPIssueLink[]> {
+    throw Error("Method not implemented.");
   }
 }
