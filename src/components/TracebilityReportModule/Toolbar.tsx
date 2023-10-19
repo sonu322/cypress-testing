@@ -115,7 +115,7 @@ export const Toolbar = ({
             updateSelectedFilterId={updateSelectedJQLString}
             showCustomJQLEditor={showCustomJQLEditor}
           />
-          <LinkIssueButton autoRefresh={handleRefresh} />
+          {/* <LinkIssueButton autoRefresh={handleRefresh} /> */}
           <RefreshButton refresh={handleRefresh} />
         </FlexContainer>
 
