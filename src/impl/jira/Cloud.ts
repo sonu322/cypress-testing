@@ -12,7 +12,10 @@ import {
   JiraProject,
   HelpLinks,
   JiraAutoCompleteResult,
+<<<<<<< HEAD
   LXPIssueLink,
+=======
+>>>>>>> origin/develop
 } from "../../types/jira";
 
 import { getQueryParam } from "../../util/index";

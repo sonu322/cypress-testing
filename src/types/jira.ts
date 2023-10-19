@@ -146,8 +146,12 @@ export interface JiraProject {
   properties: JiraProjectProperties;
 }
 
+<<<<<<< HEAD
 export interface JiraProjectProperties {};
 
+=======
+export interface JiraProjectProperties {}
+>>>>>>> origin/develop
 export interface JiraRoles {
   [roleName: string]: string;
 }
@@ -273,6 +277,7 @@ interface SuggestionResult {
   displayName: string;
 }
 
+<<<<<<< HEAD
 export interface LXPIssueLink {
   sourceId: number;
   linkTypeId: number;
@@ -284,6 +289,8 @@ export interface LXPIssueLink {
   destinationId: number;
 }
 
+=======
+>>>>>>> origin/develop
 export interface JiraAPI {
   linkIssueType(
     inwardIssueKey: string,
