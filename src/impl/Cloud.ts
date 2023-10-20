@@ -39,6 +39,7 @@ import {
   HelpLinks,
   JiraAutoCompleteResult,
   JiraAutoCompleteSuggestionsResult,
+  LXPIssueLink,
 } from "../types/jira";
 
 import { removeDuplicates } from "../util/common";
@@ -599,11 +600,12 @@ export default class APIImpl implements LXPAPI {
     return null;
   }
 
-  private _convertLinks(
+  private async _convertLinks(
+    issueId: string,
     issueLinks: JiraIssueLink[],
     subTasks: JiraIssue[],
     parent: JiraIssue
-  ): IssueLink[] {
+  ): Promise<IssueLink[]> {
     const result: IssueLink[] = [];
 
     if (parent) {
@@ -614,6 +616,7 @@ export default class APIImpl implements LXPAPI {
         issueId: parent.id,
       });
     }
+
     for (const subTask of subTasks) {
       result.push({
         linkTypeId: CustomLinkType.SUBTASKS,
@@ -623,22 +626,43 @@ export default class APIImpl implements LXPAPI {
       });
     }
 
-    for (const issueLink of issueLinks) {
-      const isInward = issueLink.inwardIssue ? true : false;
-      let id;
-      if (isInward) {
-        id = `${issueLink.type.id}-${issueLink.type.inward}`;
-      } else {
-        id = `${issueLink.type.id}-${issueLink.type.outward}`;
+    if(issueLinks !== undefined){
+      for (const issueLink of issueLinks) {
+        const isInward = issueLink.inwardIssue ? true : false;
+        let id;
+        if (isInward) {
+          id = `${issueLink.type.id}-${issueLink.type.inward}`;
+        } else {
+          id = `${issueLink.type.id}-${issueLink.type.outward}`;
+        }
+        result.push({
+          // item.id-item.outward
+          linkTypeId: id,
+          name: isInward ? issueLink.type.inward : issueLink.type.outward,
+          isInward,
+          issueId: (issueLink.inwardIssue || issueLink.outwardIssue)?.id || "",
+        });
       }
-      result.push({
-        // item.id-item.outward
-        linkTypeId: id,
-        name: isInward ? issueLink.type.inward : issueLink.type.outward,
-        isInward,
-        issueId: (issueLink.inwardIssue || issueLink.outwardIssue)?.id || "",
-      });
+    } else if(!this.isJiraCloud()){
+      const lxplinks: LXPIssueLink[] = await this.api.getLXPIssueLinks(issueId);
+      let id, name;
+      for(const link of lxplinks){
+        if (link.isInward) {
+          id = `${link.linkTypeId}-${link.inwardLink}`;
+        } else {
+          id = `${link.linkTypeId}-${link.outwardLink}`;
+        }
+        name = link.isInward ? link.inwardLink : link.outwardLink;
+        
+        result.push({
+          linkTypeId: id,
+          name,
+          isInward: link.isInward,
+          issueId: (link.isInward ? `${link.sourceId}` : `${link.destinationId}`)
+        });
+      }
     }
+    
     return result;
   }
 
@@ -734,8 +758,9 @@ export default class APIImpl implements LXPAPI {
       priority: this._convertPriority(issue.fields?.priority),
       type: this._convertIssueType(issue.fields?.issuetype),
       status: this._convertIssueStatus(issue.fields?.status),
-      links: this._convertLinks(
-        issue.fields?.issuelinks || [],
+      links: await this._convertLinks(
+        issue.id,
+        issue.fields?.issuelinks,
         issue.fields?.subtasks || [],
         parent
       ),

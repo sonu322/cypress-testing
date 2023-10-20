@@ -12,6 +12,7 @@ import {
   JiraMyself,
   JiraAutoCompleteResult,
   JiraAutoCompleteSuggestionsResult,
+  LXPIssueLink,
 } from "../../types/jira";
 
 export default class JiraServerImpl implements JiraAPI {
@@ -109,6 +110,12 @@ export default class JiraServerImpl implements JiraAPI {
   async getIssueById(issueId: string, query: string): Promise<JiraIssueFull> {
     return await this._AJS.$.getJSON(
       this.contextPath + `/rest/api/2/issue/${issueId}${query}`
+    );
+  }
+
+  async getLXPIssueLinks(issueId: string): Promise<LXPIssueLink[]> {
+    return await this._AJS.$.getJSON(
+      this.contextPath + `/rest/lxp/latest/issuelinks/${issueId}`
     );
   }
 
