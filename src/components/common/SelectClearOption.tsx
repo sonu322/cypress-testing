@@ -20,10 +20,10 @@ export const SelectClearOption = ({
         backgroundColor: token("elevation.surface.overlay", "#f9f9f9"),
       }}
     >
-      <Button appearance="subtle-link" onClick={onSelectAll}>
+      <Button className="selectall-btn" appearance="subtle-link" onClick={onSelectAll}>
         Select All
       </Button>
-      <Button appearance="subtle-link" onClick={onClearAll}>
+      <Button className="clear-btn" appearance="subtle-link" onClick={onClearAll}>
         Clear All
       </Button>
     </div>

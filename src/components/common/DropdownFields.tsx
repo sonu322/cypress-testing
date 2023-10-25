@@ -19,8 +19,9 @@ const FilterContainer = styled.sup`
 `;
 
 interface Props {
+  id?: string;
   selectedOptions: string[];
-  dropdownName: any;
+  dropdownName: string;
   dropdownNamePlacement?: string;
   updateSelectedOptions: React.Dispatch<React.SetStateAction<string[]>>;
   options: Array<{
@@ -34,6 +35,7 @@ interface Props {
 }
 
 export const DropdownFields = ({
+  id,
   selectedOptions,
   dropdownName,
   dropdownNamePlacement,
@@ -100,7 +102,7 @@ export const DropdownFields = ({
   };
 
   return (
-    <div style={{ position: "relative" }}>
+    <div id={id} style={{ position: "relative" }}>
       <DropdownMenu
         trigger={
           <div>
@@ -113,32 +115,34 @@ export const DropdownFields = ({
         }
         placement={dropdownNamePlacement ?? "bottom-start"}
       >
-        <div style={{ position: "sticky", top: 0, zIndex: 1 }}>
-          <SearchOption
-            placeholder="Search"
-            onSearch={handleSearch}
-            searchTerm={searchTerm}
-          />
-        </div>
-        <DropdownItemCheckboxGroup id={dropdownName + "-options"}>
-          {filteredOptions?.map((option) => (
-            <DropdownItemCheckbox
-              key={option.id}
-              id={option.id}
-              isSelected={selectedOptions.includes(option.id)}
-              onClick={() => handleOptionClick(option.id)}
-            >
-              <TooltipContainer content={option.description}>
-                {renderOptionWithIcon(option)}
-              </TooltipContainer>
-            </DropdownItemCheckbox>
-          ))}
-        </DropdownItemCheckboxGroup>
-        <div style={{ position: "sticky", bottom: 0, zIndex: 1 }}>
-          <SelectClearOption
-            onSelectAll={handleSelectAll}
-            onClearAll={handleClearAll}
-          />
+        <div id={id + "-container"}>
+          <div style={{ position: "sticky", top: 0, zIndex: 1 }}>
+            <SearchOption
+              placeholder="Search"
+              onSearch={handleSearch}
+              searchTerm={searchTerm}
+            />
+          </div>
+          <DropdownItemCheckboxGroup id={id + "-options"}>
+            {filteredOptions?.map((option) => (
+              <DropdownItemCheckbox
+                key={option.id}
+                id={id + "-" + option.name}
+                isSelected={selectedOptions.includes(option.id)}
+                onClick={() => handleOptionClick(option.id)}
+              >
+                <TooltipContainer content={option.description}>
+                  {renderOptionWithIcon(option)}
+                </TooltipContainer>
+              </DropdownItemCheckbox>
+            ))}
+          </DropdownItemCheckboxGroup>
+          <div className="dropdown-footer" style={{ position: "sticky", bottom: 0, zIndex: 1 }}>
+            <SelectClearOption
+              onSelectAll={handleSelectAll}
+              onClearAll={handleClearAll}
+            />
+          </div>
         </div>
       </DropdownMenu>
     </div>

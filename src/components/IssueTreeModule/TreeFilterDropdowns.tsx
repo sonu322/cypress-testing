@@ -44,6 +44,7 @@ export const TreeFilterDropdowns = ({
     <ButtonGroup>
       {filterDropdowns.map((fd) => (
         <IssueOptionsDropdown
+          id={fd.key + "-dropdown"}
           key={fd.key}
           keyName={fd.key}
           dropdownName={fd.label}

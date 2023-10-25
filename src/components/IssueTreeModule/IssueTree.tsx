@@ -118,7 +118,7 @@ export const IssueTree = ({
   };
   if (tree?.items !== undefined) {
     return (
-      <Container>
+      <Container className="lxp-tree">
         <Tree
           tree={tree}
           renderItem={({ ...props }) => {

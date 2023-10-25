@@ -30,7 +30,7 @@ export const IssueKey = ({ issueKey, isResolved }: Props): JSX.Element => {
   const issueUrl = `${api.getJiraBaseURL()}/browse/${issueKey}`;
   return (
     <TooltipContainer content={issueKey}>
-      <StyledIssueKey target="_blank" href={issueUrl} isResolved={isResolved}>
+      <StyledIssueKey className="item-key" target="_blank" href={issueUrl} isResolved={isResolved}>
         {issueKey}
       </StyledIssueKey>
     </TooltipContainer>

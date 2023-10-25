@@ -2,6 +2,7 @@ import React from "react";
 import { DropdownFields } from "../common/DropdownFields";
 import { Icon } from "../common/Icon";
 export const IssueOptionsDropdown = ({
+  id,
   keyName,
   dropdownName,
   options,
@@ -24,6 +25,7 @@ export const IssueOptionsDropdown = ({
 
   return (
     <DropdownFields
+      id={id}
       useTitleCaseOptions
       key={keyName}
       dropdownName={dropdownName}

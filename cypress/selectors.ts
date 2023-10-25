@@ -1,9 +1,17 @@
 export default {
-  emailFieldName: "username",
-  passwordFieldName: "password",
-  loginDialog: "section[role=main] ",
-  loginSubmit: "#login-submit ",
-  lxpTabId: "button[data-testid='issue-activity-feed.ui.buttons.lxp-issue-tabcom.otpl.jira.plugins.lxp'] ",
+  emailFieldName: "os_username",
+  passwordFieldName: "os_password",
+  loginDialog: "#login-form ",
+  loginSubmit: "#login-form-submit ",
+  lxpTabId: "a#link-issue-tab-panel ",
   yourWorkContainer: "[data-test-id='global-pages.home.ui.home'] ",
-
+  lxpContainerRoot: "#lxp-container-root ",
+  lxpTreeContainer: ".lxp-tree ",
+  lxpTreeItem: ".lxp-tree-item ",
+  priorityDropdown: "#priorities-dropdown ",
+  linkTypeDropdown: "#linkTypes-dropdown ",
+  issueTypeDropdown: "#issueTypes-dropdown ",
+  clearAllClassName: ".clear-btn",
+  selectAllClassName: ".selectall-btn",
+  issueKeyClassName: ".item-key"
 };

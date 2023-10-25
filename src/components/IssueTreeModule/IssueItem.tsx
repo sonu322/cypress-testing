@@ -80,6 +80,8 @@ export const IssueItem = ({
   const treeUtils = new TreeUtils(api);
   return (
     <Container
+      className="lxp-tree-item"
+      data-item-level={depth}
       marginLeft={marginLeft}
       innerRef={provided.innerRef}
       {...provided.dragHandleProps}
