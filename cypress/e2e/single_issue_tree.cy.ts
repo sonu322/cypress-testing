@@ -14,7 +14,7 @@ describe("template spec", () => {
   // });
 
   it("Test Case", () => {
-    let tc = testcases[0]; // Change the index number to run the specific test case
+    const tc = testcases[0]; // Change the index number to run the specific test case
     cy.openJiraIssue(tcConfig.mainIssueId);
     selectFilter(tc.filter);
     cy.wait(5000);
