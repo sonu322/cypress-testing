@@ -35,11 +35,13 @@ export const selectFilter = (filter: Filter, prefix?: string): void => {
   } else {
     selectAllDropdownValues(s.priorityDropdown, prefix);
   }
+  cy.wait(1000);
   if(filter.issueType !== undefined){
     selectDropdownValues(s.issueTypeDropdown, filter.issueType, prefix);
   } else {
     selectAllDropdownValues(s.issueTypeDropdown, prefix);
   }
+  cy.wait(1000);
   if(filter.linkType !== undefined){
     selectDropdownValues(s.linkTypeDropdown, filter.linkType, prefix);
   } else {

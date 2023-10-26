@@ -1,9 +1,11 @@
-import { TreeTestCase } from "../types";
+import {
+  TreeTestCase
+} from "../types";
 
-export const testcases: TreeTestCase[] = [
+export const testcases: TreeTestCase[] = [ // change these test cases
   {
     filter: {
-      priority: ["Medium"]
+      priority: ["Medium", "High"]
     },
     expected: {
       "roots": [{
@@ -54,6 +56,29 @@ export const testcases: TreeTestCase[] = [
             "children": []
           }, {
             "name": "P3-2",
+            "children": []
+          }]
+        }]
+      }]
+    }
+  },
+  {
+    filter: {
+      priority: ["High"]
+    },
+    expected: {
+      "roots": [{
+        "name": "P3-1",
+        "children": [{
+          "name": "clones",
+          "children": [{
+            "name": "PROJ-31",
+            "children": []
+          }]
+        }, {
+          "name": "Custom Outward Link",
+          "children": [{
+            "name": "PROJ-31",
             "children": []
           }]
         }]
