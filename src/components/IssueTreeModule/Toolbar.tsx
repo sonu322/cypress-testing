@@ -81,6 +81,7 @@ export const Toolbar: React.FC<Props> = ({
       )}
       <ButtonGroup>
         <DropdownFields
+          id="issue-card-fields-dropdown"
           dropdownName={t("otpl.lxp.toolbar.issue-card-fields")}
           options={issueCardOptions}
           selectedOptions={selectedIssueFieldIds}

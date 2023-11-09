@@ -58,6 +58,7 @@ export const TreeFilterDropdowns = ({
         <>
           <TooltipContainer content={t("otpl.lxp.toolbar.expand-all.title")}>
             <LoadingButton
+              id="expand-all-btn"
               appearance="default"
               iconBefore={<ExpandIcon label={""} />}
               onClick={expandAll}
@@ -67,6 +68,7 @@ export const TreeFilterDropdowns = ({
           </TooltipContainer>
           <TooltipContainer content={t("otpl.lxp.toolbar.collapse-all.title")}>
             <Button
+              id="collapse-all-btn"
               appearance="default"
               iconBefore={<CollapseIcon label={""} />}
               onClick={collapseAll}

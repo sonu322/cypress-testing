@@ -18,6 +18,7 @@ export const ExportButton = ({
   return (
     <TooltipContainer content={description}>
       <Button
+        id="export-csv-btn"
         appearance="default"
         onClick={exportContent}
         isDisabled={isDisabled}

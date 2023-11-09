@@ -10,6 +10,7 @@ export const HelpLink = ({ href, description }: Props): JSX.Element => {
   return (
     <TooltipContainer content={description}>
       <Button
+        id="help-link-btn"
         appearance="default"
         target="_blank"
         href={href}

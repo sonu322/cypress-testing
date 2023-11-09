@@ -13,5 +13,10 @@ export default {
   issueTypeDropdown: "#issueTypes-dropdown ",
   clearAllClassName: ".clear-btn",
   selectAllClassName: ".selectall-btn",
-  issueKeyClassName: ".item-key"
+  issueKeyClassName: ".item-key",
+  issueCardFieldsDropdown: "#issue-card-fields-dropdown ",
+  expandAllButton: "#expand-all-btn ",
+  collapseAllButton: "#collapse-all-btn ",
+  exportCSVButton: "#export-csv-btn ",
+  helpLinkButton: "#help-link-btn ",
 };

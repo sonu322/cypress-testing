@@ -48,3 +48,11 @@ export const selectFilter = (filter: Filter, prefix?: string): void => {
     selectAllDropdownValues(s.linkTypeDropdown, prefix);
   }
 };
+
+export const selectIssueCardFields = (fields: string[], prefix?: string): void => {
+  if(fields !== undefined){
+    selectDropdownValues(s.issueCardFieldsDropdown, fields, prefix);
+  } else {
+    selectAllDropdownValues(s.issueCardFieldsDropdown, prefix);
+  }
+};
