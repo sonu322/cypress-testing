@@ -14,6 +14,7 @@ export interface Filter {
 }
 
 export interface TreeTestCase {
-  filter: Filter,
-  expected: Tree
+  issueId: string;
+  filter: Filter;
+  expected: Tree;
 }

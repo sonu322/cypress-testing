@@ -1,12 +1,11 @@
-import {
-  CustomLinkType
-} from "../../src/types/api";
+import { tcConfig } from "./config";
 import {
   TreeTestCase
 } from "../types";
 
-export const testcases: TreeTestCase[] = [ // change these test cases
+export const testcases: TreeTestCase[] = [
   {
+    issueId: tcConfig.firstIssueId,
     filter: {
       priority: ["Highest", "High", "On Hold"]
     },
@@ -45,6 +44,7 @@ export const testcases: TreeTestCase[] = [ // change these test cases
     }
   },
   {
+    issueId: tcConfig.firstIssueId,
     filter: {
       priority: ["High"]
     },
@@ -68,6 +68,7 @@ export const testcases: TreeTestCase[] = [ // change these test cases
     }
   },
   {
+    issueId: tcConfig.firstIssueId,
     filter: {
       priority: ["Not Set"]
     },
@@ -79,6 +80,7 @@ export const testcases: TreeTestCase[] = [ // change these test cases
     }
   },
   {
+    issueId: tcConfig.firstIssueId,
     filter: {
       linkType: ["Parent", "Causes", "Relates To"]
     },
@@ -111,6 +113,7 @@ export const testcases: TreeTestCase[] = [ // change these test cases
     }
   },
   {
+    issueId: tcConfig.firstIssueId,
     filter: {
       linkType: ["Is Duplicated By"]
     },
@@ -128,6 +131,7 @@ export const testcases: TreeTestCase[] = [ // change these test cases
     }
   },
   {
+    issueId: tcConfig.firstIssueId,
     filter: {
       issueType: ["Bug", "Task", "Story", "Observations"]
     },
@@ -169,6 +173,7 @@ export const testcases: TreeTestCase[] = [ // change these test cases
     }
   },
   {
+    issueId: tcConfig.firstIssueId,
     filter: {
       issueType: ["Sub-task"]
     },
@@ -195,6 +200,7 @@ export const testcases: TreeTestCase[] = [ // change these test cases
     }
   },
   {
+    issueId: tcConfig.firstIssueId,
     filter: {
       priority: ["Medium", "On Hold", "Low", "High"],
       linkType: ["Parent", "Subtasks", "is caused by", "duplicates", "Causes", "Relates To", "Blocks"],
@@ -232,6 +238,7 @@ export const testcases: TreeTestCase[] = [ // change these test cases
     }
   },
   {
+    issueId: tcConfig.firstIssueId,
     filter: {
       // priority: [],
       linkType: ["Parent", "Subtasks", "Child Issues"],
@@ -260,6 +267,7 @@ export const testcases: TreeTestCase[] = [ // change these test cases
     }
   },
   {
+    issueId: tcConfig.firstIssueId,
     filter: {
       priority: [],
       linkType: [],
