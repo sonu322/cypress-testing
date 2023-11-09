@@ -17,7 +17,7 @@ export const selectDropdownValues = (dropdownId: string, values: string[], prefi
   cy.get(prefix + dropdownId).click();
   cy.get(dropdownBodyId + s.clearAllClassName).click();
   values.forEach(value => {
-    cy.get(dropdownBodyId + dropdownId + "-" + value).click();
+    cy.get(dropdownBodyId + dropdownId + "-" + value.toLowerCase().split(" ").join("-")).click();
   });
 };
 
