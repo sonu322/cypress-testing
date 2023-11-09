@@ -101,6 +101,10 @@ export const DropdownFields = ({
     );
   };
 
+  const getOptionId = (name: string) => {
+    return name.toLowerCase().split(" ").join("-");
+  };
+
   return (
     <div id={id} style={{ position: "relative" }}>
       <DropdownMenu
@@ -127,7 +131,7 @@ export const DropdownFields = ({
             {filteredOptions?.map((option) => (
               <DropdownItemCheckbox
                 key={option.id}
-                id={id + "-" + option.name}
+                id={id + "-" + getOptionId(option.name)}
                 isSelected={selectedOptions.includes(option.id)}
                 onClick={() => handleOptionClick(option.id)}
               >
