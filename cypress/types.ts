@@ -11,6 +11,8 @@ export interface Filter {
   priority?: string[];
   linkType?: string[];
   issueType?: string[];
+  issueCardFields?: string[];
+  globalbutton?:string;
 }
 
 export interface TreeTestCase {

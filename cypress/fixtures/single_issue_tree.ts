@@ -7,7 +7,9 @@ export const testcases: TreeTestCase[] = [
   {
     issueId: tcConfig.firstIssueId,
     filter: {
-      priority: ["Highest", "High", "On Hold"]
+      priority: ["Highest", "High", "On Hold"],
+      issueCardFields: ["Priority"],
+      globalbutton:"exportCSV"
     },
     expected: {
       "roots": [{
@@ -48,6 +50,7 @@ export const testcases: TreeTestCase[] = [
     filter: {
       priority: ["High"]
     },
+    
     expected: {
       "roots": [{
         "name": "STP-1",
@@ -72,7 +75,8 @@ export const testcases: TreeTestCase[] = [
     filter: {
       priority: ["Not Set"]
     },
-    expected: {
+    
+expected: {
       "roots": [{
         "name": "STP-1",
         "children": []
@@ -84,7 +88,8 @@ export const testcases: TreeTestCase[] = [
     filter: {
       linkType: ["Parent", "Causes", "Relates To"]
     },
-    expected: {
+    
+expected: {
       "roots": [{
         "name": "STP-1",
         "children": [{
@@ -117,7 +122,8 @@ export const testcases: TreeTestCase[] = [
     filter: {
       linkType: ["Is Duplicated By"]
     },
-    expected: {
+    
+expected: {
       "roots": [{
         "name": "STP-1",
         "children": [{
@@ -135,7 +141,8 @@ export const testcases: TreeTestCase[] = [
     filter: {
       issueType: ["Bug", "Task", "Story", "Observations"]
     },
-    expected: {
+    
+expected: {
       "roots": [{
         "name": "STP-1",
         "children": [{
@@ -177,7 +184,8 @@ export const testcases: TreeTestCase[] = [
     filter: {
       issueType: ["Sub-task"]
     },
-    expected: {
+    
+expected: {
       "roots": [{
         "name": "STP-1",
         "children": [{
@@ -206,7 +214,8 @@ export const testcases: TreeTestCase[] = [
       linkType: ["Parent", "Subtasks", "is caused by", "duplicates", "Causes", "Relates To", "Blocks"],
       issueType: ["Task", "Sub-task", "Goal", "Observations", "Sub Goal"],
     },
-    expected: {
+    
+expected: {
       "roots": [{
         "name": "STP-1",
         "children": [{
@@ -244,7 +253,8 @@ export const testcases: TreeTestCase[] = [
       linkType: ["Parent", "Subtasks", "Child Issues"],
       // issueType: [],
     },
-    expected: {
+    
+expected: {
       "roots": [{
         "name": "STP-1",
         "children": [{
@@ -273,7 +283,8 @@ export const testcases: TreeTestCase[] = [
       linkType: [],
       issueType: [],
     },
-    expected: {
+    
+expected: {
       "roots": [{
         "name": "STP-1",
         "children": [{
