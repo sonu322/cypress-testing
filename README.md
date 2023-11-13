@@ -61,7 +61,7 @@ In the left-hand navigation pane, under the 'Administration' section, click on "
 Scroll down and find the "Import and Export" section.
 
 Next, access the new Jira instance. Navigate to Jira **settings > System**. You can also use the '**Jira search admin**' bar to find the 'Restore System' option.
-Afterward, open the folder where you stored the backup file. Copy the backup zip file and paste it into the 'import' folder of the new Jira instance. 
+Afterward, open the folder where you stored the **backup** file. Copy the backup zip file and paste it into the 'import' folder of the new Jira instance. 
 
 Backup file location: Go to jira “**Export**” folder.
 Restore file location: Go to the jira “**Import**” folder.
